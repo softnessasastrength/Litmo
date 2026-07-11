@@ -11,6 +11,8 @@ This roadmap turns the original proof of concept into a sequence of independentl
 - Stopping must remain immediate and must not require an explanation.
 - Sensitive consent information is private by default.
 - Safety-sensitive decisions require human review rather than automatic public punishment.
+- Core safety concepts must retain the same meaning on every supported platform.
+- The repository, not private conversations or one vendor, is the durable source of project intent.
 
 ## Chapters
 
@@ -25,6 +27,8 @@ The current vertical slice demonstrates Touch Language onboarding, body-zone pre
 Status: implementation complete; Docker-backed acceptance and hosted CI remain blocked/unverified as recorded in `../CHAPTER_2_COMPLETION.md`.
 
 Make authentication, persistence, validation, local development, database security, testing, CI, accessibility states, and documentation dependable.
+
+The first user-facing milestone is `PHONE_VISIBLE_VERTICAL_SLICE.md`.
 
 See `CHAPTER_2_FOUNDATION.md`.
 
@@ -52,6 +56,42 @@ Add invite-only access, adult eligibility controls, coarse discovery, safety onb
 
 See `CHAPTER_6_PRIVATE_ALPHA.md`.
 
+### Chapter 7 — Identity, eligibility, and verification
+
+Add privacy-conscious adult eligibility and optional verification without treating verification as proof of safety.
+
+### Chapter 8 — Moderation operations and safeguarding
+
+Build the human roles, case handling, evidence, appeals, escalation, transparency, and operational safeguards required for responsible use.
+
+### Chapter 9 — Accessibility, internationalization, and inclusive design
+
+Make Litmo usable across disability, language, culture, device, and sensory needs while preserving precise consent language.
+
+### Chapter 10 — Multi-platform clients and open-source preparation
+
+Create platform-neutral packages and consistent clients for iOS, Android, web, macOS, Windows, and Linux, plus open-source governance and contributor infrastructure.
+
+### Chapter 11 — Public API, SDKs, and ecosystem
+
+Provide versioned APIs, scoped authorization, SDKs, webhooks, sandbox fixtures, and client-conformance requirements.
+
+### Chapter 12 — Release engineering and distribution
+
+Make cross-platform builds reproducible, signed, testable, attributable, distributable, and recoverable.
+
+### Chapter 13 — Production operations, reliability, and continuity
+
+Build observability, incident response, backup and restore, disaster recovery, vendor-exit plans, succession procedures, and responsible service wind-down capabilities.
+
+See `CHAPTERS_7_TO_13_PLATFORM_FUTURE.md` for the detailed future roadmap.
+
+## Continuity
+
+Read `../CONTINUITY_AND_STEWARDSHIP.md`. Litmo must be maintainable without its founder, its original coding assistant, or access to private conversations.
+
 ## Chapter gate
 
 Do not begin implementing a later chapter until the current chapter's acceptance criteria pass and its completion report exists. Later chapter documents may be refined when implementation reveals architectural constraints, but product invariants may not be weakened for convenience.
+
+A future chapter becomes active only when `AGENTS.md` explicitly promotes it.
