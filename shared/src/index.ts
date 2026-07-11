@@ -144,3 +144,4 @@ export function serializeValidated<T>(
 
 export * from "./consentEngine.ts";
 export * from "./consentSnapshot.ts";
+export * from "./legacyProfileAdapter.ts";

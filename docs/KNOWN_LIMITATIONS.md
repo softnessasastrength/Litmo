@@ -3,7 +3,8 @@
 ## Demo-only shortcuts
 
 - The current mobile Consent Snapshot still uses synthetic Chapter 1 data rather than the canonical Chapter 3 engine. Impact: the visible demo does not prove live two-profile computation. Mitigation: all copy labels the flow as mock. Removal criterion: typed repository integration backed by RLS-tested profile versions.
-- The legacy Express overlap route uses the original POC shape. Impact: two consent implementations temporarily coexist. Mitigation: the new engine is explicitly canonical for Chapter 3 work. Removal criterion: a versioned API migration with compatibility tests.
+- The legacy Express `/api/consent/overlap` route uses the original POC shape and is now explicitly marked deprecated (`Deprecation: true` response header, `docs/adr/0002-legacy-profile-adapter.md`). Impact: two consent implementations temporarily coexist. Mitigation: `POST /api/consent/compatibility` is canonical for all new Chapter 3+ work and is backed by the documented legacy-profile adapter (`toConsentProfileVersion` in `@litmo/domain`). Removal criterion: no client calls `/overlap`.
+- The legacy-profile adapter assumes Chapter 2's touch and consent profile versions always move in lockstep (both written by the same `save_profile_versions` call) and throws if they diverge; it has no way to represent directional receive/offer asymmetry, since Chapter 2 never captured it. Impact: every mapped rule is symmetric (`canReceive: true, canOffer: true`) except hard stops. Removal criterion: a profile-editing UI that captures direction explicitly.
 
 ## Security and privacy limitations
 
