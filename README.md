@@ -19,7 +19,9 @@ Chapter 2 adds real local Supabase email/password authentication, session restor
 
 Chapter 3 adds a canonical, framework-independent, directional consent-compatibility engine (`@litmo/domain`) with property-based safety tests, a practical-effect preview for profile edits, and a documented adapter that bridges it to Chapter 2's persisted profiles and a live backend route. The mock Consent Snapshot screen now runs this real engine end to end.
 
-A backend-free **demo mode** (`docs/adr/0003-demo-mode-entry-point.md`) lets the full Chapter 1 tap-through path run on a physical iPhone through Expo Go with no Supabase instance at all — tap "Continue without an account (demo mode)" on the sign-in screen, or on the screen shown when no local Supabase is configured. Nothing in demo mode is saved or represents a real account.
+A backend-free **demo mode** (`docs/adr/0003-demo-mode-entry-point.md`) lets the full Chapter 1 tap-through path run on a physical iPhone through Expo Go with no Supabase instance at all. From the welcome screen, tap "Explore the prototype" to reach a dedicated entry screen offering either "Enter the fictional demo" (no account, nothing saved) or real account sign-in. The screen shown when no local Supabase is configured also offers demo mode directly.
+
+Litmo also runs as a standalone iOS build (not just through Expo Go), including on very new Xcode/iOS betas — see `docs/adr/0004-ios-27-beta-build-fixes.md` and the standalone-build section of `docs/LOCAL_DEVELOPMENT.md`.
 
 ## Safety model
 
@@ -37,16 +39,16 @@ See [`docs/CONSENT_FLOW.md`](docs/CONSENT_FLOW.md) and [`docs/TRUST_SYSTEM.md`](
 
 ## Architecture
 
-| Layer            | Technology                                              |
-| ---------------- | ------------------------------------------------------- |
-| Mobile prototype | React Native with Expo SDK 55 and TypeScript            |
-| Navigation       | Expo Router                                             |
-| Auth state       | One authoritative React Context backed by Supabase Auth |
-| Domain boundary  | Framework-independent TypeScript and Zod schemas        |
-| API              | Node.js and Express                                     |
-| Database/Auth    | Supabase PostgreSQL and Auth                            |
-| Realtime         | Supabase Realtime                                       |
-| Notifications    | Expo Notifications                                      |
+| Layer            | Technology                                                                                       |
+| ---------------- | ------------------------------------------------------------------------------------------------ |
+| Mobile prototype | React Native with Expo SDK 55 and TypeScript                                                     |
+| Navigation       | Expo Router                                                                                      |
+| Auth state       | One authoritative React Context backed by Supabase Auth, plus an explicit backend-free demo mode |
+| Domain boundary  | Framework-independent TypeScript and Zod schemas                                                 |
+| API              | Node.js and Express                                                                              |
+| Database/Auth    | Supabase PostgreSQL and Auth                                                                     |
+| Realtime         | Supabase Realtime                                                                                |
+| Notifications    | Expo Notifications                                                                               |
 
 ```text
 Litmo/
@@ -116,6 +118,10 @@ This repository is an early application foundation. It is not production-ready a
 
 See [`docs/FIRST_PLAYABLE.md`](docs/FIRST_PLAYABLE.md) for the flow, accessibility decisions, and visual rationale.
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/SECURITY_MODEL.md`](docs/SECURITY_MODEL.md), and [`docs/DATA_CLASSIFICATION.md`](docs/DATA_CLASSIFICATION.md) for Chapter 2 boundaries.
+
+## Roadmap
+
+See [`ROADMAP.md`](ROADMAP.md) for chapter status and [`docs/roadmap/README.md`](docs/roadmap/README.md) for the full chapter sequence. Chapter 3 (Consent Engine) is complete (`docs/CHAPTER_3_COMPLETION.md`); Chapter 4 (Session Lifecycle) is active. Well-specified future work not yet assigned to a chapter — including a passwordless Sign in with Apple + passkeys authentication redesign — is tracked in [`docs/TODO.md`](docs/TODO.md).
 
 ## Contributing
 
