@@ -22,9 +22,9 @@ Steps (all interactive — EAS build needs to manage your Apple credentials and 
 
 ```bash
 cd app
-npx eas login
-npx eas build:configure   # links this project to your EAS account; only needs to run once
-npx eas build --platform ios --profile preview
+npx eas-cli login
+npx eas-cli build:configure   # links this project to your EAS account; only needs to run once
+npx eas-cli build --platform ios --profile preview
 ```
 
 `eas build:configure` will ask for a bundle identifier; `app/app.json` currently has a placeholder (`com.litmo.app`) — change it if you want something under your own naming convention before your first build. The `preview` build profile (`app/eas.json`) produces an ad-hoc, internally-distributed build: no App Store review, no TestFlight. The first time you build for a new device, EAS will prompt you to register that device's UDID (usually by visiting a link on the phone itself) so Apple's provisioning profile can include it.
