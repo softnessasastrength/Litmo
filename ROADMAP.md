@@ -31,3 +31,7 @@ Later work may include real product architecture, stronger accessibility validat
 Status: **implemented; environment-limited verification documented in `docs/CHAPTER_2_COMPLETION.md`**
 
 The Chapter 2 scope and acceptance criteria are maintained in [`docs/roadmap/CHAPTER_2_FOUNDATION.md`](docs/roadmap/CHAPTER_2_FOUNDATION.md). Chapter 3 remains gated.
+
+## Unscheduled future work
+
+See [`docs/TODO.md`](docs/TODO.md) for well-specified future work not yet assigned to a chapter, including a passwordless (Sign in with Apple + platform passkeys) authentication redesign.
