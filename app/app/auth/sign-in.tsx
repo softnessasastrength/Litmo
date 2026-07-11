@@ -6,7 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import { mapExternalError } from "../../services/errors";
 import { colors, radius } from "../../theme";
 export default function SignInScreen() {
-  const { signIn } = useAuth();
+  const { signIn, enterDemoMode } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -63,6 +63,16 @@ export default function SignInScreen() {
       <Link href="/auth/sign-up" style={styles.link}>
         New here? Create an account
       </Link>
+      <Button
+        variant="secondary"
+        label="Continue without an account (demo mode)"
+        onPress={enterDemoMode}
+        accessibilityHint="Explores Litmo with local, imaginary profiles. No account is created and nothing is saved."
+      />
+      <Body muted center>
+        Demo mode uses imaginary people and local data only. It does not create
+        a real account.
+      </Body>
     </Screen>
   );
 }

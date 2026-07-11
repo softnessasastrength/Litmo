@@ -1,5 +1,16 @@
 # Local development
 
+## Backend-free demo mode (no Docker required)
+
+If Docker Desktop is unavailable, or you just want to see the app without setting up Supabase, you can still launch on a physical iPhone:
+
+```bash
+npm ci
+npm --workspace app run start
+```
+
+Scan the QR code with Expo Go. Litmo will show a "No local service is configured" screen (or, if `app/.env` already points at an unreachable Supabase instance, the ordinary sign-in screen). Either way, tap **"Continue without an account (demo mode)"**. This runs the full Chapter 1 tap-through path — Welcome → Vibe Quiz → Vibe Profile → Touch Language → Discover → Match Detail → Consent Snapshot → Active Session → Wrap-Up → Trust Ledger — using only local, synthetic data. Nothing is saved, no account is created, and demo mode does not persist across an app restart. See `docs/adr/0003-demo-mode-entry-point.md` for what is and is not exercised in this mode (Chapter 2's real Supabase-backed screens, such as editing your general profile, are unavailable and say so plainly rather than failing silently).
+
 ## Prerequisites
 
 - Node.js 20.19 or newer

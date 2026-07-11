@@ -16,6 +16,11 @@
 - Consent explanations have not received independent trauma-informed, safeguarding, or legal review. Impact: wording may omit important interpretations. Mitigation: explanations disclose conservative outcomes and never private reasoning. Removal criterion: documented expert and user review.
 - Duplicate rules are excluded as contradictory even when duplicates are textually identical. Impact: false exclusions are possible, but no permission is broadened. Removal criterion: canonical input deduplication with tests proving identical duplicates are harmless.
 
+## Demo mode
+
+- Demo mode (`docs/adr/0003-demo-mode-entry-point.md`) does not persist across an app restart by design; a developer wanting a longer walkthrough must re-enter it each cold start. Removal criterion: none — this is an intentional safety property, not a gap.
+- `profile/edit.tsx` and the persistence steps in `onboarding/quiz.tsx` / `onboarding/touch-language.tsx` are unavailable in demo mode and say so, rather than persisting anything. Removal criterion: Chapter 4+ decision on whether demo-mode edits should be representable as ephemeral local state instead of simply disabled.
+
 ## Release blockers
 
 - Canonical snapshot persistence, participant authorization, database immutability, mobile preview, and server-side confirmation are not implemented yet.

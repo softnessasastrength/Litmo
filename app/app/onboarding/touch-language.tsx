@@ -42,7 +42,10 @@ export default function TouchLanguageScreen() {
   ] as const;
   const complete = groups.every((group) => touchChoices[group.key]);
   const save = async () => {
-    if (!user) return;
+    if (!user) {
+      router.replace("/match/discover");
+      return;
+    }
     setBusy(true);
     setError("");
     const pressureMap = {

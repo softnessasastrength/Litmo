@@ -4,6 +4,8 @@ import { PrototypeProvider } from "../context/PrototypeContext";
 import { AuthProvider, useAuth } from "../context/AuthContext";
 import { AppErrorBoundary } from "../components/AppErrorBoundary";
 import { FailureState, LoadingState } from "../components/AsyncState";
+import { Body, Button, Screen, Title } from "../components/ui";
+import { environmentError } from "../services/supabase";
 import { colors } from "../theme";
 
 export default function RootLayout() {
@@ -22,6 +24,17 @@ function AuthenticatedStack() {
   const auth = useAuth();
   if (auth.status === "loading")
     return <LoadingState label="Restoring your private session…" />;
+  if (auth.status === "error" && environmentError)
+    return (
+      <Screen scroll={false} style={{ justifyContent: "center", gap: 18 }}>
+        <Title center>No local service is configured.</Title>
+        <Body center>{environmentError}</Body>
+        <Button
+          label="Continue without an account (demo mode)"
+          onPress={auth.enterDemoMode}
+        />
+      </Screen>
+    );
   if (auth.status === "error")
     return (
       <FailureState

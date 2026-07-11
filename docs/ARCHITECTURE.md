@@ -23,6 +23,8 @@ Chapter 3 adds the canonical pure consent engine to `shared/`. It models receive
 
 `AuthContext` is the sole mobile authority for session state. It restores the Supabase session from device storage, fetches the owner's profile, distinguishes incomplete onboarding from a ready account, subscribes to auth changes, and redirects protected routes conservatively. Expired sessions return to sign-in.
 
+A `"demo"` status (`docs/adr/0003-demo-mode-entry-point.md`) lets the app run the full Chapter 1 tap-through path with no Supabase instance at all. It is entered only by an explicit user action (never a silent fallback), never touches Supabase, and is never persisted across an app restart. `protectedRouteFor` treats it like a signed-in state for leaving the auth route group, but never forces a redirect once outside it. Screens that require a real account (`profile/edit.tsx`, and persistence inside `onboarding/quiz.tsx` / `onboarding/touch-language.tsx`) already guarded on `user` being present for Chapter 2; demo mode reuses that same guard rather than a second implementation, and the one place that previously no-op'd instead of advancing (`onboarding/touch-language.tsx`'s save handler) now does.
+
 ## Profile separation
 
 - `profiles` contains general identity and discovery-safe candidates.

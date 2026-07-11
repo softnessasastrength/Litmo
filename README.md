@@ -17,6 +17,10 @@ Welcome → Vibe Quiz → Vibe Profile → Touch Language → Discover
 
 Chapter 2 adds real local Supabase email/password authentication, session restoration, protected routes, persistent onboarding, editable general profiles, immutable touch/consent profile versions, owner-only RLS, typed data access, and repository-wide checks. Discovery people, matches, sessions, and trust history remain synthetic until their later roadmap chapters.
 
+Chapter 3 adds a canonical, framework-independent, directional consent-compatibility engine (`@litmo/domain`) with property-based safety tests, a practical-effect preview for profile edits, and a documented adapter that bridges it to Chapter 2's persisted profiles and a live backend route. The mock Consent Snapshot screen now runs this real engine end to end.
+
+A backend-free **demo mode** (`docs/adr/0003-demo-mode-entry-point.md`) lets the full Chapter 1 tap-through path run on a physical iPhone through Expo Go with no Supabase instance at all — tap "Continue without an account (demo mode)" on the sign-in screen, or on the screen shown when no local Supabase is configured. Nothing in demo mode is saved or represents a real account.
+
 ## Safety model
 
 Litmo treats consent as session-specific and revocable at any moment.

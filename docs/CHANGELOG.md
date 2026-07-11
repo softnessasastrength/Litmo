@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-07-11 — Backend-free demo mode for physical-device launch
+
+### Summary
+
+Added a `"demo"` `AuthState` status (`docs/adr/0003-demo-mode-entry-point.md`), entered only through an explicit `enterDemoMode()` action, so the full Chapter 1 tap-through path (Welcome → Vibe Quiz → Vibe Profile → Touch Language → Discover → Match Detail → Consent Snapshot → Active Session → Wrap-Up → Trust Ledger) can run on a physical iPhone through Expo Go with no Supabase instance configured at all. This was blocking the concrete goal of running Litmo on a personal device: `AuthContext` previously redirected every signed-out visitor straight to sign-in, which requires a reachable local Supabase instance this machine cannot start (no Docker installed).
+
+### User-visible impact
+
+The sign-in screen, and the screen shown when no local Supabase URL/key is configured, now offer "Continue without an account (demo mode)". Demo mode is clearly labeled, creates no account, and does not persist across an app restart. `onboarding/touch-language.tsx`'s save action, which previously did nothing at all with no signed-in user, now advances to Discovery. `match/discover.tsx`'s "Edit my general profile" button and `profile/edit.tsx` now explain that editing requires a real account instead of hanging or silently failing. `profile/trust-ledger.tsx` labels its exit action "Exit demo mode" instead of "Sign out" while in demo mode.
+
+### Developer impact
+
+`app/context/authState.ts` gained a `"demo"` status and `ENTERED_DEMO_MODE` action (3 new tests, app test count 19 → 22). `AuthContext`'s `signOut()` skips the network call entirely in demo mode, since there is no real session to invalidate.
+
+### Migration and setup impact
+
+None. Verified with `npm --workspace app test`, `npm --workspace app run typecheck`, full repo lint, and a live Metro bundler boot: requested the actual iOS bundle Expo Go would load (`platform=ios`) and confirmed it compiled successfully (1,353 modules, no errors) before stopping the server. Scanning the QR code on a physical device was not performed in this session; see `docs/CHAPTER_3_COMPLETION.md` and this entry for what was and was not verified.
+
+### Related decision and roadmap
+
+- `docs/adr/0003-demo-mode-entry-point.md`
+- `docs/roadmap/PHONE_VISIBLE_VERTICAL_SLICE.md`
+- `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
+
 ## 2026-07-11 — Chapter 3 mock Consent Snapshot runs the real engine
 
 ### Summary

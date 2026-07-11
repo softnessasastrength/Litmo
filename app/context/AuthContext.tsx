@@ -18,6 +18,7 @@ type AuthValue = ReturnType<typeof authReducer> & {
   signIn(email: string, password: string): Promise<void>;
   signOut(): Promise<void>;
   refreshProfile(): Promise<void>;
+  enterDemoMode(): void;
 };
 const Context = createContext<AuthValue | null>(null);
 
@@ -75,11 +76,15 @@ export function AuthProvider({ children }: PropsWithChildren) {
         await authService.signIn(email, password);
       },
       async signOut() {
+        if (state.status === "demo") return dispatch({ type: "SIGNED_OUT" });
         await authService.signOut();
         dispatch({ type: "SIGNED_OUT" });
       },
       async refreshProfile() {
         await restore(state.session);
+      },
+      enterDemoMode() {
+        dispatch({ type: "ENTERED_DEMO_MODE" });
       },
     }),
     [state],

@@ -15,7 +15,7 @@ import { useAuth } from "../../context/AuthContext";
 
 export default function TrustLedgerScreen() {
   const router = useRouter();
-  const { signOut } = useAuth();
+  const { signOut, status } = useAuth();
   return (
     <Screen>
       <Eyebrow>PRIVATE · SYNTHETIC HISTORY</Eyebrow>
@@ -59,7 +59,7 @@ export default function TrustLedgerScreen() {
       />
       <Button
         variant="secondary"
-        label="Sign out"
+        label={status === "demo" ? "Exit demo mode" : "Sign out"}
         onPress={() => void signOut()}
       />
     </Screen>

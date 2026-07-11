@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Text, TextInput, View } from "react-native";
+import { useRouter } from "expo-router";
 import { Body, Button, Eyebrow, Screen, Title } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { profileRepository } from "../../services/profileRepository";
 import { authFormStyles as styles } from "../auth/sign-in";
 export default function EditProfileScreen() {
+  const router = useRouter();
   const { user } = useAuth();
   const [name, setName] = useState("");
   const [pronouns, setPronouns] = useState("");
@@ -44,6 +46,18 @@ export default function EditProfileScreen() {
       setBusy(false);
     }
   };
+  if (!user)
+    return (
+      <Screen>
+        <Eyebrow>YOUR GENERAL PROFILE</Eyebrow>
+        <Title>Demo mode has no account to edit.</Title>
+        <Body muted>
+          Sign in with a real account to edit a general profile. Nothing here is
+          saved in demo mode.
+        </Body>
+        <Button label="Back" onPress={() => router.back()} />
+      </Screen>
+    );
   return (
     <Screen>
       <Eyebrow>YOUR GENERAL PROFILE</Eyebrow>
