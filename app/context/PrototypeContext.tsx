@@ -15,6 +15,7 @@ type PrototypeState = {
   selectedProfileId: string;
   touchChoices: Record<string, string>;
   setAnswer: (answer: AnswerScores) => void;
+  hydrateAnswers: (answers: AnswerScores[]) => void;
   resetQuiz: () => void;
   selectProfile: (id: string) => void;
   setTouchChoice: (key: string, value: string) => void;
@@ -36,6 +37,7 @@ export function PrototypeProvider({ children }: PropsWithChildren) {
           ...current.filter((item) => item.questionId !== answer.questionId),
           answer,
         ]),
+      hydrateAnswers: setAnswers,
       resetQuiz: () => setAnswers([]),
       selectProfile,
       setTouchChoice: (key, choice) =>

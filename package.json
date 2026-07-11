@@ -1,0 +1,31 @@
+{
+  "name": "litmo",
+  "version": "0.2.0",
+  "private": true,
+  "workspaces": [
+    "app",
+    "backend",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "npm run env:check && npm run mobile",
+    "mobile": "npm --workspace app run start",
+    "api": "npm --workspace backend run dev",
+    "lint": "npm --workspace app run format:check && npm --workspace shared run lint",
+    "typecheck": "npm --workspace shared run typecheck && npm --workspace app run typecheck",
+    "test": "npm --workspace shared test && npm --workspace app test && npm --workspace backend test",
+    "test:integration": "node scripts/run-integration.mjs",
+    "build": "npm --workspace shared run build && npm --workspace app run build",
+    "db:start": "npx supabase start",
+    "db:reset": "npx supabase db reset",
+    "db:stop": "npx supabase stop",
+    "db:lint": "npx supabase db lint --local --level error",
+    "env:check": "node scripts/validate-env.mjs"
+  },
+  "devDependencies": {
+    "supabase": "^2.50.5"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}

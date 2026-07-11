@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { useRouter } from "expo-router";
+import { useMemo, useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
+import { computeCompatibility } from "@litmo/domain";
 import {
   Body,
   Button,
@@ -10,22 +11,36 @@ import {
   Screen,
   Title,
 } from "../../components/ui";
-import { snapshot } from "../../data/mock";
+import {
+  mockConsentProfileVersion,
+  mockSnapshotNow,
+} from "../../data/mockConsentProfiles";
+import { buildSnapshotRows } from "../../lib/consentSnapshotView";
 import { colors } from "../../theme";
 
 export default function ConsentSnapshotScreen() {
   const router = useRouter();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const [decision, setDecision] = useState("");
+  const rows = useMemo(() => {
+    const result = computeCompatibility(
+      mockConsentProfileVersion("self"),
+      mockConsentProfileVersion(id ?? "maya"),
+      mockSnapshotNow,
+    );
+    return buildSnapshotRows(result);
+  }, [id]);
   return (
     <Screen>
       <Eyebrow>MOCK CONSENT SNAPSHOT</Eyebrow>
       <Title>Read every boundary before you agree.</Title>
       <Body>
-        This is the most restrictive overlap of both mock profiles. A match and
-        a Vibe Profile do not grant consent.
+        This is the live, directional overlap of two mock preference sets
+        computed by the real consent engine. A match and a Vibe Profile do not
+        grant consent.
       </Body>
       <Card style={styles.snapshot}>
-        {snapshot.map((item) => (
+        {rows.map((item) => (
           <View key={item.label} style={styles.row}>
             <Text style={styles.label}>{item.label}</Text>
             <Text style={styles.value}>{item.value}</Text>

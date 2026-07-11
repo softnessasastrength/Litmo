@@ -6,14 +6,18 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test lib/*.test.ts",
+    "test": "node --experimental-strip-types --test lib/*.test.ts context/*.test.ts services/*.test.ts",
+    "build": "expo export --platform ios --output-dir dist",
     "format:check": "prettier --check \"**/*.{ts,tsx,json,md}\""
   },
   "dependencies": {
     "@expo/metro-runtime": "~55.0.11",
+    "@litmo/domain": "*",
+    "@react-native-async-storage/async-storage": "^3.1.1",
+    "@supabase/supabase-js": "^2.110.2",
     "expo": "~55.0.27",
     "expo-constants": "~55.0.16",
     "expo-linking": "~55.0.15",
@@ -26,7 +30,7 @@
     "react-native-screens": "~4.23.0"
   },
   "devDependencies": {
-    "@types/react": "~19.2.2",
+    "@types/react": "19.2.2",
     "prettier": "^3.9.5",
     "typescript": "~5.9.2"
   }

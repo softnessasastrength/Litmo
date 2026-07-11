@@ -1,13 +1,22 @@
 import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { Body, Eyebrow, Pill, Screen, Title } from "../../components/ui";
+import {
+  Body,
+  Button,
+  Eyebrow,
+  Pill,
+  Screen,
+  Title,
+} from "../../components/ui";
 import { mockProfiles } from "../../data/mock";
 import { usePrototype } from "../../context/PrototypeContext";
+import { useAuth } from "../../context/AuthContext";
 import { colors, radius, shadow } from "../../theme";
 
 export default function DiscoverScreen() {
   const router = useRouter();
   const { selectProfile } = usePrototype();
+  const { user } = useAuth();
   return (
     <Screen>
       <Eyebrow>IMAGINARY NEIGHBORS</Eyebrow>
@@ -16,6 +25,17 @@ export default function DiscoverScreen() {
         These synthetic profiles show vibe possibilities only. Vibe is not
         consent, and no safety guarantee is implied.
       </Body>
+      {user ? (
+        <Button
+          variant="secondary"
+          label="Edit my general profile"
+          onPress={() => router.push("/profile/edit")}
+        />
+      ) : (
+        <Body muted>
+          Demo mode has no account to edit. Sign in to edit a general profile.
+        </Body>
+      )}
       <View style={styles.list}>
         {mockProfiles.map((profile) => (
           <Pressable

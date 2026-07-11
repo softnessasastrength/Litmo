@@ -6,7 +6,7 @@ Litmo is a consent-centered, trauma-informed platform for safe, non-sexual, plat
 
 It is not a dating app, a therapy platform, or a substitute for emergency or clinical care. The proof of concept focuses on making consent explicit, matching conservative, and exits immediate.
 
-## First playable prototype
+## Current foundation
 
 Chapter 1 is a local, synthetic-data experience designed for founder review in Expo Go:
 
@@ -15,7 +15,11 @@ Welcome → Vibe Quiz → Vibe Profile → Touch Language → Discover
 → Match Detail → Consent Snapshot → Active Session → Wrap-Up → Trust Ledger
 ```
 
-The prototype contains no authentication, networking, real matching, real location, or persistent personal data. All people, histories, sessions, and outcomes shown in the app are fictional.
+Chapter 2 adds real local Supabase email/password authentication, session restoration, protected routes, persistent onboarding, editable general profiles, immutable touch/consent profile versions, owner-only RLS, typed data access, and repository-wide checks. Discovery people, matches, sessions, and trust history remain synthetic until their later roadmap chapters.
+
+Chapter 3 adds a canonical, framework-independent, directional consent-compatibility engine (`@litmo/domain`) with property-based safety tests, a practical-effect preview for profile edits, and a documented adapter that bridges it to Chapter 2's persisted profiles and a live backend route. The mock Consent Snapshot screen now runs this real engine end to end.
+
+A backend-free **demo mode** (`docs/adr/0003-demo-mode-entry-point.md`) lets the full Chapter 1 tap-through path run on a physical iPhone through Expo Go with no Supabase instance at all — tap "Continue without an account (demo mode)" on the sign-in screen, or on the screen shown when no local Supabase is configured. Nothing in demo mode is saved or represents a real account.
 
 ## Safety model
 
@@ -33,15 +37,16 @@ See [`docs/CONSENT_FLOW.md`](docs/CONSENT_FLOW.md) and [`docs/TRUST_SYSTEM.md`](
 
 ## Architecture
 
-| Layer | Technology |
-|---|---|
-| Mobile prototype | React Native with Expo SDK 55 and TypeScript |
-| Navigation | Expo Router |
-| Prototype state | React Context, in memory only |
-| API | Node.js and Express |
-| Database/Auth | Supabase PostgreSQL and Auth |
-| Realtime | Supabase Realtime |
-| Notifications | Expo Notifications |
+| Layer            | Technology                                              |
+| ---------------- | ------------------------------------------------------- |
+| Mobile prototype | React Native with Expo SDK 55 and TypeScript            |
+| Navigation       | Expo Router                                             |
+| Auth state       | One authoritative React Context backed by Supabase Auth |
+| Domain boundary  | Framework-independent TypeScript and Zod schemas        |
+| API              | Node.js and Express                                     |
+| Database/Auth    | Supabase PostgreSQL and Auth                            |
+| Realtime         | Supabase Realtime                                       |
+| Notifications    | Expo Notifications                                      |
 
 ```text
 Litmo/
@@ -54,44 +59,43 @@ Litmo/
 
 ## Local setup
 
-### Run the first playable in Expo Go
+### Run locally
 
 - Node.js 20.19+
 - npm 10+
+- Docker Desktop
 - The current Expo Go app on an iPhone
 
 ```bash
-cd app
-npm install
-npm start
+npm ci
+npm run db:start
+npm run db:reset
+cp app/.env.example app/.env
+npm run dev
 ```
 
-Scan the QR code with the iPhone Camera app and open it in Expo Go. The prototype does not require `.env` configuration or a running backend.
+Copy the local URL and anon key from `npx supabase status` into `app/.env`, then scan Expo's QR code. See [`docs/LOCAL_DEVELOPMENT.md`](docs/LOCAL_DEVELOPMENT.md), including the physical-device hostname note.
 
 ### Verification
 
 ```bash
-cd app
+npm run lint
 npm run typecheck
 npm test
+npm run test:integration
+npm run build
 ```
 
-The existing consent-domain tests remain separate:
+Integration tests require running local Supabase.
+
+### Service commands
 
 ```bash
-cd backend
-npm install
-npm test
-```
-
-Backend and Supabase files are retained as future architecture experiments but are not used by Chapter 1.
-
-### Future backend environment
-
-```bash
-cp .env.example .env
-supabase link --project-ref YOUR_PROJECT_REF
-supabase db push
+npm run mobile
+npm run api
+npm run db:start
+npm run db:reset
+npm run db:stop
 ```
 
 ## Core session lifecycle
@@ -108,9 +112,10 @@ A session cannot become `active` until both users have confirmed the same immuta
 
 ## Repository status
 
-This repository is an early, playable prototype. It is not production-ready and must not be used to arrange real-world sessions. Chapter 1 simulates safety behavior for evaluation; it does not provide operational safeguards.
+This repository is an early application foundation. It is not production-ready and must not be used to arrange real-world sessions. Authentication and RLS reduce local-development risk but do not constitute a safety, privacy, legal, or safeguarding certification.
 
 See [`docs/FIRST_PLAYABLE.md`](docs/FIRST_PLAYABLE.md) for the flow, accessibility decisions, and visual rationale.
+See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/SECURITY_MODEL.md`](docs/SECURITY_MODEL.md), and [`docs/DATA_CLASSIFICATION.md`](docs/DATA_CLASSIFICATION.md) for Chapter 2 boundaries.
 
 ## Contributing
 

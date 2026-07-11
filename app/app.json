@@ -6,9 +6,24 @@
     "orientation": "portrait",
     "scheme": "litmo",
     "userInterfaceStyle": "light",
-    "plugins": ["expo-router"],
-    "experiments": { "typedRoutes": true },
-    "ios": { "supportsTablet": false },
-    "android": { "adaptiveIcon": { "backgroundColor": "#F7F1E8" } }
+    "plugins": ["expo-router", "./plugins/withIOSXcode27Fixes.cjs"],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.litmo.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#F7F1E8"
+      }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "01be958b-59d4-4782-8ccd-1e15a15bc6ba"
+      }
+    }
   }
 }

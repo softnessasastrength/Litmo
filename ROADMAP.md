@@ -25,3 +25,13 @@ Do not begin Chapter 2 until Branden explicitly approves Chapter 1 after review.
 ## Later chapters
 
 Later work may include real product architecture, stronger accessibility validation, safeguarding, moderation, authentication, privacy, and backend integration. Scope and sequence require founder approval before implementation.
+
+## Chapter 2 — Production-grade foundation
+
+Status: **implemented; environment-limited verification documented in `docs/CHAPTER_2_COMPLETION.md`**
+
+The Chapter 2 scope and acceptance criteria are maintained in [`docs/roadmap/CHAPTER_2_FOUNDATION.md`](docs/roadmap/CHAPTER_2_FOUNDATION.md). Chapter 3 remains gated.
+
+## Unscheduled future work
+
+See [`docs/TODO.md`](docs/TODO.md) for well-specified future work not yet assigned to a chapter, including a passwordless (Sign in with Apple + platform passkeys) authentication redesign.

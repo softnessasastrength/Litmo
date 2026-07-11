@@ -56,7 +56,12 @@ export default function MatchDetailScreen() {
       </View>
       <Button
         label="Review a mock Consent Snapshot"
-        onPress={() => router.push("/match/consent-snapshot")}
+        onPress={() =>
+          router.push({
+            pathname: "/match/consent-snapshot",
+            params: { id: profile.id },
+          })
+        }
       />
     </Screen>
   );

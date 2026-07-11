@@ -105,7 +105,13 @@ export function hashConsentSnapshot(snapshot) {
   return crypto.createHash('sha256').update(canonical).digest('hex');
 }
 
+// Deprecated: this is the original Chapter 1/2 proof-of-concept overlap route.
+// It is non-directional and does not implement the Chapter 3 canonical engine.
+// Kept only for compatibility until no client depends on it
+// (docs/KNOWN_LIMITATIONS.md, docs/adr/0002-legacy-profile-adapter.md).
+// New work must use POST /api/consent/compatibility instead.
 router.post('/overlap', (req, res) => {
+  res.set('Deprecation', 'true');
   try {
     const overlap = computeConsentOverlap(req.body?.user_a, req.body?.user_b);
     return res.status(overlap.eligible ? 200 : 422).json({
