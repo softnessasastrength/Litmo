@@ -38,9 +38,9 @@ Do not block the visible mobile experience on unfinished infrastructure when saf
 
 ## Current chapter assignment
 
-Continue implementing **Chapter 2: Production-Grade Foundation** from:
+Implement **Chapter 3: Consent Engine** from:
 
-`docs/roadmap/CHAPTER_2_FOUNDATION.md`
+`docs/roadmap/CHAPTER_3_CONSENT_ENGINE.md`
 
 The phone-visible vertical slice is the first user-facing milestone inside Chapter 2. It does not cancel the chapter's security, persistence, testing, or CI requirements.
 
@@ -54,7 +54,7 @@ Read these files before changing code:
 6. `docs/DOCUMENTATION_STANDARD.md`
 7. `docs/roadmap/README.md`
 8. `docs/roadmap/PHONE_VISIBLE_VERTICAL_SLICE.md`
-9. `docs/roadmap/CHAPTER_2_FOUNDATION.md`
+9. `docs/roadmap/CHAPTER_3_CONSENT_ENGINE.md`
 
 ## What “continue” means
 
@@ -137,7 +137,7 @@ At minimum:
 
 ## Scope gate
 
-Complete Chapter 2 and make all required checks pass before implementing later chapters.
+Complete Chapter 3 and make all required checks pass before implementing later chapters. Chapter 2's Docker-backed verification gaps remain recorded in `docs/CHAPTER_2_COMPLETION.md`.
 
 You may refine future planning documents, but do not implement later chapter features unless a minimal inert interface is necessary to avoid rework. Document the interface and why it exists.
 
