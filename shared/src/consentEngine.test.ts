@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { computeCompatibility, consentStates } from "./consentEngine.ts";
+import {
+  computeCompatibility,
+  consentDimensions,
+  consentStates,
+  type ConsentRule,
+} from "./consentEngine.ts";
 
 const ids = {
   a: "10000000-0000-4000-8000-000000000001",
@@ -140,4 +145,86 @@ test("output is deterministic regardless of rule order and contains no private n
   );
   assert.deepEqual(first, second);
   assert.equal(JSON.stringify(first).includes("never disclose"), false);
+});
+
+// Property-based coverage required by docs/roadmap/CHAPTER_3_CONSENT_ENGINE.md:
+// "Use property-based tests where useful to prove that adding a restriction
+// can never broaden the computed overlap." Seeded PRNG keeps runs reproducible.
+function mulberry32(seed: number) {
+  return function random() {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function pick<T>(random: () => number, options: readonly T[]): T {
+  return options[Math.floor(random() * options.length)]!;
+}
+const values = ["north", "south", "east"] as const;
+function randomRule(random: () => number): ConsentRule {
+  return {
+    dimension: pick(random, consentDimensions),
+    value: pick(random, values),
+    state: pick(random, consentStates),
+    canReceive: random() > 0.2,
+    canOffer: random() > 0.2,
+    pressure: null,
+    maxDurationMinutes: null,
+  };
+}
+function keyOf(item: { dimension: string; value: string; direction?: string }) {
+  return `${item.dimension}:${item.value}:${item.direction ?? ""}`;
+}
+/** Only ever moves a rule toward a stricter, never a looser, boundary. */
+function restrictRule(random: () => number, rule: ConsentRule): ConsentRule {
+  const stateIndex = consentStates.indexOf(rule.state);
+  const moves: Array<() => ConsentRule> = [
+    () =>
+      stateIndex > 0
+        ? { ...rule, state: consentStates[stateIndex - 1]! }
+        : rule,
+    () => (rule.canReceive ? { ...rule, canReceive: false } : rule),
+    () => (rule.canOffer ? { ...rule, canOffer: false } : rule),
+  ];
+  return pick(random, moves)();
+}
+test("restricting any rule never broadens permitted or ask-first overlap (property-based)", () => {
+  const random = mulberry32(42);
+  for (let iteration = 0; iteration < 200; iteration++) {
+    const ruleCount = 1 + Math.floor(random() * 5);
+    const baseRulesA = Array.from({ length: ruleCount }, () =>
+      randomRule(random),
+    );
+    const rulesB = Array.from({ length: ruleCount }, () => randomRule(random));
+    const restrictedRulesA = baseRulesA.map((rule) =>
+      restrictRule(random, rule),
+    );
+    const baseline = computeCompatibility(
+      profile("a", baseRulesA),
+      profile("b", rulesB),
+      now,
+    );
+    const restricted = computeCompatibility(
+      profile("a", restrictedRulesA),
+      profile("b", rulesB),
+      now,
+    );
+    const baselineCount = baseline.permitted.length + baseline.askFirst.length;
+    const restrictedCount =
+      restricted.permitted.length + restricted.askFirst.length;
+    assert.ok(
+      restrictedCount <= baselineCount,
+      `iteration ${iteration}: restricted overlap (${restrictedCount}) exceeded baseline (${baselineCount})`,
+    );
+    const baselineKeys = new Set(
+      [...baseline.permitted, ...baseline.askFirst].map(keyOf),
+    );
+    for (const item of [...restricted.permitted, ...restricted.askFirst])
+      assert.ok(
+        baselineKeys.has(keyOf(item)),
+        `iteration ${iteration}: restricted overlap introduced a new permission at ${keyOf(item)}`,
+      );
+  }
 });
