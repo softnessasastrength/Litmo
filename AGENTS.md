@@ -4,6 +4,14 @@ Litmo is a consent-centered, trauma-informed platform for safe, non-sexual, plat
 
 > Touch is not a transaction — it is a language.
 
+## Durable-agent rule
+
+This repository must remain usable by a competent human developer or any capable coding agent without access to private conversations, the founder's memory, OpenAI, Codex, or ChatGPT.
+
+Read `docs/CONTINUITY_AND_STEWARDSHIP.md` before making material architectural or governance changes.
+
+The repository is the source of truth. Do not rely on undocumented chat context.
+
 ## Immediate priority
 
 Before disappearing into deep backend work, produce and preserve a **phone-visible vertical slice** that can be launched on a physical iPhone through Expo Go or an iOS development build.
@@ -40,12 +48,44 @@ Read these files before changing code:
 
 1. `README.md`
 2. `docs/CONCEPT.md`
-3. `docs/CONSENT_FLOW.md`
-4. `docs/TRUST_SYSTEM.md`
-5. `docs/DOCUMENTATION_STANDARD.md`
-6. `docs/roadmap/README.md`
-7. `docs/roadmap/PHONE_VISIBLE_VERTICAL_SLICE.md`
-8. `docs/roadmap/CHAPTER_2_FOUNDATION.md`
+3. `docs/CONTINUITY_AND_STEWARDSHIP.md`
+4. `docs/CONSENT_FLOW.md`
+5. `docs/TRUST_SYSTEM.md`
+6. `docs/DOCUMENTATION_STANDARD.md`
+7. `docs/roadmap/README.md`
+8. `docs/roadmap/PHONE_VISIBLE_VERTICAL_SLICE.md`
+9. `docs/roadmap/CHAPTER_2_FOUNDATION.md`
+
+## What “continue” means
+
+When instructed to “continue,” “continue the plan,” or equivalent:
+
+1. Read this file and the current chapter specification.
+2. Inspect the git status and recent commits.
+3. Read the current chapter baseline, completion report, changelog, known limitations, and relevant ADRs if they exist.
+4. Identify the next unmet acceptance criterion in the current milestone.
+5. Implement the largest safe, coherent unit of work that advances that criterion.
+6. Update tests and documentation in the same workstream.
+7. Run the relevant checks.
+8. Commit the coherent change.
+9. Continue to the next unmet criterion without asking routine questions.
+10. Stop only when the current milestone is complete or a genuine external blocker is documented.
+
+Do not skip ahead merely because a later chapter appears more interesting.
+
+## Chapter promotion rule
+
+Only the chapter explicitly named under **Current chapter assignment** is active.
+
+Future roadmap documents preserve intent but are not implementation authorization. Chapters 7–13 are currently planning-only and are described in `docs/roadmap/CHAPTERS_7_TO_13_PLATFORM_FUTURE.md`.
+
+When a chapter is complete:
+
+- Finish its completion report.
+- Confirm each acceptance criterion as passed, explicitly deferred by a documented human decision, or blocked with evidence.
+- Update `docs/CHANGELOG.md`, `docs/KNOWN_LIMITATIONS.md`, and relevant ADRs.
+- Do not promote the next chapter yourself unless a human explicitly asks you to update the active assignment.
+- Recommend the exact next chapter and first task in the completion report.
 
 ## Autonomy rules
 
@@ -68,11 +108,12 @@ Read these files before changing code:
 - Never log sensitive consent data or private nervous-system notes.
 - Treat safety logic as product logic, not decorative copy.
 - Preserve explicit, session-specific, revocable consent.
-- A match, profile, prior session, or trust signal never constitutes consent.
-- Do not present compatibility or trust data as proof that a person is safe.
+- A match, profile, prior session, verification state, or trust signal never constitutes consent.
+- Do not present compatibility, verification, or trust data as proof that a person is safe.
 - Prefer conservative behavior whenever consent data is missing, stale, contradictory, or unavailable.
 - No dead-end screens, blank failure states, or unexplained placeholder text in the demo path.
 - Preserve accessibility basics: labels, focus order, large touch targets, dynamic text support, reduced motion, and non-color-only meaning.
+- Platform clients must share canonical domain and consent semantics rather than reinterpreting them independently.
 
 ## Documentation is part of the implementation
 
@@ -90,14 +131,15 @@ At minimum:
 - Never add a safety-sensitive feature without documenting abuse cases, limits, and unresolved risks.
 - Never leave an unexplained TODO. Every TODO must include context, intended outcome, and release impact.
 - Keep examples copy-pasteable and clean-clone setup reproducible.
-- Create an ADR in `docs/adr/` for substantial architecture, data, safety, or product decisions.
+- Create an ADR in `docs/adr/` for substantial architecture, data, safety, product, platform, governance, or vendor decisions.
 - Update `docs/CHANGELOG.md` and `docs/KNOWN_LIMITATIONS.md` continuously.
+- No critical project intent may exist only in a model prompt or private conversation.
 
 ## Scope gate
 
-Complete Chapter 2 and make all required checks pass before implementing Chapters 3–6.
+Complete Chapter 2 and make all required checks pass before implementing later chapters.
 
-You may create planning notes for later chapters, but do not implement their features during Chapter 2 unless a minimal interface is necessary to avoid rework. Document any such interface and keep it inert.
+You may refine future planning documents, but do not implement later chapter features unless a minimal inert interface is necessary to avoid rework. Document the interface and why it exists.
 
 Do not add during Chapter 2:
 
@@ -108,6 +150,8 @@ Do not add during Chapter 2:
 - Production identity verification
 - Public safety scores
 - Engagement-maximizing recommendation systems
+- Desktop clients
+- Public APIs or third-party integrations
 - Unrelated visual redesigns
 
 ## Required completion report
