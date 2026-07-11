@@ -6,17 +6,16 @@ Litmo is a consent-centered, trauma-informed platform for safe, non-sexual, plat
 
 It is not a dating app, a therapy platform, or a substitute for emergency or clinical care. The proof of concept focuses on making consent explicit, matching conservative, and exits immediate.
 
-## POC goals
+## First playable prototype
 
-The first working vertical slice demonstrates:
+Chapter 1 is a local, synthetic-data experience designed for founder review in Expo Go:
 
-1. Touch Language Profile onboarding
-2. Body-zone consent setup
-3. Compatibility-based discovery and session requests
-4. A mutually confirmed Consent Snapshot
-5. An active session timer with a Soft Signal exit
-6. Independent session wrap-up
-7. A private Trust Ledger
+```text
+Welcome → Vibe Quiz → Vibe Profile → Touch Language → Discover
+→ Match Detail → Consent Snapshot → Active Session → Wrap-Up → Trust Ledger
+```
+
+The prototype contains no authentication, networking, real matching, real location, or persistent personal data. All people, histories, sessions, and outcomes shown in the app are fictional.
 
 ## Safety model
 
@@ -36,9 +35,9 @@ See [`docs/CONSENT_FLOW.md`](docs/CONSENT_FLOW.md) and [`docs/TRUST_SYSTEM.md`](
 
 | Layer | Technology |
 |---|---|
-| Mobile | React Native with Expo and TypeScript |
+| Mobile prototype | React Native with Expo SDK 55 and TypeScript |
 | Navigation | Expo Router |
-| Client state | Zustand |
+| Prototype state | React Context, in memory only |
 | API | Node.js and Express |
 | Database/Auth | Supabase PostgreSQL and Auth |
 | Realtime | Supabase Realtime |
@@ -55,41 +54,42 @@ Litmo/
 
 ## Local setup
 
-### Prerequisites
+### Run the first playable in Expo Go
 
-- Node.js 20+
+- Node.js 20.19+
 - npm 10+
-- Expo Go or a mobile simulator
-- A Supabase project
-- Supabase CLI for applying migrations
-
-### Environment
-
-```bash
-cp .env.example .env
-```
-
-Fill in the values described in `.env.example`. Never commit service-role keys or JWT secrets.
-
-### Install and run the backend
-
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-### Install and run the mobile app
+- The current Expo Go app on an iPhone
 
 ```bash
 cd app
 npm install
-npx expo start
+npm start
 ```
 
-### Apply the database migrations
+Scan the QR code with the iPhone Camera app and open it in Expo Go. The prototype does not require `.env` configuration or a running backend.
+
+### Verification
 
 ```bash
+cd app
+npm run typecheck
+npm test
+```
+
+The existing consent-domain tests remain separate:
+
+```bash
+cd backend
+npm install
+npm test
+```
+
+Backend and Supabase files are retained as future architecture experiments but are not used by Chapter 1.
+
+### Future backend environment
+
+```bash
+cp .env.example .env
 supabase link --project-ref YOUR_PROJECT_REF
 supabase db push
 ```
@@ -108,7 +108,9 @@ A session cannot become `active` until both users have confirmed the same immuta
 
 ## Repository status
 
-This repository is an early proof of concept. It is not production-ready and must not be used to arrange real-world sessions without completing independent legal, security, safeguarding, moderation, accessibility, and clinical-risk reviews.
+This repository is an early, playable prototype. It is not production-ready and must not be used to arrange real-world sessions. Chapter 1 simulates safety behavior for evaluation; it does not provide operational safeguards.
+
+See [`docs/FIRST_PLAYABLE.md`](docs/FIRST_PLAYABLE.md) for the flow, accessibility decisions, and visual rationale.
 
 ## Contributing
 
