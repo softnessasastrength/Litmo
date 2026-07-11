@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-11 — Chapter 4 kickoff: pure session-lifecycle state machine
+
+### Summary
+
+Added `shared/src/sessionLifecycle.ts` (`docs/adr/0005-session-lifecycle-state-machine.md`), the first slice of Chapter 4 (Session Lifecycle): a pure, framework-independent transition graph over the canonical session states already defined by Chapter 3's `ConsentLifecycleState`. Mirrors the approach that worked for Chapter 3 — a testable domain module before any backend/DB wiring.
+
+### User-visible impact
+
+None yet. No screen calls this module in this slice.
+
+### Developer impact
+
+`@litmo/domain` exports `sessionTransitions`, `canTransition`, `transition`, and `isTerminalState`. `transition()` is idempotent for same-state retries (`changed: false`) and fails closed once a session reaches any terminal state, rejecting every further transition including to itself. Shared tests increased from 46 to 59.
+
+### Migration and setup impact
+
+None. Explicitly deferred to a later slice, once local Supabase is available to test against: actor authorization, snapshot-version matching at the `ready -> active` transition, idempotency-key deduplication at the request layer, realtime sync, connectivity recovery, wrap-up independence, and the audit trail's actual persistence.
+
+### Related decision and roadmap
+
+- `docs/adr/0005-session-lifecycle-state-machine.md`
+- `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
+
 ## 2026-07-11 — Reconciled dedicated entry screen with demo-mode plumbing
 
 ### Summary
