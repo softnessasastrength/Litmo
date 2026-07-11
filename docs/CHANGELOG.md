@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-07-11 — Reconciled dedicated entry screen with demo-mode plumbing
+
+### Summary
+
+`main` had independently gained a dedicated "choose how to enter" screen (`app/app/entry.tsx`, reached from `app/app/index.tsx`) offering demo mode and account sign-in side by side, authored separately from this branch's `AuthState`/`AuthContext` "demo" status work (`docs/adr/0003-demo-mode-entry-point.md`). Neither alone was functional: the entry screen's buttons didn't change any auth state, and without it the app's launch screen never routed anywhere a signed-out visitor could make that choice. Merged `main` in and reconciled both pieces into one working flow.
+
+### User-visible impact
+
+Launch → "Explore the prototype" → a dedicated screen offering "Enter the fictional demo" (now actually enters demo mode) or "Sign in with an account" (now actually opens sign-in, replacing a permanently-disabled placeholder that said sign-in "is not enabled in this prototype yet" — Chapter 2's real sign-in has worked since before this ADR). Exiting demo mode, or a session expiring, now returns to this same choice screen instead of skipping past it to the sign-in form.
+
+### Developer impact
+
+`protectedRouteFor` (`app/context/authState.ts`) takes a broader `{ inAuthGroup, isPublicRoute }` route descriptor instead of a single boolean; `isPublicRoute` covers the auth group, `"/"`, and `"/entry"`. Signed-out visitors on any other route now land on `/entry` rather than `/auth/sign-in` directly. 3 tests updated, 1 added (23 app tests, up from 22).
+
+### Migration and setup impact
+
+None. Verified with `npm test` (76 total), `npm --workspace app run typecheck`, and `npm run lint`.
+
+### Related decision and roadmap
+
+- `docs/adr/0003-demo-mode-entry-point.md`
+
 ## 2026-07-11 — iOS 27 beta Scene-lifecycle and pod deployment-target fixes
 
 ### Summary

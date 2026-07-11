@@ -1,10 +1,20 @@
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
-import { Body, Button, Card, Eyebrow, FadeIn, Screen, Title } from "../components/ui";
+import {
+  Body,
+  Button,
+  Card,
+  Eyebrow,
+  FadeIn,
+  Screen,
+  Title,
+} from "../components/ui";
+import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme";
 
 export default function EntryScreen() {
   const router = useRouter();
+  const { enterDemoMode } = useAuth();
 
   return (
     <Screen style={styles.screen}>
@@ -35,23 +45,25 @@ export default function EntryScreen() {
         </View>
         <Button
           label="Enter the fictional demo"
-          onPress={() => router.replace("/onboarding/quiz")}
-          accessibilityHint="Starts the Litmo prototype with fictional local data"
+          onPress={() => {
+            enterDemoMode();
+            router.replace("/onboarding/quiz");
+          }}
+          accessibilityHint="Starts the Litmo prototype with fictional local data. No account is created and nothing is saved."
         />
       </Card>
 
       <Card style={styles.card}>
         <Text style={styles.cardTitle}>Account sign-in</Text>
         <Body muted>
-          Real accounts and persistent Supabase authentication are part of the
-          current foundation chapter and are not enabled in this prototype yet.
+          Sign in or create a real account. Your general profile, touch
+          preferences, and consent boundaries persist across visits.
         </Body>
         <Button
-          label="Sign-in is not available yet"
-          onPress={() => undefined}
-          disabled
+          label="Sign in with an account"
+          onPress={() => router.push("/auth/sign-in")}
           variant="secondary"
-          accessibilityHint="Account sign-in is not available in this prototype"
+          accessibilityHint="Opens sign-in for a real, persistent account"
         />
       </Card>
 

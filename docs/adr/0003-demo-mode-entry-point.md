@@ -35,3 +35,11 @@ The Chapter 1 tap-through path (launch → quiz → result → touch language �
 
 - If a developer wants demo mode to survive app restarts for longer manual walkthroughs, add an explicit, clearly-labeled persisted flag — not a silent default.
 - Chapter 4's session-lifecycle state machine should decide whether "demo mode" sessions are ever worth representing as real (but locally-scoped) session records, or should remain purely client-local as they are here.
+
+## Update: reconciled with a dedicated entry screen
+
+A separate, independently-authored commit on `main` added `app/app/entry.tsx` — a dedicated "choose how to enter" screen offering demo mode and account sign-in side by side, reached from `app/app/index.tsx`'s "Explore the prototype" button — without the `AuthState`/`AuthContext` plumbing this ADR describes to make either choice reachable or effective. The two were reconciled:
+
+- `entry.tsx`'s demo button now calls `enterDemoMode()` (this ADR's mechanism) before navigating, instead of navigating directly with no state change.
+- `entry.tsx`'s sign-in card, originally a permanently disabled placeholder ("not enabled in this prototype yet"), now links to the already-working `/auth/sign-in` screen — Chapter 2's real Supabase auth existed before this ADR and was never actually disabled; the placeholder text was inaccurate.
+- `protectedRouteFor` gained a broader `isPublicRoute` check (the auth route group, or `"/"`, or `"/entry"`) so a signed-out visitor reaches the welcome and entry screens without being redirected straight to sign-in, and any other signed-out redirect (an expired session, exiting demo mode) now lands on `/entry` to choose again rather than skipping past that choice to the sign-in form.

@@ -63,7 +63,16 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }, []);
   useEffect(() => {
     const inAuth = segments[0] === "auth";
-    const destination = protectedRouteFor(state.status, inAuth);
+    // "/" (segments is empty) and "/entry" need no account: they are where a
+    // signed-out visitor chooses demo mode or sign-in.
+    const isPublicRoute =
+      inAuth ||
+      (segments as readonly string[]).length === 0 ||
+      segments[0] === "entry";
+    const destination = protectedRouteFor(state.status, {
+      inAuthGroup: inAuth,
+      isPublicRoute,
+    });
     if (destination) router.replace(destination);
   }, [router, segments, state.status]);
   const value = useMemo<AuthValue>(

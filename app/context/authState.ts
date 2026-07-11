@@ -34,11 +34,17 @@ export function authReducer(_state: AuthState, action: AuthAction): AuthState {
 }
 export function protectedRouteFor(
   status: AuthState["status"],
-  inAuthGroup: boolean,
-): "/auth/sign-in" | "/" | "/match/discover" | null {
+  route: { inAuthGroup: boolean; isPublicRoute: boolean },
+): "/auth/sign-in" | "/entry" | "/" | "/match/discover" | null {
+  const { inAuthGroup, isPublicRoute } = route;
   if (status === "loading" || status === "error") return null;
   if (status === "demo") return inAuthGroup ? "/" : null;
-  if (status === "signed_out") return inAuthGroup ? null : "/auth/sign-in";
+  // The welcome screen ("/") and the entry choice screen ("/entry") need no
+  // account. A signed-out visitor anywhere else (including one who just
+  // exited demo mode, or whose session expired) goes back to "/entry" to
+  // choose demo mode or sign-in again, rather than straight past that choice
+  // to the sign-in form; sign-in itself remains one explicit tap away.
+  if (status === "signed_out") return isPublicRoute ? null : "/entry";
   if (!inAuthGroup) return null;
   return status === "ready" ? "/match/discover" : "/";
 }
