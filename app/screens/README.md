@@ -1,1 +1,1 @@
-Expo Router route modules live in `app/app/`. Shared screen-level components may be placed in this directory as the POC grows.
+Expo Router route modules live in `app/app/`. Chapter 1 keeps reusable visual primitives in `components/`, synthetic content in `data/`, deterministic domain functions in `lib/`, and in-memory prototype state in `context/`.

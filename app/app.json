@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "Litmo",
+    "slug": "litmo",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "litmo",
+    "userInterfaceStyle": "light",
+    "plugins": ["expo-router"],
+    "experiments": { "typedRoutes": true },
+    "ios": { "supportsTablet": false },
+    "android": { "adaptiveIcon": { "backgroundColor": "#F7F1E8" } }
+  }
+}

@@ -1,0 +1,79 @@
+export const mockProfiles = [
+  {
+    id: "maya",
+    name: "Maya",
+    age: 31,
+    pronouns: "she/her",
+    archetype: "Quiet Tidepool",
+    glyph: "≈",
+    color: "#DDE9DF",
+    distance: "A short walk away",
+    vibe: "Quiet company · cozy corners · unhurried",
+    note: "Would happily trade book recommendations or sit somewhere green.",
+    affirmed: 8,
+  },
+  {
+    id: "eli",
+    name: "Eli",
+    age: 29,
+    pronouns: "they/them",
+    archetype: "Wandering Lantern",
+    glyph: "☼",
+    color: "#F9E4D4",
+    distance: "In your neighborhood",
+    vibe: "Curious detours · gentle humor · tea",
+    note: "Collector of tiny adventures and excellent ambient playlists.",
+    affirmed: 5,
+  },
+  {
+    id: "jonah",
+    name: "Jonah",
+    age: 35,
+    pronouns: "he/him",
+    archetype: "Gentle Hearth",
+    glyph: "✦",
+    color: "#EEE2EC",
+    distance: "A few neighborhoods over",
+    vibe: "Steady presence · warm kitchens · easy pace",
+    note: "Likes calm conversation, soup experiments, and comfortable silence.",
+    affirmed: 12,
+  },
+] as const;
+export const touchOptions = {
+  pressure: ["Feather-light", "Comfortably gentle", "Steady and grounding"],
+  duration: ["A brief hello", "A few quiet minutes", "Let’s decide together"],
+  environment: [
+    "A calm public place",
+    "Somewhere outdoors",
+    "A hosted community space",
+  ],
+} as const;
+export const snapshot = [
+  { label: "Kind of connection", value: "Side-by-side grounding hold" },
+  { label: "Pressure", value: "Comfortably gentle" },
+  { label: "Time", value: "Up to 10 minutes" },
+  { label: "Place", value: "Hosted community lounge" },
+  { label: "Welcomed", value: "Hands and upper back" },
+  { label: "Ask each time", value: "Shoulders" },
+  { label: "Not included", value: "All other body areas" },
+] as const;
+export const ledgerEntries = [
+  {
+    date: "July 8",
+    person: "Maya",
+    outcome: "Felt good",
+    detail: "Completed · 10 minutes",
+  },
+  {
+    date: "June 29",
+    person: "Jonah",
+    outcome: "Felt neutral",
+    detail: "Ended together · 7 minutes",
+  },
+  {
+    date: "June 14",
+    person: "Eli",
+    outcome: "Felt good",
+    detail: "Completed · 12 minutes",
+  },
+] as const;
