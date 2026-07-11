@@ -4,6 +4,7 @@ import {
   computeCompatibility,
   consentDimensions,
   consentStates,
+  previewProfileChange,
   type ConsentRule,
 } from "./consentEngine.ts";
 
@@ -145,6 +146,54 @@ test("output is deterministic regardless of rule order and contains no private n
   );
   assert.deepEqual(first, second);
   assert.equal(JSON.stringify(first).includes("never disclose"), false);
+});
+
+test("preview reports no change when the proposed profile is identical", () => {
+  const preview = previewProfileChange(
+    profile("a", [rule("welcomed")]),
+    profile("a", [rule("welcomed")]),
+    profile("b", [rule("welcomed")]),
+    now,
+  );
+  assert.deepEqual(preview, {
+    gainedPermitted: [],
+    lostPermitted: [],
+    gainedAskFirst: [],
+    lostAskFirst: [],
+  });
+});
+test("preview reports a loosened rule as newly permitted, not granted consent", () => {
+  const preview = previewProfileChange(
+    profile("a", [rule("ask_first")]),
+    profile("a", [rule("welcomed")]),
+    profile("b", [rule("welcomed")]),
+    now,
+  );
+  assert.equal(preview.gainedPermitted.length, 2);
+  assert.equal(preview.lostAskFirst.length, 2);
+  assert.equal(preview.gainedAskFirst.length, 0);
+});
+test("preview reports a tightened rule as lost permission", () => {
+  const preview = previewProfileChange(
+    profile("a", [rule("welcomed")]),
+    profile("a", [rule("off_limits")]),
+    profile("b", [rule("welcomed")]),
+    now,
+  );
+  assert.equal(preview.lostPermitted.length, 2);
+  assert.equal(preview.gainedPermitted.length, 0);
+  assert.equal(preview.gainedAskFirst.length, 0);
+});
+test("preview never reports a gain when the proposed profile is invalid", () => {
+  const preview = previewProfileChange(
+    profile("a", [rule("welcomed")]),
+    { not: "a profile" },
+    profile("b", [rule("welcomed")]),
+    now,
+  );
+  assert.equal(preview.lostPermitted.length, 2);
+  assert.equal(preview.gainedPermitted.length, 0);
+  assert.equal(preview.gainedAskFirst.length, 0);
 });
 
 // Property-based coverage required by docs/roadmap/CHAPTER_3_CONSENT_ENGINE.md:

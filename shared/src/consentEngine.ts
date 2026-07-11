@@ -250,3 +250,55 @@ export function computeCompatibility(
       .concat(excluded.map((item) => item.explanation)),
   };
 }
+
+export type ProfileChangePreviewItem = Pick<
+  OverlapItem,
+  "dimension" | "value" | "direction" | "state"
+>;
+export type ProfileChangePreview = {
+  gainedPermitted: ProfileChangePreviewItem[];
+  lostPermitted: ProfileChangePreviewItem[];
+  gainedAskFirst: ProfileChangePreviewItem[];
+  lostAskFirst: ProfileChangePreviewItem[];
+};
+const previewKey = (item: ProfileChangePreviewItem) =>
+  `${item.dimension} ${item.value} ${item.direction}`;
+function diff(
+  before: OverlapItem[],
+  after: OverlapItem[],
+): { gained: ProfileChangePreviewItem[]; lost: ProfileChangePreviewItem[] } {
+  const beforeKeys = new Set(before.map(previewKey));
+  const afterKeys = new Set(after.map(previewKey));
+  return {
+    gained: after
+      .filter((item) => !beforeKeys.has(previewKey(item)))
+      .sort(compare),
+    lost: before
+      .filter((item) => !afterKeys.has(previewKey(item)))
+      .sort(compare),
+  };
+}
+
+/**
+ * Compares a not-yet-saved profile version against the currently saved
+ * version, both against the same counterpart, so a user can see the
+ * practical effect of a change before committing it. This is a preview
+ * only: it never persists a version and never grants consent.
+ */
+export function previewProfileChange(
+  currentProfile: unknown,
+  proposedProfile: unknown,
+  counterpartProfile: unknown,
+  now = new Date(),
+): ProfileChangePreview {
+  const before = computeCompatibility(currentProfile, counterpartProfile, now);
+  const after = computeCompatibility(proposedProfile, counterpartProfile, now);
+  const permitted = diff(before.permitted, after.permitted);
+  const askFirst = diff(before.askFirst, after.askFirst);
+  return {
+    gainedPermitted: permitted.gained,
+    lostPermitted: permitted.lost,
+    gainedAskFirst: askFirst.gained,
+    lostAskFirst: askFirst.lost,
+  };
+}

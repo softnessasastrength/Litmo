@@ -15,7 +15,7 @@ UI/API adapters
 
 `shared/` owns framework-independent types, enum values, runtime schemas, and validated serialization. UI components do not call Supabase directly. `profileRepository` owns profile persistence, timeouts, boundary parsing, and safe error translation.
 
-Chapter 3 adds the canonical pure consent engine to `shared/`. It models receive/offer direction, produces deterministic conservative overlap and explanations, and creates exact-version snapshot records. Compatibility and consent remain different states: engine output cannot activate consent.
+Chapter 3 adds the canonical pure consent engine to `shared/`. It models receive/offer direction, produces deterministic conservative overlap and explanations, and creates exact-version snapshot records. Compatibility and consent remain different states: engine output cannot activate consent. `previewProfileChange` reuses the same engine to diff a not-yet-saved profile version against the saved one, both against the same counterpart, so a user can see the practical effect of an edit before it becomes a new immutable version. The preview never persists a version and never grants consent.
 
 ## Authentication and routing
 

@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-11 — Chapter 3 practical-effect preview
+
+### Summary
+
+Added `previewProfileChange` to `@litmo/domain`, a pure diff between a not-yet-saved profile version and the currently saved version, both evaluated against the same counterpart profile. Satisfies the Chapter 3 "Versioned profiles" requirement that users can preview the practical effect of a change before saving.
+
+### User-visible impact
+
+None yet. No mobile screen calls this function in this slice; it is available for the profile-edit flow to adopt.
+
+### Developer impact
+
+`@litmo/domain` exports `previewProfileChange` and `ProfileChangePreview`. It never persists a version and never sets `consentGranted`. Shared tests increased to 40.
+
+### Migration and setup impact
+
+None.
+
+### Related decision and roadmap
+
+- `docs/adr/0001-directional-consent-engine.md`
+- `docs/roadmap/CHAPTER_3_CONSENT_ENGINE.md`
+
 ## 2026-07-11 — Chapter 3 consent engine property-based coverage
 
 ### Summary
