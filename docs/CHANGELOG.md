@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-11 — EAS build configuration for a standalone iOS install
+
+### Summary
+
+Added `app/eas.json` (`preview` and `production` build profiles) and an `ios.bundleIdentifier` in `app/app.json` so a real, installable iOS build can be produced with EAS Build, rather than only running through Expo Go. Documented the exact steps in `docs/LOCAL_DEVELOPMENT.md`.
+
+### User-visible impact
+
+None by itself; this is build tooling. Once the human runs the documented `eas login` / `eas build` steps with their own Expo account and Apple Developer Program membership, they get a standalone app icon installable directly on their iPhone with no Metro connection required.
+
+### Developer impact
+
+`app/eas.json` is new. `app/app.json` gained `ios.bundleIdentifier: "com.litmo.app"` (a placeholder — change it before a first real build if a different reverse-domain name is wanted). Deliberately did not add `expo-dev-client` or a `development` EAS profile: installing it triggered a pre-existing dependency-hoisting bug in this Expo CLI version that crashed the dev server (`Cannot find module 'expo-router/_ctx-shared'`), so the profile set was kept to what's needed for a standalone install build. Verified by reverting cleanly to a known-good `node_modules` state, confirming the dev server and full test suite were unaffected, and re-verifying with `npm test`, `npm run lint`, and `npm --workspace app run typecheck`.
+
+### Migration and setup impact
+
+None to existing behavior. `eas login` and `eas build` were not run in this session: both require the human's own Expo and Apple credentials, which this agent does not handle.
+
+### Related decision and roadmap
+
+- `docs/LOCAL_DEVELOPMENT.md`
+- `docs/roadmap/PHONE_VISIBLE_VERTICAL_SLICE.md`
+
 ## 2026-07-11 — Backend-free demo mode for physical-device launch
 
 ### Summary
