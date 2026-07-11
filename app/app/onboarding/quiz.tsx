@@ -1,25 +1,59 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { Choice, FadeIn, Progress, Screen } from "../../components/ui";
 import { quizQuestions, type QuizAnswer } from "../../data/quiz";
 import { usePrototype } from "../../context/PrototypeContext";
 import { colors } from "../../theme";
+import { useAuth } from "../../context/AuthContext";
+import { profileRepository } from "../../services/profileRepository";
 export default function QuizScreen() {
   const router = useRouter();
-  const { answers, setAnswer } = usePrototype();
+  const { answers, setAnswer, hydrateAnswers } = usePrototype();
+  const { user } = useAuth();
   const [index, setIndex] = useState(0);
   const question = quizQuestions[index];
+  useEffect(() => {
+    if (!user) return;
+    profileRepository
+      .getProgress(user.id)
+      .then(({ draftProfile }) => {
+        const saved = draftProfile.quizAnswers;
+        if (Array.isArray(saved)) {
+          hydrateAnswers(saved as typeof answers);
+          setIndex(
+            Math.min(
+              Number(draftProfile.questionIndex ?? 0),
+              quizQuestions.length - 1,
+            ),
+          );
+        }
+      })
+      .catch(() => undefined);
+  }, [user?.id]);
   if (!question) return null;
   const selected = answers.find(
     (item) => item.questionId === question.id,
   )?.answerId;
   const choose = (answer: QuizAnswer) => {
-    setAnswer({
+    const selectedAnswer = {
       questionId: question.id,
       answerId: answer.id,
       scores: answer.scores,
-    });
+    };
+    setAnswer(selectedAnswer);
+    const updated = [
+      ...answers.filter((item) => item.questionId !== question.id),
+      selectedAnswer,
+    ];
+    if (user)
+      void profileRepository
+        .saveProgress(
+          user.id,
+          index === quizQuestions.length - 1 ? "vibe_result" : "vibe_quiz",
+          { quizAnswers: updated, questionIndex: index + 1 },
+        )
+        .catch(() => undefined);
     setTimeout(() => {
       if (index === quizQuestions.length - 1)
         router.replace("/onboarding/result");

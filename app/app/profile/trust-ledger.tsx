@@ -11,9 +11,11 @@ import {
 } from "../../components/ui";
 import { ledgerEntries } from "../../data/mock";
 import { colors } from "../../theme";
+import { useAuth } from "../../context/AuthContext";
 
 export default function TrustLedgerScreen() {
   const router = useRouter();
+  const { signOut } = useAuth();
   return (
     <Screen>
       <Eyebrow>PRIVATE · SYNTHETIC HISTORY</Eyebrow>
@@ -54,6 +56,11 @@ export default function TrustLedgerScreen() {
       <Button
         label="Return to the beginning"
         onPress={() => router.replace("/")}
+      />
+      <Button
+        variant="secondary"
+        label="Sign out"
+        onPress={() => void signOut()}
       />
     </Screen>
   );
