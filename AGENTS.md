@@ -38,11 +38,13 @@ Do not block the visible mobile experience on unfinished infrastructure when saf
 
 ## Current chapter assignment
 
-Implement **Chapter 3: Consent Engine** from:
+Chapter 3 (Consent Engine) is complete; see `docs/CHAPTER_3_COMPLETION.md`. Promoted by explicit human instruction to:
 
-`docs/roadmap/CHAPTER_3_CONSENT_ENGINE.md`
+Implement **Chapter 4: Session Lifecycle** from:
 
-The phone-visible vertical slice is the first user-facing milestone inside Chapter 2. It does not cancel the chapter's security, persistence, testing, or CI requirements.
+`docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
+
+The human directing this work has stated their concrete near-term goal is a build they can run on their own physical iPhone via Expo Go. `docs/CHAPTER_3_COMPLETION.md` section 13 identifies the actual blocker: `AuthContext` unconditionally redirects every signed-out visitor to sign-in, which requires a local Supabase instance this machine cannot run (no Docker). `docs/roadmap/PHONE_VISIBLE_VERTICAL_SLICE.md` already specifies the fix — a clearly labeled, backend-free demo-mode entry point. Do that work first, ahead of the session-lifecycle state machine itself, since it is what unblocks the stated goal.
 
 Read these files before changing code:
 
@@ -54,7 +56,8 @@ Read these files before changing code:
 6. `docs/DOCUMENTATION_STANDARD.md`
 7. `docs/roadmap/README.md`
 8. `docs/roadmap/PHONE_VISIBLE_VERTICAL_SLICE.md`
-9. `docs/roadmap/CHAPTER_3_CONSENT_ENGINE.md`
+9. `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
+10. `docs/CHAPTER_3_COMPLETION.md`
 
 ## What “continue” means
 
