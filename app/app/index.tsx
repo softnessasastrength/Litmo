@@ -22,12 +22,13 @@ export default function HomeScreen() {
       </FadeIn>
       <View style={styles.bottom}>
         <Button
-          label="Begin with your vibe"
-          onPress={() => router.push("/onboarding/quiz")}
-          accessibilityHint="Starts the personality quiz"
+          label="Explore the prototype"
+          onPress={() => router.push("/entry")}
+          accessibilityHint="Opens options for entering the Litmo prototype"
         />
         <Text style={styles.caption}>
-          A tap-through prototype using imaginary people and local data.
+          A tap-through prototype using imaginary people and local data. No real
+          account or connection is created.
         </Text>
       </View>
     </Screen>
