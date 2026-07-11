@@ -1,47 +1,27 @@
 # Litmo Roadmap
 
-## Phase 1 — Foundation
-- [ ] Welcome screen
-- [ ] Design system
-- [ ] Navigation
-- [ ] Mock data layer
+## Chapter 1 — First playable front-end
 
-## Phase 2 — Vibe Quiz
-- [ ] Quiz flow
-- [ ] Progress animation
-- [ ] Vibe Profile generation
-- [ ] Result archetypes
+Status: **implemented; awaiting founder review**
 
-## Phase 3 — Touch Language
-- [ ] Touch preferences
-- [ ] Environment preferences
-- [ ] Session preferences
+- [x] Welcome and local navigation
+- [x] Deterministic Vibe Quiz with animated, accessible progress
+- [x] Provisional archetype result and Vibe Profile card
+- [x] Friendly Touch Language setup
+- [x] Synthetic Discover profiles and match detail
+- [x] Explicit mock Consent Snapshot
+- [x] Simulated timer and prominent Soft Signal
+- [x] Private wrap-up and synthetic Trust Ledger
+- [x] Shared visual system, reduced-motion support, and non-color status language
+- [x] Expo Go-compatible SDK and documented setup
+- [ ] Founder review on an iPhone
 
-## Phase 4 — Discover
-- [ ] Mock match cards
-- [ ] Compatibility summaries
+Chapter 1 uses in-memory state and synthetic data only. It contains no authentication, backend networking, Supabase integration, location, payments, identity verification, or production analytics.
 
-## Phase 5 — Consent
-- [ ] Consent Snapshot UI
-- [ ] Review flow
+## Approval gate
 
-## Phase 6 — Session
-- [ ] Active session screen
-- [ ] Soft Signal
-- [ ] Wrap-up
+Do not begin Chapter 2 until Branden explicitly approves Chapter 1 after review.
 
-## Phase 7 — Trust Ledger
-- [ ] Timeline
-- [ ] Session history
+## Later chapters
 
-## Phase 8 — Polish
-- [ ] Accessibility
-- [ ] Animations
-- [ ] Copy review
-- [ ] User testing
-
-Definition of Done:
-- Feature implemented
-- Tests added where applicable
-- Documentation updated
-- Ready for Expo Go review on iPhone
+Later work may include real product architecture, stronger accessibility validation, safeguarding, moderation, authentication, privacy, and backend integration. Scope and sequence require founder approval before implementation.
