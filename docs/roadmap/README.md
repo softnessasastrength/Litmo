@@ -22,7 +22,7 @@ The current vertical slice demonstrates Touch Language onboarding, body-zone pre
 
 ### Chapter 2 — Production-grade foundation
 
-Status: current assignment.
+Status: implementation complete; Docker-backed acceptance and hosted CI remain blocked/unverified as recorded in `../CHAPTER_2_COMPLETION.md`.
 
 Make authentication, persistence, validation, local development, database security, testing, CI, accessibility states, and documentation dependable.
 
