@@ -1,0 +1,7 @@
+-- Litmo schema is managed by ordered migrations in ./migrations.
+-- Apply with: supabase db push
+--
+-- 001_users.sql
+-- 002_sessions.sql
+-- 003_consent_records.sql
+-- 004_trust_ledger.sql
