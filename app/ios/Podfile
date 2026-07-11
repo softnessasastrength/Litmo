@@ -61,5 +61,20 @@ target 'Litmo' do
       :mac_catalyst_enabled => false,
       :ccache_enabled => ccache_enabled?(podfile_properties),
     )
+
+    # IPHONEOS_DEPLOYMENT_TARGET pod floor fix: some pods (e.g. SDWebImage,
+    # AsyncStorage) ship a deployment target below what this Xcode's SDK will
+    # even accept. Force every pod target up to the app's own minimum instead
+    # of failing the build.
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        deployment_target = Gem::Version.new(config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_s)
+        minimum_target = Gem::Version.new('17.0')
+        if deployment_target < minimum_target
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '17.0'
+        end
+      end
+    end
+
   end
 end

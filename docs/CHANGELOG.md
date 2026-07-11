@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-07-11 — iOS 27 beta Scene-lifecycle and pod deployment-target fixes
+
+### Summary
+
+Running Litmo as a locally-built (non-EAS) standalone Release build on a physical iPhone with an early Xcode 27 / iOS 27 beta surfaced two real bugs: the app crashed instantly on every launch (`EXC_BREAKPOINT` in a UIKit runtime check for missing Scene-lifecycle adoption), and Release builds failed outright because several third-party pods declare a deployment target Xcode 27's SDK no longer accepts. Added `app/plugins/withIOSXcode27Fixes.cjs`, an Expo config plugin, so both fixes survive `expo prebuild` regeneration instead of living only in the generated (and largely untracked) `ios/` folder. Full story in `docs/adr/0004-ios-27-beta-build-fixes.md`.
+
+### User-visible impact
+
+None to the app's behavior. This only affects whether a locally-built standalone iOS binary launches successfully on very new iOS versions.
+
+### Developer impact
+
+New `app/plugins/withIOSXcode27Fixes.cjs`, registered in `app/app.json`. Adds `UIApplicationSceneManifest` and a `SceneDelegate` to the generated `AppDelegate.swift`/`Info.plist`, and a `post_install` Podfile hook plus an Xcode project mod that floor every pod's and the app target's own `IPHONEOS_DEPLOYMENT_TARGET` at 17.0.
+
+### Migration and setup impact
+
+None for Expo Go or EAS-built usage. Verified end-to-end by deleting `ios/` entirely, running `expo prebuild --platform ios`, building Release, and installing/launching on a physical device — confirmed running (no crash) via `xcrun devicectl device info processes`.
+
+### Related decision and roadmap
+
+- `docs/adr/0004-ios-27-beta-build-fixes.md`
+
 ## 2026-07-11 — EAS build configuration for a standalone iOS install
 
 ### Summary

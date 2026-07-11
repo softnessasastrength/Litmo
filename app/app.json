@@ -6,15 +6,7 @@
     "orientation": "portrait",
     "scheme": "litmo",
     "userInterfaceStyle": "light",
-    "plugins": [
-      "expo-router",
-      [
-        "expo-build-properties",
-        {
-          "ios": { "deploymentTarget": "17.0" }
-        }
-      ]
-    ],
+    "plugins": ["expo-router", "./plugins/withIOSXcode27Fixes.cjs"],
     "experiments": {
       "typedRoutes": true
     },
