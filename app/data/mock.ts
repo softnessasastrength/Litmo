@@ -48,15 +48,6 @@ export const touchOptions = {
     "A hosted community space",
   ],
 } as const;
-export const snapshot = [
-  { label: "Kind of connection", value: "Side-by-side grounding hold" },
-  { label: "Pressure", value: "Comfortably gentle" },
-  { label: "Time", value: "Up to 10 minutes" },
-  { label: "Place", value: "Hosted community lounge" },
-  { label: "Welcomed", value: "Hands and upper back" },
-  { label: "Ask each time", value: "Shoulders" },
-  { label: "Not included", value: "All other body areas" },
-] as const;
 export const ledgerEntries = [
   {
     date: "July 8",

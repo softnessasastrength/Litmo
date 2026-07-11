@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-07-11 — Chapter 3 mock Consent Snapshot runs the real engine
+
+### Summary
+
+Replaced the hardcoded seven-row display array in `app/app/match/consent-snapshot.tsx` with a live call to `computeCompatibility` over two `ConsentProfileVersion`s built through the new legacy-profile adapter. Added mock fixtures for four personas (`app/data/mockConsentProfiles.ts`) and a pure, unit-tested row-formatting helper (`app/lib/consentSnapshotView.ts`). The match-detail screen now passes the tapped persona's id through to the snapshot screen so the counterpart varies per match.
+
+### User-visible impact
+
+The mock Consent Snapshot screen shows real computed overlap (welcomed, ask-first, pressure, duration, place, connection type) that changes depending on which mock match was opened, instead of one static set of values. The screen still clearly labels the flow as mock and never grants consent.
+
+### Developer impact
+
+Added `app/data/mockConsentProfiles.ts` and `app/lib/consentSnapshotView.ts` (4 new tests, app test count now 19). Removed the now-unused `snapshot` export from `app/data/mock.ts`. Verified with `npm --workspace app test`, `npm --workspace app run typecheck`, and a direct Node script exercising the exact code path for every mock persona plus an unknown id. Full on-device/browser verification was not performed: this environment has no local Supabase running (`.env` absent, matching the existing Chapter 2 Docker/RLS blocker), and the app's auth-gated root layout cannot be reached without it.
+
+### Migration and setup impact
+
+None.
+
+### Related decision and roadmap
+
+- `docs/adr/0001-directional-consent-engine.md`
+- `docs/adr/0002-legacy-profile-adapter.md`
+- `docs/roadmap/CHAPTER_3_CONSENT_ENGINE.md`
+
 ## 2026-07-11 — Chapter 3 legacy-profile adapter and canonical backend route
 
 ### Summary
