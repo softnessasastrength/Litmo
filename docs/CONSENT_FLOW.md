@@ -16,3 +16,11 @@
 - The lighter pressure and shorter duration always win.
 - Unknown or malformed values fail closed.
 - A prior confirmation never rolls forward into a new session.
+
+## Canonical Chapter 3 engine
+
+The framework-independent domain engine evaluates receiving and offering separately. Compatibility output contains welcomed directions, directions requiring a fresh ask, exclusions, stable machine-readable reasons, and privacy-safe explanations. It always reports that consent has not been granted.
+
+A session snapshot references exact immutable profile IDs and version numbers. A participant must confirm the exact snapshot fingerprint. Any material snapshot change clears prior confirmations. Withdrawal clears confirmations in every lifecycle state and never requires an explanation.
+
+Missing, invalid, stale, or contradictory profile data is excluded rather than interpreted as ask-first. Private nervous-system notes never enter compatibility output or explanations.

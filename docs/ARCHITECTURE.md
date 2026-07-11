@@ -15,6 +15,8 @@ UI/API adapters
 
 `shared/` owns framework-independent types, enum values, runtime schemas, and validated serialization. UI components do not call Supabase directly. `profileRepository` owns profile persistence, timeouts, boundary parsing, and safe error translation.
 
+Chapter 3 adds the canonical pure consent engine to `shared/`. It models receive/offer direction, produces deterministic conservative overlap and explanations, and creates exact-version snapshot records. Compatibility and consent remain different states: engine output cannot activate consent.
+
 ## Authentication and routing
 
 `AuthContext` is the sole mobile authority for session state. It restores the Supabase session from device storage, fetches the owner's profile, distinguishes incomplete onboarding from a ready account, subscribes to auth changes, and redirects protected routes conservatively. Expired sessions return to sign-in.
