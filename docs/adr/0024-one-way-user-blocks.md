@@ -22,16 +22,15 @@ cancel future pending requests safely.
   reason-free audit event (`trigger: user_action`).
 - **Discovery:** `discovery_profiles()` excludes pair-blocked accounts.
 - **No free-text block reasons** on the record (retaliation / inference risk).
-- Active mid-lifecycle sessions are **not** auto-cancelled in this slice
-  (participants still have Soft Signal / withdraw). Future work may add safer
-  mid-session handling.
+- ~~Active mid-lifecycle sessions are not auto-cancelled~~ **Superseded by
+  ADR 0040 (2026-07-12):** blocks cancel pre-activation and safety-end active
+  pair sessions.
 
 ## Alternatives considered
 
 - Mutual-only blocks. Rejected: one-way better matches harassment protection.
 - Revealing “this user blocked you.” Rejected: roadmap non-disclosing rule.
-- Auto-ending active sessions on block. Deferred: needs careful product copy
-  and Soft Signal interaction design.
+- Auto-ending active sessions on block. ~~Deferred.~~ Accepted in ADR 0040.
 
 ## Consequences
 
@@ -40,6 +39,6 @@ Reporting and moderator queues remain later Chapter 5 work.
 
 ## Follow-up work
 
-- Structured reports and human-review queue.
-- Optional auto-handling of active sessions on block.
-- Rate limits for block/unblock thrash.
+- ~~Structured reports and human-review queue.~~ Done.
+- ~~Optional auto-handling of active sessions on block.~~ ADR 0040.
+- ~~Rate limits for block/unblock thrash.~~ Done.

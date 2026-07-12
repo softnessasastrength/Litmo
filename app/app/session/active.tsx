@@ -13,6 +13,7 @@ import {
 import { type AppColors } from "../../theme";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { useAuth } from "../../context/AuthContext";
+import { blockService } from "../../services/blockService";
 import { emergencyStopService } from "../../services/emergencyStopService";
 import { hapticService } from "../../services/hapticService";
 import { sessionCompleteService } from "../../services/sessionCompleteService";
@@ -47,6 +48,10 @@ function ActiveSessionContent() {
     "idle",
   );
   const [completing, setCompleting] = useState(false);
+  const [blockState, setBlockState] = useState<
+    "idle" | "blocking" | "error"
+  >("idle");
+  const [blockError, setBlockError] = useState("");
   /** Display-only: last server sync outcome. Never invents consent offline. */
   const [syncNote, setSyncNote] = useState<string | null>(null);
   const endedRef = useRef(false);
@@ -165,6 +170,33 @@ function ActiveSessionContent() {
       },
     });
   };
+  const blockPeer = async () => {
+    if (!peerUserId || endedRef.current) return;
+    setBlockState("blocking");
+    setBlockError("");
+    try {
+      // Block RPC ends the pair session (ADR 0040). Soft Signal is still the
+      // immediate stop without cutting discovery permanently.
+      await blockService.blockUser(peerUserId);
+      endedRef.current = true;
+      setEnded(true);
+      router.replace({
+        pathname: "/session/wrap-up",
+        params: {
+          ended: "soft-signal",
+          sessionId: sessionId ?? "",
+        },
+      });
+    } catch (caught) {
+      setBlockState("error");
+      setBlockError(
+        caught instanceof Error
+          ? caught.message
+          : "That account could not be blocked right now.",
+      );
+    }
+  };
+
   const endTogether = async () => {
     endedRef.current = true;
     setEnded(true);
@@ -260,6 +292,26 @@ function ActiveSessionContent() {
               Reporting does not end the session. Soft Signal is still the
               immediate stop. Litmo is not emergency response.
             </Text>
+            <Button
+              variant="secondary"
+              label={
+                blockState === "blocking"
+                  ? "Blocking…"
+                  : "Block this person and leave"
+              }
+              disabled={blockState === "blocking"}
+              onPress={() => void blockPeer()}
+              accessibilityHint="Privately blocks them and ends this session. They are not told who blocked them. Soft Signal is still available without blocking."
+            />
+            <Text style={styles.explain}>
+              Blocking ends open sessions with them and hides you from each
+              other. They are not told it was you.
+            </Text>
+            {blockState === "error" ? (
+              <Text accessibilityRole="alert" style={styles.explain}>
+                {blockError}
+              </Text>
+            ) : null}
           </>
         ) : null}
       </View>

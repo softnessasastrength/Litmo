@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-07-12 — Block ends open sessions + system appearance
+
+### Summary
+
+One-way blocks now cancel pre-activation and safety-end active sessions with
+the blocked person (ADR 0040). Active session UI can block and leave. Appearance
+Settings cycles light → dark → **system** (follows OS).
+
+### User-visible impact
+
+- Blocking mid-session ends that pair’s open work and discovery contact.
+- Settings: Appearance light / dark / system.
+- Soft Signal remains the stop without permanently cutting discovery.
+
+### Developer impact
+
+- Migration `035_block_ends_open_sessions.sql`; pgTAP `block_ends_sessions.test.sql`
+- Theme preference `system` + `Appearance` listener
+- ADR 0040
+
+### Related decision and roadmap
+
+- `docs/adr/0040-block-ends-open-sessions.md`
+
 ## 2026-07-12 — Dark mode toggle in Settings
 
 ### Summary

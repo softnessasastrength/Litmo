@@ -70,16 +70,19 @@ Started 2026-07-12 after Chapter 4 engineering completion
   - Holds cancel pre-activation and safety-end active (aligned with permanent ban)
 - **Semantic haptics** (ADR 0039 / HAPTIC-001):
   - Five-event local vocabulary; Settings toggle; Soft Signal + learning hooks
+- **Block ends open pair sessions** (ADR 0040, migration 035):
+  - Cancels pre-activation; safety-ends active with blocked person
+  - Active session: “Block this person and leave”
+- **System appearance** — Settings cycles light / dark / system (OS follow)
 
 ## Next coherent slices (in order)
 
-1. **Execute** physical walkthrough on device (incl. haptic feel); file defects.
-2. Optional: mid-session block ending active sessions (product open).
-3. Optional: dedicated emergency-stop control distinct from Soft Signal UI copy.
+1. **Execute** physical walkthrough on device (incl. haptic feel + dark/system); file defects.
+2. Optional: dedicated emergency-stop control distinct from Soft Signal UI copy.
+3. Optional: block history retention after unblock (abuse analysis — product open).
 
 ## Product decisions still open
 
-- Auto-end active sessions when a participant blocks mid-session?
 - Retention of block history after unblock for abuse analysis?
 
 ## How to resume
