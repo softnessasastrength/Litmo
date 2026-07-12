@@ -118,3 +118,17 @@ export function mockConsentProfileVersion(
   });
 }
 export const mockSnapshotNow = new Date(FIXED_CREATED_AT);
+
+/**
+ * Inverse of personaUserId, for screens that only have a real requester's
+ * user id (e.g. an incoming session request) and need the matching mock
+ * persona id to look up display/preference fixtures. Falls back to "maya"
+ * for any account outside the fixed seeded personas, matching
+ * mockConsentProfileVersion's own fallback.
+ */
+export function personaIdForUserId(userId: string): MockPersonaId {
+  const match = (
+    Object.entries(personaUserId) as [MockPersonaId, string][]
+  ).find(([, value]) => value === userId);
+  return match?.[0] ?? "maya";
+}

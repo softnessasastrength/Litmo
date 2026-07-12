@@ -42,20 +42,24 @@ The `ready -> active` precondition is now enforced by a database trigger for eve
 - "End together" calls `transition_session(..., 'completed')` (`sessionRepository.completeSession`) before navigating to wrap-up; Soft Signal already called `transition_session`'s sibling `withdraw_session_consent` via `emergencyStopService`.
 - The wrap-up screen calls `submit_session_wrapup(...)` (`sessionWrapupService`) with the real five-value canonical outcome enum and an optional client-encrypted private note, when a real session ID and an authenticated (non-demo) user are present.
 
-Landed 2026-07-12 (`docs/adr/0015-session-request-creation-and-recipient-authorization.md`'s UI addendum):
+Landed 2026-07-12 (`docs/adr/0015-session-request-creation-and-recipient-authorization.md`'s UI addenda):
 
 - `app/app/match/[id].tsx` has a real "Request a session" action for signed-in users (`sessionRepository.requestSession`).
 - `app/app/requests.tsx` (linked from the home tab) lists incoming pending requests and lets the recipient Accept or Decline (`sessionRepository.respondToRequest`/`listIncomingRequests`).
+- Accepting now calls `sessionRepository.beginConsentReview` (`accepted -> consent_pending`, best-effort) and navigates into `/match/consent-snapshot` with the real `sessionId` and the requester's resolved mock persona id (`personaIdForUserId`), which now forwards `sessionId` into `/session/active` on "Confirm this mock snapshot."
 
-Still not done:
+**Still genuinely incomplete, and important to understand precisely**: this wiring correctly gets a real session to `consent_pending`, but **not to `active`**. Reaching `ready -> active` requires a persisted, dual-confirmed canonical Consent Snapshot (`docs/adr/0006-snapshot-computation-and-persistence-boundary.md`: `POST /api/sessions/:sessionId/snapshot` plus `confirm_session_snapshot(...)` from _both_ participants) — nothing calls those yet from this flow, and confirming from both sides isn't demonstrable from a single signed-in identity on one device anyway. Concretely, today: a real accepted session will sit at `consent_pending` when the person reaches `/session/active`; "End together" will attempt `completeSession` (`active -> completed`), which will fail because the session isn't actually `active`, and the existing `endTogether()` fallback (built for offline/connectivity failures) will catch it and route to wrap-up with `ended=pending-sync` — whose copy ("Litmo will keep retrying... it cannot resume here") is about connectivity, not about an unwired activation step, so it's technically inaccurate for this specific case even though it doesn't lie about anything having succeeded. `submit_session_wrapup` will then correctly and honestly reject with "session is not ready for wrap-up" (session_wrapups only accepts `completed`/`soft_signaled`/`safety_ended`) if attempted. Nothing here fails silently or fabricates success — but the experience visibly breaks down after `consent_pending`, and that's expected until snapshot creation/confirmation is wired.
 
-- Replace the local timer with a real `active` session row + Supabase Realtime subscription so both participants see the same state.
-- **Accepting a request doesn't navigate anywhere yet** — `respond("accepted")` just refreshes the requests list. The accepted session still needs a path into the consent-snapshot/confirmation flow and eventually `/session/active?sessionId=...`, rather than the current no-param `router.push("/session/active")` in `consent-snapshot.tsx`. This is the actual next piece of Deliverable 3.
+Not done:
+
+- Wire real snapshot creation (`POST /api/sessions/:sessionId/snapshot`) and confirmation (`confirm_session_snapshot`) into the consent-snapshot screen so a real session can actually reach `ready`/`active`. Needs a design decision on how a single-device demo represents the _second_ participant's independent confirmation (can't be solved by just calling the API twice as the same identity).
+- Replace `/session/active`'s local timer with a real Realtime subscription once a session can actually become `active`.
+- More precise wrap-up copy for "this session never got activated" vs. genuine connectivity pending-sync (currently the same copy covers both).
 - No Realtime/push notification when a new request arrives — the recipient only sees it by opening `/requests`.
 - Wrap-up submission itself has no offline retry/queue (only the Soft Signal path does, via `emergencyStopService`'s pending-storage pattern).
 - No blocking/eligibility checks before request creation (no blocking system exists anywhere in this codebase), and no request expiration timestamps/jobs.
 
-The database half of wrap-up is complete in migration 012 and ADR 0008: owner-only immutable rows, terminal-state validation, and retry-safe submission. The database half and mobile UI for request creation/response are complete (migration 015, ADR 0015). The remaining mobile work is connecting an accepted request into the consent-snapshot/session flow, replacing the local timer with Realtime, and wrap-up offline retry.
+The database half of wrap-up is complete in migration 012 and ADR 0008: owner-only immutable rows, terminal-state validation, and retry-safe submission. The database half and mobile UI for request creation/response are complete (migration 015, ADR 0015), correctly reaching `consent_pending`. The next real piece of Deliverable 3 is snapshot creation/confirmation wiring so a session can reach `active` at all.
 
 ## Not yet scoped (fine to leave for later)
 

@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — Connect an accepted request to consent review
+
+### Summary
+
+Accepting an incoming request now advances the session (`accepted -> consent_pending`, best-effort) and navigates into the consent-snapshot screen with the real session id, which now forwards it into `/session/active`.
+
+### User-visible impact
+
+None fully end-to-end yet: a real session correctly reaches `consent_pending` but the flow visibly breaks down after that, since reaching `active` needs snapshot creation/confirmation that isn't wired (see the ADR 0015 addendum and `docs/CHAPTER_4_NEXT_STEPS.md` for the precise, honest account of what happens and why — it fails closed with a real backend error, not a fabricated success).
+
+### Developer impact
+
+Added `sessionRepository.beginConsentReview` and `mockConsentProfiles.ts`'s `personaIdForUserId` (inverse of `personaUserId`). `consent-snapshot.tsx` accepts and forwards an optional `sessionId` param.
+
+### Migration and setup impact
+
+No new migration. Typecheck, 46 app tests, lint all pass.
+
+### Related decision and roadmap
+
+- `docs/adr/0015-session-request-creation-and-recipient-authorization.md`
+- `docs/CHAPTER_4_NEXT_STEPS.md`
+
 ## 2026-07-12 — Mobile session request, accept, and decline UI
 
 ### Summary

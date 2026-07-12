@@ -30,7 +30,10 @@ export default function ConsentSnapshotScreen() {
 
 function ConsentSnapshotContent() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, sessionId } = useLocalSearchParams<{
+    id: string;
+    sessionId?: string;
+  }>();
   const [decision, setDecision] = useState("");
   const rows = useMemo(() => {
     const result = computeCompatibility(
@@ -83,7 +86,11 @@ function ConsentSnapshotContent() {
         disabled={decision !== "yes"}
         onPress={() => {
           void scheduleDemoNotification(4);
-          router.push("/session/active");
+          router.push(
+            sessionId
+              ? { pathname: "/session/active", params: { sessionId } }
+              : "/session/active",
+          );
         }}
       />
       <Body muted center>

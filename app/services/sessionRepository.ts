@@ -56,6 +56,25 @@ export const sessionRepository = {
       throw mapExternalError(error);
     }
   },
+  /**
+   * Advances a just-accepted session toward consent confirmation
+   * (`accepted -> consent_pending`, migration 008/011). Either participant
+   * may call this; it's idempotent (a retry against an already-
+   * consent_pending session is a no-op, not an error).
+   */
+  async beginConsentReview(sessionId: string): Promise<string> {
+    try {
+      const { data, error } = await supabase.rpc("transition_session", {
+        p_session_id: sessionId,
+        p_to_state: "consent_pending",
+        p_idempotency_key: `consent-pending-${Crypto.randomUUID()}`,
+      });
+      if (error) throw error;
+      return data as string;
+    } catch (error) {
+      throw mapExternalError(error);
+    }
+  },
   /** Incoming pending requests where the signed-in user is the recipient. */
   async listIncomingRequests(userId: string): Promise<
     Array<{

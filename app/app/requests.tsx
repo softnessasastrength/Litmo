@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { Body, Button, Card, Eyebrow, Screen, Title } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
+import { personaIdForUserId } from "../data/mockConsentProfiles";
 import { sessionRepository } from "../services/sessionRepository";
 import { supabase } from "../services/supabase";
 import { colors } from "../theme";
@@ -19,6 +21,7 @@ type IncomingRequest = {
 };
 
 export default function IncomingRequestsScreen() {
+  const router = useRouter();
   const { user, status } = useAuth();
   const [state, setState] = useState<
     | { kind: "loading" }
@@ -68,12 +71,30 @@ export default function IncomingRequestsScreen() {
   }, [load]);
 
   const respond = async (
-    sessionId: string,
+    request: IncomingRequest,
     decision: "accepted" | "declined",
   ) => {
-    setRespondingTo(sessionId);
+    setRespondingTo(request.id);
     try {
-      await sessionRepository.respondToRequest(sessionId, decision);
+      await sessionRepository.respondToRequest(request.id, decision);
+      if (decision === "accepted") {
+        // Best-effort: advances the session toward consent review. If this
+        // fails, the requests list still refreshes and the person can try
+        // again from the match screen; it does not block the accept itself.
+        try {
+          await sessionRepository.beginConsentReview(request.id);
+        } catch {
+          // Swallowed intentionally -- see comment above.
+        }
+        router.push({
+          pathname: "/match/consent-snapshot",
+          params: {
+            id: personaIdForUserId(request.requesterId),
+            sessionId: request.id,
+          },
+        });
+        return;
+      }
       await load();
     } catch (caught) {
       setState({
@@ -133,13 +154,13 @@ export default function IncomingRequestsScreen() {
                 <Button
                   label={respondingTo === request.id ? "…" : "Accept"}
                   disabled={respondingTo === request.id}
-                  onPress={() => void respond(request.id, "accepted")}
+                  onPress={() => void respond(request, "accepted")}
                 />
                 <Button
                   variant="secondary"
                   label={respondingTo === request.id ? "…" : "Decline"}
                   disabled={respondingTo === request.id}
-                  onPress={() => void respond(request.id, "declined")}
+                  onPress={() => void respond(request, "declined")}
                 />
               </View>
             </Card>
