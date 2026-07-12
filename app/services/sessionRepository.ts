@@ -166,20 +166,25 @@ export const sessionRepository = {
       throw mapExternalError(error);
     }
   },
-  /** Current status and activation time of a session (migration 016). */
-  async getSession(
-    sessionId: string,
-  ): Promise<{ status: string; startedAt: string | null }> {
+  /** Current status, participants, and activation time of a session. */
+  async getSession(sessionId: string): Promise<{
+    status: string;
+    startedAt: string | null;
+    userA: string;
+    userB: string;
+  }> {
     try {
       const { data, error } = await supabase
         .from("sessions")
-        .select("status,started_at")
+        .select("status,started_at,user_a,user_b")
         .eq("id", sessionId)
         .single();
       if (error) throw error;
       return {
         status: data.status as string,
         startedAt: data.started_at as string | null,
+        userA: data.user_a as string,
+        userB: data.user_b as string,
       };
     } catch (error) {
       throw mapExternalError(error);

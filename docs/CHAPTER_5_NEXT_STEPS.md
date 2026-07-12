@@ -31,17 +31,18 @@ Started 2026-07-12 after Chapter 4 engineering completion
 - **Account restrictions** (ADR 0030, migration 028):
   - Staff `matching_hold` / `permanent_ban`; lift; audit trust events
   - Discovery + `request_session` enforcement; self-only access status
+- **Report from wrap-up** — real sessions can open structured report with
+  session + peer prefilled (soft signal / uncomfortable / safety concern)
 
 ## Next coherent slices (in order)
 
-1. **Report entry from active session / wrap-up** when a real session ID is
-   present (intake API already accepts `session_id`).
-2. **Gate accept/transition** while restricted; optional cancel open requests
+1. **Gate accept/transition** while restricted; optional cancel open requests
    on apply.
-3. **Moderator console UI** (internal tool) on top of existing RPCs.
-4. **Optional peer-visible specific indicators** (e.g. account age) after
+2. **Moderator console UI** (internal tool) on top of existing RPCs.
+3. **Optional peer-visible specific indicators** (e.g. account age) after
    product copy review — still never a universal score.
-5. **Appeals** workflow.
+4. **Appeals** workflow.
+5. **Report from active session** mid-session affordance (fail closed, calm).
 
 ## Product decisions still open
 
