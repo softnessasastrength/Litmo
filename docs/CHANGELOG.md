@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — LEARN-002: full fictional session practice module
+
+### Summary
+
+New guided-learning module walks fictional adults River and Sam from request
+through Consent Snapshot, dual confirm, active session, Soft Signal, and
+wrap-up. Device-local progress only; never creates a real session or claims
+safety competence.
+
+### User-visible impact
+
+- Learn tab: **A full practice session** (~8 min, recommended before first session).
+
+### Developer impact
+
+- `app/data/learningModules.ts` module `full-session-practice`
+- `docs/LEARNING_SYSTEM.md` curriculum update
+
+### Related decision and roadmap
+
+- `TASKS.md` LEARN-002
+- `docs/LEARNING_SYSTEM.md`
+
 ## 2026-07-12 — Chapter 5: staff case evidence + reviewer message
 
 ### Summary

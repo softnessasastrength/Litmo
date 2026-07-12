@@ -37,14 +37,6 @@ Only one implementation task should normally be `active`. Every status change mu
 - **Goal:** Validate VoiceOver, Dynamic Type, reduced motion, focus order, contrast, large touch targets, and non-color-only meaning.
 - **Acceptance criteria:** screen-by-screen findings; severity; reproducible steps; fixes and regression tests for material failures.
 
-### LEARN-002 — Full fictional guided-practice session
-
-- **Status:** pending
-- **Owner:** current coding agent
-- **Depends on:** BETA-001
-- **Goal:** Teach the complete two-person session lifecycle with fictional participants and no real session authority or sensitive user data.
-- **Acceptance criteria:** invitation; profile comparison; Consent Snapshot; mutual confirmation; active-session expectations; Soft Signal; wrap-up; explanatory feedback; private progress; accessibility coverage.
-
 ### SAFETY-OPS-001 — Moderation and beta-operations design
 
 - **Status:** pending
@@ -64,6 +56,11 @@ Only one implementation task should normally be `active`. Every status change mu
 None recorded. External credentials, signing, App Store configuration, or policy review may block specific tasks and must be documented when encountered.
 
 ## Completed
+
+### LEARN-002 — Full fictional guided-practice session
+
+- **Status:** completed
+- **Result:** Module `full-session-practice` — fictional River/Sam lifecycle with scenarios; private progress via existing player; not a real-session gate or safety certificate.
 
 ### RESUME-001 — Model-portable resumable development workflow
 
