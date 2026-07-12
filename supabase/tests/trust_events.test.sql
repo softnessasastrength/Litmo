@@ -21,8 +21,14 @@ select cmp_ok(
   'account_age_days is non-negative'
 );
 
--- Clear age signal then re-attest → trust event age_adult_confirmed.
+-- Clear age signal then re-attest → appends another age_adult_confirmed.
+-- Seed already wrote one when marking demos adult (migration 027 trigger).
 reset role;
+select count(*)::integer as age_before
+  from public.trust_events
+ where subject_user_id = '10000000-0000-4000-8000-000000000001'
+   and event_type = 'age_adult_confirmed' \gset
+
 update public.profiles
    set age_signal_status = 'unverified',
        age_signal_source = null,
@@ -41,7 +47,7 @@ select is(
     where subject_user_id = '10000000-0000-4000-8000-000000000001'
       and event_type = 'age_adult_confirmed'
   ),
-  1,
+  :'age_before'::integer + 1,
   'recording adult age appends age_adult_confirmed'
 );
 
