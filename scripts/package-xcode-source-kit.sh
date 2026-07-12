@@ -42,7 +42,8 @@ cp "$STAGE/release/README-XCODE.md" "$STAGE/README.md"
 
 (
   cd "$ROOT/dist"
-  ditto -c -k --sequesterRsrc --keepParent "$NAME" "$NAME.zip"
+  /usr/bin/zip -qry "$NAME.zip" "$NAME"
 )
 
+/usr/bin/unzip -tq "$ARCHIVE" >/dev/null
 printf '%s\n' "$ARCHIVE"
