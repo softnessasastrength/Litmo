@@ -43,6 +43,12 @@ function SettingsContent() {
             onPress={() => router.push("/security/reports" as never)}
             accessibilityHint="View private status of safety reports you submitted"
           />
+          <Button
+            variant="secondary"
+            label="Your private signals"
+            onPress={() => router.push("/security/trust-signals" as never)}
+            accessibilityHint="View specific facts about your own account. Not a safety score."
+          />
         </>
       ) : null}
       <Button

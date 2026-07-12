@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-07-12 — Chapter 5: rate limits + append-only trust events
+
+### Summary
+
+Abuse soft-limits on new session requests, reports, and block/unblock, plus
+an append-only trust event ledger with a self-only `my_trust_signals` view.
+No universal safety score; no automatic punishment on rate limit hits.
+
+### User-visible impact
+
+- Over-limit actions fail with a calm “try again later” message.
+- Settings → **Your private signals** (account age, profile complete, adult
+  flag, terminal session counts — self only).
+
+### Developer impact
+
+- Migrations `026_rate_limits.sql`, `027_trust_events.sql`
+- ADRs 0028 / 0029; `trustSignalsService`
+- pgTAP `rate_limits.test.sql`, `trust_events.test.sql`
+
+### Migration and setup impact
+
+`npm run db:reset` (or apply 026–027).
+
+### Related decision and roadmap
+
+- `docs/adr/0028-abuse-rate-limits.md`
+- `docs/adr/0029-append-only-trust-events.md`
+- `docs/CHAPTER_5_NEXT_STEPS.md`
+
 ## 2026-07-12 — Chapter 5: human moderation review queue
 
 ### Summary
