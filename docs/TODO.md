@@ -20,7 +20,7 @@ Replace (or sit alongside, pending a decision below) Chapter 2's Supabase email/
 - Immediately after a successful Sign in with Apple account creation, **prompt the user to create a passkey**.
 - The server stores **only public passkey credential material** — never a private key, never a client-side authenticator secret.
 - **Keychain**-backed storage for access and refresh tokens. Never `UserDefaults`, never any unencrypted local store.
-- Protect sensitive local access using **LocalAuthentication** (Face ID / Touch ID / passcode) at appropriate points, and **obscure the UI in app-switcher snapshots** (the standard `UIScreen`/`willResignActive` blur-overlay pattern) so sensitive screens don't appear in the multitasking preview.
+- Completed 2026-07-12: mandatory biometric-only Face ID locking and native app-switcher privacy cover. See `docs/adr/0007-mandatory-face-id-lock.md`. Remaining follow-up: notification-preview and screen-capture review before private alpha.
 - Explicit design for:
   - **Account recovery** (what happens when a user loses every enrolled passkey-capable device).
   - **Multi-device credential enrollment** (adding a passkey on a second device without treating the first device's presence as sufficient proof by itself).

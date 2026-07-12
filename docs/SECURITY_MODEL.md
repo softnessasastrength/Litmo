@@ -22,6 +22,8 @@ Service-role keys, JWT secrets, database passwords, and moderation credentials m
 
 Supabase Auth provides password hashing, token issuance, expiry, and refresh. The app restores sessions from AsyncStorage for Expo Go compatibility. AsyncStorage is persistent but not hardware-encrypted; a production distribution must adopt and review a secure-storage adapter, device compromise behavior, and logout token revocation.
 
+Face ID is a separate local-access gate, not account authentication or identity verification. ADR 0007 documents the biometric-only policy, 30-second lifecycle threshold, native app-switcher cover, step-up routes, fail-closed errors, threat model, and limitations. Litmo stores no biometric data and offers no device-passcode bypass.
+
 ## Fail-closed behavior
 
 Missing configuration produces an explicit failure state. Missing or invalid domain data is rejected by runtime schemas. Permission failures reveal no private record. Network and timeout failures do not broaden consent or silently mark onboarding complete.

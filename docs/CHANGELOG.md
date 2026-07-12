@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-07-12 — Mandatory Face ID security lock
+
+### Summary
+
+Added a centralized biometric service/controller using Apple's biometric-only policy, mandatory launch and 30-second resume locks, native and React privacy covers, fail-closed availability/error states, and fresh step-up authentication for private session, Consent Snapshot, settings, and consent-history routes. Added seven reducer/timing/race tests and ADR 0007.
+
+### User-visible impact
+
+Litmo remains fully covered until Face ID succeeds. Unsupported, unenrolled, locked-out, failed, or cancelled Face ID never falls through to app content and always offers a visible evergreen retry button.
+
+### Developer impact
+
+Added `expo-local-authentication` ~55.0.15, `NSFaceIDUsageDescription`, native pod linkage, a reproducible SceneDelegate privacy cover in the existing config plugin, and centralized step-up gating. Face ID requires a development/standalone build and cannot be tested in Expo Go.
+
+### Migration and setup impact
+
+Run `npm install` and `cd app/ios && pod install`. Physical-device testing now requires a Face ID iPhone and development/standalone build.
+
+### Related decision
+
+- `docs/adr/0007-mandatory-face-id-lock.md`
+
 ## 2026-07-12 — Chapter 4: persisted Consent Snapshots
 
 ### Summary

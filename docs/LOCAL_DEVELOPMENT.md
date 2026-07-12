@@ -4,14 +4,15 @@ Setting up a machine from scratch (new laptop, wiped disk, disaster recovery)? S
 
 ## Backend-free demo mode (no Docker required)
 
-If Docker Desktop is unavailable, or you just want to see the app without setting up Supabase, you can still launch on a physical iPhone:
+If Docker Desktop is unavailable, demo mode still needs no backend. Mandatory Face ID requires an iOS development or standalone build on a Face ID iPhone; Expo Go cannot evaluate Face ID:
 
 ```bash
 npm ci
-npm --workspace app run start
+cd app
+npx expo run:ios --device
 ```
 
-Scan the QR code with Expo Go. Litmo will show a "No local service is configured" screen (or, if `app/.env` already points at an unreachable Supabase instance, the ordinary sign-in screen). Either way, tap **"Continue without an account (demo mode)"**. This runs the full Chapter 1 tap-through path — Welcome → Vibe Quiz → Vibe Profile → Touch Language → Discover → Match Detail → Consent Snapshot → Active Session → Wrap-Up → Trust Ledger — using only local, synthetic data. Nothing is saved, no account is created, and demo mode does not persist across an app restart. See `docs/adr/0003-demo-mode-entry-point.md` for what is and is not exercised in this mode (Chapter 2's real Supabase-backed screens, such as editing your general profile, are unavailable and say so plainly rather than failing silently).
+Unlock the installed development build with Face ID, then tap **"Continue without an account (demo mode)"**. This runs the full synthetic path locally. Expo Go fails closed because Apple does not expose Face ID evaluation to it; this is expected, not a reason to bypass the gate.
 
 ## Standalone iOS build (installs directly on a physical device, no Expo Go)
 
@@ -40,7 +41,7 @@ Re-run `npx eas build --platform ios --profile preview` any time you want an upd
 - Node.js 20.19 or newer
 - npm 10 or newer
 - Docker Desktop running
-- The current Expo Go app for device review
+- A Face ID iPhone and an iOS development or standalone build for device review
 
 The Supabase CLI is installed through the root lockfile; a separate global install is not required.
 
@@ -110,7 +111,7 @@ npm run build
 3. Create an account with a synthetic `example.test` email.
 4. Complete the Vibe Quiz and Touch Language steps.
 5. Confirm Discover appears.
-6. Close Expo Go completely and reopen the project.
+6. Close the installed development build completely and reopen it; confirm Face ID is required.
 7. Confirm the authenticated Discover screen returns without signing in again.
 8. Open Edit Profile, change the introduction, save, and reopen it.
 9. Complete Touch Language again and confirm a new version row exists without changing the prior row.

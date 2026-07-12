@@ -10,8 +10,17 @@ import {
   Title,
 } from "../../components/ui";
 import { colors } from "../../theme";
+import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 
 export default function ActiveSessionScreen() {
+  return (
+    <SensitiveAccessGate>
+      <ActiveSessionContent />
+    </SensitiveAccessGate>
+  );
+}
+
+function ActiveSessionContent() {
   const router = useRouter();
   const [seconds, setSeconds] = useState(0);
   const [ended, setEnded] = useState(false);

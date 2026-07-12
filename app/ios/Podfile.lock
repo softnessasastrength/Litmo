@@ -71,6 +71,8 @@ PODS:
     - ExpoModulesCore
   - ExpoLinking (55.0.16):
     - ExpoModulesCore
+  - ExpoLocalAuthentication (55.0.15):
+    - ExpoModulesCore
   - ExpoLogBox (55.0.12):
     - React-Core
   - ExpoModulesCore (55.0.25):
@@ -2050,6 +2052,7 @@ DEPENDENCIES:
   - ExpoImage (from `../node_modules/expo-image/ios`)
   - ExpoKeepAwake (from `../../node_modules/expo-keep-awake/ios`)
   - ExpoLinking (from `../node_modules/expo-linking/ios`)
+  - ExpoLocalAuthentication (from `../../node_modules/expo-local-authentication/ios`)
   - "ExpoLogBox (from `../../node_modules/@expo/log-box`)"
   - ExpoModulesCore (from `../../node_modules/expo-modules-core`)
   - ExpoModulesJSI (from `../../node_modules/expo-modules-core`)
@@ -2168,6 +2171,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/expo-keep-awake/ios"
   ExpoLinking:
     :path: "../node_modules/expo-linking/ios"
+  ExpoLocalAuthentication:
+    :path: "../../node_modules/expo-local-authentication/ios"
   ExpoLogBox:
     :path: "../../node_modules/@expo/log-box"
   ExpoModulesCore:
@@ -2345,6 +2350,7 @@ SPEC CHECKSUMS:
   ExpoImage: 5854bd51edd7c0a775755473598f9daeb3fde4e3
   ExpoKeepAwake: d0eb7a0719500d2a43fbf29b6f79e84d70c75ebf
   ExpoLinking: 221ab136d976b632e04ff4023660cc9c24233d07
+  ExpoLocalAuthentication: ea6ccdc422cdac27275770e742ac69a46bc8d748
   ExpoLogBox: a678d36477ab9544fe63e0b5328a0716539b6774
   ExpoModulesCore: 998d0fbf7f687b1ff715b87cec779fc92be628ac
   ExpoModulesJSI: 964334271fc77832736f66ee1785761cdc778dbe

@@ -80,6 +80,7 @@ class ReactNativeDelegate: ExpoReactNativeFactoryDelegate {
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   var window: UIWindow?
+  private var privacyShield: UIView?
 
   func scene(
     _ scene: UIScene,
@@ -98,5 +99,33 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
       withModuleName: "main",
       in: window,
       launchOptions: nil)
+  }
+
+  // Native cover is installed before iOS captures the multitasking snapshot.
+  // The React biometric controller independently remains locked underneath it.
+  func sceneWillResignActive(_ scene: UIScene) {
+    guard let window, privacyShield == nil else { return }
+    let shield = UIView(frame: window.bounds)
+    shield.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    shield.backgroundColor = UIColor(red: 247 / 255, green: 241 / 255, blue: 232 / 255, alpha: 1)
+
+    let mark = UILabel()
+    mark.text = "L"
+    mark.textColor = UIColor(red: 105 / 255, green: 71 / 255, blue: 91 / 255, alpha: 1)
+    mark.font = UIFont(name: "Georgia-Italic", size: 52) ?? UIFont.italicSystemFont(ofSize: 52)
+    mark.translatesAutoresizingMaskIntoConstraints = false
+    shield.addSubview(mark)
+    NSLayoutConstraint.activate([
+      mark.centerXAnchor.constraint(equalTo: shield.centerXAnchor),
+      mark.centerYAnchor.constraint(equalTo: shield.centerYAnchor),
+    ])
+
+    privacyShield = shield
+    window.addSubview(shield)
+  }
+
+  func sceneDidBecomeActive(_ scene: UIScene) {
+    privacyShield?.removeFromSuperview()
+    privacyShield = nil
   }
 }

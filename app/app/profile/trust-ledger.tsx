@@ -12,8 +12,17 @@ import {
 import { ledgerEntries } from "../../data/mock";
 import { colors, fonts } from "../../theme";
 import { useAuth } from "../../context/AuthContext";
+import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 
 export default function TrustLedgerScreen() {
+  return (
+    <SensitiveAccessGate>
+      <TrustLedgerContent />
+    </SensitiveAccessGate>
+  );
+}
+
+function TrustLedgerContent() {
   const router = useRouter();
   const { signOut, status } = useAuth();
   return (

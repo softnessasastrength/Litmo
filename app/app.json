@@ -9,6 +9,12 @@
     "icon": "./assets/icon.png",
     "plugins": [
       "expo-router",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow Litmo to use Face ID to protect your private consent and session information."
+        }
+      ],
       "./plugins/withIOSXcode27Fixes.cjs",
       "./plugins/withoutPushEntitlement.cjs"
     ],

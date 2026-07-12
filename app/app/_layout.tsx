@@ -8,6 +8,11 @@ import { FailureState, LoadingState } from "../components/AsyncState";
 import { Body, Button, Screen, Title } from "../components/ui";
 import { environmentError } from "../services/supabase";
 import { colors } from "../theme";
+import {
+  BiometricLockProvider,
+  useBiometricLock,
+} from "../context/BiometricLockContext";
+import { BiometricLockScreen } from "../components/BiometricLockScreen";
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
@@ -19,13 +24,21 @@ export default function RootLayout() {
   return (
     <AppErrorBoundary>
       <PrototypeProvider>
-        <AuthProvider>
-          <StatusBar style="dark" />
-          <AuthenticatedStack />
-        </AuthProvider>
+        <BiometricLockProvider>
+          <AuthProvider>
+            <StatusBar style="dark" />
+            <AuthenticatedStack />
+            <BiometricPrivacyCover />
+          </AuthProvider>
+        </BiometricLockProvider>
       </PrototypeProvider>
     </AppErrorBoundary>
   );
+}
+function BiometricPrivacyCover() {
+  const { state } = useBiometricLock();
+  if (state.status === "unlocked" && !state.privacyShielded) return null;
+  return <BiometricLockScreen />;
 }
 function AuthenticatedStack() {
   const auth = useAuth();

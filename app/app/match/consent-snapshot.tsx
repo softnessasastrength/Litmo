@@ -18,8 +18,17 @@ import {
 import { buildSnapshotRows } from "../../lib/consentSnapshotView";
 import { scheduleDemoNotification } from "../../services/notifications";
 import { colors } from "../../theme";
+import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 
 export default function ConsentSnapshotScreen() {
+  return (
+    <SensitiveAccessGate>
+      <ConsentSnapshotContent />
+    </SensitiveAccessGate>
+  );
+}
+
+function ConsentSnapshotContent() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [decision, setDecision] = useState("");

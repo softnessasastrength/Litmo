@@ -2,8 +2,17 @@ import { useRouter } from "expo-router";
 import { Linking } from "react-native";
 import { Body, Button, Eyebrow, Screen, Title } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
+import { SensitiveAccessGate } from "../components/SensitiveAccessGate";
 
 export default function SettingsScreen() {
+  return (
+    <SensitiveAccessGate>
+      <SettingsContent />
+    </SensitiveAccessGate>
+  );
+}
+
+function SettingsContent() {
   const router = useRouter();
   const { status, signOut } = useAuth();
   return (

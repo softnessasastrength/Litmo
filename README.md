@@ -8,7 +8,7 @@ It is not a dating app, a therapy platform, or a substitute for emergency or cli
 
 ## Current foundation
 
-Chapter 1 is a local, synthetic-data experience designed for founder review in Expo Go:
+Chapter 1 is a local, synthetic-data experience designed for founder review in an iOS development or standalone build:
 
 ```text
 Welcome → Vibe Quiz → Vibe Profile → Touch Language → Discover
@@ -19,7 +19,7 @@ Chapter 2 adds real local Supabase email/password authentication, session restor
 
 Chapter 3 adds a canonical, framework-independent, directional consent-compatibility engine (`@litmo/domain`) with property-based safety tests, a practical-effect preview for profile edits, and a documented adapter that bridges it to Chapter 2's persisted profiles and a live backend route. The mock Consent Snapshot screen now runs this real engine end to end.
 
-A backend-free **demo mode** (`docs/adr/0003-demo-mode-entry-point.md`) lets the full Chapter 1 tap-through path run on a physical iPhone through Expo Go with no Supabase instance at all. From the welcome screen, tap "Explore the prototype" to reach a dedicated entry screen offering either "Enter the fictional demo" (no account, nothing saved) or real account sign-in. The screen shown when no local Supabase is configured also offers demo mode directly.
+A backend-free **demo mode** (`docs/adr/0003-demo-mode-entry-point.md`) lets the full Chapter 1 tap-through path run on a physical iPhone with no Supabase instance. Mandatory Face ID means Expo Go is no longer supported for end-to-end review; use a development or standalone build. From the welcome screen, tap "Explore the prototype" to reach a dedicated entry screen offering either "Enter the fictional demo" (no account, nothing saved) or real account sign-in.
 
 Litmo also runs as a standalone iOS build (not just through Expo Go), including on very new Xcode/iOS betas — see `docs/adr/0004-ios-27-beta-build-fixes.md` and the standalone-build section of `docs/LOCAL_DEVELOPMENT.md`.
 
@@ -66,7 +66,7 @@ Litmo/
 - Node.js 20.19+
 - npm 10+
 - Docker Desktop
-- The current Expo Go app on an iPhone
+- A Face ID iPhone and an iOS development or standalone build
 
 ```bash
 npm ci
