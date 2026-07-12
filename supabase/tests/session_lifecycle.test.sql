@@ -68,6 +68,26 @@ select
   from_state
 from lifecycle_cases;
 
+-- `ready -> active` has the additional Chapter 4 snapshot precondition. Seed
+-- exact confirmed data for that one matrix case so the graph test continues
+-- to exercise the edge rather than weakening activation safety.
+insert into public.touch_profile_versions (id, user_id, version, profile) values
+  ('22000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000001',1,'{}'),
+  ('22000000-0000-4000-8000-000000000002','10000000-0000-4000-8000-000000000002',1,'{}');
+insert into public.consent_snapshots (
+  session_id, profile_a_id, profile_a_version, profile_b_id,
+  profile_b_version, fingerprint, compatibility
+)
+select session_id,
+  '22000000-0000-4000-8000-000000000001',1,
+  '22000000-0000-4000-8000-000000000002',1,
+  repeat('d',64),'{"consentGranted":false}'
+from lifecycle_cases where from_state='ready' and to_state='active';
+insert into public.consent_snapshot_confirmations (snapshot_id, user_id, fingerprint)
+select id, '10000000-0000-4000-8000-000000000001'::uuid, fingerprint from public.consent_snapshots
+union all
+select id, '10000000-0000-4000-8000-000000000002'::uuid, fingerprint from public.consent_snapshots;
+
 insert into public.sessions (id, user_a, user_b, status)
 values (
   '30000000-0000-4000-8000-000000000001',

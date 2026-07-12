@@ -24,5 +24,5 @@
 
 ## Release blockers
 
-- Canonical snapshot persistence, snapshot-version enforcement at `ready -> active`, transition-specific actor authorization, mobile preview, and server-side confirmation are not implemented yet. Basic participant authorization, idempotent transactional state changes, and append-only audit persistence now exist in migration 008.
+- Canonical snapshot persistence, exact-fingerprint confirmation, withdrawal, and `ready -> active` enforcement exist in migration 009. The trusted Express/server adapter that computes and creates snapshots is not wired, material profile changes do not yet replace/invalidate a persisted snapshot, and transition-specific actor authorization remains unimplemented. Mobile session screens therefore remain demo-only.
 - Hosted CI (GitHub Actions) has not been run from this branch. The local Docker blocker is resolved (see above).

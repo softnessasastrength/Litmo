@@ -27,13 +27,13 @@ Implemented in migration `008_transition_session.sql`. The function and the 144-
 
 **Don't implement yet** (explicitly deferred per ADR 0005): snapshot-version matching at `ready -> active` (needs the canonical snapshot persisted somewhere first — see Deliverable 2) and realtime broadcast of the change (Supabase Realtime, separate concern).
 
-## Deliverable 2 — persist the canonical Consent Snapshot (next)
+## Deliverable 2 — persist the canonical Consent Snapshot (database boundary complete)
 
 `shared/src/consentSnapshot.ts` already has `createConsentSnapshot`, `confirmSnapshot`, `invalidateForMaterialChange`, and `withdrawConsent` — all pure, all tested. None of it is persisted anywhere yet (`docs/KNOWN_LIMITATIONS.md`'s "Release blockers" section calls this out explicitly).
 
-Needed: a `consent_snapshots` table (id, session_id, profile_a_id/version, profile_b_id/version, fingerprint, compatibility jsonb, confirmations jsonb or a separate confirmations table, withdrawn_by/at) plus RLS so only the two participants can read it, and a security-definer function that calls the existing pure `createConsentSnapshot`/`confirmSnapshot` logic (ported to a Postgres function, or called from the Express backend if that's the chosen home — this is the same "which backend owns this" question flagged in `docs/TODO.md` for the passwordless-auth item, worth deciding once rather than per-feature).
+Implemented in migration 009 and ADR 0006. The trusted server owns canonical engine computation; PostgreSQL owns service-only persistence, exact versions, private confirmations, withdrawal, and activation enforcement. Remaining work within this deliverable is wiring the Express/trusted adapter and persisted invalidation after material profile changes.
 
-This is what makes the `ready -> active` transition's snapshot-version precondition (deferred in Deliverable 1) actually checkable.
+The `ready -> active` precondition is now enforced by a database trigger for every write path.
 
 ## Deliverable 3 — wire the mock session screens to real data
 

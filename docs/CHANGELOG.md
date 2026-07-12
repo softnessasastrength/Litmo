@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — Chapter 4: persisted Consent Snapshots
+
+### Summary
+
+Added service-owned canonical snapshot persistence, participant-private exact-fingerprint confirmations, pre-activation withdrawal, and a database-level activation guard in migration 009. Added ADR 0006 for the trusted-engine/PostgreSQL responsibility split and 15 pgTAP assertions; the database total is now 40.
+
+### User-visible impact
+
+None yet. Mobile session screens remain isolated demo adapters, but the server now has the safety boundary they will eventually call.
+
+### Developer impact
+
+Only `service_role` can create a snapshot after trusted `@litmo/domain` computation. Participants can confirm or withdraw through dedicated functions, cannot write tables directly, and cannot read the counterpart's confirmation.
+
+### Migration and setup impact
+
+Run `npm run db:reset`, then `npx supabase test db`. The legacy `consent_records` table remains inert; no destructive migration is performed.
+
+### Related decision and roadmap
+
+- `docs/adr/0006-snapshot-computation-and-persistence-boundary.md`
+- `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
+
 ## 2026-07-12 — Chapter 4: transactional session transitions
 
 ### Summary

@@ -24,3 +24,7 @@ The framework-independent domain engine evaluates receiving and offering separat
 A session snapshot references exact immutable profile IDs and version numbers. A participant must confirm the exact snapshot fingerprint. Any material snapshot change clears prior confirmations. Withdrawal clears confirmations in every lifecycle state and never requires an explanation.
 
 Missing, invalid, stale, or contradictory profile data is excluded rather than interpreted as ask-first. Private nervous-system notes never enter compatibility output or explanations.
+
+## Persisted Chapter 4 boundary
+
+Canonical snapshots are created only by a trusted server after `@litmo/domain` computation and are tied to exact immutable participant profile IDs and versions. Each participant's confirmation row is readable only by that participant. A second exact-fingerprint confirmation moves the session to `ready`; no path can activate without both current confirmations. Pre-activation withdrawal requires no explanation, records the actor/time, clears confirmations, and cancels the session. Snapshot replacement after a material profile edit is still pending.
