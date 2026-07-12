@@ -20,7 +20,7 @@ export default function SettingsScreen() {
 function SettingsContent() {
   const router = useRouter();
   const { status, signOut } = useAuth();
-  const { scheme, isDark, toggleScheme } = useTheme();
+  const { scheme, resolvedScheme, cycleScheme } = useTheme();
   const [isStaff, setIsStaff] = useState(false);
   const [hapticsOn, setHapticsOn] = useState(true);
 
@@ -58,14 +58,22 @@ function SettingsContent() {
       </Body>
       <Button
         variant="secondary"
-        label={isDark ? "Appearance: dark" : "Appearance: light"}
-        onPress={toggleScheme}
-        accessibilityHint="Switches between Litmo’s cream light theme and a soft dark theme. Preference stays on this device."
+        label={
+          scheme === "system"
+            ? "Appearance: system"
+            : scheme === "dark"
+              ? "Appearance: dark"
+              : "Appearance: light"
+        }
+        onPress={cycleScheme}
+        accessibilityHint="Cycles light, dark, and follow system appearance. Preference stays on this device."
       />
       <Body muted>
-        {scheme === "dark"
-          ? "Dark mode softens the surface for low light. Safety colors stay distinct; meaning is never color-only."
-          : "Light mode is the default cream journal surface. Switch anytime on this device only."}
+        {scheme === "system"
+          ? `Following your phone (${resolvedScheme}). Safety colors stay distinct; meaning is never color-only.`
+          : scheme === "dark"
+            ? "Dark mode softens the surface for low light. Safety colors stay distinct; meaning is never color-only."
+            : "Light mode is the default cream journal surface. Switch anytime on this device only."}
       </Body>
       <Button
         variant="secondary"

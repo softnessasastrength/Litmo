@@ -97,8 +97,29 @@ export function shadowFor(isDark: boolean) {
   return isDark ? darkShadow : lightShadow;
 }
 
-export type ColorSchemePreference = "light" | "dark";
+/** Stored preference. `system` follows the OS light/dark setting. */
+export type ColorSchemePreference = "light" | "dark" | "system";
 
-export function paletteFor(scheme: ColorSchemePreference): AppColors {
+/** Resolved palette key after applying system appearance. */
+export type ResolvedColorScheme = "light" | "dark";
+
+export function resolveScheme(
+  preference: ColorSchemePreference,
+  systemIsDark: boolean,
+): ResolvedColorScheme {
+  if (preference === "system") return systemIsDark ? "dark" : "light";
+  return preference;
+}
+
+export function paletteFor(scheme: ResolvedColorScheme): AppColors {
   return scheme === "dark" ? darkColors : lightColors;
+}
+
+/** Cycle Settings control: light → dark → system → light. */
+export function nextAppearancePreference(
+  current: ColorSchemePreference,
+): ColorSchemePreference {
+  if (current === "light") return "dark";
+  if (current === "dark") return "system";
+  return "light";
 }

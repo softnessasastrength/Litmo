@@ -5,30 +5,48 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState } from "react";
+  useState,
+} from "react";
+import { Appearance, type ColorSchemeName } from "react-native";
 import {
   type AppColors,
   type ColorSchemePreference,
+  type ResolvedColorScheme,
   darkShadow,
   lightShadow,
-  paletteFor } from "../theme";
+  nextAppearancePreference,
+  paletteFor,
+  resolveScheme,
+} from "../theme";
 import { themePreference } from "../services/themePreference";
 
 type ThemeState = {
+  /** Stored preference (may be system). */
   scheme: ColorSchemePreference;
+  /** Resolved light/dark after system. */
+  resolvedScheme: ResolvedColorScheme;
   isDark: boolean;
   colors: AppColors;
   shadow: typeof lightShadow | typeof darkShadow;
-  /** Ready after first preference load (avoids light flash if stored dark). */
   ready: boolean;
   setScheme: (scheme: ColorSchemePreference) => void;
+  /** Cycles light → dark → system. */
+  cycleScheme: () => void;
+  /** @deprecated use cycleScheme — kept for a single-toggle mental model. */
   toggleScheme: () => void;
 };
 
 const ThemeContext = createContext<ThemeState | null>(null);
 
+function systemIsDarkFrom(name: ColorSchemeName | null | undefined): boolean {
+  return name === "dark";
+}
+
 export function ThemeProvider({ children }: PropsWithChildren) {
   const [scheme, setSchemeState] = useState<ColorSchemePreference>("light");
+  const [systemIsDark, setSystemIsDark] = useState(() =>
+    systemIsDarkFrom(Appearance.getColorScheme() ?? null),
+  );
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -43,30 +61,41 @@ export function ThemeProvider({ children }: PropsWithChildren) {
     };
   }, []);
 
+  useEffect(() => {
+    const sub = Appearance.addChangeListener(({ colorScheme }) => {
+      setSystemIsDark(systemIsDarkFrom(colorScheme));
+    });
+    return () => sub.remove();
+  }, []);
+
   const setScheme = useCallback((next: ColorSchemePreference) => {
     setSchemeState(next);
     void themePreference.save(next);
   }, []);
 
-  const toggleScheme = useCallback(() => {
+  const cycleScheme = useCallback(() => {
     setSchemeState((prev) => {
-      const next: ColorSchemePreference = prev === "dark" ? "light" : "dark";
+      const next = nextAppearancePreference(prev);
       void themePreference.save(next);
       return next;
     });
   }, []);
 
   const value = useMemo<ThemeState>(() => {
-    const isDark = scheme === "dark";
+    const resolved = resolveScheme(scheme, systemIsDark);
+    const isDark = resolved === "dark";
     return {
       scheme,
+      resolvedScheme: resolved,
       isDark,
-      colors: paletteFor(scheme),
+      colors: paletteFor(resolved),
       shadow: isDark ? darkShadow : lightShadow,
       ready,
       setScheme,
-      toggleScheme };
-  }, [scheme, ready, setScheme, toggleScheme]);
+      cycleScheme,
+      toggleScheme: cycleScheme,
+    };
+  }, [scheme, systemIsDark, ready, setScheme, cycleScheme]);
 
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>

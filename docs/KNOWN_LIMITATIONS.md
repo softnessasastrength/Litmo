@@ -2,9 +2,10 @@
 
 ## Appearance
 
-- Dark mode is device-local (Settings toggle) and does not follow system
-  appearance yet. Preference is not synced across devices. Contrast and Soft
-  Signal distinctness should be checked on a physical phone under BETA-001.
+- Appearance is device-local (light / dark / **system**). System follows the OS
+  light/dark setting via React Native `Appearance`. Preference is not synced
+  across devices. Contrast and Soft Signal distinctness should be checked on a
+  physical phone under BETA-001.
 
 ## Haptics
 

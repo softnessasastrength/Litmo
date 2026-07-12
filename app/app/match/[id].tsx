@@ -383,7 +383,7 @@ export default function MatchDetailScreen() {
             }
             disabled={blockState === "blocking"}
             onPress={() => void blockPerson()}
-            accessibilityHint="Immediately and privately blocks this account. They are not told who blocked them. Pending requests are cancelled."
+            accessibilityHint="Immediately and privately blocks this account. They are not told who blocked them. Open sessions with them end; pending requests are cancelled."
           />
           <Body muted center>
             Blocking is private and immediate. They will not be told it was you.

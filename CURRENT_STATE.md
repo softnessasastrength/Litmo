@@ -28,9 +28,9 @@ Execute `docs/PHYSICAL_BETA_WALKTHROUGH.md` on a physical iPhone (demo track + r
 
 ## Priority next work
 
-1. **Run** the physical-iPhone walkthrough (Tracks A/B + accessibility + haptic feel) using `docs/PHYSICAL_BETA_WALKTHROUGH.md`.
+1. **Run** the physical-iPhone walkthrough (Tracks A/B + accessibility + haptic feel + appearance) using `docs/PHYSICAL_BETA_WALKTHROUGH.md`.
 2. Reconcile walkthrough findings into tests, ADRs, `KNOWN_LIMITATIONS.md`, and release docs.
-3. Optional: mid-session block ending active sessions (product open).
+3. Optional: Soft Signal vs emergency-stop UI copy split; block history retention.
 4. Clear external TestFlight blockers only when intentionally starting private alpha distribution.
 
 ## Verification baseline
