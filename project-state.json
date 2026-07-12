@@ -1,0 +1,26 @@
+{
+  "$schema": "./docs/project-state.schema.json",
+  "version": 1,
+  "updatedAt": "2026-07-12T00:00:00-04:00",
+  "milestone": {
+    "id": "RESUME-001",
+    "name": "Model-portable resumable development workflow",
+    "status": "active"
+  },
+  "git": {
+    "branch": "chore/model-portable-workflow",
+    "latestCoherentCommit": "91cf491801f5b8ef4614a8ca0cfd2f508753e2ad",
+    "workingTreeExpectedClean": true
+  },
+  "verification": {
+    "status": "pending",
+    "commands": [],
+    "failures": []
+  },
+  "nextAction": "Add schema, validator, CI enforcement, and agent instructions.",
+  "blockedBy": [],
+  "risks": [],
+  "notes": [
+    "Repository artifacts are the source of truth; prior chat context is optional context only."
+  ]
+}
