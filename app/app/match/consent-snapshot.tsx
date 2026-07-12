@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
-import { computeCompatibility } from "@litmo/domain";
+import { computeCompatibility, type CompatibilityResult } from "@litmo/domain";
 import {
   Body,
   Button,
@@ -15,7 +15,10 @@ import {
   mockConsentProfileVersion,
   mockSnapshotNow,
 } from "../../data/mockConsentProfiles";
-import { buildSnapshotRows } from "../../lib/consentSnapshotView";
+import {
+  buildSnapshotRows,
+  type SnapshotRow,
+} from "../../lib/consentSnapshotView";
 import { scheduleDemoNotification } from "../../services/notifications";
 import {
   sessionRepository,
@@ -23,6 +26,7 @@ import {
 } from "../../services/sessionRepository";
 import { colors } from "../../theme";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
+import { FailureState, LoadingState } from "../../components/AsyncState";
 
 export default function ConsentSnapshotScreen() {
   return (
@@ -35,9 +39,13 @@ export default function ConsentSnapshotScreen() {
 function ConsentSnapshotContent() {
   const router = useRouter();
   const { id, sessionId } = useLocalSearchParams<{
-    id: string;
+    id?: string;
     sessionId?: string;
   }>();
+  const realSessionId =
+    typeof sessionId === "string" && sessionId.length > 0 ? sessionId : null;
+  const isReal = Boolean(realSessionId);
+
   const [decision, setDecision] = useState("");
   const [confirmState, setConfirmState] = useState<
     "idle" | "confirming" | "waiting" | "error" | "withdrawing" | "ended"
@@ -45,7 +53,13 @@ function ConsentSnapshotContent() {
   const [confirmError, setConfirmError] = useState("");
   const [lifecycleNote, setLifecycleNote] = useState<string | null>(null);
   const [snapshot, setSnapshot] = useState<PersistedSnapshot | null>(null);
-  const rows = useMemo(() => {
+  const [realRows, setRealRows] = useState<SnapshotRow[] | null>(null);
+  const [realLoad, setRealLoad] = useState<
+    "idle" | "loading" | "ready" | "error"
+  >(isReal ? "loading" : "idle");
+  const [realLoadError, setRealLoadError] = useState("");
+
+  const mockRows = useMemo(() => {
     const result = computeCompatibility(
       mockConsentProfileVersion("self"),
       mockConsentProfileVersion(id ?? "maya"),
@@ -54,14 +68,19 @@ function ConsentSnapshotContent() {
     return buildSnapshotRows(result);
   }, [id]);
 
+  const rows = isReal ? (realRows ?? []) : mockRows;
+
   const proceededRef = useRef(false);
   const leftRef = useRef(false);
   const proceedToActive = async () => {
     if (proceededRef.current || leftRef.current) return;
     proceededRef.current = true;
-    await sessionRepository.activateSession(sessionId!);
+    await sessionRepository.activateSession(realSessionId!);
     void scheduleDemoNotification(4);
-    router.push({ pathname: "/session/active", params: { sessionId } });
+    router.push({
+      pathname: "/session/active",
+      params: { sessionId: realSessionId! },
+    });
   };
 
   const leaveEnded = (message: string) => {
@@ -71,13 +90,50 @@ function ConsentSnapshotContent() {
     setLifecycleNote(message);
   };
 
+  const applyCompatibility = (compatibility: CompatibilityResult | null) => {
+    if (!compatibility) {
+      setRealRows([]);
+      return;
+    }
+    setRealRows(buildSnapshotRows(compatibility));
+  };
+
+  const loadRealSnapshot = async () => {
+    if (!realSessionId) return;
+    setRealLoad("loading");
+    setRealLoadError("");
+    try {
+      let current =
+        await sessionRepository.getLatestSessionSnapshot(realSessionId);
+      if (!current) {
+        current = await sessionRepository.createSnapshot(realSessionId);
+      }
+      setSnapshot(current);
+      applyCompatibility(current.compatibility);
+      setRealLoad("ready");
+    } catch (caught) {
+      setRealLoad("error");
+      setRealLoadError(
+        caught instanceof Error
+          ? caught.message
+          : "The Consent Snapshot could not be prepared. Check that the backend is running and both people have saved touch and consent profiles.",
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (isReal) void loadRealSnapshot();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [realSessionId]);
+
   const confirmReal = async () => {
     setConfirmState("confirming");
     setConfirmError("");
     try {
       const created =
-        snapshot ?? (await sessionRepository.createSnapshot(sessionId!));
+        snapshot ?? (await sessionRepository.createSnapshot(realSessionId!));
       setSnapshot(created);
+      if (created.compatibility) applyCompatibility(created.compatibility);
       const result = await sessionRepository.confirmSnapshot(
         created.id,
         created.fingerprint,
@@ -100,7 +156,7 @@ function ConsentSnapshotContent() {
   // Real sessions: hydrate status, leave if the counterpart already cancelled,
   // activate if already ready, and listen for ready / terminal changes.
   useEffect(() => {
-    if (!sessionId) return;
+    if (!realSessionId) return;
     let cancelled = false;
     const handleStatus = (status: string) => {
       if (cancelled || leftRef.current) return;
@@ -125,11 +181,11 @@ function ConsentSnapshotContent() {
         );
       }
     };
-    void sessionRepository.getSession(sessionId).then((session) => {
+    void sessionRepository.getSession(realSessionId).then((session) => {
       handleStatus(session.status);
     });
     const unsubscribe = sessionRepository.subscribeToSession(
-      sessionId,
+      realSessionId,
       (session) => handleStatus(session.status),
     );
     return () => {
@@ -137,10 +193,10 @@ function ConsentSnapshotContent() {
       unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionId]);
+  }, [realSessionId]);
 
   const confirm = () => {
-    if (sessionId) {
+    if (realSessionId) {
       void confirmReal();
       return;
     }
@@ -149,14 +205,14 @@ function ConsentSnapshotContent() {
   };
 
   const withdraw = async () => {
-    if (!sessionId) {
+    if (!realSessionId) {
       router.replace("/home");
       return;
     }
     setConfirmState("withdrawing");
     setConfirmError("");
     try {
-      await sessionRepository.withdrawConsent(sessionId);
+      await sessionRepository.withdrawConsent(realSessionId);
       router.replace("/home");
     } catch (caught) {
       setConfirmState("error");
@@ -168,24 +224,44 @@ function ConsentSnapshotContent() {
     }
   };
 
+  if (isReal && realLoad === "loading") {
+    return <LoadingState label="Preparing the real Consent Snapshot…" />;
+  }
+  if (isReal && realLoad === "error") {
+    return (
+      <FailureState
+        title="Snapshot unavailable"
+        message={realLoadError}
+        onRetry={() => void loadRealSnapshot()}
+      />
+    );
+  }
+
   return (
     <Screen>
       <Eyebrow>
-        {sessionId ? "CONSENT SNAPSHOT" : "MOCK CONSENT SNAPSHOT"}
+        {isReal ? "CONSENT SNAPSHOT" : "MOCK CONSENT SNAPSHOT"}
       </Eyebrow>
       <Title>Read every boundary before you agree.</Title>
       <Body>
-        This is the live, directional overlap of two mock preference sets
-        computed by the real consent engine. A match and a Vibe Profile do not
-        grant consent.
+        {isReal
+          ? "This is the live, directional overlap of both participants' saved touch and consent profiles, computed by the trusted backend. A match and a Vibe Profile do not grant consent."
+          : "This is the live, directional overlap of two mock preference sets computed by the real consent engine. A match and a Vibe Profile do not grant consent."}
       </Body>
       <Card style={styles.snapshot}>
-        {rows.map((item) => (
-          <View key={item.label} style={styles.row}>
-            <Text style={styles.label}>{item.label}</Text>
-            <Text style={styles.value}>{item.value}</Text>
-          </View>
-        ))}
+        {rows.length === 0 ? (
+          <Body muted>
+            No shared permitted items to list. Either person may stop without
+            granting consent.
+          </Body>
+        ) : (
+          rows.map((item) => (
+            <View key={item.label} style={styles.row}>
+              <Text style={styles.label}>{item.label}</Text>
+              <Text style={styles.value}>{item.value}</Text>
+            </View>
+          ))
+        )}
       </Card>
       <View accessibilityRole="radiogroup" style={styles.decisions}>
         <Choice
@@ -211,7 +287,7 @@ function ConsentSnapshotContent() {
             label={
               confirmState === "withdrawing"
                 ? "Withdrawing…"
-                : sessionId
+                : isReal
                   ? "Withdraw and leave"
                   : "Leave this mock snapshot"
             }
@@ -249,14 +325,15 @@ function ConsentSnapshotContent() {
               ? "Confirming…"
               : confirmState === "waiting"
                 ? "Check again"
-                : sessionId
+                : isReal
                   ? "Confirm this snapshot"
                   : "Confirm this mock snapshot"
           }
           disabled={
             decision !== "yes" ||
             confirmState === "confirming" ||
-            confirmState === "waiting"
+            confirmState === "waiting" ||
+            (isReal && rows.length === 0)
           }
           onPress={confirm}
         />
@@ -266,16 +343,20 @@ function ConsentSnapshotContent() {
           {confirmError}
         </Text>
       ) : null}
-      {!sessionId ? (
+      {!isReal ? (
         <Body muted center>
           In a real Litmo session, each person would confirm independently. This
-          prototype simulates both confirmations.
+          prototype simulates both confirmations with mock preference sets.
         </Body>
-      ) : null}
+      ) : (
+        <Body muted center>
+          Each person confirms the same immutable snapshot independently. If
+          either profile changes, this snapshot is no longer current.
+        </Body>
+      )}
       <Body muted center>
-        Confirming will ask for notification permission and send one real local
-        notification a few seconds later, so you can see how session alerts will
-        actually work — not just a mockup.
+        Confirming may ask for notification permission and send one local
+        notification so you can see how session alerts will feel.
       </Body>
     </Screen>
   );

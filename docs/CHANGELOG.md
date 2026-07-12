@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-07-12 — Chapter 5: real Consent Snapshot display
+
+### Summary
+
+When a real `sessionId` is present, Consent Snapshot loads the latest non-withdrawn
+snapshot (or creates one via the trusted backend) and renders rows from that
+snapshot's `compatibility` JSON. Mock fixtures remain only for the demo path.
+
+### User-visible impact
+
+- Real pairs see live directional overlap from saved profiles, not mock people.
+- Fail-closed loading/error with retry if backend or profiles are missing.
+- Empty overlap lists clearly; confirm is disabled until shared items exist.
+
+### Developer impact
+
+- `sessionRepository.createSnapshot` returns `compatibility`
+- `getLatestSessionSnapshot` via participant RLS on `consent_snapshots`
+- ADR 0036
+
+### Related decision and roadmap
+
+- `docs/adr/0036-real-consent-snapshot-display.md`
+
 ## 2026-07-12 — Chapter 5: real discovery UI + permanent ban ends sessions
 
 ### Summary

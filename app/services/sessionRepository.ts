@@ -1,4 +1,5 @@
 import * as Crypto from "expo-crypto";
+import type { CompatibilityResult } from "@litmo/domain";
 import { runtimeConfig } from "../config/runtime.ts";
 import { PublicAppError, mapExternalError } from "./errors.ts";
 import { supabase } from "./supabase.ts";
@@ -6,6 +7,8 @@ import { supabase } from "./supabase.ts";
 export type PersistedSnapshot = {
   id: string;
   fingerprint: string;
+  /** Canonical compatibility payload from the trusted snapshot service. */
+  compatibility: CompatibilityResult | null;
 };
 
 export const sessionRepository = {
@@ -119,11 +122,46 @@ export const sessionRepository = {
         },
       );
       const body = (await response.json()) as {
-        snapshot?: { id: string; fingerprint: string };
+        snapshot?: {
+          id: string;
+          fingerprint: string;
+          compatibility?: CompatibilityResult;
+        };
         error?: string;
       };
       if (!response.ok || !body.snapshot) throw new Error(body.error);
-      return { id: body.snapshot.id, fingerprint: body.snapshot.fingerprint };
+      return {
+        id: body.snapshot.id,
+        fingerprint: body.snapshot.fingerprint,
+        compatibility: body.snapshot.compatibility ?? null,
+      };
+    } catch (error) {
+      throw mapExternalError(error);
+    }
+  },
+  /**
+   * Latest non-withdrawn snapshot for a session (participant RLS).
+   * Used to resume consent review without recomputing when one already exists.
+   */
+  async getLatestSessionSnapshot(
+    sessionId: string,
+  ): Promise<PersistedSnapshot | null> {
+    try {
+      const { data, error } = await supabase
+        .from("consent_snapshots")
+        .select("id,fingerprint,compatibility")
+        .eq("session_id", sessionId)
+        .is("withdrawn_at", null)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) return null;
+      return {
+        id: data.id as string,
+        fingerprint: data.fingerprint as string,
+        compatibility: (data.compatibility as CompatibilityResult) ?? null,
+      };
     } catch (error) {
       throw mapExternalError(error);
     }

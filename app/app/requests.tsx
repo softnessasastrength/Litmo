@@ -125,6 +125,7 @@ export default function IncomingRequestsScreen() {
         router.push({
           pathname: "/match/consent-snapshot",
           params: {
+            // Mock persona id only used if snapshot falls back; real path uses sessionId.
             id: personaIdForUserId(request.requesterId),
             sessionId: request.id,
           },
