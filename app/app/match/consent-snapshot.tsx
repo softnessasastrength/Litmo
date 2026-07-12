@@ -271,14 +271,28 @@ function ConsentSnapshotContent() {
           </Body>
         ) : (
           rows.map((item) => (
-            <View key={item.label} style={styles.row}>
-              <Text style={styles.label}>{item.label}</Text>
-              <Text style={styles.value}>{item.value}</Text>
+            <View
+              key={item.label}
+              accessible
+              accessibilityRole="text"
+              accessibilityLabel={`${item.label}: ${item.value}`}
+              style={styles.row}
+            >
+              <Text accessible={false} style={styles.label}>
+                {item.label}
+              </Text>
+              <Text accessible={false} allowFontScaling style={styles.value}>
+                {item.value}
+              </Text>
             </View>
           ))
         )}
       </Card>
-      <View accessibilityRole="radiogroup" style={styles.decisions}>
+      <View
+        accessibilityRole="radiogroup"
+        accessibilityLabel="Consent decision. Choose whether this snapshot matches what you agree to now."
+        style={styles.decisions}
+      >
         <Choice
           label="Yes, this matches what I agree to now"
           selected={decision === "yes"}
@@ -291,7 +305,12 @@ function ConsentSnapshotContent() {
         />
       </View>
       {decision === "no" ? (
-        <View style={styles.stop}>
+        <View
+          style={styles.stop}
+          accessible
+          accessibilityRole="summary"
+          accessibilityLabel="Nothing moves forward. Withdrawal cancels consent without penalty."
+        >
           <Text style={styles.stopTitle}>Nothing moves forward.</Text>
           <Text style={styles.stopBody}>
             You never owe an explanation. Withdrawal cancels pre-activation
@@ -308,6 +327,11 @@ function ConsentSnapshotContent() {
             }
             disabled={confirmState === "withdrawing"}
             onPress={() => void withdraw()}
+            accessibilityLabel={
+              isReal
+                ? "Withdraw and leave without granting consent"
+                : "Leave this mock snapshot without granting consent"
+            }
             accessibilityHint="Ends this consent process without requiring a reason. Does not grant consent."
           />
         </View>
@@ -351,6 +375,11 @@ function ConsentSnapshotContent() {
             (isReal && rows.length === 0)
           }
           onPress={confirm}
+          accessibilityHint={
+            decision !== "yes"
+              ? "Choose Yes above before confirming. Confirming records only your agreement to this snapshot."
+              : "Records your confirmation of this exact snapshot. Does not mean the other person has confirmed yet."
+          }
         />
       ) : null}
       {confirmState === "error" ? (

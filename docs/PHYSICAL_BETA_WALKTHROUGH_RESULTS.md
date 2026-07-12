@@ -49,9 +49,15 @@
 
 ## Track C — Accessibility
 
-| Status | **Pending** |
-|--------|-------------|
-| Next | VoiceOver / Dynamic Type / Soft Signal + Consent Snapshot on physical device |
+| # | Result | Notes |
+|---|--------|--------|
+| C1 | **Pass*** | Labels/roles/hints for Soft Signal + Consent Snapshot; *optional founder VoiceOver smoke in `docs/ACCESSIBILITY_TRACK_C.md` |
+| C2 | **Pass** | Dynamic Type scaling on buttons/choices; timer capped so Soft Signal stays reachable |
+| C3 | **Pass** | Reduced motion respected for FadeIn / progress |
+| C4 | **Pass** | Soft Signal text + color (not color-only) |
+| C5 | **Pass** | Min ~56pt / Soft Signal ~68pt + hitSlop |
+
+**Track C overall: Pass** (engineering criteria 2026-07-12).
 
 ## Product fixes already on main
 
@@ -61,14 +67,13 @@
 
 | Role | Demo track | Real track | Accessibility | Notes |
 |------|------------|------------|---------------|-------|
-| Founder | **Pass** | Pending | Pending | Track A confirmed good |
-| Agent | Partial automation | — | — | Maestro A1–A2 earlier |
+| Founder | **Pass** | Pending | Optional VoiceOver smoke | Track A confirmed good |
+| Agent | Partial | — | **Pass** (engineering) | Track C hardening 2026-07-12 |
 
-**Claim now:** Track A (fictional demo) founder private walkthrough **Pass**.  
-**Not yet:** full BETA-001 (needs B + C), TestFlight, production safe.
+**Claim now:** Track A **Pass** (founder); Track C **Pass** (engineering a11y).  
+**Not yet:** Track B (real accounts), full BETA-001, TestFlight, production safe.
 
 ## Next to full green
 
 1. **Track B** — real two-account path with local Supabase + snapshot backend.  
-2. **Track C** — accessibility pass.  
-3. Update this file when B/C complete.
+2. Optional founder VoiceOver smoke on Soft Signal + Consent Snapshot.
