@@ -6,7 +6,7 @@
 
 **A consent-centered, trauma-informed platform for safe, non-sexual, platonic physical connection between consenting adults.**
 
-[Why Litmo exists](docs/philosophy/00_Founding_Thesis.md) · [Consent flow](docs/CONSENT_FLOW.md) · [Trust system](docs/TRUST_SYSTEM.md) · [Architecture](docs/ARCHITECTURE.md)
+[Why Litmo exists](docs/philosophy/00_Founding_Thesis.md) · [Consent flow](docs/CONSENT_FLOW.md) · [Trust system](docs/TRUST_SYSTEM.md) · [Architecture](docs/ARCHITECTURE.md) · [Guided learning](docs/LEARNING_SYSTEM.md)
 
 </div>
 
@@ -24,13 +24,17 @@ It is **not** a dating app, therapy platform, or substitute for emergency or cli
 
 ```text
 Welcome → Vibe Quiz → Vibe Profile → Touch Language
-→ Discover → Match Detail → Consent Snapshot
+→ Learn → Discover → Match Detail → Consent Snapshot
 → Active Session → Wrap-Up → Trust Ledger
 ```
 
 ### Touch Language Profile
 
 Describe preferred hold types, pressure, duration, body zones, environment, and nervous-system context before meeting anyone.
+
+### Guided Learning
+
+Short, step-by-step modules explain Consent Snapshots, the Soft Signal, and Touch Language through plain-language instruction and fictional scenarios. Progress is private and device-local in the current implementation.
 
 ### Consent Snapshot
 
@@ -56,24 +60,27 @@ Litmo treats consent as session-specific and revocable at every moment.
 - Trust history supports context, not certainty.
 - Reports and uncomfortable outcomes require careful human review.
 
-Read the full [Consent Flow](docs/CONSENT_FLOW.md) and [Trust System](docs/TRUST_SYSTEM.md).
+Read the full [Consent Flow](docs/CONSENT_FLOW.md), [Trust System](docs/TRUST_SYSTEM.md), and [Consent Withdrawal and Emergency Stop](docs/CONSENT_WITHDRAWAL_AND_EMERGENCY_STOP.md).
 
 ## Current build
 
 Litmo currently includes:
 
-- a complete tap-through prototype for founder review;
-- Expo Router navigation;
-- Supabase-backed authentication and persistent profiles;
-- owner-only row-level security;
-- immutable touch and consent profile versions;
-- a framework-independent consent compatibility engine;
-- property-based safety tests;
-- and a backend-free demo mode for physical-device testing.
+- a complete tap-through prototype and backend-free demo mode;
+- Expo Router navigation and a native iOS development build path;
+- Supabase-backed authentication, device registration, and persistent profiles;
+- passkey-first authentication architecture and mandatory biometric app locking on supported devices;
+- owner-only row-level security and database-enforced session transitions;
+- immutable touch profiles and Consent Snapshots;
+- private session requests, realtime updates, unilateral withdrawal, emergency stop, and private wrap-ups;
+- device-bound sensitive-data protection and privacy-safe notifications;
+- a framework-independent consent compatibility engine with property-based safety tests;
+- guided learning modules with private local progress and resume behavior;
+- and documented release, privacy, security, and TestFlight boundaries.
 
-The discovery people, matches, sessions, and trust history remain synthetic while the safety and persistence foundations are developed.
+Some discovery content and trust-history presentation remain synthetic or beta-oriented while real-world moderation, reporting, accessibility validation, and operational safeguards are developed.
 
-> **Repository status:** Early application foundation. Not production-ready. Do not use the current build to arrange real-world sessions.
+> **Repository status:** Advanced private-beta foundation. Not production-ready. Do not use the current build to arrange real-world sessions with strangers.
 
 ## Architecture
 
@@ -81,19 +88,23 @@ The discovery people, matches, sessions, and trust history remain synthetic whil
 | --- | --- |
 | Mobile app | React Native · Expo SDK 55 · TypeScript |
 | Navigation | Expo Router |
-| Authentication | Supabase Auth |
+| Authentication | Supabase Auth · native passkey module · LocalAuthentication |
 | Domain boundary | TypeScript · Zod |
 | API | Node.js · Express |
 | Database | Supabase PostgreSQL |
 | Realtime | Supabase Realtime |
 | Notifications | Expo Notifications |
+| Local protected state | SecureStore · AsyncStorage for non-sensitive learning progress |
 
 ```text
 Litmo/
 ├── app/          Mobile application
 ├── backend/      Express API and domain logic
-├── supabase/     Schema, policies, and migrations
-├── docs/         Product, safety, and architecture documents
+├── shared/       Canonical domain and session rules
+├── supabase/     Schema, policies, migrations, and pgTAP tests
+├── docs/         Product, safety, architecture, and operations documents
+├── documents/    Governance and design philosophy
+├── wiki/         Publish-ready GitHub Wiki source
 └── .env.example
 ```
 
@@ -103,8 +114,9 @@ Litmo/
 
 - Node.js 20.19+
 - npm 10+
-- Docker Desktop
-- Expo Go on an iPhone
+- Docker Desktop for local Supabase and integration tests
+- Expo Go or an iOS development build on an iPhone
+- Xcode for native passkey, biometric, and release-build work
 
 ### Setup
 
@@ -116,21 +128,23 @@ cp app/.env.example app/.env
 npm run dev
 ```
 
-Copy the local Supabase URL and anon key from `npx supabase status` into `app/.env`, then scan Expo's QR code.
+Copy the local Supabase URL and anon key from `npx supabase status` into `app/.env`, then scan Expo's QR code or use the documented development-build path.
 
-See [Local Development](docs/LOCAL_DEVELOPMENT.md) for full instructions, including physical-device hostname configuration.
+See [Local Development](docs/LOCAL_DEVELOPMENT.md), [Machine Setup](docs/MACHINE_SETUP.md), and [Passkey Authentication](docs/PASSKEY_AUTHENTICATION.md) for platform-specific setup.
 
 ### Verify the repository
 
 ```bash
+npm run state:check
 npm run lint
 npm run typecheck
 npm test
 npm run test:integration
+npm run db:lint
 npm run build
 ```
 
-Integration tests require local Supabase to be running.
+Integration and database checks require local Supabase to be running. Native iOS and release verification require Xcode and appropriate signing configuration.
 
 ## Core session lifecycle
 
@@ -139,10 +153,10 @@ requested
   → consent_pending
   → consented
   → active
-  → completed | exited | cancelled
+  → completed | exited | cancelled | withdrawn
 ```
 
-A session cannot become `active` until both users affirm the same immutable Consent Snapshot.
+A session cannot become `active` until both users affirm the same immutable Consent Snapshot. Either participant may stop or withdraw unilaterally.
 
 ## Project philosophy
 
@@ -164,18 +178,22 @@ Start with the [Founding Thesis](docs/philosophy/00_Founding_Thesis.md): it expl
 
 ## Documentation
 
+- [Documentation Map](docs/DOCUMENTATION_MAP.md)
 - [Founding Thesis](docs/philosophy/00_Founding_Thesis.md)
+- [Litmo Constitution](docs/LITMO_CONSTITUTION.md)
 - [Concept](docs/CONCEPT.md)
-- [First Playable](docs/FIRST_PLAYABLE.md)
 - [Consent Flow](docs/CONSENT_FLOW.md)
 - [Trust System](docs/TRUST_SYSTEM.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Security Model](docs/SECURITY_MODEL.md)
 - [Data Classification](docs/DATA_CLASSIFICATION.md)
+- [Guided Learning System](docs/LEARNING_SYSTEM.md)
+- [Known Limitations](docs/KNOWN_LIMITATIONS.md)
+- [Release and TestFlight](docs/RELEASE_AND_TESTFLIGHT.md)
 
 ## Roadmap
 
-See [`ROADMAP.md`](ROADMAP.md) for chapter status and [`docs/roadmap/README.md`](docs/roadmap/README.md) for the full chapter sequence. Chapter 3 (Consent Engine) is complete (`docs/CHAPTER_3_COMPLETION.md`); Chapter 4 (Session Lifecycle) is active. Passkey behavior and deployment requirements are documented in [`docs/PASSKEY_AUTHENTICATION.md`](docs/PASSKEY_AUTHENTICATION.md).
+See [`ROADMAP.md`](ROADMAP.md) for chapter status and [`docs/roadmap/README.md`](docs/roadmap/README.md) for the full chapter sequence. Chapters 1–4 are implemented at foundation level. Guided learning now has a first vertical slice; the next product work should focus on real-device validation, fictional two-person practice, accessibility review, moderation/reporting design, and invite-only beta operations.
 
 ## Contributing
 
@@ -183,7 +201,7 @@ Contributions should preserve Litmo's core principle:
 
 > **Safety logic is product logic, not decorative copy.**
 
-Read the [Founding Thesis](docs/philosophy/00_Founding_Thesis.md) and [Concept](docs/CONCEPT.md) before changing product behavior.
+Read the [Founding Thesis](docs/philosophy/00_Founding_Thesis.md), [Constitution](docs/LITMO_CONSTITUTION.md), [Concept](docs/CONCEPT.md), and [current handoff](CURRENT_STATE.md) before changing product behavior.
 
 ## License
 
