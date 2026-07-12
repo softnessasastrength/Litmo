@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-07-12 — Incoming session-request Realtime
+
+### Summary
+
+Signed-in recipients now see new session requests without manually reopening
+the requests screen. Home shows a live pending count; `/requests` quietly
+reloads when a request is created or changes.
+
+### User-visible impact
+
+While signed in with Home or Session requests open, a new request from another
+participant appears without a pull-to-refresh. Accepting still only begins
+consent review — Realtime never grants consent.
+
+### Developer impact
+
+- `sessionRepository.subscribeToIncomingRequests` (INSERT + UPDATE on
+  `sessions` filtered by `user_b`, reusing migration 016's publication).
+- No new migration.
+- ADR 0019.
+
+### Related decision and roadmap
+
+- `docs/adr/0019-incoming-request-realtime.md`
+- `docs/CHAPTER_4_NEXT_STEPS.md`
+
 ## 2026-07-12 — Demo path body-zone step and practice session request
 
 ### Summary

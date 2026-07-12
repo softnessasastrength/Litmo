@@ -25,6 +25,6 @@ A real session's elapsed timer reflects actual activation time rather than a per
 
 ## Follow-up work
 
-- Realtime/push notification when a new request arrives (still manual, per `docs/CHAPTER_4_NEXT_STEPS.md`).
-- Wrap-up submission offline retry/queue.
+- ~~Realtime when a new request arrives~~ Done in ADR 0019 (in-app; push still deferred).
+- ~~Wrap-up submission offline retry/queue~~ Done in ADR 0017.
 - The double-navigation guard (ref) is a pragmatic fix for a same-device race; a cleaner long-term approach might be for `stop`/`endTogether` to simply rely on the Realtime callback for navigation instead of navigating directly themselves, removing the duplication path entirely — not done here to keep this change minimal and not touch already-verified working code paths.

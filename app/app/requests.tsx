@@ -31,45 +31,58 @@ export default function IncomingRequestsScreen() {
   >({ kind: "loading" });
   const [respondingTo, setRespondingTo] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    if (!user) return;
-    setState({ kind: "loading" });
-    try {
-      const [requests, { data: profiles, error: profilesError }] =
-        await Promise.all([
-          sessionRepository.listIncomingRequests(),
-          supabase.rpc("discovery_profiles"),
-        ]);
-      if (profilesError) throw profilesError;
-      const nameByUserId = new Map<string, string>(
-        (profiles ?? []).map(
-          (row: { user_id: string; display_name: string }) => [
-            row.user_id,
-            row.display_name,
-          ],
-        ),
-      );
-      setState({
-        kind: "ready",
-        requests: requests.map((request) => ({
-          ...request,
-          requesterName: nameByUserId.get(request.requesterId) ?? "Someone",
-        })),
-      });
-    } catch (caught) {
-      setState({
-        kind: "error",
-        message:
-          caught instanceof Error
-            ? caught.message
-            : "Requests could not be loaded.",
-      });
-    }
-  }, [user]);
+  const load = useCallback(
+    async (options?: { quiet?: boolean }) => {
+      if (!user) return;
+      if (!options?.quiet) setState({ kind: "loading" });
+      try {
+        const [requests, { data: profiles, error: profilesError }] =
+          await Promise.all([
+            sessionRepository.listIncomingRequests(),
+            supabase.rpc("discovery_profiles"),
+          ]);
+        if (profilesError) throw profilesError;
+        const nameByUserId = new Map<string, string>(
+          (profiles ?? []).map(
+            (row: { user_id: string; display_name: string }) => [
+              row.user_id,
+              row.display_name,
+            ],
+          ),
+        );
+        setState({
+          kind: "ready",
+          requests: requests.map((request) => ({
+            ...request,
+            requesterName: nameByUserId.get(request.requesterId) ?? "Someone",
+          })),
+        });
+      } catch (caught) {
+        setState({
+          kind: "error",
+          message:
+            caught instanceof Error
+              ? caught.message
+              : "Requests could not be loaded.",
+        });
+      }
+    },
+    [user],
+  );
 
   useEffect(() => {
     void load();
   }, [load]);
+
+  // Live refresh when a new request is created or an existing one changes
+  // (accept/decline/expire elsewhere). Quiet reload avoids a full-screen
+  // flash while the user is already looking at this list.
+  useEffect(() => {
+    if (!user || status !== "authenticated") return;
+    return sessionRepository.subscribeToIncomingRequests(user.id, () => {
+      void load({ quiet: true });
+    });
+  }, [user, status, load]);
 
   const respond = async (
     request: IncomingRequest,
