@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-07-12 — Chapter 5: human moderation review queue
+
+### Summary
+
+Staff-only human-review queue for structured reports: auto-open cases with
+category priority, claim/assign, internal notes, resolve with coarse
+reporter-visible outcomes. No auto-punishment and no consumer admin UI yet.
+
+### User-visible impact
+
+- When a report is claimed, reporter status may become **Under review**.
+- When resolved, reporter sees coarse closed outcome only.
+
+### Developer impact
+
+- Migration `025_moderation_review_queue.sql`
+- `staff_roles`, `moderation_cases`, `moderation_case_notes`
+- RPCs: `list_moderation_queue`, `claim_moderation_case`,
+  `add_moderation_note`, `resolve_moderation_case`
+- pgTAP `moderation_review_queue.test.sql`; ADR 0027
+
+### Migration and setup impact
+
+`npm run db:reset` (or apply 025). Grant staff via `staff_roles` as service
+role / ops (not self-service).
+
+### Related decision and roadmap
+
+- `docs/adr/0027-moderation-review-queue.md`
+- `docs/CHAPTER_5_NEXT_STEPS.md`
+
 ## 2026-07-12 — Chapter 5: structured user reports (intake)
 
 ### Summary
