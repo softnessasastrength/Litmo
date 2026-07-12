@@ -5,6 +5,7 @@ import { Body, Button, Eyebrow, Screen, Title } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { mapExternalError } from "../../services/errors";
 import { colors } from "../../theme";
+import { runtimeConfig } from "../../config/runtime";
 
 export default function SignInScreen() {
   const { signInWithPasskey, enterDemoMode, status } = useAuth();
@@ -42,14 +43,18 @@ export default function SignInScreen() {
       <Link href={"/auth/recovery" as never} style={styles.link}>
         Can’t access your passkey?
       </Link>
-      <Button
-        variant="secondary"
-        label="Continue without an account (demo mode)"
-        onPress={enterDemoMode}
-      />
-      <Body muted center>
-        Demo mode uses imaginary people and local data only.
-      </Body>
+      {runtimeConfig.allowDemo ? (
+        <>
+          <Button
+            variant="secondary"
+            label="Continue without an account (demo mode)"
+            onPress={enterDemoMode}
+          />
+          <Body muted center>
+            Demo mode uses imaginary people and local data only.
+          </Body>
+        </>
+      ) : null}
     </Screen>
   );
 }

@@ -42,5 +42,7 @@
 
 ## Release blockers
 
+- TestFlight external testing is blocked by missing hosted staging validation, staging/production AASA deployment, push credentials, complete account deletion/session revocation/local clearing, audited first-launch beta onboarding, final privacy policy/App Store disclosures, independent security/privacy/accessibility review, signed archive inspection, and physical-device scenario completion. Automated environment/release validation and a structured plan exist in `docs/RELEASE_AND_TESTFLIGHT.md`.
+
 - Canonical snapshot persistence, trusted server computation/creation, exact-fingerprint confirmation, withdrawal, material profile-change invalidation, `ready -> active` enforcement, and participant-private wrap-up persistence now exist. Transition-specific actor authorization remains unimplemented, and no mobile screen calls these boundaries. Mobile session screens therefore remain demo-only. Mitigation: profile history is immutable, stale confirmation is cleared transactionally, activation remains database-gated, and wrap-ups are owner-only. Removal criterion: authenticated request/mobile wiring, role enforcement, realtime recovery, wrap-up UI recovery states, and two-client tests.
 - Hosted CI (GitHub Actions) has not been run from this branch. The local Docker blocker is resolved (see above).

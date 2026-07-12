@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-12 — TestFlight and production-readiness hardening
+
+Added explicit development/staging/production bundle/domain profiles, production-disabled demo/diagnostics surfaces, automated release validation, a non-sensitive diagnostics screen, privacy-policy draft, and structured TestFlight/release/rollback plan. Automated hardening passes with synthetic release variables; hosted services, deletion operations, reviewed onboarding/privacy disclosures, signed archive, and physical-device plan remain explicit blockers, so TestFlight readiness is not claimed.
+
 ## 2026-07-12 — Consent withdrawal and offline emergency stop
 
 Added a reason-free, single-party transactional withdrawal authority and an offline-first mobile emergency stop. Migration 014 serializes against activation, clears confirmations, terminalizes the session, and writes one idempotent minimal audit event. Mobile disables locally, locks decrypted state, persists only a Keychain request identifier/session identifier, and reconciles after connectivity returns. ADR 0012 documents atomicity, privacy, race behavior, and remaining Realtime/push limitations.
