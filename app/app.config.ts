@@ -43,6 +43,15 @@ export default {
     ...(freeTierBuild
       ? {}
       : { associatedDomains: [`webcredentials:${selected.domain}`] }),
+    // Declared Age Range capability (ADR 0025). Requires a paid team /
+    // matching provisioning profile for a real device signal; without it
+    // the native module returns "unavailable" and development self-attest
+    // may be used outside production.
+    entitlements: {
+      ...(base.expo.ios as { entitlements?: Record<string, unknown> })
+        ?.entitlements,
+      "com.apple.developer.declared-age-range": true,
+    },
   },
   extra: { ...base.expo.extra, appEnvironment: environment },
 };

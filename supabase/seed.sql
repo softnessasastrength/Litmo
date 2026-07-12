@@ -27,10 +27,10 @@ values
   ('10000000-0000-4000-8000-000000000004', '10000000-0000-4000-8000-000000000004', 'jonah-persona.demo@litmo.local', '{"sub":"10000000-0000-4000-8000-000000000004","email":"jonah-persona.demo@litmo.local"}', 'email', now(), now(), now())
 on conflict (provider_id, provider) do nothing;
 
-update public.profiles set pronouns = 'she/her', bio = 'Synthetic account for local RLS testing.', vibe_archetype = 'Quiet Tidepool', onboarding_completed_at = now() where user_id = '10000000-0000-4000-8000-000000000001';
-update public.profiles set pronouns = 'they/them', bio = 'Synthetic account for local RLS testing.', vibe_archetype = 'Wandering Lantern', onboarding_completed_at = now() where user_id = '10000000-0000-4000-8000-000000000002';
-update public.profiles set pronouns = 'they/them', bio = 'Synthetic mock-discovery persona for local request-flow testing.', vibe_archetype = 'Wandering Lantern', onboarding_completed_at = now() where user_id = '10000000-0000-4000-8000-000000000003';
-update public.profiles set pronouns = 'he/him', bio = 'Synthetic mock-discovery persona for local request-flow testing.', vibe_archetype = 'Gentle Hearth', onboarding_completed_at = now() where user_id = '10000000-0000-4000-8000-000000000004';
+update public.profiles set pronouns = 'she/her', bio = 'Synthetic account for local RLS testing.', vibe_archetype = 'Quiet Tidepool', onboarding_completed_at = now(), age_signal_status = 'adult', age_signal_source = 'development_self_attest', age_signal_at = now() where user_id = '10000000-0000-4000-8000-000000000001';
+update public.profiles set pronouns = 'they/them', bio = 'Synthetic account for local RLS testing.', vibe_archetype = 'Wandering Lantern', onboarding_completed_at = now(), age_signal_status = 'adult', age_signal_source = 'development_self_attest', age_signal_at = now() where user_id = '10000000-0000-4000-8000-000000000002';
+update public.profiles set pronouns = 'they/them', bio = 'Synthetic mock-discovery persona for local request-flow testing.', vibe_archetype = 'Wandering Lantern', onboarding_completed_at = now(), age_signal_status = 'adult', age_signal_source = 'development_self_attest', age_signal_at = now() where user_id = '10000000-0000-4000-8000-000000000003';
+update public.profiles set pronouns = 'he/him', bio = 'Synthetic mock-discovery persona for local request-flow testing.', vibe_archetype = 'Gentle Hearth', onboarding_completed_at = now(), age_signal_status = 'adult', age_signal_source = 'development_self_attest', age_signal_at = now() where user_id = '10000000-0000-4000-8000-000000000004';
 
 -- Touch/consent profiles for all four seeded accounts, matching
 -- app/data/mockConsentProfiles.ts's legacyProfiles fixtures exactly, so

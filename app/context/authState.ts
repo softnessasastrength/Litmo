@@ -6,6 +6,7 @@ export type AuthState = {
     | "authenticating"
     | "registering"
     | "onboarding"
+    | "age_gate"
     | "authenticated"
     | "expired"
     | "revoked"
@@ -16,7 +17,12 @@ export type AuthState = {
   error: PublicAppError | null;
 };
 export type AuthAction =
-  | { type: "RESTORED"; session: Session | null; onboardingComplete?: boolean }
+  | {
+      type: "RESTORED";
+      session: Session | null;
+      onboardingComplete?: boolean;
+      ageEligible?: boolean;
+    }
   | { type: "AUTHENTICATING" }
   | { type: "REGISTERING" }
   | { type: "EXPIRED" }
@@ -46,8 +52,13 @@ export function authReducer(_state: AuthState, action: AuthAction): AuthState {
   if (action.type === "ENTERED_DEMO_MODE")
     return { ...initialAuthState, status: "demo" };
   if (!action.session) return { ...initialAuthState, status: "locked" };
+  // Order: finish product onboarding, then adult eligibility, then app.
+  let status: AuthState["status"] = "onboarding";
+  if (action.onboardingComplete) {
+    status = action.ageEligible ? "authenticated" : "age_gate";
+  }
   return {
-    status: action.onboardingComplete ? "authenticated" : "onboarding",
+    status,
     session: action.session,
     user: action.session.user,
     error: null,
@@ -56,7 +67,7 @@ export function authReducer(_state: AuthState, action: AuthAction): AuthState {
 export function protectedRouteFor(
   status: AuthState["status"],
   route: { inAuthGroup: boolean; isPublicRoute: boolean },
-): "/auth/sign-in" | "/entry" | "/" | "/home" | null {
+): "/auth/sign-in" | "/entry" | "/" | "/home" | "/onboarding/age-gate" | null {
   const { inAuthGroup, isPublicRoute } = route;
   if (status === "error") return null;
   if (status === "demo") return inAuthGroup ? "/" : null;
@@ -68,6 +79,8 @@ export function protectedRouteFor(
   if (status === "locked" || status === "expired" || status === "revoked")
     return isPublicRoute ? null : "/entry";
   if (status === "authenticating" || status === "registering") return null;
+  if (status === "age_gate") return "/onboarding/age-gate";
   if (!inAuthGroup) return null;
-  return status === "authenticated" ? "/home" : "/";
+  if (status === "authenticated") return "/home";
+  return "/";
 }

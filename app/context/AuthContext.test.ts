@@ -18,14 +18,33 @@ test("restored new user enters onboarding", () =>
     }).status,
     "onboarding",
   ));
-test("restored complete user reaches authenticated state", () =>
+test("restored complete user without age signal enters age_gate", () =>
   assert.equal(
     authReducer(initialAuthState, {
       type: "RESTORED",
       session,
       onboardingComplete: true,
+      ageEligible: false,
+    }).status,
+    "age_gate",
+  ));
+test("restored complete adult user reaches authenticated state", () =>
+  assert.equal(
+    authReducer(initialAuthState, {
+      type: "RESTORED",
+      session,
+      onboardingComplete: true,
+      ageEligible: true,
     }).status,
     "authenticated",
+  ));
+test("age_gate routes to the age gate screen", () =>
+  assert.equal(
+    protectedRouteFor("age_gate", {
+      inAuthGroup: false,
+      isPublicRoute: false,
+    }),
+    "/onboarding/age-gate",
   ));
 test("logout clears session authority", () =>
   assert.deepEqual(

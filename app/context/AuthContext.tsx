@@ -10,6 +10,7 @@ import {
   useRef,
 } from "react";
 import { mapExternalError, type PublicAppError } from "../services/errors";
+import { ageGateService } from "../services/ageGateService";
 import { profileRepository } from "../services/profileRepository";
 import { environmentError, supabase } from "../services/supabase";
 import { authService } from "../services/authService";
@@ -42,10 +43,21 @@ export function AuthProvider({ children }: PropsWithChildren) {
       await sessionCompleteService.reconcile();
       await sessionWrapupService.reconcile();
       const profile = await profileRepository.getOwnProfile(session.user.id);
+      const onboardingComplete = Boolean(profile.onboardingCompletedAt);
+      let ageEligible = false;
+      if (onboardingComplete) {
+        try {
+          ageEligible = (await ageGateService.getEligibility(session.user.id))
+            .isAdult;
+        } catch {
+          ageEligible = false;
+        }
+      }
       dispatch({
         type: "RESTORED",
         session,
-        onboardingComplete: Boolean(profile.onboardingCompletedAt),
+        onboardingComplete,
+        ageEligible,
       });
     } catch (error) {
       const mapped = mapExternalError(error);
@@ -87,6 +99,15 @@ export function AuthProvider({ children }: PropsWithChildren) {
       inAuth ||
       (segments as readonly string[]).length === 0 ||
       segments[0] === "entry";
+    // Stay on age-gate without replace loop once already there.
+    const routeParts = segments as readonly string[];
+    if (
+      state.status === "age_gate" &&
+      routeParts[0] === "onboarding" &&
+      routeParts[1] === "age-gate"
+    ) {
+      return;
+    }
     const destination = protectedRouteFor(state.status, {
       inAuthGroup: inAuth,
       isPublicRoute,
