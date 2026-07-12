@@ -52,13 +52,17 @@ Started 2026-07-12 after Chapter 4 engineering completion
 - **Permanent ban ends open work** (ADR 0035, migration 032):
   - Pre-activation cancelled; active → `safety_ended`
   - Holds still only cancel `requested`
+- **Real Consent Snapshot display** (ADR 0036):
+  - Real `sessionId` path loads/creates trusted snapshot and renders
+    `compatibility` rows (no mock fixtures)
+  - Demo path (no `sessionId`) unchanged
+  - Requires `EXPO_PUBLIC_BACKEND_URL` + snapshot service for create
 
 ## Next coherent slices (in order)
 
-1. Richer staff evidence access (encrypted notes are device-bound today).
-2. Real Consent Snapshot path for accepted real pairs (beyond mock fixtures).
+1. Physical-device accessibility + beta validation walkthrough.
+2. Richer staff evidence access (encrypted notes are device-bound today).
 3. Optional: end active sessions on matching_hold (product still open for blocks).
-4. Physical-device accessibility + beta validation walkthrough.
 
 ## Product decisions still open
 
