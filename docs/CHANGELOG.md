@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-07-12 — Chapter 5: real discovery UI + permanent ban ends sessions
+
+### Summary
+
+Signed-in discovery loads `discovery_profiles` with peer-visible age/session
+facts. Demo still uses synthetic neighbors. Permanent bans cancel pre-activation
+work and safety-end active sessions; temporary holds still only cancel requests.
+
+### User-visible impact
+
+- Authenticated Discover: real people (or empty fail-closed list).
+- Match detail for UUIDs uses repository data + real request/block/report.
+- Permanent ban closes open matching work fail-closed.
+
+### Developer impact
+
+- Migration `032_permanent_ban_ends_sessions.sql`
+- `discoveryService`; discover + match dual-mode
+- ADR 0035; pgTAP `permanent_ban_sessions.test.sql`
+
+### Related decision and roadmap
+
+- `docs/adr/0035-permanent-ban-ends-open-sessions.md`
+
 ## 2026-07-12 — Chapter 5: peer signals + restriction appeals
 
 ### Summary
