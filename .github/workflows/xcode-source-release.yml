@@ -40,9 +40,10 @@ jobs:
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v7
         with:
-          name: Litmo-Xcode-Source-${{ steps.version.outputs.value }}
-          path: dist/Litmo-Xcode-Source-${{ steps.version.outputs.value }}.zip
+          name: Litmo-Xcode-Source-${{ steps.version.outputs.value }}-tarball
+          path: dist/Litmo-Xcode-Source-${{ steps.version.outputs.value }}.tar.gz
           if-no-files-found: error
+          compression-level: 0
 
       - name: Attach archive to GitHub Release
         if: github.ref_type == 'tag'
@@ -50,7 +51,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          archive="dist/Litmo-Xcode-Source-${{ steps.version.outputs.value }}.zip"
+          archive="dist/Litmo-Xcode-Source-${{ steps.version.outputs.value }}.tar.gz"
           if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
             gh release upload "${GITHUB_REF_NAME}" "$archive" --clobber
           else
