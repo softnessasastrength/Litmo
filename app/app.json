@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "scheme": "litmo",
     "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
     "plugins": ["expo-router", "./plugins/withIOSXcode27Fixes.cjs"],
     "experiments": {
       "typedRoutes": true
