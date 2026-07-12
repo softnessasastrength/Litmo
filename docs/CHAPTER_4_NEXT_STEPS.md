@@ -71,11 +71,13 @@ Also still open: the Express backend's LAN dependency for snapshot creation (acc
 
 Landed 2026-07-12: the deterministic two-client Chapter 4 integration scenario (`integration/chapter4-session-lifecycle.test.mjs`, run via `npm run test:integration`). It covers request → accept → dual snapshot confirmation → activation → Soft Signal → independent private wrap-ups against local Supabase, using authenticated RPCs plus the same trusted snapshot service the Express route uses. Migration `018_service_role_snapshot_read_grants.sql` grants `service_role` SELECT on the three tables that repository must read (a pre-existing gap that made trusted snapshot creation fail closed with `snapshot_storage_failed`).
 
-The database half of wrap-up is complete in migration 012 and ADR 0008. The database half and mobile UI for request creation, response, request expiration, snapshot creation, and confirmation are all complete and locally verified (migrations 015 and 017, ADRs 0015 and 0018). Dual-confirmation device verification, the real timer/Realtime sync, and the two-client integration scenario are also already complete; this document is therefore now mainly a "what remains" handoff rather than an implementation checklist for those pieces.
+Landed 2026-07-12 (`docs/adr/0019-incoming-request-realtime.md`): signed-in recipients subscribe to `sessions` Realtime for rows where they are `user_b`. The requests list quietly refreshes on INSERT/UPDATE, and Home shows a live pending-request count. This is in-app only — not push notifications.
+
+The database half of wrap-up is complete in migration 012 and ADR 0008. The database half and mobile UI for request creation, response, request expiration, snapshot creation, and confirmation are all complete and locally verified (migrations 015 and 017, ADRs 0015 and 0018). Dual-confirmation device verification, the real timer/Realtime sync, the two-client integration scenario, and incoming-request Realtime are also already complete; this document is therefore now mainly a "what remains" handoff rather than an implementation checklist for those pieces.
 
 ## Not yet scoped (fine to leave for later)
 
-Connectivity/offline recovery edge cases, later pre-activation expiry policy beyond `requested`, blocking/eligibility checks, and Realtime delivery for new incoming requests.
+Connectivity/offline recovery edge cases, later pre-activation expiry policy beyond `requested`, blocking/eligibility checks, and OS push notifications for new requests (in-app Realtime is done).
 
 ## Resolved 2026-07-12: mock discovery now has real accounts to request
 
@@ -87,4 +89,4 @@ If picking this up fresh (new session, new agent, or just after a break):
 
 1. `git checkout agent/chapter-4-session-lifecycle` (or start a new branch off it if it's already merged).
 2. Confirm Docker/Supabase still work: `npm run db:start && npm run db:reset && env HOME=/tmp npx supabase test db` should show 111/111 passing.
-3. Deliverables 1–3's major request/confirm/activate/wrap-up boundaries are complete, including 24-hour request expiration and the two-client integration scenario (ADRs 0005, 0006, 0008, 0014, 0015, 0018; migration 018). The next task is one of the remaining chapter gaps above (blocking/eligibility policy, later pre-activation expiry, new-request Realtime, or offline recovery edge cases).
+3. Deliverables 1–3's major request/confirm/activate/wrap-up boundaries are complete, including 24-hour request expiration, the two-client integration scenario, and incoming-request Realtime (ADRs 0005, 0006, 0008, 0014, 0015, 0018, 0019; migration 018). The next task is one of the remaining chapter gaps above (blocking/eligibility policy, later pre-activation expiry, push notifications, or offline recovery edge cases).

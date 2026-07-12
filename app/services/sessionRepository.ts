@@ -218,6 +218,46 @@ export const sessionRepository = {
       void supabase.removeChannel(channel);
     };
   },
+  /**
+   * Subscribes to session rows where this user is the recipient (`user_b`).
+   * `request_session` always stores the recipient as user_b (migration 015).
+   * Fires on INSERT (new request) and UPDATE (accept/decline/expire) so the
+   * incoming-requests UI and home badge can refresh without a manual pull.
+   * Uses the existing `sessions` Realtime publication (migration 016); RLS
+   * still limits which rows this client can observe. Not push notifications —
+   * in-app only. Returns an unsubscribe function.
+   */
+  subscribeToIncomingRequests(
+    recipientId: string,
+    onChange: () => void,
+  ): () => void {
+    const channel = supabase
+      .channel(`incoming-requests-${recipientId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "sessions",
+          filter: `user_b=eq.${recipientId}`,
+        },
+        () => onChange(),
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "sessions",
+          filter: `user_b=eq.${recipientId}`,
+        },
+        () => onChange(),
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  },
   /** Incoming pending requests where the signed-in user is the recipient. */
   async listIncomingRequests(): Promise<
     Array<{
