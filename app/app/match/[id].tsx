@@ -17,6 +17,7 @@ import {
   type MockPersonaId,
 } from "../../data/mockConsentProfiles";
 import { useAuth } from "../../context/AuthContext";
+import { blockService } from "../../services/blockService";
 import { sessionRepository } from "../../services/sessionRepository";
 import { colors } from "../../theme";
 
@@ -31,7 +32,12 @@ export default function MatchDetailScreen() {
   >("idle");
   const [requestError, setRequestError] = useState("");
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [blockState, setBlockState] = useState<
+    "idle" | "blocking" | "blocked" | "error"
+  >("idle");
+  const [blockError, setBlockError] = useState("");
   const canRequest = status === "authenticated";
+  const personaTargetId = personaUserId[profile.id as MockPersonaId];
 
   const sendRequest = async () => {
     setRequestState("sending");
@@ -66,6 +72,24 @@ export default function MatchDetailScreen() {
         caught instanceof Error
           ? caught.message
           : "The request could not be cancelled.",
+      );
+    }
+  };
+
+  const blockPerson = async () => {
+    setBlockState("blocking");
+    setBlockError("");
+    try {
+      await blockService.blockUser(personaTargetId);
+      setBlockState("blocked");
+      setSessionId(null);
+      setRequestState("idle");
+    } catch (caught) {
+      setBlockState("error");
+      setBlockError(
+        caught instanceof Error
+          ? caught.message
+          : "That account could not be blocked right now.",
       );
     }
   };
@@ -201,6 +225,34 @@ export default function MatchDetailScreen() {
         }
         accessibilityHint="Opens the mock Consent Snapshot. Confirming is practice only unless a real session ID is present."
       />
+      {canRequest && blockState !== "blocked" ? (
+        <>
+          <Button
+            variant="signal"
+            label={
+              blockState === "blocking" ? "Blocking…" : `Block ${profile.name}`
+            }
+            disabled={blockState === "blocking"}
+            onPress={() => void blockPerson()}
+            accessibilityHint="Immediately and privately blocks this account. They are not told who blocked them. Pending requests are cancelled."
+          />
+          <Body muted center>
+            Blocking is private and immediate. They will not be told it was you.
+            Pending session requests between you are cancelled.
+          </Body>
+          {blockState === "error" ? (
+            <Text accessibilityRole="alert" style={styles.error}>
+              {blockError}
+            </Text>
+          ) : null}
+        </>
+      ) : null}
+      {blockState === "blocked" ? (
+        <Body muted center>
+          Blocked. You will not see each other in discovery or requests. Manage
+          blocks in Settings.
+        </Body>
+      ) : null}
     </Screen>
   );
 }

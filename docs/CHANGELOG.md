@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-07-12 — Chapter 5: one-way user blocks
+
+### Summary
+
+First Trust & Moderation slice: immediate, non-disclosing one-way blocks that
+hide people from discovery and block session requests in either direction.
+Pending requests between the pair are cancelled.
+
+### User-visible impact
+
+- **Block** on a match profile (signed-in only).
+- Settings → **Blocked accounts** with private unblock.
+- Blocked users are not told who blocked them.
+- Requesting a blocked account fails with the same opaque “not available”
+  message as a missing profile.
+
+### Developer impact
+
+- Migration `022_user_blocks.sql`
+- `blockService`; `/security/blocked`
+- pgTAP `user_blocks.test.sql`; ADR 0024; `CHAPTER_5_NEXT_STEPS.md`
+
+### Migration and setup impact
+
+`npm run db:reset` (or apply 022).
+
+### Related decision and roadmap
+
+- `docs/adr/0024-one-way-user-blocks.md`
+- `docs/roadmap/CHAPTER_5_TRUST_AND_MODERATION.md`
+
 ## 2026-07-12 — Pre-activation review expiration and Chapter 4 completion
 
 ### Summary

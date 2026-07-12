@@ -29,6 +29,14 @@ function SettingsContent() {
         label="Passkeys and registered devices"
         onPress={() => router.push("/security/devices" as never)}
       />
+      {status === "authenticated" ? (
+        <Button
+          variant="secondary"
+          label="Blocked accounts"
+          onPress={() => router.push("/security/blocked" as never)}
+          accessibilityHint="View and unblock accounts you have privately blocked"
+        />
+      ) : null}
       <Button
         variant="secondary"
         label="softnessasastrength.com"

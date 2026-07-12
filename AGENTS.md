@@ -38,11 +38,10 @@ Do not block the visible mobile experience on unfinished infrastructure when saf
 
 ## Current chapter assignment
 
-Chapter 3 (Consent Engine) is complete; see `docs/CHAPTER_3_COMPLETION.md`. Promoted by explicit human instruction to:
-
-Implement **Chapter 4: Session Lifecycle** from:
-
-`docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
+Chapter 4 (Session Lifecycle) engineering is complete; see
+`docs/CHAPTER_4_COMPLETION.md`. Chapter 5 first slice (one-way blocks) is in
+progress; see `docs/CHAPTER_5_NEXT_STEPS.md` and
+`docs/roadmap/CHAPTER_5_TRUST_AND_MODERATION.md`.
 
 The human directing this work has stated their concrete near-term goal is a build they can run on their own physical iPhone via Expo Go. **Demo path status (2026-07-12):** backend-free demo mode exists (`docs/adr/0003-demo-mode-entry-point.md`); Face ID is required only for real account sessions (ADR 0007 amendment), so Expo Go can walk the fictional path without Docker or `.env`. Documented in `docs/LOCAL_DEVELOPMENT.md`. Chapter 4 session-lifecycle work continues for remaining gaps (blocking policy, later pre-activation expiry, new-request Realtime)—not for re-opening the demo entry path.
 
