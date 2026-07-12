@@ -23,6 +23,8 @@ select public.apply_account_restriction(
   'gate test'
 ) as hold_id \gset
 
+-- Session status is participant-RLS; assert as postgres (not the moderator).
+reset role;
 select is(
   (select status from public.sessions where id = :'sid'::uuid),
   'cancelled',
@@ -96,6 +98,7 @@ select lives_ok(
   'restricted recipient may still decline'
 );
 
+reset role;
 select is(
   (select status from public.sessions where id = 'b1000000-0000-4000-8000-000000000088'),
   'declined',
