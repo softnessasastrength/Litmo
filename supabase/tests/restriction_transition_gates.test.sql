@@ -31,21 +31,14 @@ select is(
   'applying a restriction cancels pending requested sessions'
 );
 
--- Fresh request cannot be accepted while recipient is restricted.
--- First lift, request, then re-restrict before accept? Or restrict requester.
--- Lift 0002, create request 0001→0004, restrict 0004, 0004 cannot accept.
+-- Lift 0002 as staff, then restrict 0004 for accept-gate tests.
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000003', true);
 select lives_ok(
   'select public.lift_account_restriction(''' || :'hold_id' || '''::uuid)',
   'lift hold on 0002'
 );
 
-select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000001', true);
-select public.request_session(
-  '10000000-0000-4000-8000-000000000004',
-  'gate-req-2'
-) as sid2 \gset
-
-select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000003', true);
 select public.apply_account_restriction(
   '10000000-0000-4000-8000-000000000004',
   'matching_hold',
@@ -54,9 +47,7 @@ select public.apply_account_restriction(
   null
 );
 
--- Restriction cancelled the request; open another after temporarily lifting
--- is heavy. Instead: create session as requested via insert as postgres,
--- then attempt accept while restricted.
+-- Create a requested session as postgres, then attempt accept while restricted.
 reset role;
 -- Ensure 0004 still restricted
 select is(
