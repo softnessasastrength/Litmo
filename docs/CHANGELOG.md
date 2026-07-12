@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-07-12 — Outgoing requests, cancel, and local request alert
+
+### Summary
+
+Requesters can list and cancel pending session requests. Recipients get a
+privacy-safe local notification when a new request arrives (Realtime INSERT),
+without revealing names or consent details.
+
+### User-visible impact
+
+- Session requests screen shows **Incoming** and **Outgoing**.
+- **Cancel request** withdraws a pending ask (no explanation required).
+- A new incoming request can raise a local device notification: “Open Litmo
+  for a private update.”
+
+### Developer impact
+
+- Migration `019_outgoing_requests.sql` — `list_outgoing_requests()`
+- `sessionRepository.listOutgoingRequests` / `cancelRequest`
+- `notifyPrivateUpdate()`; Realtime callback now passes `INSERT` | `UPDATE`
+- pgTAP `session_outgoing_requests.test.sql`; ADR 0021
+
+### Migration and setup impact
+
+Run `npm run db:reset` (or apply migration 019) for local Supabase.
+
+### Related decision and roadmap
+
+- `docs/adr/0021-outgoing-requests-and-local-request-alert.md`
+- `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md` (cancel requests)
+
 ## 2026-07-12 — Durable offline retry for End together
 
 ### Summary

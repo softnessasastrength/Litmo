@@ -37,3 +37,18 @@ export async function scheduleDemoNotification(
   });
   return true;
 }
+
+/**
+ * Immediate privacy-safe local notification for a new session request.
+ * Reveals no names, session ids, or consent details (notificationsCore).
+ * Not remote push — fires only on this device when permission is granted.
+ */
+export async function notifyPrivateUpdate(): Promise<boolean> {
+  const granted = await requestNotificationPermission();
+  if (!granted) return false;
+  await Notifications.scheduleNotificationAsync({
+    content: privacySafeNotificationContent(),
+    trigger: null,
+  });
+  return true;
+}
