@@ -30,12 +30,20 @@ function SettingsContent() {
         onPress={() => router.push("/security/devices" as never)}
       />
       {status === "authenticated" ? (
-        <Button
-          variant="secondary"
-          label="Blocked accounts"
-          onPress={() => router.push("/security/blocked" as never)}
-          accessibilityHint="View and unblock accounts you have privately blocked"
-        />
+        <>
+          <Button
+            variant="secondary"
+            label="Blocked accounts"
+            onPress={() => router.push("/security/blocked" as never)}
+            accessibilityHint="View and unblock accounts you have privately blocked"
+          />
+          <Button
+            variant="secondary"
+            label="My reports"
+            onPress={() => router.push("/security/reports" as never)}
+            accessibilityHint="View private status of safety reports you submitted"
+          />
+        </>
       ) : null}
       <Button
         variant="secondary"

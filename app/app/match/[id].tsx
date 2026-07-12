@@ -225,6 +225,22 @@ export default function MatchDetailScreen() {
         }
         accessibilityHint="Opens the mock Consent Snapshot. Confirming is practice only unless a real session ID is present."
       />
+      {canRequest ? (
+        <Button
+          variant="secondary"
+          label={`Report ${profile.name}`}
+          onPress={() =>
+            router.push({
+              pathname: "/security/report",
+              params: {
+                reportedId: personaTargetId,
+                displayName: profile.name,
+              },
+            })
+          }
+          accessibilityHint="Opens a private structured report for human review. They are not told who reported them."
+        />
+      ) : null}
       {canRequest && blockState !== "blocked" ? (
         <>
           <Button
@@ -238,7 +254,8 @@ export default function MatchDetailScreen() {
           />
           <Body muted center>
             Blocking is private and immediate. They will not be told it was you.
-            Pending session requests between you are cancelled.
+            Pending session requests between you are cancelled. Reporting is
+            separate and does not automatically block.
           </Body>
           {blockState === "error" ? (
             <Text accessibilityRole="alert" style={styles.error}>
