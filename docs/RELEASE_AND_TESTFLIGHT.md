@@ -4,6 +4,23 @@
 
 Automated release hardening exists, but this repository is **not yet approved for TestFlight use with real interactions**. Hosted staging/production services, AASA endpoints, push credentials, account deletion/session-revocation operations, legal privacy disclosures, independent security/accessibility review, and signed archive upload remain manual blockers.
 
+## Xcode Source Kit releases
+
+GitHub Releases can publish a developer-facing source archive named `Litmo-Xcode-Source-<tag>.zip`.
+
+The source kit is intentionally different from a signed `.ipa` or TestFlight build. It contains the app, shared package, checked-in native iOS project, lockfiles, and a launcher named `release/Open Litmo.command`. A reviewer can unzip the archive and double-click the launcher; it installs the locked npm and CocoaPods dependencies, then opens the correct `.xcworkspace` in Xcode.
+
+Litmo uses CocoaPods, so opening the `.xcodeproj` directly is not supported: it omits the Pods integration. The `.xcworkspace` is the authoritative Xcode entry point.
+
+The source kit contains no secrets, certificates, provisioning profiles, hosted-backend credentials, or production configuration. The recipient must select their own Apple development team and provide any environment required for backend-dependent features.
+
+The workflow is defined in `.github/workflows/xcode-source-release.yml`:
+
+- pushing a tag matching `v*` creates or updates a prerelease and attaches the ZIP;
+- manual workflow runs produce the same ZIP as a downloadable Actions artifact;
+- packaging is performed by `scripts/package-xcode-source-kit.sh`;
+- generated dependency directories, local environment files, build output, and secrets are excluded.
+
 ## Environment separation
 
 | Profile                      | App environment | Bundle ID               | Associated domain                 | Data policy                                                      |
