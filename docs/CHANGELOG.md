@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-07-12 — Chapter 5: staff account restrictions
+
+### Summary
+
+Human-only matching holds and permanent bans with audit trail. Enforced on
+discovery and session requests. Self-visible coarse status only — no staff
+notes or automatic bans from reports/rate limits.
+
+### User-visible impact
+
+- Restricted accounts cannot match; peers see opaque “not available.”
+- Settings → Your private signals shows **Matching access** (open/paused).
+
+### Developer impact
+
+- Migration `028_account_restrictions.sql`
+- `apply_account_restriction` / `lift_account_restriction` / `my_matching_access`
+- ADR 0030; `matchingAccessService`; pgTAP `account_restrictions.test.sql`
+
+### Migration and setup impact
+
+`npm run db:reset` (or apply 028). Staff role required to apply/lift.
+
+### Related decision and roadmap
+
+- `docs/adr/0030-account-restrictions.md`
+
 ## 2026-07-12 — Chapter 5: rate limits + append-only trust events
 
 ### Summary
