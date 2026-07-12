@@ -1,0 +1,57 @@
+# Litmo Guided Learning System
+
+## Purpose
+
+Litmo teaches its safety model instead of expecting users to infer it from buttons and warnings.
+
+The learning system uses short, step-by-step modules inspired by station training: one concept at a time, concrete instructions, realistic practice, immediate explanation, and the ability to resume later.
+
+## Educational principles
+
+- Calm, direct, trauma-informed language.
+- Understanding over compliance theater.
+- No public badges, rankings, streaks, or claims of consent expertise.
+- No module completion is evidence that a participant is safe.
+- Scenario feedback explains consequences without shaming the learner.
+- Every module reinforces that consent is current, specific, revocable, and session-bound.
+
+## Initial curriculum
+
+1. **Consent Snapshots** — nothing is inferred; the strictest compatible boundary wins; both people affirm the same current snapshot.
+2. **The Soft Signal** — stopping is unilateral, immediate, and requires no explanation.
+3. **Understanding Touch Language** — preferences are contextual and never obligations.
+
+The two safety-critical modules are labeled as recommended before a first session. This first implementation does not yet hard-block session creation because gating behavior requires a separate product decision and accessibility review.
+
+## Architecture
+
+- `app/data/learningModules.ts` contains typed, static curriculum content.
+- `app/services/learningProgressCore.ts` contains deterministic progress and resume rules.
+- `app/services/learningProgress.ts` persists private device-local progress through AsyncStorage.
+- `app/app/(tabs)/learn.tsx` displays the module catalog and private completion summary.
+- `app/app/learning/[id].tsx` renders one step at a time and provides scenario feedback.
+
+Progress is intentionally local in this first slice. It contains only module identifiers, step positions, completion flags, and timestamps. It contains no reflections, sensitive free text, or social data.
+
+## Progress behavior
+
+- Opening an unfinished module resumes at the saved step.
+- Completing a step saves the next position.
+- Completing a module records its final step and completion status.
+- Corrupt or invalid persisted state fails safely to empty progress.
+- Completed modules may be revisited from the beginning.
+
+## Accessibility
+
+The interface includes semantic button roles, selected states, descriptive labels, progress-bar values, evergreen high-contrast actions, and no color-only completion meaning.
+
+Future validation should include VoiceOver, Dynamic Type, reduced motion, and physical-device testing.
+
+## Future work
+
+- Authoring schema and content validation.
+- More modules, including respectful communication, ending sessions well, accessibility, privacy, and the Trust Ledger.
+- Practice mode covering the full session lifecycle with fictional participants.
+- Optional account synchronization without exposing learning data publicly.
+- A separately reviewed decision about whether specific modules gate first-session features.
+- Localization and plain-language editorial review.
