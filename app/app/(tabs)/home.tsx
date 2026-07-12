@@ -10,6 +10,7 @@ import {
   Title,
 } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
+import { notifyPrivateUpdate } from "../../services/notifications";
 import { sessionRepository } from "../../services/sessionRepository";
 import { colors, fonts } from "../../theme";
 
@@ -36,7 +37,10 @@ export default function HomeTabScreen() {
     void refresh();
     const unsubscribe = sessionRepository.subscribeToIncomingRequests(
       user.id,
-      () => void refresh(),
+      (event) => {
+        void refresh();
+        if (event === "INSERT") void notifyPrivateUpdate();
+      },
     );
     return () => {
       cancelled = true;

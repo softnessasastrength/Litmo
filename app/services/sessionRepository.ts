@@ -229,7 +229,7 @@ export const sessionRepository = {
    */
   subscribeToIncomingRequests(
     recipientId: string,
-    onChange: () => void,
+    onChange: (event: "INSERT" | "UPDATE") => void,
   ): () => void {
     const channel = supabase
       .channel(`incoming-requests-${recipientId}`)
@@ -241,7 +241,7 @@ export const sessionRepository = {
           table: "sessions",
           filter: `user_b=eq.${recipientId}`,
         },
-        () => onChange(),
+        () => onChange("INSERT"),
       )
       .on(
         "postgres_changes",
@@ -251,7 +251,7 @@ export const sessionRepository = {
           table: "sessions",
           filter: `user_b=eq.${recipientId}`,
         },
-        () => onChange(),
+        () => onChange("UPDATE"),
       )
       .subscribe();
     return () => {
@@ -283,6 +283,52 @@ export const sessionRepository = {
         createdAt: row.created_at as string,
         expiresAt: row.expires_at as string,
       }));
+    } catch (error) {
+      throw mapExternalError(error);
+    }
+  },
+  /** Outgoing pending requests where the signed-in user is the requester. */
+  async listOutgoingRequests(): Promise<
+    Array<{
+      id: string;
+      recipientId: string;
+      createdAt: string;
+      expiresAt: string;
+    }>
+  > {
+    try {
+      const { data, error } = await supabase.rpc("list_outgoing_requests");
+      if (error) throw error;
+      return (
+        (data as Array<{
+          id: string;
+          recipient_id: string;
+          created_at: string;
+          expires_at: string;
+        }> | null) ?? []
+      ).map((row) => ({
+        id: row.id as string,
+        recipientId: row.recipient_id as string,
+        createdAt: row.created_at as string,
+        expiresAt: row.expires_at as string,
+      }));
+    } catch (error) {
+      throw mapExternalError(error);
+    }
+  },
+  /**
+   * Cancels a pending `requested` session (migration 015 graph). Either
+   * participant may cancel; only the recipient may accept/decline.
+   */
+  async cancelRequest(sessionId: string): Promise<string> {
+    try {
+      const { data, error } = await supabase.rpc("transition_session", {
+        p_session_id: sessionId,
+        p_to_state: "cancelled",
+        p_idempotency_key: `cancel-${Crypto.randomUUID()}`,
+      });
+      if (error) throw error;
+      return data as string;
     } catch (error) {
       throw mapExternalError(error);
     }

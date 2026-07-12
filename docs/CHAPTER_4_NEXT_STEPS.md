@@ -75,11 +75,13 @@ Landed 2026-07-12 (`docs/adr/0019-incoming-request-realtime.md`): signed-in reci
 
 Landed 2026-07-12 (`docs/adr/0020-session-complete-offline-retry.md`): "End together" now uses the same durable Keychain queue + restore reconcile pattern as Soft Signal and wrap-up. Permanent invalid transitions fail closed without infinite retry.
 
-The database half of wrap-up is complete in migration 012 and ADR 0008. The database half and mobile UI for request creation, response, request expiration, snapshot creation, and confirmation are all complete and locally verified (migrations 015 and 017, ADRs 0015 and 0018). Dual-confirmation device verification, the real timer/Realtime sync, the two-client integration scenario, incoming-request Realtime, and completion offline retry are also already complete; this document is therefore now mainly a "what remains" handoff rather than an implementation checklist for those pieces.
+Landed 2026-07-12 (`docs/adr/0021-outgoing-requests-and-local-request-alert.md`): requesters list/cancel outgoing pending requests (migration 019); recipients get a privacy-safe **local** notification on Realtime INSERT (not remote push).
+
+The database half of wrap-up is complete in migration 012 and ADR 0008. Request create/accept/decline/cancel/expire, snapshot, Realtime, offline retry, and two-client integration are largely complete. This document is mainly a handoff for remaining policy/release items.
 
 ## Not yet scoped (fine to leave for later)
 
-Later pre-activation expiry policy beyond `requested`, blocking/eligibility checks, OS push notifications for new requests (in-app Realtime is done), optional offline UI banners, and physical offline/termination chaos tests.
+Later pre-activation expiry policy beyond `requested`, blocking/eligibility checks, remote OS push (local alert exists), optional offline UI banners, and physical offline/termination chaos tests.
 
 ## Resolved 2026-07-12: mock discovery now has real accounts to request
 
@@ -91,4 +93,4 @@ If picking this up fresh (new session, new agent, or just after a break):
 
 1. `git checkout agent/chapter-4-session-lifecycle` (or start a new branch off it if it's already merged).
 2. Confirm Docker/Supabase still work: `npm run db:start && npm run db:reset && env HOME=/tmp npx supabase test db` should show 111/111 passing.
-3. Deliverables 1–3's major request/confirm/activate/wrap-up boundaries are complete, including 24-hour request expiration, the two-client integration scenario, incoming-request Realtime, and End-together offline retry (ADRs 0005, 0006, 0008, 0014, 0015, 0018, 0019, 0020; migration 018). Remaining chapter gaps need product decisions (blocking/eligibility, later pre-activation expiry) or release-track work (push, chaos tests).
+3. Deliverables 1–3 are complete through outgoing cancel + local request alert (ADRs 0005–0021; migrations through 019). Remaining gaps need product decisions (blocking/eligibility, later pre-activation expiry) or release-track work (remote push, chaos tests).

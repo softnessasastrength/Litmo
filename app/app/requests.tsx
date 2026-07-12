@@ -1,9 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
-import { Body, Button, Card, Eyebrow, Screen, Title } from "../components/ui";
+import {
+  Body,
+  Button,
+  Card,
+  Eyebrow,
+  Screen,
+  SectionTitle,
+  Title,
+} from "../components/ui";
 import { useAuth } from "../context/AuthContext";
 import { personaIdForUserId } from "../data/mockConsentProfiles";
+import { notifyPrivateUpdate } from "../services/notifications";
 import { sessionRepository } from "../services/sessionRepository";
 import { supabase } from "../services/supabase";
 import { colors } from "../theme";
@@ -21,24 +30,37 @@ type IncomingRequest = {
   expiresAt: string;
 };
 
+type OutgoingRequest = {
+  id: string;
+  recipientId: string;
+  recipientName: string;
+  createdAt: string;
+  expiresAt: string;
+};
+
 export default function IncomingRequestsScreen() {
   const router = useRouter();
   const { user, status } = useAuth();
   const [state, setState] = useState<
     | { kind: "loading" }
     | { kind: "error"; message: string }
-    | { kind: "ready"; requests: IncomingRequest[] }
+    | {
+        kind: "ready";
+        incoming: IncomingRequest[];
+        outgoing: OutgoingRequest[];
+      }
   >({ kind: "loading" });
-  const [respondingTo, setRespondingTo] = useState<string | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
   const load = useCallback(
     async (options?: { quiet?: boolean }) => {
       if (!user) return;
       if (!options?.quiet) setState({ kind: "loading" });
       try {
-        const [requests, { data: profiles, error: profilesError }] =
+        const [incoming, outgoing, { data: profiles, error: profilesError }] =
           await Promise.all([
             sessionRepository.listIncomingRequests(),
+            sessionRepository.listOutgoingRequests(),
             supabase.rpc("discovery_profiles"),
           ]);
         if (profilesError) throw profilesError;
@@ -52,9 +74,13 @@ export default function IncomingRequestsScreen() {
         );
         setState({
           kind: "ready",
-          requests: requests.map((request) => ({
+          incoming: incoming.map((request) => ({
             ...request,
             requesterName: nameByUserId.get(request.requesterId) ?? "Someone",
+          })),
+          outgoing: outgoing.map((request) => ({
+            ...request,
+            recipientName: nameByUserId.get(request.recipientId) ?? "Someone",
           })),
         });
       } catch (caught) {
@@ -74,13 +100,12 @@ export default function IncomingRequestsScreen() {
     void load();
   }, [load]);
 
-  // Live refresh when a new request is created or an existing one changes
-  // (accept/decline/expire elsewhere). Quiet reload avoids a full-screen
-  // flash while the user is already looking at this list.
+  // Live refresh + privacy-safe local alert on a brand-new incoming request.
   useEffect(() => {
     if (!user || status !== "authenticated") return;
-    return sessionRepository.subscribeToIncomingRequests(user.id, () => {
+    return sessionRepository.subscribeToIncomingRequests(user.id, (event) => {
       void load({ quiet: true });
+      if (event === "INSERT") void notifyPrivateUpdate();
     });
   }, [user, status, load]);
 
@@ -88,17 +113,14 @@ export default function IncomingRequestsScreen() {
     request: IncomingRequest,
     decision: "accepted" | "declined",
   ) => {
-    setRespondingTo(request.id);
+    setBusyId(request.id);
     try {
       await sessionRepository.respondToRequest(request.id, decision);
       if (decision === "accepted") {
-        // Best-effort: advances the session toward consent review. If this
-        // fails, the requests list still refreshes and the person can try
-        // again from the match screen; it does not block the accept itself.
         try {
           await sessionRepository.beginConsentReview(request.id);
         } catch {
-          // Swallowed intentionally -- see comment above.
+          // Best-effort; accept already succeeded.
         }
         router.push({
           pathname: "/match/consent-snapshot",
@@ -119,7 +141,25 @@ export default function IncomingRequestsScreen() {
             : "That response could not be saved.",
       });
     } finally {
-      setRespondingTo(null);
+      setBusyId(null);
+    }
+  };
+
+  const cancelOutgoing = async (request: OutgoingRequest) => {
+    setBusyId(request.id);
+    try {
+      await sessionRepository.cancelRequest(request.id);
+      await load({ quiet: true });
+    } catch (caught) {
+      setState({
+        kind: "error",
+        message:
+          caught instanceof Error
+            ? caught.message
+            : "That request could not be cancelled.",
+      });
+    } finally {
+      setBusyId(null);
     }
   };
 
@@ -128,8 +168,8 @@ export default function IncomingRequestsScreen() {
       <Screen scroll={false} style={styles.center}>
         <Title center>Session requests</Title>
         <Body center muted>
-          Demo mode has no real account to receive requests on. Sign in to see
-          requests sent to you.
+          Demo mode has no real account to send or receive requests on. Sign in
+          to manage real session requests.
         </Body>
       </Screen>
     );
@@ -142,19 +182,21 @@ export default function IncomingRequestsScreen() {
   return (
     <Screen>
       <Eyebrow>SESSION REQUESTS</Eyebrow>
-      <Title>Who's asked to meet?</Title>
+      <Title>Requests in and out.</Title>
       <Body muted>
-        Accepting only begins the consent process. It never grants consent by
-        itself.
+        Accepting only begins consent review. Cancelling withdraws a pending
+        ask. Neither grants consent.
       </Body>
-      {state.requests.length === 0 ? (
+
+      <SectionTitle>Incoming</SectionTitle>
+      {state.incoming.length === 0 ? (
         <EmptyState
-          title="No requests right now"
+          title="No incoming requests"
           message="When someone requests a session with you, it will show up here."
         />
       ) : (
         <View style={styles.list}>
-          {state.requests.map((request) => (
+          {state.incoming.map((request) => (
             <Card key={request.id}>
               <Text style={styles.name}>{request.requesterName}</Text>
               <Body muted>
@@ -175,15 +217,56 @@ export default function IncomingRequestsScreen() {
               </Body>
               <View style={styles.actions}>
                 <Button
-                  label={respondingTo === request.id ? "…" : "Accept"}
-                  disabled={respondingTo === request.id}
+                  label={busyId === request.id ? "…" : "Accept"}
+                  disabled={busyId === request.id}
                   onPress={() => void respond(request, "accepted")}
                 />
                 <Button
                   variant="secondary"
-                  label={respondingTo === request.id ? "…" : "Decline"}
-                  disabled={respondingTo === request.id}
+                  label={busyId === request.id ? "…" : "Decline"}
+                  disabled={busyId === request.id}
                   onPress={() => void respond(request, "declined")}
+                />
+              </View>
+            </Card>
+          ))}
+        </View>
+      )}
+
+      <SectionTitle>Outgoing</SectionTitle>
+      {state.outgoing.length === 0 ? (
+        <EmptyState
+          title="No outgoing requests"
+          message="When you request a session, it stays here until they respond, it expires, or you cancel."
+        />
+      ) : (
+        <View style={styles.list}>
+          {state.outgoing.map((request) => (
+            <Card key={request.id}>
+              <Text style={styles.name}>{request.recipientName}</Text>
+              <Body muted>
+                Sent{" "}
+                {new Date(request.createdAt).toLocaleDateString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                })}
+              </Body>
+              <Body muted>
+                Expires{" "}
+                {new Date(request.expiresAt).toLocaleString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                })}
+              </Body>
+              <View style={styles.actions}>
+                <Button
+                  variant="secondary"
+                  label={busyId === request.id ? "…" : "Cancel request"}
+                  disabled={busyId === request.id}
+                  onPress={() => void cancelOutgoing(request)}
+                  accessibilityHint="Withdraws this pending session request. No explanation is required."
                 />
               </View>
             </Card>
@@ -195,7 +278,7 @@ export default function IncomingRequestsScreen() {
 }
 const styles = StyleSheet.create({
   center: { justifyContent: "center", gap: 18 },
-  list: { gap: 14 },
+  list: { gap: 14, marginBottom: 18 },
   name: { color: colors.ink, fontWeight: "800", fontSize: 17 },
   actions: { flexDirection: "row", gap: 10, marginTop: 10 },
 });
