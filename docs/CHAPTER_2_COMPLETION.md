@@ -2,7 +2,9 @@
 
 ## Status
 
-Implementation is complete on `agent/chapter-2-foundation`. Static checks, unit tests, and iOS bundle validation pass. Database-backed acceptance criteria and hosted CI are explicitly **blocked/unverified** because this execution environment has no running Docker daemon and the branch has not been pushed for GitHub Actions. Chapter 3 must not begin until those checks pass in an environment with Docker and the resulting CI run is green.
+Implementation is complete on `agent/chapter-2-foundation`. Static checks, unit tests, and iOS bundle validation pass.
+
+**Update, 2026-07-12**: Docker was installed on this machine and the previously-blocked database acceptance criteria have now actually been run and verified locally — see the updated tables below. Running them for the first time surfaced and fixed a real bug: migration 005's RLS policies existed with no underlying table-level `GRANT` to `authenticated` on `profiles`, `onboarding_progress`, `touch_profile_versions`, or `consent_preference_versions`, so every signed-in user got "permission denied" — not just in the pgTAP suite, in the real app too. Fixed in migration `006_grant_authenticated_table_privileges.sql`. Hosted CI (GitHub Actions) still has not been run from this branch.
 
 ## 1. Initial repository condition
 
@@ -45,7 +47,7 @@ Chapter 1 was a polished, mock-only Expo flow. App type checking, quiz tests, fo
 - 6 auth restoration and protected-route transition tests.
 - 3 auth operation tests: signup, invalid credentials, and logout.
 - 3 public error-mapping tests.
-- 7 pgTAP RLS/immutability assertions.
+- 8 pgTAP RLS/immutability assertions (grew to 8 on 2026-07-12; see the update note above).
 - 1 two-client integration scenario covering signup, progress persistence, two profile versions, RLS isolation, restoration, and logout.
 - Existing 3 quiz and 6 backend consent tests remain intact.
 
@@ -62,36 +64,40 @@ Chapter 1 was a polished, mock-only Expo flow. App type checking, quiz tests, fo
 - `git diff --check` — passed.
 - Mobile secret-name scan outside the example environment file — no service-role or JWT-secret references found.
 
-### Blocked or unverified
+### Previously blocked, now passed (2026-07-12, Docker installed)
 
-- `env HOME=/tmp npm run db:start` — blocked: `Cannot connect to the Docker daemon at unix:///var/run/docker.sock`.
-- `npm run db:reset` — not run because local Supabase could not start.
-- `npm run db:lint` — not run because local Postgres could not start.
-- `npx supabase test db` — not run because local Postgres could not start.
-- `npm run test:integration` — blocked with exit 2 because no local Supabase URL/anon key was available.
+- `npm run db:start` / `npm run db:reset` — pass; all six migrations apply cleanly (including the new `006_grant_authenticated_table_privileges.sql`) and the seed loads.
+- `npm run db:lint` — passed, no schema errors.
+- `npx supabase test db` — passed, 8/8 pgTAP assertions (`supabase/tests/rls.test.sql`; one assertion rewritten to check that a disallowed update affects zero rows rather than assuming it raises, since Postgres denies row visibility for a command with no matching RLS policy rather than throwing — see the file's comments).
+- `npm run test:integration` — passed, the two-client signup/persistence/versioning/RLS-isolation scenario.
+
+Running these for the first time surfaced a real bug, now fixed: migration 005 created RLS policies for `profiles`, `onboarding_progress`, `touch_profile_versions`, and `consent_preference_versions` with no underlying table-level `GRANT` to `authenticated`. Postgres denies access at the grant level before RLS is even evaluated, so every signed-in user got "permission denied" on all four tables — in the real app, not just in a test that had never been run.
+
+### Still blocked or unverified
+
 - GitHub Actions CI — workflow created but not run from this unpushed local branch.
-- Physical iPhone smoke path — documented but not run from this environment.
+- Physical iPhone smoke path against a real (non-demo-mode) Supabase-backed account — documented in `docs/LOCAL_DEVELOPMENT.md` but not run end-to-end on a device in this session; demo mode and standalone iOS builds against mock/local data have been verified separately (see `docs/adr/0003-demo-mode-entry-point.md`, `docs/adr/0004-ios-27-beta-build-fixes.md`).
 
 ## 7. Known limitations and acceptance criteria
 
-| Acceptance criterion                 | Status                                                          |
-| ------------------------------------ | --------------------------------------------------------------- |
-| Clean-clone configuration documented | Implemented; not independently rehearsed                        |
-| Local services start                 | Blocked by absent Docker daemon                                 |
-| Signup, sign-in, sign-out            | Implemented and unit-tested; database integration blocked       |
-| Session restoration                  | Implemented and unit-tested; device/database smoke blocked      |
-| Onboarding progress persists         | Implemented; database integration blocked                       |
-| Touch Language Profile persists      | Implemented; database integration blocked                       |
-| Material changes create versions     | Implemented with transaction/lock; database integration blocked |
-| Cross-user private access rejected   | RLS and tests written; execution blocked                        |
-| No service-role key in mobile code   | Passed source scan                                              |
-| Loading and failure states usable    | Implemented; manual accessibility review outstanding            |
-| Lint                                 | Passed                                                          |
-| Type checking                        | Passed                                                          |
-| Unit tests                           | Passed, 27/27                                                   |
-| Build validation                     | Passed                                                          |
-| CI                                   | Blocked until branch is pushed and workflow runs                |
-| No secrets committed                 | Passed source review; independent scanner not run               |
+| Acceptance criterion                 | Status                                                                  |
+| ------------------------------------ | ----------------------------------------------------------------------- |
+| Clean-clone configuration documented | Implemented; not independently rehearsed                                |
+| Local services start                 | Passed (2026-07-12)                                                     |
+| Signup, sign-in, sign-out            | Implemented, unit-tested, and passed live via the integration test      |
+| Session restoration                  | Implemented, unit-tested, and passed live via the integration test      |
+| Onboarding progress persists         | Implemented and passed live via the integration test                    |
+| Touch Language Profile persists      | Implemented and passed live via the integration test                    |
+| Material changes create versions     | Implemented with transaction/lock; passed live via the integration test |
+| Cross-user private access rejected   | RLS and tests written; passed, 8/8 pgTAP assertions                     |
+| No service-role key in mobile code   | Passed source scan                                                      |
+| Loading and failure states usable    | Implemented; manual accessibility review outstanding                    |
+| Lint                                 | Passed                                                                  |
+| Type checking                        | Passed                                                                  |
+| Unit tests                           | Passed, 90/90 (repo-wide, as of 2026-07-12)                             |
+| Build validation                     | Passed                                                                  |
+| CI                                   | Blocked until branch is pushed and workflow runs                        |
+| No secrets committed                 | Passed source review; independent scanner not run                       |
 
 Additional limitations: AsyncStorage token persistence needs production hardening; email confirmation is disabled locally; no independent security/accessibility reviewer participated; Expo/npm dependencies report 9 moderate transitive CLI-tooling advisories whose automated fix proposes an unsafe SDK downgrade.
 

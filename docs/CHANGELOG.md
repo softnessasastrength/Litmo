@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-07-12 — Fixed missing table grants; Chapter 2's Docker-blocked checks now pass
+
+### Summary
+
+Docker was installed and local Supabase run for the first time since Chapter 2. This immediately surfaced a real bug: migration 005's RLS policies existed for `profiles`, `onboarding_progress`, `touch_profile_versions`, and `consent_preference_versions`, but none of those tables had an underlying table-level `GRANT` to `authenticated`. Postgres denies access at the grant level before RLS is even evaluated, so every signed-in user got "permission denied" on all four tables — in the real app, not just in a test that had never actually been run. Fixed in `supabase/migrations/006_grant_authenticated_table_privileges.sql`.
+
+Also fixed a test-correctness bug this uncovered: `supabase/tests/rls.test.sql` expected rewriting a historical `touch_profile_versions` row to raise the `prevent_version_mutation` trigger's exception. With no `UPDATE` RLS policy at all, Postgres denies row visibility for that command before the trigger ever runs — the statement succeeds but affects zero rows, which is a stronger protection, not a weaker one, but doesn't match `throws_ok`'s expectation. Rewrote the assertion to check that zero rows were actually changed instead.
+
+### User-visible impact
+
+None to already-shipped behavior — this fixes a bug that was blocking real Supabase-backed usage (sign-up, onboarding, profile save) from ever working correctly, which had gone undetected because the tests that would have caught it were never run in this environment until now.
+
+### Developer impact
+
+New migration `006_grant_authenticated_table_privileges.sql`. `supabase/tests/rls.test.sql` grew from 7 to 8 assertions. All previously Docker-blocked checks now pass: `npm run db:lint`, `npx supabase test db` (8/8), `npm run test:integration`. Full details and updated status tables in `docs/CHAPTER_2_COMPLETION.md` and `docs/KNOWN_LIMITATIONS.md`.
+
+### Migration and setup impact
+
+Anyone running `npm run db:reset` picks up migration 006 automatically. No application code changes needed.
+
+### Related decision and roadmap
+
+- `docs/CHAPTER_2_COMPLETION.md`
+- `docs/KNOWN_LIMITATIONS.md`
+- `docs/SECURITY_MODEL.md`
+
 ## 2026-07-11 — Machine setup bootstrap script and disaster-recovery doc
 
 ### Summary

@@ -8,7 +8,7 @@ Service-role keys, JWT secrets, database passwords, and moderation credentials m
 
 ## Private data controls
 
-- Every Chapter 2 user-data table has RLS enabled.
+- Every Chapter 2 user-data table has RLS enabled. RLS policies alone are not sufficient: Postgres also requires an underlying table-level `GRANT` to a role, checked before RLS is even evaluated. A real bug — RLS policies with no matching `GRANT` on four tables, silently masked because Docker-backed tests were never run locally until 2026-07-12 — is documented in `docs/CHANGELOG.md` and fixed in `supabase/migrations/006_grant_authenticated_table_privileges.sql`. When adding a new table, both must be reviewed, not just RLS policies.
 - General private records are owner-select/update only.
 - Touch and consent histories are owner-select/append only.
 - Mutation triggers reject ordinary historical updates and deletes.
