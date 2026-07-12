@@ -19,6 +19,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { sessionRepository } from "../../services/sessionRepository";
 import { colors } from "../../theme";
+
 export default function MatchDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -26,17 +27,20 @@ export default function MatchDetailScreen() {
     mockProfiles.find((item) => item.id === id) ?? mockProfiles[0];
   const { status } = useAuth();
   const [requestState, setRequestState] = useState<
-    "idle" | "sending" | "sent" | "error"
+    "idle" | "sending" | "sent" | "cancelling" | "error"
   >("idle");
   const [requestError, setRequestError] = useState("");
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const canRequest = status === "authenticated";
+
   const sendRequest = async () => {
     setRequestState("sending");
     setRequestError("");
     try {
-      await sessionRepository.requestSession(
+      const id = await sessionRepository.requestSession(
         personaUserId[profile.id as MockPersonaId],
       );
+      setSessionId(id);
       setRequestState("sent");
     } catch (caught) {
       setRequestState("error");
@@ -47,6 +51,25 @@ export default function MatchDetailScreen() {
       );
     }
   };
+
+  const cancelRequest = async () => {
+    if (!sessionId) return;
+    setRequestState("cancelling");
+    setRequestError("");
+    try {
+      await sessionRepository.cancelRequest(sessionId);
+      setSessionId(null);
+      setRequestState("idle");
+    } catch (caught) {
+      setRequestState("error");
+      setRequestError(
+        caught instanceof Error
+          ? caught.message
+          : "The request could not be cancelled.",
+      );
+    }
+  };
+
   return (
     <Screen>
       <View style={[styles.hero, { backgroundColor: profile.color }]}>
@@ -91,18 +114,40 @@ export default function MatchDetailScreen() {
             label={
               requestState === "sending"
                 ? "Sending…"
-                : requestState === "sent"
+                : requestState === "sent" || requestState === "cancelling"
                   ? "Request sent"
                   : `Request a session with ${profile.name}`
             }
-            disabled={requestState === "sending" || requestState === "sent"}
+            disabled={
+              requestState === "sending" ||
+              requestState === "sent" ||
+              requestState === "cancelling"
+            }
             onPress={() => void sendRequest()}
           />
-          {requestState === "sent" ? (
-            <Body muted>
-              {profile.name} will see this the next time they sign in. This only
-              sends a request — nothing is scheduled or agreed yet.
-            </Body>
+          {requestState === "sent" || requestState === "cancelling" ? (
+            <>
+              <Body muted>
+                {profile.name} will see this the next time they open Litmo. This
+                only sends a request — nothing is scheduled or agreed yet.
+              </Body>
+              <Button
+                variant="secondary"
+                label={
+                  requestState === "cancelling"
+                    ? "Cancelling…"
+                    : "Cancel this request"
+                }
+                disabled={requestState === "cancelling" || !sessionId}
+                onPress={() => void cancelRequest()}
+                accessibilityHint="Withdraws the pending session request without requiring a reason"
+              />
+              <Button
+                variant="secondary"
+                label="View all requests"
+                onPress={() => router.push("/requests")}
+              />
+            </>
           ) : null}
           {requestState === "error" ? (
             <Text accessibilityRole="alert" style={styles.error}>

@@ -385,4 +385,41 @@ export const sessionRepository = {
       throw mapExternalError(error);
     }
   },
+  /**
+   * Subscribes to any session change where this user is requester or
+   * recipient so Home can refresh open-session resume cards (accept →
+   * consent_pending → ready → active → terminal) without a manual pull.
+   * Reuses the sessions Realtime publication; RLS still scopes visibility.
+   */
+  subscribeToParticipantSessions(
+    userId: string,
+    onChange: () => void,
+  ): () => void {
+    const channel = supabase
+      .channel(`participant-sessions-${userId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "sessions",
+          filter: `user_a=eq.${userId}`,
+        },
+        () => onChange(),
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "sessions",
+          filter: `user_b=eq.${userId}`,
+        },
+        () => onChange(),
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  },
 };

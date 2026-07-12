@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-07-12 — Live open-session refresh and match-detail cancel
+
+### Summary
+
+Home open-session cards refresh live when either participant’s session row
+changes. Resuming an `accepted` session advances into consent review first.
+Match detail stores the real request id so the requester can cancel without
+leaving the profile.
+
+### User-visible impact
+
+- Home resume list updates when the counterpart accepts or a session ends.
+- “Begin consent review” from Home moves `accepted → consent_pending` when possible.
+- After sending a request from a match profile, **Cancel this request** appears.
+
+### Developer impact
+
+- `sessionRepository.subscribeToParticipantSessions`
+- Home resume calls `beginConsentReview` for `accepted`
+- Match detail keeps `sessionId` from `requestSession` for cancel
+
+### Related decision and roadmap
+
+- Builds on ADR 0021 / 0022
+- `docs/CHAPTER_4_NEXT_STEPS.md`
+
 ## 2026-07-12 — Open-session resume and pre-activation withdraw UI
 
 ### Summary

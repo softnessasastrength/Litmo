@@ -31,30 +31,12 @@ function resumeLabel(status: string): string {
   return "Open session";
 }
 
-function resumeRoute(session: OpenSession): {
-  pathname: "/session/active" | "/match/consent-snapshot";
-  params: Record<string, string>;
-} {
-  if (session.status === "active") {
-    return {
-      pathname: "/session/active",
-      params: { sessionId: session.id },
-    };
-  }
-  return {
-    pathname: "/match/consent-snapshot",
-    params: {
-      id: personaIdForUserId(session.counterpartId),
-      sessionId: session.id,
-    },
-  };
-}
-
 export default function HomeTabScreen() {
   const router = useRouter();
   const { status, user } = useAuth();
   const [pendingCount, setPendingCount] = useState(0);
   const [openSessions, setOpenSessions] = useState<OpenSession[]>([]);
+  const [resumingId, setResumingId] = useState<string | null>(null);
 
   const refreshActivity = useCallback(async () => {
     if (!user) return;
@@ -78,15 +60,52 @@ export default function HomeTabScreen() {
       return;
     }
     void refreshActivity();
-    const unsubscribe = sessionRepository.subscribeToIncomingRequests(
+    const unsubIncoming = sessionRepository.subscribeToIncomingRequests(
       user.id,
       (event) => {
         void refreshActivity();
         if (event === "INSERT") void notifyPrivateUpdate();
       },
     );
-    return unsubscribe;
+    const unsubOpen = sessionRepository.subscribeToParticipantSessions(
+      user.id,
+      () => void refreshActivity(),
+    );
+    return () => {
+      unsubIncoming();
+      unsubOpen();
+    };
   }, [status, user, refreshActivity]);
+
+  const resume = async (session: OpenSession) => {
+    setResumingId(session.id);
+    try {
+      if (session.status === "active") {
+        router.push({
+          pathname: "/session/active",
+          params: { sessionId: session.id },
+        });
+        return;
+      }
+      // accepted → advance into consent_pending when possible (idempotent).
+      if (session.status === "accepted") {
+        try {
+          await sessionRepository.beginConsentReview(session.id);
+        } catch {
+          // Still open the snapshot; user can retry the transition later.
+        }
+      }
+      router.push({
+        pathname: "/match/consent-snapshot",
+        params: {
+          id: personaIdForUserId(session.counterpartId),
+          sessionId: session.id,
+        },
+      });
+    } finally {
+      setResumingId(null);
+    }
+  };
 
   return (
     <Screen>
@@ -98,34 +117,31 @@ export default function HomeTabScreen() {
       </Body>
 
       {status === "authenticated" && openSessions.length > 0
-        ? openSessions.map((session) => {
-            const route = resumeRoute(session);
-            return (
-              <Card key={session.id}>
-                <Text style={styles.cardTitle}>
-                  {session.status === "active"
-                    ? "Session in progress"
-                    : "Consent still open"}
-                </Text>
-                <Body muted>
-                  Status: {session.status.replaceAll("_", " ")}. Resuming never
-                  grants new consent — it only returns you to the current step.
-                </Body>
-                <View style={styles.cardAction}>
-                  <Button
-                    label={resumeLabel(session.status)}
-                    onPress={() =>
-                      router.push({
-                        pathname: route.pathname,
-                        params: route.params,
-                      })
-                    }
-                    accessibilityHint="Returns to the current consent or active session step without inventing new consent"
-                  />
-                </View>
-              </Card>
-            );
-          })
+        ? openSessions.map((session) => (
+            <Card key={session.id}>
+              <Text style={styles.cardTitle}>
+                {session.status === "active"
+                  ? "Session in progress"
+                  : "Consent still open"}
+              </Text>
+              <Body muted>
+                Status: {session.status.replaceAll("_", " ")}. Resuming never
+                grants new consent — it only returns you to the current step.
+              </Body>
+              <View style={styles.cardAction}>
+                <Button
+                  label={
+                    resumingId === session.id
+                      ? "Opening…"
+                      : resumeLabel(session.status)
+                  }
+                  disabled={resumingId === session.id}
+                  onPress={() => void resume(session)}
+                  accessibilityHint="Returns to the current consent or active session step without inventing new consent"
+                />
+              </View>
+            </Card>
+          ))
         : null}
 
       <Card>
