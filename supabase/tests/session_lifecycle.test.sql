@@ -108,8 +108,12 @@ values (
 grant select on lifecycle_cases to authenticated;
 grant insert, select on lifecycle_results to authenticated;
 
+-- Acting as user_b (the recipient in every seeded session below) so the
+-- matrix and the fixture-session assertions can exercise every graph edge,
+-- including requested -> accepted/declined, which migration 015 restricts
+-- to the recipient only.
 set local role authenticated;
-select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000001', true);
+select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000002', true);
 
 select is(
   (select count(*)::integer from public.sessions where id = '30000000-0000-4000-8000-000000000001'),
@@ -226,7 +230,7 @@ select is(
       and event_type = 'session_transition'
       and prior_state = 'requested'
       and resulting_state = 'accepted'
-      and actor_id = '10000000-0000-4000-8000-000000000001'
+      and actor_id = '10000000-0000-4000-8000-000000000002'
   ),
   1,
   'the audit event records actor, prior state, resulting state, and event type'

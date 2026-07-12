@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-07-12 — Session request creation and recipient-only response authorization
+
+### Summary
+
+Added `request_session(...)`, the first authenticated write path that can create a `sessions` row at all, and narrowed `transition_session(...)` so only the recipient (not the requester) can accept or decline a request.
+
+### User-visible impact
+
+None yet: no mobile screen calls `request_session` yet. This lands the database boundary a future "request a session" UI will call.
+
+### Developer impact
+
+`request_session(p_recipient_id, p_idempotency_key)` establishes the requester-becomes-`user_a`/recipient-becomes-`user_b` convention, creates the session directly at `requested`, and returns an existing non-terminal session between the same two people (in either direction) instead of creating a duplicate. `transition_session(...)` now requires the actor to be `user_b` for `requested -> accepted`/`declined` specifically; every other edge's authorization is unchanged. Twelve new pgTAP assertions in `supabase/tests/session_requests.test.sql` (100 total, up from 88); `supabase/tests/session_lifecycle.test.sql`'s 144-pair matrix now runs as the recipient so it continues to exercise every graph edge, including the two newly restricted ones. Fixed a regression caught before commit: the new migration's first draft was based on migration 008's superseded `transition_session` body rather than 011's current one, which would have silently dropped the `ready -> consent_pending` edge and the `material_profile_change` metadata trigger value 011 had added.
+
+### Migration and setup impact
+
+Run `npm run db:reset` to apply migration 015. Verified with a clean local reset, 100/100 pgTAP assertions, and typecheck/test/lint all green.
+
+### Related decision and roadmap
+
+- `docs/adr/0015-session-request-creation-and-recipient-authorization.md`
+- `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
+- `docs/CHAPTER_4_NEXT_STEPS.md`
+
 ## 2026-07-12 — Wrap-up mobile wiring and real session completion
 
 ### Summary

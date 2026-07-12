@@ -45,19 +45,20 @@ The `ready -> active` precondition is now enforced by a database trigger for eve
 Still not done:
 
 - Replace the local timer with a real `active` session row + Supabase Realtime subscription so both participants see the same state.
-- **No caller anywhere threads a real `sessionId` into `/session/active` yet** — session creation and request/accept flow don't exist. The wiring above is correct and unit-tested but dormant until that exists. This is the actual next piece of Deliverable 3, and is bigger than the wrap-up wiring was: it needs a `sessions` row created from a request, an accept step, and a way to navigate into `/session/active?sessionId=...` from a real match rather than the current no-param `router.push("/session/active")` in `consent-snapshot.tsx`.
+- **No mobile screen calls `request_session(...)` yet**, even though the database side of request creation and recipient-only accept/decline now exists (migration 015, `docs/adr/0015-session-request-creation-and-recipient-authorization.md`). This is the actual next piece of Deliverable 3: a "request a session" action from `match/[id].tsx` or `discover.tsx`, an accept/decline UI for incoming requests, and a way to navigate into `/session/active?sessionId=...` from a real accepted session rather than the current no-param `router.push("/session/active")` in `consent-snapshot.tsx`.
 - Wrap-up submission itself has no offline retry/queue (only the Soft Signal path does, via `emergencyStopService`'s pending-storage pattern).
+- No blocking/eligibility checks before request creation (no blocking system exists anywhere in this codebase), and no request expiration timestamps/jobs.
 
-The database half of wrap-up is complete in migration 012 and ADR 0008: owner-only immutable rows, terminal-state validation, and retry-safe submission. The remaining mobile work is session creation/request-accept, replacing the local timer with Realtime, and wrap-up offline retry.
+The database half of wrap-up is complete in migration 012 and ADR 0008: owner-only immutable rows, terminal-state validation, and retry-safe submission. The database half of request creation/response is complete in migration 015 and ADR 0015. The remaining mobile work is the request/accept/decline screens, replacing the local timer with Realtime, and wrap-up offline retry.
 
 ## Not yet scoped (fine to leave for later)
 
-Realtime sync details, connectivity/offline recovery, request expiration (needs either a scheduled job or a check-on-read pattern — undecided), and the two-client Chapter 4 integration test the roadmap doc calls for. Don't start these before Deliverable 1 exists under them.
+Realtime sync details, connectivity/offline recovery, request expiration (needs either a scheduled job or a check-on-read pattern — undecided), blocking/eligibility checks, and the two-client Chapter 4 integration test the roadmap doc calls for.
 
 ## How to resume
 
 If picking this up fresh (new session, new agent, or just after a break):
 
 1. `git checkout agent/chapter-4-session-lifecycle` (or start a new branch off it if it's already merged).
-2. Confirm Docker/Supabase still work: `npm run db:start && npm run db:reset && npx supabase test db` should show 14/14 passing.
-3. Start on Deliverable 1 above. Read `docs/adr/0005-session-lifecycle-state-machine.md` in full first — it documents the exact design decisions and why they were made.
+2. Confirm Docker/Supabase still work: `npm run db:start && npm run db:reset && npx supabase test db` should show 100/100 passing.
+3. Deliverables 1–2 and the wrap-up/request-creation database boundaries (ADRs 0005, 0006, 0008, 0014, 0015) are complete. The next task is the mobile request/accept/decline UI described in Deliverable 3 above — read ADR 0015 first for the exact function contracts (`request_session`, and `transition_session`'s recipient-only `requested -> accepted/declined`) it will call.
