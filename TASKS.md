@@ -12,13 +12,13 @@ None. Founder **BETA-001** physical walkthrough is the next operator task.
 
 ### BETA-001 — Integrated physical-iPhone validation
 
-- **Status:** pending (partial automation logged)
+- **Status:** pending (Track A Pass)
 - **Owner:** founder plus current coding agent
 - **Goal:** Verify the integrated `main` experience on a physical iPhone from entry through learning, consent, session, stop, wrap-up, and haptic feel.
 - **Specification:** `docs/PHYSICAL_BETA_WALKTHROUGH.md` + `docs/PHYSICAL_BETA_WALKTHROUGH_RESULTS.md`
 - **Acceptance criteria:** documented test script (done); exact build/install method; passkey and Face ID behavior; privacy-safe backgrounding; session request; **real** Consent Snapshot (ADR 0036); realtime transition; Soft Signal; wrap-up; Chapter 5 safety smoke; five haptic events recognizability; failures recorded without euphemism.
-- **Progress 2026-07-12:** Simulator Maestro A1–A2 **Pass**; about-you→gender path automated; Soft Signal label fixed; Track B **Blocked** (no Docker this session). Not full green until founder physical Tracks A/B/C.
-- **Next action:** founder physical walkthrough; Docker for Track B; fill results; fix only Fail IDs.
+- **Progress 2026-07-12:** **Track A Pass** (founder: “track a good”). Soft Signal label fixed. Track B and C still pending.
+- **Next action:** Track B (Docker + two seed accounts + real snapshot) then Track C accessibility.
 
 ### ACCESS-001 — Physical-device accessibility review
 

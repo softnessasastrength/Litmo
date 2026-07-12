@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-07-12 — BETA-001 Track A Pass (founder)
+
+### Summary
+
+Founder confirmed fictional demo walkthrough Track A is good. Results log
+updated; BETA-001 continues with Tracks B (real accounts) and C (accessibility).
+
+### User-visible impact
+
+- None in code; validation milestone recorded.
+
+### Related decision and roadmap
+
+- `docs/PHYSICAL_BETA_WALKTHROUGH_RESULTS.md`
+
 ## 2026-07-12 — Soft Signal label + walkthrough automation start
 
 ### Summary
