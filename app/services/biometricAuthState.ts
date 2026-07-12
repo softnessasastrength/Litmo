@@ -83,15 +83,20 @@ export function biometricRequiredForAuthStatus(
     | "authenticating"
     | "registering"
     | "onboarding"
+    | "age_gate"
     | "authenticated"
     | "expired"
     | "revoked"
     | "error"
     | "demo",
 ): boolean {
+  // Age gate is post-auth eligibility (not a private session yet). Face ID
+  // applies once a real account session is in play, including age_gate so the
+  // account holder must unlock before changing eligibility state.
   return (
     status === "authenticated" ||
     status === "onboarding" ||
+    status === "age_gate" ||
     status === "authenticating" ||
     status === "registering"
   );

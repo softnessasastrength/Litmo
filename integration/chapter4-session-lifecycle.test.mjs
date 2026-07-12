@@ -73,6 +73,14 @@ async function saveCompatibleProfiles(supabase) {
   assert.equal(error, null, `save_profile_versions: ${error?.message}`);
   assert.equal(data[0].touch_version, 1);
   assert.equal(data[0].consent_version, 1);
+  // Adult eligibility is required before request_session (ADR 0025).
+  const age = await supabase.rpc("record_age_signal", {
+    p_status: "adult",
+    p_source: "development_self_attest",
+    p_lower: null,
+    p_upper: null,
+  });
+  assert.equal(age.error, null, `record_age_signal: ${age.error?.message}`);
 }
 
 async function sessionStatus(supabase, sessionId) {

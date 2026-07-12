@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-07-12 — Apple Declared Age Range adult eligibility gate
+
+### Summary
+
+Real accounts must confirm adult status (18+) before discovery or session
+requests. Primary path is Apple Declared Age Range on device; production
+fails closed when unavailable. Development may self-attest only outside
+production. Demo mode is exempt. Composed with one-way blocks (022).
+
+### User-visible impact
+
+- After onboarding, signed-in users hit **Confirm you are 18 or older**.
+- System age-range sheet when the native module is available.
+- Not adult / declined → access denied copy (no real matching).
+
+### Developer impact
+
+- Module `litmo-age-range` (Swift + Expo)
+- Migration `023_age_eligibility_gate.sql`
+- Auth status `age_gate`; `/onboarding/age-gate`
+- ADR 0025; entitlement `com.apple.developer.declared-age-range`
+- `discovery_profiles` / `request_session` require adult + not blocked
+
+### Migration and setup impact
+
+`npm run db:reset`. Seed users are marked adult for local tests. Real device
+check needs a dev build (not Expo Go) with the capability enabled.
+
+### Related decision and roadmap
+
+- `docs/adr/0025-apple-declared-age-range-gate.md`
+
 ## 2026-07-12 — Chapter 5: one-way user blocks
 
 ### Summary

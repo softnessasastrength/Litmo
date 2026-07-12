@@ -1,5 +1,13 @@
 # Known limitations
 
+## Age eligibility
+
+- Adult confirmation uses Apple Declared Age Range when the native module and
+  OS support it (ADR 0025). Expo Go and older iOS return `unavailable`;
+  production fails closed, development may self-attest only outside production
+  builds. This is **declared/account age range**, not government ID proof.
+  Removal criterion: vendor KYC where law requires stronger assurance.
+
 ## Passkey authentication
 
 - Passkeys require an iOS development/distribution build, the deployed AASA file,

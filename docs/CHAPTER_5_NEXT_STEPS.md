@@ -3,7 +3,7 @@
 Started 2026-07-12 after Chapter 4 engineering completion
 (`docs/CHAPTER_4_COMPLETION.md`).
 
-## Delivered first slice
+## Delivered first slices
 
 - **One-way blocks** (ADR 0024, migration 022):
   - `user_blocks`, `block_user` / `unblock_user` / `list_blocked_users`
@@ -11,6 +11,8 @@ Started 2026-07-12 after Chapter 4 engineering completion
   - Discovery excludes pair-blocked accounts
   - Pending `requested` sessions between the pair cancel on block
   - Mobile: block on match profile; Settings → Blocked accounts
+- **Adult eligibility** (ADR 0025, migration 023) — Apple Declared Age Range
+  gate; composed with blocks on discovery/`request_session`.
 
 ## Next coherent slices (in order)
 
