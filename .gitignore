@@ -4,3 +4,9 @@ node_modules/
 dist/
 npm-debug.log*
 .claude/
+
+# Local secrets and machine-generated env (never commit)
+.env
+.env.*
+!**/.env.example
+app/.env.lan.example

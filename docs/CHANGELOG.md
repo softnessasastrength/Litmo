@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — Fix Track B seed password sign-in (GoTrue tokens)
+
+### Summary
+
+Local seed accounts in `supabase/seed.sql` left GoTrue token columns `NULL`.
+Password grant then returned HTTP 500 (`confirmation_token` scan error), so
+Track B seed sign-in was broken after every `db reset` even though integration
+tests (which create users via signup) still passed.
+
+### User-visible impact
+
+- Development seed sign-in works again for all four seeded emails
+
+### Developer impact
+
+- Seed inserts empty-string token fields; setup script verifies password grant
+- ADR 0041 addendum; BETA-001 results record automated backend Pass
+
+### Related decision and roadmap
+
+- `docs/adr/0041-development-seed-password-sign-in.md`
+- `docs/TRACK_B_LOCAL.md`, `docs/PHYSICAL_BETA_WALKTHROUGH_RESULTS.md`
+
 ## 2026-07-12 — Track B development seed sign-in + local setup
 
 ### Summary

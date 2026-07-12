@@ -6,11 +6,15 @@ request → Consent Snapshot → active → Soft Signal with two authenticated u
 ## One-shot setup
 
 ```bash
-# Docker Desktop must be running
+# Docker Desktop must be running (this machine: /Volumes/SSD/Docker.app is fine)
 bash scripts/setup-track-b-local.sh
 npm run api      # terminal 1
 npm run mobile   # terminal 2
 ```
+
+The setup script ends by **password-logging in every seed email**. If that
+step fails with HTTP 500 and a `confirmation_token` scan error, re-check
+`supabase/seed.sql` token columns (must be `''`, not `NULL` — ADR 0041).
 
 ## Seed accounts
 

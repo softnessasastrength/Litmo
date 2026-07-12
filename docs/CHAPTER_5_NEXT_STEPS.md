@@ -77,7 +77,7 @@ Started 2026-07-12 after Chapter 4 engineering completion
 
 ## Next coherent slices (in order)
 
-1. Physical walkthrough **Track A Pass** + **Track C Pass**. **Track B** tooling ready (`docs/TRACK_B_LOCAL.md`); run with Docker + seed sign-in.
+1. Physical walkthrough: **Track A Pass** + **Track C Pass** + **Track B automated backend Pass** (seed login + integration). Founder still owns B1–B26 on device (`docs/TRACK_B_LOCAL.md`).
 2. Optional: block history retention after unblock (abuse analysis — product open).
 3. Optional: Soft Signal vs dedicated emergency-stop control if product wants a second control.
 

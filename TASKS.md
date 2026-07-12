@@ -6,19 +6,18 @@ Only one implementation task should normally be `active`. Every status change mu
 
 ## Active
 
-None. Founder **BETA-001** physical walkthrough is the next operator task.
-
-## Pending
-
 ### BETA-001 — Integrated physical-iPhone validation
 
-- **Status:** pending (Track A Pass)
+- **Status:** active (Track A Pass; Track C Pass; Track B automated backend Pass)
 - **Owner:** founder plus current coding agent
 - **Goal:** Verify the integrated `main` experience on a physical iPhone from entry through learning, consent, session, stop, wrap-up, and haptic feel.
 - **Specification:** `docs/PHYSICAL_BETA_WALKTHROUGH.md` + `docs/PHYSICAL_BETA_WALKTHROUGH_RESULTS.md`
 - **Acceptance criteria:** documented test script (done); exact build/install method; passkey and Face ID behavior; privacy-safe backgrounding; session request; **real** Consent Snapshot (ADR 0036); realtime transition; Soft Signal; wrap-up; Chapter 5 safety smoke; five haptic events recognizability; failures recorded without euphemism.
-- **Progress 2026-07-12:** **Track A Pass** (founder). **Track C Pass** (engineering a11y). Track B: seed password sign-in + `setup-track-b-local.sh` landed; **execution** still needs Docker + operator walkthrough.
-- **Next action:** Start Docker → `bash scripts/setup-track-b-local.sh` → two seed accounts → B1–B26.
+- **Progress 2026-07-12:** **Track A Pass** (founder). **Track C Pass** (engineering a11y). **Track B automated:** Docker + setup + all four seed password grants + integration 3/3 + pgTAP 240/240; fixed seed GoTrue NULL token columns that caused HTTP 500 on password login.
+- **Next action:** Founder completes B1–B26 on device(s); agent merges seed fix and only opens fix PRs for Fail items.
+- **Verification (agent, 2026-07-12):** `npm run typecheck` pass; `npm test` pass; `npm run test:integration` 3/3; `env HOME=/tmp npx supabase test db` 240/240; seed emails `maya`/`eli`/`eli-persona`/`jonah-persona` password grant HTTP 200.
+
+## Pending
 
 ### ACCESS-001 — Physical-device accessibility review
 

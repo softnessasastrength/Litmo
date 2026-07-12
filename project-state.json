@@ -1,40 +1,41 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-12T18:30:00-04:00",
+  "updatedAt": "2026-07-12T19:30:00-04:00",
   "milestone": {
     "id": "BETA-001",
     "name": "Integrated physical-iPhone validation",
     "status": "active"
   },
   "git": {
-    "branch": "main",
-    "latestCoherentCommit": "chapter-5-real-consent-snapshot-and-walkthrough-checklist",
-    "workingTreeExpectedClean": true
+    "branch": "fix/seed-password-sign-in-gotrue-tokens",
+    "latestCoherentCommit": "main@22fe53f plus seed GoTrue token fix",
+    "workingTreeExpectedClean": false
   },
   "verification": {
     "status": "partial",
     "commands": [
-      "Review latest GitHub Actions for current main",
-      "Run npm run typecheck",
-      "Run npm test",
-      "Run npm run test:integration with local Supabase where relevant",
-      "Execute docs/PHYSICAL_BETA_WALKTHROUGH.md on a physical iPhone (Tracks A/B/C)"
+      "npm run typecheck — pass",
+      "npm test — pass",
+      "npm run test:integration — 3/3 pass (local Supabase)",
+      "env HOME=/tmp npx supabase test db — 240/240 pass",
+      "All four seed emails password grant HTTP 200 after db reset",
+      "Physical Track B B1–B26 still founder-owned"
     ],
     "failures": []
   },
-  "nextAction": "Execute docs/PHYSICAL_BETA_WALKTHROUGH.md on a physical iPhone for demo and real two-account paths; record pass/fail by checklist ID; open fix PRs only for Fail items.",
+  "nextAction": "Merge seed password fix; founder runs docs/PHYSICAL_BETA_WALKTHROUGH.md Track B B1–B26 on device(s) with bash scripts/setup-track-b-local.sh.",
   "blockedBy": [],
   "risks": [
-    "Physical walkthrough not yet completed end-to-end after Chapter 5 slices.",
+    "Track B physical two-account UI walkthrough not yet founder-signed.",
     "Real Consent Snapshot requires LAN-reachable snapshot backend and saved profiles.",
     "External TestFlight remains blocked (deletion, staging, AASA, disclosures, independent review).",
     "Simulator-only testing cannot validate Face ID, haptics, or real-device accessibility."
   ],
   "notes": [
     "Repository artifacts are the source of truth; prior chat context is optional context only.",
-    "Chapters 1–5 trust/moderation foundation is merged including real Consent Snapshot display (ADR 0036).",
-    "PHYSICAL_BETA_WALKTHROUGH.md is the founder/private checklist; completing it is not external beta approval.",
-    "HAPTIC-001 remains a pending implementation track after BETA-001 findings or in parallel if preferred."
+    "HAPTIC-001 completed (ADR 0039).",
+    "Seed auth.users token columns must be empty strings for GoTrue password login (ADR 0041 addendum).",
+    "PHYSICAL_BETA_WALKTHROUGH.md is the founder/private checklist; completing it is not external beta approval."
   ]
 }

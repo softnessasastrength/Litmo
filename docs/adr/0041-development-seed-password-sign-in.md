@@ -29,3 +29,16 @@ and simulator builds. Local seed users already exist with passwords in
 - Track B can use two simulators/devices with seed accounts after `db:reset`.
 - Real Face ID lock still applies once a real session exists.
 - Never ship seed passwords into production configs.
+
+## Addendum 2026-07-12 — GoTrue token column nullability
+
+Direct `INSERT` into `auth.users` must set `confirmation_token`,
+`recovery_token`, `email_change_token_new`, and `email_change` to empty
+strings (`''`), not SQL `NULL`. GoTrue's password grant scans those columns
+as non-null strings; `NULL` yields HTTP 500:
+
+`Scan error on column ... confirmation_token: converting NULL to string is unsupported`
+
+Signup-created users get empty-string defaults; seed rows must match.
+`scripts/setup-track-b-local.sh` verifies password grant for all four seed
+emails after `db reset` so this cannot regress silently.

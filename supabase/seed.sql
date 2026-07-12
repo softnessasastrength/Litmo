@@ -11,12 +11,32 @@
 -- represents (per mockConsentProfiles.ts's userId map), not the pre-existing
 -- 0001/0002 accounts' own display names, which predate this mapping and
 -- don't line up with the "maya"/"eli" persona names by coincidence.
-insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+-- GoTrue password login scans token columns as non-null strings. Leaving them
+-- NULL causes: "Scan error on column ... confirmation_token: converting NULL
+-- to string is unsupported" and HTTP 500 on /auth/v1/token. Match the empty
+-- string defaults GoTrue writes for signup-created users (Track B / ADR 0041).
+insert into auth.users (
+  instance_id,
+  id,
+  aud,
+  role,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  created_at,
+  updated_at
+)
 values
-  ('00000000-0000-0000-0000-000000000000', '10000000-0000-4000-8000-000000000001', 'authenticated', 'authenticated', 'maya.demo@litmo.local', crypt('LitmoDemo123!', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{"display_name":"Maya Demo"}', now(), now()),
-  ('00000000-0000-0000-0000-000000000000', '10000000-0000-4000-8000-000000000002', 'authenticated', 'authenticated', 'eli.demo@litmo.local', crypt('LitmoDemo123!', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{"display_name":"Eli Demo"}', now(), now()),
-  ('00000000-0000-0000-0000-000000000000', '10000000-0000-4000-8000-000000000003', 'authenticated', 'authenticated', 'eli-persona.demo@litmo.local', crypt('LitmoDemo123!', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{"display_name":"Eli"}', now(), now()),
-  ('00000000-0000-0000-0000-000000000000', '10000000-0000-4000-8000-000000000004', 'authenticated', 'authenticated', 'jonah-persona.demo@litmo.local', crypt('LitmoDemo123!', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{"display_name":"Jonah"}', now(), now())
+  ('00000000-0000-0000-0000-000000000000', '10000000-0000-4000-8000-000000000001', 'authenticated', 'authenticated', 'maya.demo@litmo.local', crypt('LitmoDemo123!', gen_salt('bf')), now(), '', '', '', '', '{"provider":"email","providers":["email"]}', '{"display_name":"Maya Demo"}', now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '10000000-0000-4000-8000-000000000002', 'authenticated', 'authenticated', 'eli.demo@litmo.local', crypt('LitmoDemo123!', gen_salt('bf')), now(), '', '', '', '', '{"provider":"email","providers":["email"]}', '{"display_name":"Eli Demo"}', now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '10000000-0000-4000-8000-000000000003', 'authenticated', 'authenticated', 'eli-persona.demo@litmo.local', crypt('LitmoDemo123!', gen_salt('bf')), now(), '', '', '', '', '{"provider":"email","providers":["email"]}', '{"display_name":"Eli"}', now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '10000000-0000-4000-8000-000000000004', 'authenticated', 'authenticated', 'jonah-persona.demo@litmo.local', crypt('LitmoDemo123!', gen_salt('bf')), now(), '', '', '', '', '{"provider":"email","providers":["email"]}', '{"display_name":"Jonah"}', now(), now())
 on conflict (id) do nothing;
 
 insert into auth.identities (id, user_id, provider_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
