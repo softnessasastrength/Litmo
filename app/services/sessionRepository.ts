@@ -345,6 +345,7 @@ export const sessionRepository = {
       status: string;
       startedAt: string | null;
       createdAt: string;
+      expiresAt: string | null;
     }>
   > {
     try {
@@ -357,6 +358,7 @@ export const sessionRepository = {
           status: string;
           started_at: string | null;
           created_at: string;
+          expires_at: string | null;
         }> | null) ?? []
       ).map((row) => ({
         id: row.id as string,
@@ -364,6 +366,7 @@ export const sessionRepository = {
         status: row.status as string,
         startedAt: row.started_at as string | null,
         createdAt: row.created_at as string,
+        expiresAt: (row.expires_at as string | null) ?? null,
       }));
     } catch (error) {
       throw mapExternalError(error);
