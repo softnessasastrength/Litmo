@@ -4,11 +4,16 @@ This archive is for developers and reviewers who want to inspect or run the nati
 
 ## Fastest path
 
-1. Unzip the archive on a Mac.
-2. Double-click **Open Litmo.command** inside the `release` folder.
-3. Let the launcher install the locked JavaScript and CocoaPods dependencies.
-4. Xcode opens the generated `.xcworkspace` automatically.
-5. Select your Apple development team, choose an iPhone or simulator, and press **Run**.
+1. Download the `.tar.gz` file from the GitHub Release.
+2. Double-click it in Finder to extract it, or run `tar -xzf Litmo-Xcode-Source-<version>.tar.gz`.
+3. Double-click **Open Litmo.command** inside the `release` folder.
+4. Let the launcher install the locked JavaScript and CocoaPods dependencies.
+5. Xcode opens the generated `.xcworkspace` automatically.
+6. Select your Apple development team, choose an iPhone or simulator, and press **Run**.
+
+## Manual GitHub Actions test downloads
+
+GitHub always wraps workflow artifacts in its own ZIP container. For a manual workflow run, first extract GitHub's downloaded artifact ZIP; the validated Litmo `.tar.gz` file is inside it. Tagged GitHub Releases attach the `.tar.gz` directly.
 
 ## Why a workspace instead of a project?
 
