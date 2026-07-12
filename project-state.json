@@ -1,31 +1,41 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-12T11:00:00-04:00",
+  "updatedAt": "2026-07-12T14:15:00-04:00",
   "milestone": {
-    "id": "RESUME-001",
-    "name": "Model-portable resumable development workflow",
-    "status": "completed"
+    "id": "BETA-VALIDATION",
+    "name": "Private-beta validation and guided-practice expansion",
+    "status": "active"
   },
   "git": {
-    "branch": "chore/model-portable-workflow",
-    "latestCoherentCommit": "dec4dd8f9e0669227663398308ed1f2d124c6ca8",
+    "branch": "main",
+    "latestCoherentCommit": "current-main-after-learning-system-merge",
     "workingTreeExpectedClean": true
   },
   "verification": {
     "status": "partial",
     "commands": [
-      "npm run state:check (scheduled in GitHub Actions)"
+      "Review latest GitHub Actions for current main",
+      "Run npm run state:check",
+      "Run npm run lint",
+      "Run npm run typecheck",
+      "Run npm test",
+      "Run npm run test:integration with local Supabase",
+      "Run npm run db:lint with local Supabase",
+      "Run npm run build"
     ],
     "failures": []
   },
-  "nextAction": "Review the pull request, confirm the Project State CI check passes, and merge when satisfied.",
+  "nextAction": "Select BETA-001, ACCESS-001, LEARN-002, or SAFETY-OPS-001 from TASKS.md and record the chosen task before implementation.",
   "blockedBy": [],
   "risks": [
-    "CI has not yet validated the workflow on a clean checkout."
+    "The integrated current main has not been represented here as fully verified on a physical iPhone.",
+    "Moderation, reporting, beta operations, and physical-device accessibility validation remain incomplete.",
+    "Learning completion must never be interpreted as evidence of safety or consent competence."
   ],
   "notes": [
     "Repository artifacts are the source of truth; prior chat context is optional context only.",
-    "The existing AGENTS.md already contains durable-agent, coherent-commit, documentation, and verification rules."
+    "Chapters 1 through 4, secure-auth foundation, Wiki source, and the first guided-learning vertical slice are merged.",
+    "No implementation branch is designated active at this handoff."
   ]
 }
