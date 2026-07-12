@@ -20,7 +20,8 @@
     "db:reset": "npx supabase db reset",
     "db:stop": "npx supabase stop",
     "db:lint": "npx supabase db lint --local --level error",
-    "env:check": "node scripts/validate-env.mjs"
+    "env:check": "node scripts/validate-env.mjs",
+    "bootstrap": "bash scripts/bootstrap-macos-dev-env.sh"
   },
   "devDependencies": {
     "supabase": "^2.50.5"

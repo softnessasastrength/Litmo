@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-11 — Machine setup bootstrap script and disaster-recovery doc
+
+### Summary
+
+Added `scripts/bootstrap-macos-dev-env.sh` and `docs/MACHINE_SETUP.md` so a fresh Mac (new laptop, wiped disk) can be brought up for Litmo development without rediscovering the several real, non-obvious issues hit while setting this machine up: a CocoaPods crash from a missing UTF-8 locale, a broken `docker` CLI symlink when Docker Desktop is installed off the default `/Applications` path, and the `expo-build-properties`/npm-hoisting conflict.
+
+### User-visible impact
+
+None to the app. `npm run bootstrap` checks Homebrew, Node version, CocoaPods, locale configuration, Xcode, and the Docker CLI, fixing what it safely can and printing the manual steps (Xcode/Docker Desktop installation, Apple/Expo account logins) that genuinely require interactive, credentialed steps.
+
+### Developer impact
+
+New `scripts/bootstrap-macos-dev-env.sh` (idempotent, safe to re-run) and `docs/MACHINE_SETUP.md`. New `npm run bootstrap` script. Linked from `docs/LOCAL_DEVELOPMENT.md`.
+
+### Migration and setup impact
+
+None to existing setups. Verified by running the script twice against this already-configured machine and confirming the second run reports everything already satisfied rather than re-applying changes.
+
+### Related decision and roadmap
+
+- `docs/MACHINE_SETUP.md`
+- `docs/adr/0004-ios-27-beta-build-fixes.md`
+
 ## 2026-07-11 — Chapter 4 kickoff: pure session-lifecycle state machine
 
 ### Summary

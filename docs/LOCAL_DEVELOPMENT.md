@@ -1,5 +1,7 @@
 # Local development
 
+Setting up a machine from scratch (new laptop, wiped disk, disaster recovery)? See `docs/MACHINE_SETUP.md` first, or run `npm run bootstrap`.
+
 ## Backend-free demo mode (no Docker required)
 
 If Docker Desktop is unavailable, or you just want to see the app without setting up Supabase, you can still launch on a physical iPhone:
