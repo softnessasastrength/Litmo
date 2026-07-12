@@ -77,11 +77,13 @@ Landed 2026-07-12 (`docs/adr/0020-session-complete-offline-retry.md`): "End toge
 
 Landed 2026-07-12 (`docs/adr/0021-outgoing-requests-and-local-request-alert.md`): requesters list/cancel outgoing pending requests (migration 019); recipients get a privacy-safe **local** notification on Realtime INSERT (not remote push).
 
-The database half of wrap-up is complete in migration 012 and ADR 0008. Request create/accept/decline/cancel/expire, snapshot, Realtime, offline retry, and two-client integration are largely complete. This document is mainly a handoff for remaining policy/release items.
+Landed 2026-07-12 (`docs/adr/0022-open-session-resume-and-preactivation-withdraw.md`): `list_open_sessions` + Home resume; Consent Snapshot withdraw UI; active session foreground re-sync and connectivity note.
+
+The database half of wrap-up is complete in migration 012 and ADR 0008. Request create/accept/decline/cancel/expire, snapshot, Realtime, offline retry, resume, and two-client integration are largely complete. This document is mainly a handoff for remaining policy/release items.
 
 ## Not yet scoped (fine to leave for later)
 
-Later pre-activation expiry policy beyond `requested`, blocking/eligibility checks, remote OS push (local alert exists), optional offline UI banners, and physical offline/termination chaos tests.
+Later pre-activation expiry policy beyond `requested`, blocking/eligibility checks, remote OS push (local alert exists), and physical offline/termination chaos tests.
 
 ## Resolved 2026-07-12: mock discovery now has real accounts to request
 
@@ -93,4 +95,4 @@ If picking this up fresh (new session, new agent, or just after a break):
 
 1. `git checkout agent/chapter-4-session-lifecycle` (or start a new branch off it if it's already merged).
 2. Confirm Docker/Supabase still work: `npm run db:start && npm run db:reset && env HOME=/tmp npx supabase test db` should show 111/111 passing.
-3. Deliverables 1–3 are complete through outgoing cancel + local request alert (ADRs 0005–0021; migrations through 019). Remaining gaps need product decisions (blocking/eligibility, later pre-activation expiry) or release-track work (remote push, chaos tests).
+3. Deliverables 1–3 are complete through open-session resume (ADRs 0005–0022; migrations through 020). Remaining gaps need product decisions (blocking/eligibility, later pre-activation expiry) or release-track work (remote push, chaos tests).

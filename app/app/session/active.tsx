@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { AppState, type AppStateStatus } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import {
@@ -39,6 +40,8 @@ function ActiveSessionContent() {
     "idle",
   );
   const [completing, setCompleting] = useState(false);
+  /** Display-only: last server sync outcome. Never invents consent offline. */
+  const [syncNote, setSyncNote] = useState<string | null>(null);
   const endedRef = useRef(false);
 
   // Real elapsed time from the database's started_at once a real session is
@@ -62,31 +65,60 @@ function ActiveSessionContent() {
 
   // Fetch the real session once, then subscribe to changes so the other
   // participant's soft signal or completion is reflected here without a
-  // manual refresh.
+  // manual refresh. On foreground, re-read so a missed Realtime event cannot
+  // leave a terminal session looking active.
   useEffect(() => {
     if (!sessionId) return;
     let cancelled = false;
-    void sessionRepository.getSession(sessionId).then((session) => {
-      if (!cancelled) setStartedAt(session.startedAt);
-    });
+
+    const applySession = (session: {
+      status: string;
+      startedAt: string | null;
+    }) => {
+      if (session.startedAt) setStartedAt(session.startedAt);
+      const reason = terminalEndedReason[session.status];
+      if (reason && !endedRef.current) {
+        endedRef.current = true;
+        setEnded(true);
+        router.replace({
+          pathname: "/session/wrap-up",
+          params: { ended: reason, sessionId },
+        });
+      }
+    };
+
+    const refresh = async () => {
+      try {
+        const session = await sessionRepository.getSession(sessionId);
+        if (cancelled) return;
+        setSyncNote(null);
+        applySession(session);
+      } catch {
+        if (!cancelled)
+          setSyncNote(
+            "Connection uncertain. Soft Signal still works offline; completion will sync when the network returns.",
+          );
+      }
+    };
+
+    void refresh();
     const unsubscribe = sessionRepository.subscribeToSession(
       sessionId,
       (session) => {
-        if (session.startedAt) setStartedAt(session.startedAt);
-        const reason = terminalEndedReason[session.status];
-        if (reason && !endedRef.current) {
-          endedRef.current = true;
-          setEnded(true);
-          router.replace({
-            pathname: "/session/wrap-up",
-            params: { ended: reason, sessionId },
-          });
-        }
+        setSyncNote(null);
+        applySession(session);
       },
     );
+
+    const onAppState = (next: AppStateStatus) => {
+      if (next === "active") void refresh();
+    };
+    const appSub = AppState.addEventListener("change", onAppState);
+
     return () => {
       cancelled = true;
       unsubscribe();
+      appSub.remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId]);
@@ -147,6 +179,11 @@ function ActiveSessionContent() {
         <Body muted>
           Keep noticing yourself. Agreement can change at any moment.
         </Body>
+        {syncNote ? (
+          <View style={styles.syncNote} accessible accessibilityRole="text">
+            <Text style={styles.syncNoteText}>{syncNote}</Text>
+          </View>
+        ) : null}
       </View>
       <View
         accessible
@@ -208,4 +245,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 18,
   },
+  syncNote: {
+    marginTop: 12,
+    backgroundColor: colors.apricotSoft,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.apricot,
+    padding: 12,
+    borderRadius: 12,
+  },
+  syncNoteText: { color: colors.ink, fontSize: 14, lineHeight: 20 },
 });
