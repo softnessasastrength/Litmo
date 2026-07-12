@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import {
@@ -13,6 +13,7 @@ import { colors, fonts, radius } from "../../theme";
 import { useAuth } from "../../context/AuthContext";
 import { sessionWrapupService } from "../../services/sessionWrapupService";
 import type { WrapupOutcome } from "../../services/sessionWrapupServiceCore";
+import { sessionRepository } from "../../services/sessionRepository";
 
 const outcomeChoices: Array<{
   value: WrapupOutcome;
@@ -52,12 +53,45 @@ export default function SessionWrapUpScreen() {
     ended?: string;
     sessionId?: string;
   }>();
-  const { status } = useAuth();
+  const { status, user } = useAuth();
   const [outcome, setOutcome] = useState<WrapupOutcome | "">("");
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [peerUserId, setPeerUserId] = useState<string | null>(null);
   const canPersist = status === "authenticated" && !!sessionId;
+  const showReportOffer =
+    canPersist &&
+    !!peerUserId &&
+    (outcome === "felt_uncomfortable" ||
+      outcome === "safety_concern" ||
+      outcome === "soft_signal_used");
+
+  useEffect(() => {
+    if (!canPersist || !sessionId || !user?.id) {
+      setPeerUserId(null);
+      return;
+    }
+    let cancelled = false;
+    void sessionRepository
+      .getSession(sessionId)
+      .then((session) => {
+        if (cancelled) return;
+        const peer =
+          session.userA === user.id
+            ? session.userB
+            : session.userB === user.id
+              ? session.userA
+              : null;
+        setPeerUserId(peer);
+      })
+      .catch(() => {
+        if (!cancelled) setPeerUserId(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [canPersist, sessionId, user?.id]);
 
   const save = async () => {
     if (!outcome) return;
@@ -84,6 +118,18 @@ export default function SessionWrapUpScreen() {
     } finally {
       setBusy(false);
     }
+  };
+
+  const openReport = () => {
+    if (!peerUserId || !sessionId) return;
+    router.push({
+      pathname: "/security/report",
+      params: {
+        reportedId: peerUserId,
+        sessionId,
+        displayName: "the other person",
+      },
+    });
   };
 
   return (
@@ -122,10 +168,25 @@ export default function SessionWrapUpScreen() {
           <Text style={styles.supportTitle}>Your comfort matters.</Text>
           <Text style={styles.supportBody}>
             {canPersist
-              ? "This stays private to you. A future release routes this to human review without exposing it to the other person."
+              ? "Your wrap-up stays private. If you want human review, you can also submit a structured report — they will not be told who reported them."
               : "A production system would privately offer reporting and support options for human review. This prototype stores nothing."}
           </Text>
         </View>
+      ) : null}
+      {showReportOffer ? (
+        <>
+          <Button
+            variant="secondary"
+            label="Report this session for human review"
+            onPress={openReport}
+            accessibilityHint="Opens a private structured report linked to this session. Optional and separate from your wrap-up."
+          />
+          <Body muted>
+            Reporting is optional and separate from this private reflection.
+            Litmo is not emergency response — if you are in immediate danger,
+            contact local emergency services.
+          </Body>
+        </>
       ) : null}
       <View style={styles.noteBlock}>
         <Text style={styles.noteLabel}>

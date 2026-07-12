@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — Chapter 5: report entry from session wrap-up
+
+### Summary
+
+Real session wrap-up offers optional structured reporting linked to the
+session and peer when the outcome signals discomfort, Soft Signal, or a
+safety concern. Wrap-up remains private and separate from reporting.
+
+### User-visible impact
+
+- After selecting soft signal / uncomfortable / safety concern on a real
+  session wrap-up: **Report this session for human review**.
+- Report form receives `sessionId` + peer id automatically.
+
+### Developer impact
+
+- `sessionRepository.getSession` returns `userA` / `userB`
+- Wrap-up → `/security/report` with session params
+
+### Related decision and roadmap
+
+- `docs/CHAPTER_5_NEXT_STEPS.md` (report entry from wrap-up)
+
 ## 2026-07-12 — Chapter 5: staff account restrictions
 
 ### Summary
