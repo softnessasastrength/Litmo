@@ -5,6 +5,15 @@
 - Passkeys require an iOS development/distribution build, the deployed AASA file,
   iCloud Keychain, a device passcode, and enabled Supabase experimental passkeys;
   they do not work inside stock Expo Go.
+- **A free Apple "Personal Team" cannot use the Associated Domains capability
+  passkeys require at all** (the same class of limitation as Push
+  Notifications). `app.config.ts`'s `LITMO_FREE_TIER_BUILD=1` flag omits
+  Associated Domains so a free-team local build can compile and install, at
+  the direct cost of passkey sign-in not functioning in that build. Real
+  passkey sign-in can only be verified with a paid Apple Developer Program
+  membership (EAS or a paid local team). See
+  `docs/adr/0015-session-request-creation-and-recipient-authorization.md`'s
+  build-verification addendum and `docs/MACHINE_SETUP.md`.
 - Human-reviewed account recovery and trusted backend session-revocation
   operations are specified but not yet deployed. Recovery therefore fails
   closed if no synced passkey remains.

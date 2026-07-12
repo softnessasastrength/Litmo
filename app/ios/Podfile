@@ -22,9 +22,8 @@ platform :ios, podfile_properties['ios.deploymentTarget'] || '15.1'
 
 prepare_react_native_project!
 
-target 'Litmo' do
+target 'Litmodevelopment' do
   use_expo_modules!
-  pod 'LitmoPasskeys', :path => '../modules/litmo-passkeys/ios'
 
   if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'
     config_command = ['node', '-e', "process.argv=['', '', 'config'];require('@react-native-community/cli').run()"];

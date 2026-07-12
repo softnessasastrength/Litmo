@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-07-12 — Free-tier local build fix and on-device verification
+
+### Summary
+
+A free Apple "Personal Team" cannot use the Associated Domains capability that passkey sign-in (ADR 0010) requires, blocking every local build once the requester passed re-authentication. Added an `app.config.ts` flag (`LITMO_FREE_TIER_BUILD=1`) that omits Associated Domains for local free-tier builds only, keeping it for real (paid-team/EAS) builds.
+
+### User-visible impact
+
+Local builds on a free Apple account work again; passkey sign-in specifically does not function in that build (demo mode and everything else does), matching the existing Push Notifications trade-off.
+
+### Developer impact
+
+Fixed a bug caught before landing: the first version only skipped adding an `associatedDomains` override, but `app.json`'s hardcoded value leaked through via the `...base.expo.ios` spread regardless; fixed by destructuring it out first. Verified end to end: `LITMO_FREE_TIER_BUILD=1 npx expo prebuild --platform ios` + `pod install` + `xcodebuild` succeeded, and the app installed and launched on the physical device (confirmed by the founder), verifying this session's request/accept/decline UI on-device.
+
+### Migration and setup impact
+
+No migration. See `docs/MACHINE_SETUP.md` and `docs/KNOWN_LIMITATIONS.md` for the flag and its trade-off.
+
+### Related decision and roadmap
+
+- `docs/adr/0015-session-request-creation-and-recipient-authorization.md`
+
 ## 2026-07-12 — Connect an accepted request to consent review
 
 ### Summary

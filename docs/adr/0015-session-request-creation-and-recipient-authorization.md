@@ -37,6 +37,16 @@ A session can now genuinely be requested and responded to correctly and safely a
 - Blocking/eligibility checks before request creation.
 - Expiration timestamps/jobs for unanswered requests.
 
+## Addendum (2026-07-12): free-tier build unblocked, on-device verification completed
+
+The on-device build blocked in the "mobile request/accept/decline UI" addendum below turned out to be more than an expired Xcode sign-in: after re-authenticating, the build failed with a _second_, structural error — "Personal development teams... do not support the Associated Domains capability" for `com.litmo.app.dev`. Associated Domains was added by the passkey-first authentication work (ADR 0010) and, like Push Notifications before it (`app/plugins/withoutPushEntitlement.cjs`), a free Apple "Personal Team" cannot use it at all.
+
+Unlike Push Notifications, this isn't a removable no-op — passkeys are the app's only sign-in method, so silently stripping the entitlement everywhere would break real sign-in. Presented this tradeoff directly; the founder chose to strip it for **local free-tier builds only**, keeping it intact for real (paid-team/EAS) builds. Implemented as an `app.config.ts` flag: `LITMO_FREE_TIER_BUILD=1 npx expo prebuild --platform ios` omits `associatedDomains` from the generated config entirely (real dev/staging/production builds keep it by default). Fixed a bug caught before this landed: the first implementation only skipped _adding_ an override, but `...base.expo.ios` (spread from `app.json`) already carried a hardcoded `associatedDomains` value that leaked through unchanged; fixed by destructuring it out of the base object first.
+
+With that fix, `LITMO_FREE_TIER_BUILD=1 npx expo prebuild --platform ios` + `pod install` + `xcodebuild` succeeded, and the app installed and launched on the physical device without crashing (confirmed by the founder), verifying this session's mobile request/accept/decline UI on-device. Passkey sign-in itself was not (and cannot be) verified under a free Personal Team; that remains blocked on a paid Apple Developer Program membership. See `docs/KNOWN_LIMITATIONS.md` and `docs/MACHINE_SETUP.md`.
+
+Note: this build also regenerated the native Xcode project under a new name (`Litmodevelopment` instead of `Litmo`), because the environment-aware display name (`Litmo development` in dev, from the earlier "harden release environment boundaries" work) is what Expo derives the native project/target/scheme names from. This is a pre-existing, deliberate design choice from that work, not something changed here — just documented so the renamed `ios/Litmodevelopment.*` paths in this commit aren't mistaken for an unrelated restructuring.
+
 ## Addendum (2026-07-12): mobile request/accept/decline UI
 
 Wired the follow-up work above: `sessionRepository.requestSession`/`respondToRequest`/`listIncomingRequests` (thin RPC wrappers, matching `completeSession`'s existing pattern); a "Request a session" action on `app/app/match/[id].tsx` (real when `status === "authenticated"`, honest fallback in demo mode, matching ADR 0014's established convention); and a new `app/app/requests.tsx` screen listing incoming pending requests (via `discovery_profiles()` for the requester's display name) with Accept/Decline, linked from the home tab.

@@ -54,6 +54,7 @@ Installing Xcode, Docker Desktop, and signing into Apple/Expo accounts genuinely
 6. **Or skip Supabase entirely** and use backend-free demo mode (`docs/adr/0003-demo-mode-entry-point.md`) — run `npm --workspace app run start`, scan the QR code with Expo Go, and tap "Continue without an account (demo mode)."
 
 7. **For a standalone iOS build** (not just Expo Go), see `docs/LOCAL_DEVELOPMENT.md`'s standalone-build section for both the EAS path (needs an Expo account and, for physical-device installs, a paid Apple Developer Program membership) and the free local Xcode "Personal Team" path (needs Xcode signed into any Apple ID; 7-day expiring installs).
+   - A free Personal Team cannot use the **Associated Domains** capability (required for real passkey sign-in, ADR 0010) any more than it can use Push Notifications. Building locally under a free team requires `LITMO_FREE_TIER_BUILD=1 npx expo prebuild --platform ios`, which omits Associated Domains entirely for that build — passkey sign-in will not work in it, but everything else (demo mode, session requests, etc.) does. See `docs/adr/0015-session-request-creation-and-recipient-authorization.md`'s build-verification addendum.
 
 ## Known gotchas from prior sessions
 
