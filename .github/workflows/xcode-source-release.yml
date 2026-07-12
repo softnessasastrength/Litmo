@@ -1,0 +1,61 @@
+name: Xcode Source Kit
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Archive version label
+        required: false
+        default: manual
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: macos-15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: version
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            echo "value=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=${{ inputs.version || 'manual' }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build source kit
+        shell: bash
+        run: |
+          chmod +x scripts/package-xcode-source-kit.sh
+          scripts/package-xcode-source-kit.sh "${{ steps.version.outputs.value }}"
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Litmo-Xcode-Source-${{ steps.version.outputs.value }}
+          path: dist/Litmo-Xcode-Source-${{ steps.version.outputs.value }}.zip
+          if-no-files-found: error
+
+      - name: Attach archive to GitHub Release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          archive="dist/Litmo-Xcode-Source-${{ steps.version.outputs.value }}.zip"
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            gh release upload "${GITHUB_REF_NAME}" "$archive" --clobber
+          else
+            gh release create "${GITHUB_REF_NAME}" "$archive" \
+              --title "Litmo ${GITHUB_REF_NAME}" \
+              --generate-notes \
+              --prerelease
+          fi
