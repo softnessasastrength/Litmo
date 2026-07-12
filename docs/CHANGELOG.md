@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-07-12 — Pre-activation review expiration and Chapter 4 completion
+
+### Summary
+
+Pre-activation sessions (`accepted` / `consent_pending` / `ready`) now expire
+24 hours after review starts (same check-on-read pattern as request expiry).
+Home open-session cards show the review deadline. Chapter 4 engineering is
+documented as complete with explicit deferred gaps.
+
+### User-visible impact
+
+- Abandoned consent reviews fail closed after a day; Home resume cards drop them.
+- Open consent cards show when the review expires.
+- Active sessions are not auto-expired.
+
+### Developer impact
+
+- Migration `021_preactivation_expiry.sql` — `preactivation_deadline`,
+  `list_open_sessions` + `transition_session` expiry
+- pgTAP `session_preactivation_expiry.test.sql`
+- ADR 0023; `docs/CHAPTER_4_COMPLETION.md`
+
+### Migration and setup impact
+
+`npm run db:reset` (or apply 021).
+
+### Related decision and roadmap
+
+- `docs/adr/0023-preactivation-review-expiration.md`
+- `docs/CHAPTER_4_COMPLETION.md`
+
 ## 2026-07-12 — Ready-session resume and consent cancel watch
 
 ### Summary

@@ -1,5 +1,5 @@
 begin;
-select plan(6);
+select plan(7);
 
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000001', true);
@@ -39,6 +39,11 @@ select is(
   (select count(*)::integer from public.list_open_sessions()),
   1,
   'requester also sees the same open session'
+);
+
+select ok(
+  (select expires_at is not null from public.list_open_sessions() limit 1),
+  'open pre-activation sessions expose a review expiration timestamp'
 );
 
 reset role;

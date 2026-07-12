@@ -85,9 +85,16 @@ Landed 2026-07-12: resume of `ready` activates and opens `/session/active`; Cons
 
 The database half of wrap-up is complete in migration 012 and ADR 0008. Request create/accept/decline/cancel/expire, snapshot, Realtime, offline retry, resume, and two-client integration are largely complete. This document is mainly a handoff for remaining policy/release items.
 
+## Chapter 4 engineering status
+
+See **`docs/CHAPTER_4_COMPLETION.md`**. Pre-activation review expiry landed in
+ADR 0023 / migration 021. Remaining work is product/release: blocking,
+remote push, multi-device chaos tests, Edge snapshot path.
+
 ## Not yet scoped (fine to leave for later)
 
-Later pre-activation expiry policy beyond `requested`, blocking/eligibility checks, remote OS push (local alert exists), and physical offline/termination chaos tests.
+Blocking/eligibility checks (Chapter 5), remote OS push (local alert exists),
+physical offline/termination chaos tests, moving snapshot compute off LAN Express.
 
 ## Resolved 2026-07-12: mock discovery now has real accounts to request
 
@@ -99,4 +106,4 @@ If picking this up fresh (new session, new agent, or just after a break):
 
 1. `git checkout agent/chapter-4-session-lifecycle` (or start a new branch off it if it's already merged).
 2. Confirm Docker/Supabase still work: `npm run db:start && npm run db:reset && env HOME=/tmp npx supabase test db` should show 111/111 passing.
-3. Deliverables 1–3 are complete through open-session resume (ADRs 0005–0022; migrations through 020). Remaining gaps need product decisions (blocking/eligibility, later pre-activation expiry) or release-track work (remote push, chaos tests).
+3. Chapter 4 engineering is complete through pre-activation expiry (ADRs 0005–0023; migrations through 021). Read `docs/CHAPTER_4_COMPLETION.md`. Next product chapter is Trust and Moderation (Chapter 5) unless release work (push/chaos/Edge snapshot) is prioritized.

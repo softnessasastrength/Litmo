@@ -21,6 +21,7 @@ type OpenSession = {
   status: string;
   startedAt: string | null;
   createdAt: string;
+  expiresAt: string | null;
 };
 
 function resumeLabel(status: string): string {
@@ -141,6 +142,17 @@ export default function HomeTabScreen() {
                 Status: {session.status.replaceAll("_", " ")}. Resuming never
                 grants new consent — it only returns you to the current step.
               </Body>
+              {session.expiresAt ? (
+                <Body muted>
+                  Review expires{" "}
+                  {new Date(session.expiresAt).toLocaleString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                  })}
+                </Body>
+              ) : null}
               <View style={styles.cardAction}>
                 <Button
                   label={
