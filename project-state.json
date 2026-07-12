@@ -1,0 +1,31 @@
+{
+  "$schema": "./docs/project-state.schema.json",
+  "version": 1,
+  "updatedAt": "2026-07-12T11:00:00-04:00",
+  "milestone": {
+    "id": "RESUME-001",
+    "name": "Model-portable resumable development workflow",
+    "status": "completed"
+  },
+  "git": {
+    "branch": "chore/model-portable-workflow",
+    "latestCoherentCommit": "dec4dd8f9e0669227663398308ed1f2d124c6ca8",
+    "workingTreeExpectedClean": true
+  },
+  "verification": {
+    "status": "partial",
+    "commands": [
+      "npm run state:check (scheduled in GitHub Actions)"
+    ],
+    "failures": []
+  },
+  "nextAction": "Review the pull request, confirm the Project State CI check passes, and merge when satisfied.",
+  "blockedBy": [],
+  "risks": [
+    "CI has not yet validated the workflow on a clean checkout."
+  ],
+  "notes": [
+    "Repository artifacts are the source of truth; prior chat context is optional context only.",
+    "The existing AGENTS.md already contains durable-agent, coherent-commit, documentation, and verification rules."
+  ]
+}

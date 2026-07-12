@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://softnessasastrength.github.io/Litmo/project-state.schema.json",
+  "title": "Litmo Project State",
+  "type": "object",
+  "required": ["version", "updatedAt", "milestone", "git", "verification", "nextAction", "blockedBy", "risks", "notes"],
+  "properties": {
+    "version": { "type": "integer", "minimum": 1 },
+    "updatedAt": { "type": "string" },
+    "milestone": {
+      "type": "object",
+      "required": ["id", "name", "status"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["pending", "active", "blocked", "completed", "abandoned"] }
+      },
+      "additionalProperties": false
+    },
+    "git": {
+      "type": "object",
+      "required": ["branch", "latestCoherentCommit", "workingTreeExpectedClean"],
+      "properties": {
+        "branch": { "type": "string", "minLength": 1 },
+        "latestCoherentCommit": { "type": "string", "minLength": 7 },
+        "workingTreeExpectedClean": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "verification": {
+      "type": "object",
+      "required": ["status", "commands", "failures"],
+      "properties": {
+        "status": { "enum": ["pending", "passed", "failed", "partial"] },
+        "commands": { "type": "array", "items": { "type": "string" } },
+        "failures": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "nextAction": { "type": "string", "minLength": 1 },
+    "blockedBy": { "type": "array", "items": { "type": "string" } },
+    "risks": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}
