@@ -14,6 +14,7 @@ import { colors } from "../../theme";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { useAuth } from "../../context/AuthContext";
 import { emergencyStopService } from "../../services/emergencyStopService";
+import { hapticService } from "../../services/hapticService";
 import { sessionCompleteService } from "../../services/sessionCompleteService";
 import { sessionRepository } from "../../services/sessionRepository";
 
@@ -139,6 +140,7 @@ function ActiveSessionContent() {
 
   const time = `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
   const stop = async () => {
+    // Safety transition first; haptic acknowledgement never gates the stop.
     endedRef.current = true;
     setEnded(true);
     setStopState("stopping");
@@ -150,6 +152,8 @@ function ActiveSessionContent() {
         setStopState("pending");
       }
     }
+    // Soft Signal acknowledgement only — does not represent the peer stopping.
+    void hapticService.play("softSignal");
     router.replace({
       pathname: "/session/wrap-up",
       params: {

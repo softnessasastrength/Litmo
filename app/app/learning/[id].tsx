@@ -1,7 +1,8 @@
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { findLearningModule } from "../../data/learningModules";
+import { hapticService } from "../../services/hapticService";
 import { learningProgressService } from "../../services/learningProgress";
 import { colors, fonts, radius } from "../../theme";
 
@@ -12,20 +13,40 @@ export default function LearningModuleScreen() {
   const [stepIndex, setStepIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const presencePlayedRef = useRef(false);
+  const attentionStepRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!module) return;
     let active = true;
+    presencePlayedRef.current = false;
+    attentionStepRef.current = null;
     void learningProgressService.load().then((progress) => {
       if (!active) return;
       const saved = progress[module.id];
       setStepIndex(saved?.completed ? 0 : (saved?.stepIndex ?? 0));
       setLoaded(true);
+      // presence once per module entry — not on resume of progress alone after rerender.
+      if (!presencePlayedRef.current) {
+        presencePlayedRef.current = true;
+        void hapticService.play("presence");
+      }
     });
     return () => {
       active = false;
     };
   }, [module]);
+
+  const step = module?.steps[stepIndex];
+  const hasScenario = Boolean(step?.scenario);
+
+  // attention once when landing on a consent-critical scenario step.
+  useEffect(() => {
+    if (!loaded || !module || !hasScenario) return;
+    if (attentionStepRef.current === stepIndex) return;
+    attentionStepRef.current = stepIndex;
+    void hapticService.play("attention");
+  }, [loaded, module, stepIndex, hasScenario]);
 
   if (!module) {
     return (
@@ -40,7 +61,6 @@ export default function LearningModuleScreen() {
 
   // Capture after the null check so nested async handlers keep a defined type.
   const current = module;
-  const step = current.steps[stepIndex];
   if (!step) {
     return (
       <View style={styles.missing}>
@@ -54,11 +74,17 @@ export default function LearningModuleScreen() {
 
   const isLast = stepIndex === current.steps.length - 1;
   const canContinue = !step.scenario || selectedOption !== null;
+  const stepId = step.id;
 
   async function advance() {
     if (!canContinue) return;
+    // Fictional Soft Signal practice: acknowledge local stop registration only.
+    if (stepId === "scenario-response" || stepId === "practice-soft-signal") {
+      void hapticService.play("softSignal");
+    }
     if (isLast) {
       await learningProgressService.complete(current.id, current.steps.length);
+      void hapticService.play("confirmation");
       router.replace("/(tabs)/learn");
       return;
     }

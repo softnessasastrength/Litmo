@@ -52,7 +52,9 @@ select is(
   'permanent ban cancels pre-activation sessions'
 );
 
--- matching_hold does not end active sessions for a different pair.
+-- matching_hold ends open work (ADR 0038); covered in matching_hold_sessions.test.sql.
+-- Keep one permanent-ban-only residual check: second pair remains active when
+-- ban targets a different user (already safety-ended 0001's sessions above).
 insert into public.sessions (id, user_a, user_b, status, started_at)
 values (
   'c1000000-0000-4000-8000-000000000072',
@@ -62,21 +64,11 @@ values (
   now()
 );
 
-set local role authenticated;
-select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000003', true);
-select public.apply_account_restriction(
-  '10000000-0000-4000-8000-000000000002',
-  'matching_hold',
-  'safety_review',
-  now() + interval '3 days',
-  'hold should not end active'
-);
-
 reset role;
 select is(
   (select status from public.sessions where id = 'c1000000-0000-4000-8000-000000000072'),
   'active',
-  'matching hold leaves active sessions running'
+  'sessions not involving the banned account remain active'
 );
 
 select * from finish();

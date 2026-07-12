@@ -5,6 +5,7 @@ import { Body, Button, Eyebrow, Screen, Title } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
 import { SensitiveAccessGate } from "../components/SensitiveAccessGate";
 import { runtimeConfig } from "../config/runtime";
+import { hapticService } from "../services/hapticService";
 import { moderationService } from "../services/moderationService";
 
 export default function SettingsScreen() {
@@ -19,6 +20,17 @@ function SettingsContent() {
   const router = useRouter();
   const { status, signOut } = useAuth();
   const [isStaff, setIsStaff] = useState(false);
+  const [hapticsOn, setHapticsOn] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    void hapticService.isEnabled().then((on) => {
+      if (!cancelled) setHapticsOn(on);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (status !== "authenticated") {
@@ -41,6 +53,20 @@ function SettingsContent() {
       <Body muted>
         Manage access without passwords. Security changes require a fresh
         device-owner check.
+      </Body>
+      <Button
+        variant="secondary"
+        label={hapticsOn ? "Haptics: on" : "Haptics: off"}
+        onPress={() => {
+          const next = !hapticsOn;
+          setHapticsOn(next);
+          void hapticService.setEnabled(next);
+        }}
+        accessibilityHint="Toggles local haptic feedback. Disabling suppresses all vibration while visible and spoken feedback remain."
+      />
+      <Body muted>
+        Haptics are a local optional vocabulary (presence, attention, confirm,
+        Soft Signal). They never mean another person agreed or is present.
       </Body>
       <Button
         variant="secondary"
