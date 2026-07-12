@@ -20,6 +20,7 @@ function dependencies(overrides: Record<string, unknown> = {}) {
   const auth = {
     signInWithOtp: async () => ({ data: {}, error: null }),
     verifyOtp: async () => ({ data: { session }, error: null }),
+    signInWithPassword: async () => ({ data: { session }, error: null }),
     signOut: async () => ({ error: null }),
     passkey: {
       startRegistration: async () => ({
@@ -117,4 +118,23 @@ test("the only passkey cannot be removed", async () => {
     (error: unknown) =>
       (error as { code: string }).code === "auth_recovery_required",
   );
+});
+
+test("development seed password sign-in returns a session", async () => {
+  let seen: unknown;
+  const deps = dependencies({
+    signInWithPassword: async (value: unknown) => {
+      seen = value;
+      return { data: { session }, error: null };
+    },
+  });
+  const result = await createAuthService(
+    { auth: deps.auth } as never,
+    deps.native,
+  ).signInWithPassword("maya.demo@litmo.local", "LitmoDemo123!");
+  assert.equal(result, session);
+  assert.deepEqual(seen, {
+    email: "maya.demo@litmo.local",
+    password: "LitmoDemo123!",
+  });
 });
