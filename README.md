@@ -1,70 +1,112 @@
+<div align="center">
+
 # Litmo
 
-> **Touch is not a transaction — it is a language.**
+### Touch is not a transaction — it is a language.
 
-Litmo is a consent-centered, trauma-informed platform for safe, non-sexual, platonic physical connection between consenting adults.
+**A consent-centered, trauma-informed platform for safe, non-sexual, platonic physical connection between consenting adults.**
 
-It is not a dating app, a therapy platform, or a substitute for emergency or clinical care. The proof of concept focuses on making consent explicit, matching conservative, and exits immediate.
+[Why Litmo exists](docs/philosophy/00_Founding_Thesis.md) · [Consent flow](docs/CONSENT_FLOW.md) · [Trust system](docs/TRUST_SYSTEM.md) · [Architecture](docs/ARCHITECTURE.md)
 
-## Current foundation
+</div>
 
-Chapter 1 is a local, synthetic-data experience designed for founder review in Expo Go:
+---
+
+## What Litmo is
+
+Litmo is an attempt to build the social infrastructure that safe platonic touch has always lacked.
+
+It is **not** a dating app, therapy platform, or substitute for emergency or clinical care. It is a structured way for adults to describe what safe touch means to them, discover compatible boundaries, confirm consent explicitly, and stop immediately without explanation.
+
+> **Litmo is not trying to optimize touch. It is trying to protect it.**
+
+## The core experience
 
 ```text
-Welcome → Vibe Quiz → Vibe Profile → Touch Language → Discover
-→ Match Detail → Consent Snapshot → Active Session → Wrap-Up → Trust Ledger
+Welcome → Vibe Quiz → Vibe Profile → Touch Language
+→ Discover → Match Detail → Consent Snapshot
+→ Active Session → Wrap-Up → Trust Ledger
 ```
 
-Chapter 2 adds real local Supabase email/password authentication, session restoration, protected routes, persistent onboarding, editable general profiles, immutable touch/consent profile versions, owner-only RLS, typed data access, and repository-wide checks. Discovery people, matches, sessions, and trust history remain synthetic until their later roadmap chapters.
+### Touch Language Profile
 
-Chapter 3 adds a canonical, framework-independent, directional consent-compatibility engine (`@litmo/domain`) with property-based safety tests, a practical-effect preview for profile edits, and a documented adapter that bridges it to Chapter 2's persisted profiles and a live backend route. The mock Consent Snapshot screen now runs this real engine end to end.
+Describe preferred hold types, pressure, duration, body zones, environment, and nervous-system context before meeting anyone.
 
-A backend-free **demo mode** (`docs/adr/0003-demo-mode-entry-point.md`) lets the full Chapter 1 tap-through path run on a physical iPhone through Expo Go with no Supabase instance at all — tap "Continue without an account (demo mode)" on the sign-in screen, or on the screen shown when no local Supabase is configured. Nothing in demo mode is saved or represents a real account.
+### Consent Snapshot
 
-## Safety model
+Both participants review and affirm the exact intersection of their current boundaries. Nothing is inferred from a match, prior interaction, profile, or trust history.
 
-Litmo treats consent as session-specific and revocable at any moment.
+### Soft Signal
 
-- Consent is never inferred from a match, prior session, profile, or trust score.
-- Session boundaries are computed from the strict intersection of both participants' preferences.
-- The more restrictive pressure, duration, and body-zone rule always wins.
-- Both participants must explicitly confirm the same Consent Snapshot before activation.
-- The Soft Signal ends a session without requiring an explanation.
-- Trust records support accountability but never certify that a person is safe.
-- Reports and uncomfortable outcomes require human review; they do not trigger automatic public punishment.
+End a session immediately. No explanation required. No social negotiation. No penalty for stopping.
 
-See [`docs/CONSENT_FLOW.md`](docs/CONSENT_FLOW.md) and [`docs/TRUST_SYSTEM.md`](docs/TRUST_SYSTEM.md).
+### Trust Ledger
+
+Support gradual accountability through affirmed session history without ever certifying that a person is universally safe.
+
+## Safety is product logic
+
+Litmo treats consent as session-specific and revocable at every moment.
+
+- Consent is never inferred.
+- The strictest compatible boundary always wins.
+- Both participants must confirm the same immutable Consent Snapshot.
+- A session cannot become active before mutual confirmation.
+- The Soft Signal ends the interaction immediately.
+- Trust history supports context, not certainty.
+- Reports and uncomfortable outcomes require careful human review.
+
+Read the full [Consent Flow](docs/CONSENT_FLOW.md) and [Trust System](docs/TRUST_SYSTEM.md).
+
+## Current build
+
+Litmo currently includes:
+
+- a complete tap-through prototype for founder review;
+- Expo Router navigation;
+- Supabase-backed authentication and persistent profiles;
+- owner-only row-level security;
+- immutable touch and consent profile versions;
+- a framework-independent consent compatibility engine;
+- property-based safety tests;
+- and a backend-free demo mode for physical-device testing.
+
+The discovery people, matches, sessions, and trust history remain synthetic while the safety and persistence foundations are developed.
+
+> **Repository status:** Early application foundation. Not production-ready. Do not use the current build to arrange real-world sessions.
 
 ## Architecture
 
-| Layer            | Technology                                              |
-| ---------------- | ------------------------------------------------------- |
-| Mobile prototype | React Native with Expo SDK 55 and TypeScript            |
-| Navigation       | Expo Router                                             |
-| Auth state       | One authoritative React Context backed by Supabase Auth |
-| Domain boundary  | Framework-independent TypeScript and Zod schemas        |
-| API              | Node.js and Express                                     |
-| Database/Auth    | Supabase PostgreSQL and Auth                            |
-| Realtime         | Supabase Realtime                                       |
-| Notifications    | Expo Notifications                                      |
+| Layer | Technology |
+| --- | --- |
+| Mobile app | React Native · Expo SDK 55 · TypeScript |
+| Navigation | Expo Router |
+| Authentication | Supabase Auth |
+| Domain boundary | TypeScript · Zod |
+| API | Node.js · Express |
+| Database | Supabase PostgreSQL |
+| Realtime | Supabase Realtime |
+| Notifications | Expo Notifications |
 
 ```text
 Litmo/
-├── app/                 # Expo client
-├── backend/             # Express API and domain logic
-├── supabase/            # SQL schema and migrations
-├── docs/                # Product, consent, and trust documentation
+├── app/          Mobile application
+├── backend/      Express API and domain logic
+├── supabase/     Schema, policies, and migrations
+├── docs/         Product, safety, and architecture documents
 └── .env.example
 ```
 
-## Local setup
+## Run locally
 
-### Run locally
+### Requirements
 
 - Node.js 20.19+
 - npm 10+
 - Docker Desktop
-- The current Expo Go app on an iPhone
+- Expo Go on an iPhone
+
+### Setup
 
 ```bash
 npm ci
@@ -74,9 +116,11 @@ cp app/.env.example app/.env
 npm run dev
 ```
 
-Copy the local URL and anon key from `npx supabase status` into `app/.env`, then scan Expo's QR code. See [`docs/LOCAL_DEVELOPMENT.md`](docs/LOCAL_DEVELOPMENT.md), including the physical-device hostname note.
+Copy the local Supabase URL and anon key from `npx supabase status` into `app/.env`, then scan Expo's QR code.
 
-### Verification
+See [Local Development](docs/LOCAL_DEVELOPMENT.md) for full instructions, including physical-device hostname configuration.
+
+### Verify the repository
 
 ```bash
 npm run lint
@@ -86,40 +130,56 @@ npm run test:integration
 npm run build
 ```
 
-Integration tests require running local Supabase.
-
-### Service commands
-
-```bash
-npm run mobile
-npm run api
-npm run db:start
-npm run db:reset
-npm run db:stop
-```
+Integration tests require local Supabase to be running.
 
 ## Core session lifecycle
 
 ```text
 requested
-  -> consent_pending
-  -> consented
-  -> active
-  -> completed | exited | cancelled
+  → consent_pending
+  → consented
+  → active
+  → completed | exited | cancelled
 ```
 
-A session cannot become `active` until both users have confirmed the same immutable Consent Snapshot.
+A session cannot become `active` until both users affirm the same immutable Consent Snapshot.
 
-## Repository status
+## Project philosophy
 
-This repository is an early application foundation. It is not production-ready and must not be used to arrange real-world sessions. Authentication and RLS reduce local-development risk but do not constitute a safety, privacy, legal, or safeguarding certification.
+The project's philosophical order is:
 
-See [`docs/FIRST_PLAYABLE.md`](docs/FIRST_PLAYABLE.md) for the flow, accessibility decisions, and visual rationale.
-See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/SECURITY_MODEL.md`](docs/SECURITY_MODEL.md), and [`docs/DATA_CLASSIFICATION.md`](docs/DATA_CLASSIFICATION.md) for Chapter 2 boundaries.
+```text
+Founding Thesis
+      ↓
+Constitution
+      ↓
+Product Requirements
+      ↓
+Architecture
+      ↓
+Code
+```
+
+Start with the [Founding Thesis](docs/philosophy/00_Founding_Thesis.md): it explains why Litmo exists and why safety, privacy, consent, and human agency outrank growth or convenience.
+
+## Documentation
+
+- [Founding Thesis](docs/philosophy/00_Founding_Thesis.md)
+- [Concept](docs/CONCEPT.md)
+- [First Playable](docs/FIRST_PLAYABLE.md)
+- [Consent Flow](docs/CONSENT_FLOW.md)
+- [Trust System](docs/TRUST_SYSTEM.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Security Model](docs/SECURITY_MODEL.md)
+- [Data Classification](docs/DATA_CLASSIFICATION.md)
 
 ## Contributing
 
-Start with [`docs/CONCEPT.md`](docs/CONCEPT.md). Contributions should preserve Litmo's core principle: safety logic is product logic, not decorative copy.
+Contributions should preserve Litmo's core principle:
+
+> **Safety logic is product logic, not decorative copy.**
+
+Read the [Founding Thesis](docs/philosophy/00_Founding_Thesis.md) and [Concept](docs/CONCEPT.md) before changing product behavior.
 
 ## License
 
