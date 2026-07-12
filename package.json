@@ -22,6 +22,7 @@
     "db:lint": "npx supabase db lint --local --level error",
     "env:check": "node scripts/validate-env.mjs",
     "release:check": "node scripts/validate-release.mjs",
+    "release:xcode-source": "bash scripts/package-xcode-source-kit.sh local",
     "bootstrap": "bash scripts/bootstrap-macos-dev-env.sh",
     "postinstall": "node scripts/fix-expo-router-hoisting.mjs"
   },
