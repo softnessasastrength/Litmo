@@ -38,14 +38,17 @@ Started 2026-07-12 after Chapter 4 engineering completion
   - Block forward transitions while either party restricted
   - Decline / cancel / Soft Signal / complete still allowed
 - **Report from active session** — mid-session report without ending
+- **Moderator console UI** (ADR 0032, migration 030):
+  - Staff queue + case detail (claim / notes / resolve / 7-day hold)
+  - Settings link only when `is_staff_moderator()`
 
 ## Next coherent slices (in order)
 
-1. **Moderator console UI** (internal tool) on top of existing RPCs.
-2. **Optional peer-visible specific indicators** (e.g. account age) after
+1. **Optional peer-visible specific indicators** (e.g. account age) after
    product copy review — still never a universal score.
-3. **Appeals** workflow.
-4. Optional auto-end of **active** sessions on permanent ban (product decision).
+2. **Appeals** workflow.
+3. Optional auto-end of **active** sessions on permanent ban (product decision).
+4. Richer staff evidence access (encrypted notes are device-bound today).
 
 ## Product decisions still open
 

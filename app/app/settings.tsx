@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { Linking } from "react-native";
 import { Body, Button, Eyebrow, Screen, Title } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
 import { SensitiveAccessGate } from "../components/SensitiveAccessGate";
 import { runtimeConfig } from "../config/runtime";
+import { moderationService } from "../services/moderationService";
 
 export default function SettingsScreen() {
   return (
@@ -16,6 +18,22 @@ export default function SettingsScreen() {
 function SettingsContent() {
   const router = useRouter();
   const { status, signOut } = useAuth();
+  const [isStaff, setIsStaff] = useState(false);
+
+  useEffect(() => {
+    if (status !== "authenticated") {
+      setIsStaff(false);
+      return;
+    }
+    let cancelled = false;
+    void moderationService.amIStaffModerator().then((staff) => {
+      if (!cancelled) setIsStaff(staff);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [status]);
+
   return (
     <Screen>
       <Eyebrow>SETTINGS</Eyebrow>
@@ -49,6 +67,14 @@ function SettingsContent() {
             onPress={() => router.push("/security/trust-signals" as never)}
             accessibilityHint="View specific facts about your own account. Not a safety score."
           />
+          {isStaff ? (
+            <Button
+              variant="secondary"
+              label="Moderation queue (staff)"
+              onPress={() => router.push("/security/moderation" as never)}
+              accessibilityHint="Staff-only human review queue for structured reports"
+            />
+          ) : null}
         </>
       ) : null}
       <Button
