@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-07-12 — Demo path body-zone step and practice session request
+
+### Summary
+
+Completed two phone-visible vertical-slice gaps that still interrupted the
+Expo Go walkthrough: interactive body-zone boundary setup (local only) and a
+clearly labeled practice session-request step in demo mode.
+
+### User-visible impact
+
+- After Touch Language in demo mode, users set Welcomed / Ask first / Off
+  limits for hands, shoulders, upper back, and torso before discovery.
+- Match detail in demo offers **Practice requesting a session** (nothing is
+  sent) and continues into the mock Consent Snapshot.
+- Learning module TypeScript strictness fixes unblocked `app` typecheck on
+  the same path (pre-existing strict-null errors).
+
+### Related decision and roadmap
+
+- `docs/roadmap/PHONE_VISIBLE_VERTICAL_SLICE.md`
+- `docs/adr/0003-demo-mode-entry-point.md`
+
 ## 2026-07-12 — Expo Go / backend-free demo path unblocked
 
 ### Summary

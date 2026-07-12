@@ -22,7 +22,8 @@ export const learningModules: LearningModule[] = [
   {
     id: "consent-snapshots",
     title: "Consent Snapshots",
-    summary: "Learn why both people confirm the same current boundaries before a session can begin.",
+    summary:
+      "Learn why both people confirm the same current boundaries before a session can begin.",
     minutes: 4,
     requiredBeforeFirstSession: true,
     steps: [
@@ -30,7 +31,8 @@ export const learningModules: LearningModule[] = [
         id: "snapshot-not-assumption",
         title: "Nothing is inferred",
         body: "A match, a prior session, or a compatible profile never means consent. A Consent Snapshot records the exact overlap both people are willing to affirm right now.",
-        takeaway: "Compatibility can begin a conversation. It cannot begin a session.",
+        takeaway:
+          "Compatibility can begin a conversation. It cannot begin a session.",
       },
       {
         id: "strictest-boundary",
@@ -49,7 +51,8 @@ export const learningModules: LearningModule[] = [
   {
     id: "soft-signal",
     title: "The Soft Signal",
-    summary: "Practice ending a session immediately, without explanation or negotiation.",
+    summary:
+      "Practice ending a session immediately, without explanation or negotiation.",
     minutes: 3,
     requiredBeforeFirstSession: true,
     steps: [
@@ -71,11 +74,24 @@ export const learningModules: LearningModule[] = [
         body: "A Soft Signal has ended the session. Your job is not to solve or debate it.",
         takeaway: "Calm acceptance protects both people.",
         scenario: {
-          prompt: "The other person uses the Soft Signal. What is the safest response?",
+          prompt:
+            "The other person uses the Soft Signal. What is the safest response?",
           options: [
-            { label: "Stop and give them space", feedback: "Yes. The session is over, and no explanation is required." },
-            { label: "Ask what you did wrong", feedback: "That can create pressure. Stop first and do not require a conversation." },
-            { label: "Explain that you meant well", feedback: "Intent does not override the stop. End the interaction without negotiation." },
+            {
+              label: "Stop and give them space",
+              feedback:
+                "Yes. The session is over, and no explanation is required.",
+            },
+            {
+              label: "Ask what you did wrong",
+              feedback:
+                "That can create pressure. Stop first and do not require a conversation.",
+            },
+            {
+              label: "Explain that you meant well",
+              feedback:
+                "Intent does not override the stop. End the interaction without negotiation.",
+            },
           ],
         },
       },
@@ -84,7 +100,8 @@ export const learningModules: LearningModule[] = [
   {
     id: "touch-language",
     title: "Understanding Touch Language",
-    summary: "Describe preferences clearly without turning them into permanent promises.",
+    summary:
+      "Describe preferences clearly without turning them into permanent promises.",
     minutes: 5,
     steps: [
       {

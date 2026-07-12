@@ -42,8 +42,10 @@ export default function TouchLanguageScreen() {
   ] as const;
   const complete = groups.every((group) => touchChoices[group.key]);
   const save = async () => {
+    // Demo / unsigned path: keep preferences local and continue into the
+    // body-zone boundary screen (phone-visible vertical slice).
     if (!user) {
-      router.replace("/home");
+      router.push("/onboarding/boundaries");
       return;
     }
     setBusy(true);

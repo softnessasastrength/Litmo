@@ -22,14 +22,21 @@ test("records progress without erasing other modules", () => {
     4,
     "now",
   );
+  assert.ok(progress.first);
   assert.equal(progress.first.completed, true);
-  assert.deepEqual(progress.second, { stepIndex: 2, completed: false, updatedAt: "now" });
+  assert.deepEqual(progress.second, {
+    stepIndex: 2,
+    completed: false,
+    updatedAt: "now",
+  });
 });
 
 test("completion is durable and counted", () => {
   const progress = completeModule({}, "soft-signal", 3, "now");
-  assert.equal(progress["soft-signal"].stepIndex, 2);
-  assert.equal(progress["soft-signal"].completed, true);
+  const softSignal = progress["soft-signal"];
+  assert.ok(softSignal);
+  assert.equal(softSignal.stepIndex, 2);
+  assert.equal(softSignal.completed, true);
   assert.equal(completionCount(progress), 1);
 });
 
