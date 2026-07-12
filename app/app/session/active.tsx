@@ -12,6 +12,7 @@ import {
 } from "../../components/ui";
 import { colors } from "../../theme";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
+import { useAuth } from "../../context/AuthContext";
 import { emergencyStopService } from "../../services/emergencyStopService";
 import { sessionCompleteService } from "../../services/sessionCompleteService";
 import { sessionRepository } from "../../services/sessionRepository";
@@ -32,9 +33,11 @@ export default function ActiveSessionScreen() {
 
 function ActiveSessionContent() {
   const router = useRouter();
+  const { user } = useAuth();
   const { sessionId } = useLocalSearchParams<{ sessionId?: string }>();
   const [seconds, setSeconds] = useState(0);
   const [startedAt, setStartedAt] = useState<string | null>(null);
+  const [peerUserId, setPeerUserId] = useState<string | null>(null);
   const [ended, setEnded] = useState(false);
   const [stopState, setStopState] = useState<"idle" | "stopping" | "pending">(
     "idle",
@@ -74,8 +77,19 @@ function ActiveSessionContent() {
     const applySession = (session: {
       status: string;
       startedAt: string | null;
+      userA?: string;
+      userB?: string;
     }) => {
       if (session.startedAt) setStartedAt(session.startedAt);
+      if (user?.id && session.userA && session.userB) {
+        setPeerUserId(
+          session.userA === user.id
+            ? session.userB
+            : session.userB === user.id
+              ? session.userA
+              : null,
+        );
+      }
       const reason = terminalEndedReason[session.status];
       if (reason && !endedRef.current) {
         endedRef.current = true;
@@ -218,6 +232,29 @@ function ActiveSessionContent() {
           disabled={ended}
           onPress={() => void endTogether()}
         />
+        {sessionId && peerUserId && !ended ? (
+          <>
+            <Button
+              variant="secondary"
+              label="Report for human review"
+              onPress={() =>
+                router.push({
+                  pathname: "/security/report",
+                  params: {
+                    reportedId: peerUserId,
+                    sessionId,
+                    displayName: "the other person",
+                  },
+                })
+              }
+              accessibilityHint="Opens a private structured report linked to this session. Does not end the session."
+            />
+            <Text style={styles.explain}>
+              Reporting does not end the session. Soft Signal is still the
+              immediate stop. Litmo is not emergency response.
+            </Text>
+          </>
+        ) : null}
       </View>
     </Screen>
   );
