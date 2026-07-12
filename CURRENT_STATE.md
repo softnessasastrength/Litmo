@@ -4,47 +4,62 @@
 
 ## Active milestone
 
-- **Name:** Model-portable resumable development workflow
-- **Status:** completed
-- **Branch:** `chore/model-portable-workflow`
-- **Latest known coherent commit:** `d5c9643ee6076e01f1959d64a263211ccfd5bb99`
+- **Name:** Private-beta validation and guided-practice expansion
+- **Status:** active
+- **Branch:** `main` is the current integrated baseline; use a feature branch for new work.
+- **Latest known coherent milestone:** Chapters 1–4, secure-auth foundation, GitHub Wiki source, and the first guided-learning vertical slice are merged.
 
-## Completed in this milestone
+## Completed foundation
 
-- Added `CURRENT_STATE.md` as the human-readable handoff.
-- Added `TASKS.md` as the durable task ledger.
-- Added `DECISIONS.md` for workflow-level architectural decisions.
-- Added `project-state.json` and its JSON Schema.
-- Added `scripts/validate-project-state.mjs`.
-- Added `npm run state:check`.
-- Added GitHub Actions enforcement for pull requests and pushes to `main`.
-- Confirmed the existing `AGENTS.md` already establishes the repository as the source of truth and requires coherent commits, documentation, and verification.
+- First playable mobile experience and backend-free demo mode.
+- Supabase persistence, owner-only RLS, immutable profile versions, and consent compatibility engine.
+- Database-enforced session lifecycle, immutable Consent Snapshots, session requests, realtime updates, private wrap-ups, and unilateral withdrawal/emergency stop.
+- Passkey-first authentication architecture, device registration, mandatory biometric locking, sensitive-data protection, and privacy-safe notifications.
+- Release/TestFlight boundaries, privacy and security documentation, ADRs, and database tests.
+- Model-portable workflow files and `npm run state:check` enforcement.
+- Publish-ready GitHub Wiki source under `wiki/`.
+- Guided learning catalog, lesson player, fictional scenarios, private device-local progress, resume behavior, and progress tests.
 
 ## Work in progress
 
-None in this milestone.
+No implementation branch is designated active at this handoff. The next coherent milestone should be selected from the prioritized tasks below rather than inferred from old chapter documents.
 
-## Files changed
+## Priority next work
 
-- `CURRENT_STATE.md`
-- `TASKS.md`
-- `DECISIONS.md`
-- `project-state.json`
-- `docs/project-state.schema.json`
-- `scripts/validate-project-state.mjs`
-- `.github/workflows/project-state.yml`
-- `package.json`
+1. Run the integrated build and complete a physical-iPhone walkthrough of authentication, app lock, learning, session request, Consent Snapshot, active session, Soft Signal, and wrap-up.
+2. Validate VoiceOver, Dynamic Type, reduced motion, focus order, and large touch targets on a physical device.
+3. Build a fictional two-person guided-practice flow that teaches the full session lifecycle without creating a real session.
+4. Define moderation, reporting, blocking, invitation expiry, eligibility, and beta-operations policies before stranger discovery or wider distribution.
+5. Reconcile any findings into tests, ADRs, `KNOWN_LIMITATIONS.md`, and release documentation.
 
-## Verification
+## Verification baseline
 
-- **Run:** GitHub file-level validation and schema/script review completed.
-- **Not run locally:** `npm run state:check` and the full repository test suite were not executable through the GitHub file connector.
-- **Expected CI:** the new `Project State` workflow will run `npm ci` and `npm run state:check` on the pull request.
+The repository contains commands for:
 
-## Unresolved issues
+```bash
+npm run state:check
+npm run lint
+npm run typecheck
+npm test
+npm run test:integration
+npm run db:lint
+npm run build
+```
 
-- CI must confirm the validator against a clean checkout.
-- The workflow does not attempt to prove that every semantic detail in the Markdown handoff is current; it validates required structure and machine-readable fields.
+Database and integration checks require local Supabase. Native passkey, biometric, device-build, and release verification require Xcode, signing configuration, and a physical iPhone where applicable.
+
+Do not claim the current integrated `main` has passed every command unless the exact current commit was tested. Review the latest CI and local test evidence before release decisions.
+
+## Known limitations and risks
+
+- The product is not production-ready and must not be presented as safe for arranging meetings with strangers.
+- Discovery and trust-history presentation remain partly synthetic or beta-oriented.
+- Learning progress is device-local and does not synchronize across accounts or devices.
+- Learning completion is not evidence of safety, competence, or consent.
+- First-session learning gates have not been approved or implemented.
+- Physical-device accessibility validation remains incomplete.
+- Moderation, reporting, operational review, invitation expiry, and eligibility rules remain incomplete.
+- Passkey deployment depends on correct Associated Domains and server-side relying-party configuration.
 
 ## Architectural decisions
 
@@ -52,17 +67,20 @@ None in this milestone.
 - No agent may depend on hidden reasoning or prior chat context for continuity.
 - Model switches should occur at coherent commit boundaries whenever practical.
 - Security-sensitive partial work must fail closed and be explicitly documented.
+- Consent is explicit, current, revocable, session-specific, and never inferred from trust or compatibility.
+- Guided learning teaches product behavior but never certifies a participant as safe.
 
 ## Exact next action
 
-Open and review the pull request. Confirm the `Project State` GitHub Actions check passes, then merge when satisfied.
+Select one priority milestone, create a dedicated branch, record it in `TASKS.md` and `project-state.json`, inspect recent commits and CI, then implement and verify one coherent unit at a time.
 
 ## Resume checklist
 
 1. Read `CURRENT_STATE.md`, `TASKS.md`, `DECISIONS.md`, and `project-state.json`.
-2. Run `git status`, inspect the current diff, and read recent commits.
-3. Verify the last recorded checks before changing code.
-4. Continue only from the exact next action above unless new evidence requires a documented change.
+2. Read `docs/DOCUMENTATION_MAP.md`, `docs/KNOWN_LIMITATIONS.md`, and the relevant ADRs.
+3. Run `git status`, inspect the current diff, and read recent commits.
+4. Verify the last recorded checks before changing code.
+5. Continue only from an explicitly selected active task.
 
 ## Stop checklist
 
@@ -72,6 +90,6 @@ Before stopping because of a rate limit, context limit, tool failure, interrupti
 2. Preserve all working changes.
 3. Run all practical checks and record the exact results.
 4. Commit coherent completed work.
-5. Update this file and `project-state.json`.
+5. Update this file, `TASKS.md`, and `project-state.json`.
 6. State whether the working tree is clean.
 7. Record the exact next command or action required to resume.
