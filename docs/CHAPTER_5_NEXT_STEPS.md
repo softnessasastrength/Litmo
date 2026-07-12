@@ -77,9 +77,9 @@ Started 2026-07-12 after Chapter 4 engineering completion
 
 ## Next coherent slices (in order)
 
-1. **Execute** physical walkthrough on device (incl. haptic feel + dark/system); file defects.
-2. Optional: dedicated emergency-stop control distinct from Soft Signal UI copy.
-3. Optional: block history retention after unblock (abuse analysis — product open).
+1. Physical walkthrough **Track A Pass** (2026-07-12). Finish **Track B** (real pairs) + **Track C** (accessibility).
+2. Optional: block history retention after unblock (abuse analysis — product open).
+3. Optional: Soft Signal vs dedicated emergency-stop control if product wants a second control.
 
 ## Product decisions still open
 
