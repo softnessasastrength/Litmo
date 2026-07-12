@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-07-12 — Chapter 5: staff case evidence + reviewer message
+
+### Summary
+
+Reporter free text for human review is stored as staff-readable
+`staff_shared_message` (not device-encrypted). Staff case detail loads a
+structured evidence pack: message, session metadata, active restriction, and
+prior report counts (facts, not a score). Device-encrypted notes stay opaque.
+
+### User-visible impact
+
+- Report form: “Message for reviewers” with honest staff-share copy.
+- Staff case: Evidence section with message, session, counts, restriction.
+
+### Developer impact
+
+- Migration `033_staff_case_evidence.sql`
+- `get_moderation_case_evidence`; extended `submit_report`
+- ADR 0037; pgTAP `staff_case_evidence.test.sql`
+
+### Related decision and roadmap
+
+- `docs/adr/0037-staff-case-evidence.md`
+
 ## 2026-07-12 — Physical beta walkthrough checklist
 
 ### Summary

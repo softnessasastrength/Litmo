@@ -17,6 +17,7 @@ import {
 } from "../../components/AsyncState";
 import {
   moderationService,
+  type CaseEvidence,
   type ModerationNote,
 } from "../../services/moderationService";
 import { REPORT_CATEGORIES } from "../../services/reportService";
@@ -24,6 +25,11 @@ import { colors } from "../../theme";
 
 function categoryLabel(id: string): string {
   return REPORT_CATEGORIES.find((c) => c.id === id)?.label ?? id;
+}
+
+function shortId(id: string): string {
+  if (id.length <= 12) return id;
+  return `${id.slice(0, 8)}…`;
 }
 
 export default function ModerationCaseScreen() {
@@ -57,6 +63,7 @@ function ModerationCaseContent() {
       : null;
 
   const [notes, setNotes] = useState<ModerationNote[]>([]);
+  const [evidence, setEvidence] = useState<CaseEvidence | null>(null);
   const [noteDraft, setNoteDraft] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -74,8 +81,12 @@ function ModerationCaseContent() {
         setLoadState("denied");
         return;
       }
-      const rows = await moderationService.listNotes(caseId);
+      const [rows, pack] = await Promise.all([
+        moderationService.listNotes(caseId),
+        moderationService.getCaseEvidence(caseId),
+      ]);
       setNotes(rows);
+      setEvidence(pack);
       setLoadState("ready");
     } catch (caught) {
       setLoadState("error");
@@ -138,20 +149,91 @@ function ModerationCaseContent() {
     );
   }
 
+  const displayCategory = evidence?.category ?? category;
+  const displayPriority = evidence?.priority ?? priority;
+  const displayQueue = evidence?.queueStatus ?? queueStatus;
+  const displayReported = evidence?.reportedId ?? reportedId;
+  const displaySessionId = evidence?.sessionId ?? sessionId;
+
   return (
     <Screen>
       <Eyebrow>CASE</Eyebrow>
-      <Title>{categoryLabel(category)}</Title>
+      <Title>{categoryLabel(displayCategory)}</Title>
       <Body muted>
-        Priority {priority || "—"} · {queueStatus.replace(/_/g, " ") || "—"}
+        Priority {displayPriority || "—"} ·{" "}
+        {(displayQueue || "—").replace(/_/g, " ")}
       </Body>
-      {sessionId ? (
+      <Card>
+        <Text style={styles.section}>Evidence</Text>
         <Body muted>
-          Linked session present (private to participants + staff).
+          Staff-only. Counts are facts for judgment — not a safety score. Device
+          encrypted notes cannot be read here.
         </Body>
-      ) : (
-        <Body muted>No session linked to this report.</Body>
-      )}
+        {evidence?.staffSharedMessage ? (
+          <View style={styles.evidenceBlock}>
+            <Text style={styles.evidenceLabel}>Reporter message</Text>
+            <Body>{evidence.staffSharedMessage}</Body>
+          </View>
+        ) : (
+          <Body muted>No staff-shared message on this report.</Body>
+        )}
+        <Body muted>
+          Device-bound private note:{" "}
+          {evidence?.hasDevicePrivateNote
+            ? "present (not readable by staff)"
+            : "none"}
+        </Body>
+        <Body muted>
+          Reported {displayReported ? shortId(displayReported) : "—"}
+          {evidence?.reporterId
+            ? ` · Reporter ${shortId(evidence.reporterId)}`
+            : ""}
+        </Body>
+        <Body muted>
+          Other reports about this account:{" "}
+          {evidence?.priorOtherReportsForReported ?? 0} · Open cases:{" "}
+          {evidence?.priorOpenCasesForReported ?? 0}
+        </Body>
+        {evidence?.reportedActiveRestrictionKind ? (
+          <Body muted>
+            Active restriction: {evidence.reportedActiveRestrictionKind}
+          </Body>
+        ) : (
+          <Body muted>No active matching restriction on reported account.</Body>
+        )}
+        {evidence?.session ? (
+          <View style={styles.evidenceBlock}>
+            <Text style={styles.evidenceLabel}>Linked session</Text>
+            <Body muted>
+              Status {evidence.session.status.replace(/_/g, " ")} ·{" "}
+              {shortId(evidence.session.id)}
+            </Body>
+            <Body muted>
+              Participants {shortId(evidence.session.userA)} /{" "}
+              {shortId(evidence.session.userB)}
+            </Body>
+            <Body muted>
+              Created{" "}
+              {new Date(evidence.session.createdAt).toLocaleString(undefined, {
+                dateStyle: "medium",
+                timeStyle: "short",
+              })}
+              {evidence.session.startedAt
+                ? ` · Started ${new Date(evidence.session.startedAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}`
+                : ""}
+              {evidence.session.endedAt
+                ? ` · Ended ${new Date(evidence.session.endedAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}`
+                : ""}
+            </Body>
+          </View>
+        ) : displaySessionId ? (
+          <Body muted>
+            Linked session id {shortId(displaySessionId)} (row not found).
+          </Body>
+        ) : (
+          <Body muted>No session linked to this report.</Body>
+        )}
+      </Card>
       <Card>
         <Text style={styles.section}>Actions</Text>
         <Body muted>
@@ -198,7 +280,7 @@ function ModerationCaseContent() {
             )
           }
         />
-        {reportedId ? (
+        {displayReported ? (
           <Button
             variant="signal"
             label={
@@ -210,7 +292,7 @@ function ModerationCaseContent() {
                 const ends = new Date();
                 ends.setDate(ends.getDate() + 7);
                 await moderationService.applyMatchingHold(
-                  reportedId,
+                  displayReported,
                   "safety_review",
                   ends.toISOString(),
                   "Applied from moderator console case " + caseId,
@@ -282,6 +364,15 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     fontSize: 16,
     marginBottom: 8,
+  },
+  evidenceBlock: {
+    marginTop: 10,
+    gap: 4,
+  },
+  evidenceLabel: {
+    color: colors.ink,
+    fontWeight: "700",
+    fontSize: 14,
   },
   note: {
     borderTopWidth: 1,
