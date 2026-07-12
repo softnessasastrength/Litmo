@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import {
@@ -19,14 +19,33 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { blockService } from "../../services/blockService";
 import { sessionRepository } from "../../services/sessionRepository";
+import {
+  cosmeticForUserId,
+  discoveryService,
+  type DiscoveryProfile,
+} from "../../services/discoveryService";
+import { LoadingState, FailureState } from "../../components/AsyncState";
 import { colors } from "../../theme";
+
+const uuidRe =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export default function MatchDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const profile =
-    mockProfiles.find((item) => item.id === id) ?? mockProfiles[0];
+  const routeId = typeof id === "string" ? id : "";
+  const isRealId = uuidRe.test(routeId);
+  const mockProfile =
+    mockProfiles.find((item) => item.id === routeId) ?? mockProfiles[0];
   const { status } = useAuth();
+  const canRequest = status === "authenticated";
+
+  const [real, setReal] = useState<DiscoveryProfile | null>(null);
+  const [realLoad, setRealLoad] = useState<
+    "idle" | "loading" | "error" | "ready"
+  >(isRealId ? "loading" : "idle");
+  const [realError, setRealError] = useState("");
+
   const [requestState, setRequestState] = useState<
     "idle" | "sending" | "sent" | "cancelling" | "error"
   >("idle");
@@ -36,17 +55,83 @@ export default function MatchDetailScreen() {
     "idle" | "blocking" | "blocked" | "error"
   >("idle");
   const [blockError, setBlockError] = useState("");
-  const canRequest = status === "authenticated";
-  const personaTargetId = personaUserId[profile.id as MockPersonaId];
+
+  useEffect(() => {
+    if (!isRealId) return;
+    let cancelled = false;
+    setRealLoad("loading");
+    void discoveryService
+      .listProfiles()
+      .then((rows) => {
+        if (cancelled) return;
+        const found = rows.find((r) => r.userId === routeId) ?? null;
+        if (!found) {
+          setRealError("That person is not available in discovery right now.");
+          setRealLoad("error");
+          return;
+        }
+        setReal(found);
+        setRealLoad("ready");
+      })
+      .catch((caught) => {
+        if (cancelled) return;
+        setRealError(
+          caught instanceof Error
+            ? caught.message
+            : "Profile could not be loaded.",
+        );
+        setRealLoad("error");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isRealId, routeId]);
+
+  const targetUserId = useMemo(() => {
+    if (isRealId) return routeId;
+    return personaUserId[mockProfile.id as MockPersonaId];
+  }, [isRealId, routeId, mockProfile.id]);
+
+  const display = useMemo(() => {
+    if (isRealId && real) {
+      const cosmetic = cosmeticForUserId(real.userId);
+      return {
+        name: real.displayName,
+        pronouns: real.pronouns ?? "pronouns not listed",
+        note: real.bio?.trim() || "No bio yet.",
+        vibe: real.vibeArchetype ?? "Open to connection",
+        archetype: real.vibeArchetype ?? "Neighbor",
+        color: cosmetic.color,
+        glyph: cosmetic.glyph,
+        distance: null as string | null,
+        age: null as number | null,
+        affirmed: real.completedSessions,
+        accountAgeDays: real.accountAgeDays,
+        synthetic: false,
+      };
+    }
+    return {
+      name: mockProfile.name,
+      pronouns: mockProfile.pronouns,
+      note: mockProfile.note,
+      vibe: mockProfile.vibe,
+      archetype: mockProfile.archetype,
+      color: mockProfile.color,
+      glyph: mockProfile.glyph,
+      distance: mockProfile.distance,
+      age: mockProfile.age,
+      affirmed: mockProfile.affirmed,
+      accountAgeDays: null as number | null,
+      synthetic: true,
+    };
+  }, [isRealId, real, mockProfile]);
 
   const sendRequest = async () => {
     setRequestState("sending");
     setRequestError("");
     try {
-      const id = await sessionRepository.requestSession(
-        personaUserId[profile.id as MockPersonaId],
-      );
-      setSessionId(id);
+      const newId = await sessionRepository.requestSession(targetUserId);
+      setSessionId(newId);
       setRequestState("sent");
     } catch (caught) {
       setRequestState("error");
@@ -80,7 +165,7 @@ export default function MatchDetailScreen() {
     setBlockState("blocking");
     setBlockError("");
     try {
-      await blockService.blockUser(personaTargetId);
+      await blockService.blockUser(targetUserId);
       setBlockState("blocked");
       setSessionId(null);
       setRequestState("idle");
@@ -94,34 +179,69 @@ export default function MatchDetailScreen() {
     }
   };
 
+  if (isRealId && realLoad === "loading") {
+    return <LoadingState label="Loading profile…" />;
+  }
+  if (isRealId && realLoad === "error") {
+    return (
+      <FailureState
+        title="Profile unavailable"
+        message={realError}
+        onRetry={() => {
+          setRealLoad("loading");
+          void discoveryService.listProfiles().then((rows) => {
+            const found = rows.find((r) => r.userId === routeId) ?? null;
+            if (!found) {
+              setRealError(
+                "That person is not available in discovery right now.",
+              );
+              setRealLoad("error");
+              return;
+            }
+            setReal(found);
+            setRealLoad("ready");
+          });
+        }}
+      />
+    );
+  }
+
   return (
     <Screen>
-      <View style={[styles.hero, { backgroundColor: profile.color }]}>
-        <Text style={styles.glyph}>{profile.glyph}</Text>
-        <Pill>{profile.archetype}</Pill>
+      <View style={[styles.hero, { backgroundColor: display.color }]}>
+        <Text style={styles.glyph}>{display.glyph}</Text>
+        <Pill>{display.archetype}</Pill>
       </View>
-      <Eyebrow>SYNTHETIC PROFILE</Eyebrow>
+      <Eyebrow>
+        {display.synthetic ? "SYNTHETIC PROFILE" : "REAL ACCOUNT"}
+      </Eyebrow>
       <Title>
-        {profile.name}, {profile.age}
+        {display.name}
+        {display.age != null ? `, ${display.age}` : ""}
       </Title>
       <Body muted>
-        {profile.pronouns} · {profile.distance}
+        {display.pronouns}
+        {display.distance ? ` · ${display.distance}` : ""}
       </Body>
-      <Body>{profile.note}</Body>
+      <Body>{display.note}</Body>
       <Card>
         <SectionTitle>Vibe notes</SectionTitle>
-        <Body>{profile.vibe}</Body>
+        <Body>{display.vibe}</Body>
       </Card>
       <Card>
         <SectionTitle>Specific context (not a score)</SectionTitle>
         <Text style={styles.affirmed}>
-          {profile.affirmed} completed mock sessions listed for demo
+          {display.synthetic
+            ? `${display.affirmed} completed mock sessions listed for demo`
+            : `${display.affirmed} completed session${display.affirmed === 1 ? "" : "s"}`}
         </Text>
+        {!display.synthetic && display.accountAgeDays != null ? (
+          <Body muted>Account age: {display.accountAgeDays} days.</Body>
+        ) : null}
         <Body muted>
-          Account age on this synthetic profile is illustrative only. Real
-          discovery shows account age in days and completed session counts as
-          separate facts — never a single safety rating. Positive history never
-          replaces current consent.
+          {display.synthetic
+            ? "Account age on this synthetic profile is illustrative only. Real discovery shows account age in days and completed session counts as separate facts — never a single safety rating."
+            : "These are separate facts, not a safety rating. Positive history never replaces current consent."}
         </Body>
       </Card>
       <View style={styles.separation}>
@@ -129,8 +249,9 @@ export default function MatchDetailScreen() {
           Vibe brought you here. Consent comes next.
         </Text>
         <Text style={styles.separationBody}>
-          The next screen uses plain, literal language and the strict overlap of
-          both mock preference sets.
+          {display.synthetic
+            ? "The next screen uses plain, literal language and the strict overlap of both mock preference sets."
+            : "A real session still requires an explicit request, mutual acceptance, and a fresh Consent Snapshot — curiosity is not consent."}
         </Text>
       </View>
       {canRequest ? (
@@ -142,7 +263,7 @@ export default function MatchDetailScreen() {
                 ? "Sending…"
                 : requestState === "sent" || requestState === "cancelling"
                   ? "Request sent"
-                  : `Request a session with ${profile.name}`
+                  : `Request a session with ${display.name}`
             }
             disabled={
               requestState === "sending" ||
@@ -154,7 +275,7 @@ export default function MatchDetailScreen() {
           {requestState === "sent" || requestState === "cancelling" ? (
             <>
               <Body muted>
-                {profile.name} will see this the next time they open Litmo. This
+                {display.name} will see this the next time they open Litmo. This
                 only sends a request — nothing is scheduled or agreed yet.
               </Body>
               <Button
@@ -188,7 +309,7 @@ export default function MatchDetailScreen() {
             label={
               requestState === "sent"
                 ? "Practice request recorded (demo)"
-                : `Practice requesting a session with ${profile.name}`
+                : `Practice requesting a session with ${display.name}`
             }
             disabled={requestState === "sent"}
             onPress={() => setRequestState("sent")}
@@ -213,30 +334,37 @@ export default function MatchDetailScreen() {
           entry screen to practice with fictional people.
         </Body>
       )}
-      <Button
-        label={
-          status === "demo"
-            ? "Continue to mock Consent Snapshot"
-            : "Review a mock Consent Snapshot"
-        }
-        onPress={() =>
-          router.push({
-            pathname: "/match/consent-snapshot",
-            params: { id: profile.id },
-          })
-        }
-        accessibilityHint="Opens the mock Consent Snapshot. Confirming is practice only unless a real session ID is present."
-      />
+      {display.synthetic ? (
+        <Button
+          label={
+            status === "demo"
+              ? "Continue to mock Consent Snapshot"
+              : "Review a mock Consent Snapshot"
+          }
+          onPress={() =>
+            router.push({
+              pathname: "/match/consent-snapshot",
+              params: { id: mockProfile.id },
+            })
+          }
+          accessibilityHint="Opens the mock Consent Snapshot. Confirming is practice only unless a real session ID is present."
+        />
+      ) : (
+        <Body muted>
+          Consent Snapshot for a real pair starts after they accept a request
+          and enter the review path — not from curiosity alone.
+        </Body>
+      )}
       {canRequest ? (
         <Button
           variant="secondary"
-          label={`Report ${profile.name}`}
+          label={`Report ${display.name}`}
           onPress={() =>
             router.push({
               pathname: "/security/report",
               params: {
-                reportedId: personaTargetId,
-                displayName: profile.name,
+                reportedId: targetUserId,
+                displayName: display.name,
               },
             })
           }
@@ -248,7 +376,7 @@ export default function MatchDetailScreen() {
           <Button
             variant="signal"
             label={
-              blockState === "blocking" ? "Blocking…" : `Block ${profile.name}`
+              blockState === "blocking" ? "Blocking…" : `Block ${display.name}`
             }
             disabled={blockState === "blocking"}
             onPress={() => void blockPerson()}

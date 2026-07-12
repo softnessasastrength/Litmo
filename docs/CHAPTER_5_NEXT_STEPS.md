@@ -47,13 +47,18 @@ Started 2026-07-12 after Chapter 4 engineering completion
 - **Restriction appeals** (ADR 0034, migration 031):
   - Submit / list / staff resolve (uphold or lift)
   - Settings → Appeals; staff → Open appeals
+- **Real discovery UI** — authenticated Discover uses `discovery_profiles`
+  with peer signals; demo keeps mock neighbors
+- **Permanent ban ends open work** (ADR 0035, migration 032):
+  - Pre-activation cancelled; active → `safety_ended`
+  - Holds still only cancel `requested`
 
 ## Next coherent slices (in order)
 
-1. Optional auto-end of **active** sessions on permanent ban (product decision).
-2. Richer staff evidence access (encrypted notes are device-bound today).
-3. Wire real discovery list UI (still partly mock profiles on mobile).
-4. Peer signals on live match cards when discovery is fully repository-backed.
+1. Richer staff evidence access (encrypted notes are device-bound today).
+2. Real Consent Snapshot path for accepted real pairs (beyond mock fixtures).
+3. Optional: end active sessions on matching_hold (product still open for blocks).
+4. Physical-device accessibility + beta validation walkthrough.
 
 ## Product decisions still open
 
