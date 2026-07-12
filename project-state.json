@@ -1,15 +1,15 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-12T14:15:00-04:00",
+  "updatedAt": "2026-07-12T15:55:00-04:00",
   "milestone": {
-    "id": "BETA-VALIDATION",
-    "name": "Private-beta validation and guided-practice expansion",
+    "id": "HAPTIC-001",
+    "name": "Semantic haptic language foundation",
     "status": "active"
   },
   "git": {
-    "branch": "main",
-    "latestCoherentCommit": "current-main-after-learning-system-merge",
+    "branch": "docs/haptic-language-implementation",
+    "latestCoherentCommit": "haptic-language-implementation-spec",
     "workingTreeExpectedClean": true
   },
   "verification": {
@@ -20,22 +20,25 @@
       "Run npm run lint",
       "Run npm run typecheck",
       "Run npm test",
-      "Run npm run test:integration with local Supabase",
-      "Run npm run db:lint with local Supabase",
-      "Run npm run build"
+      "Run npm run test:integration with local Supabase where relevant",
+      "Run npm run build",
+      "Perform physical-iPhone haptic validation before claiming sensory acceptance"
     ],
     "failures": []
   },
-  "nextAction": "Select BETA-001, ACCESS-001, LEARN-002, or SAFETY-OPS-001 from TASKS.md and record the chosen task before implementation.",
+  "nextAction": "Read docs/roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md, inspect current haptic dependencies and preference-storage patterns, then implement the semantic haptic service as the first coherent commit.",
   "blockedBy": [],
   "risks": [
+    "Haptics could be mistaken for remote consent or another person's presence if semantics are not carefully constrained.",
+    "Simulator-only testing cannot validate recognizability, comfort, intensity, or timing on a physical iPhone.",
+    "Playback failure must never delay or undo Soft Signal or emergency-stop state transitions.",
     "The integrated current main has not been represented here as fully verified on a physical iPhone.",
-    "Moderation, reporting, beta operations, and physical-device accessibility validation remain incomplete.",
     "Learning completion must never be interpreted as evidence of safety or consent competence."
   ],
   "notes": [
     "Repository artifacts are the source of truth; prior chat context is optional context only.",
-    "Chapters 1 through 4, secure-auth foundation, Wiki source, and the first guided-learning vertical slice are merged.",
-    "No implementation branch is designated active at this handoff."
+    "HAPTIC-001 is explicitly authorized for autonomous implementation after this documentation branch is merged.",
+    "The first slice is limited to presence, attention, confirmation, softSignal, and emergencyStop semantic events.",
+    "No custom Core Haptics waveform work is authorized unless the Expo-compatible path is documented as insufficient."
   ]
 }

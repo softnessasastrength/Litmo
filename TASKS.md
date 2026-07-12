@@ -6,7 +6,17 @@ Only one implementation task should normally be `active`. Every status change mu
 
 ## Active
 
-None. Select one pending milestone explicitly before beginning implementation.
+### HAPTIC-001 — Semantic haptic language foundation
+
+- **Status:** active
+- **Owner:** current coding agent
+- **Goal:** Implement a restrained, accessible, user-controlled semantic haptic vocabulary for guided learning, Soft Signal acknowledgement, and emergency-stop acknowledgement.
+- **Depends on:** LEARN-001, FOUNDATION-001
+- **Specification:** `docs/roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md`
+- **Acceptance criteria:** one semantic service; five documented events; local preference; no direct platform haptic calls outside the adapter; learning integration; safety actions independent of playback; unit/integration coverage; synchronized documentation; physical-device validation documented or explicitly deferred to BETA-001.
+- **Verification:** pending implementation. Record exact commands and results; never claim physical haptic validation from simulator-only testing.
+- **Notes:** Haptics supplement visible and spoken meaning. They never represent remote consent, trust, safety, or another person’s presence. Do not add custom Core Haptics waveforms in the first slice unless the documented Expo-compatible path is insufficient.
+- **Next action:** read `AGENTS.md` and `docs/roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md`, inspect current dependencies and preference patterns, then implement the semantic service as the first coherent commit.
 
 ## Pending
 

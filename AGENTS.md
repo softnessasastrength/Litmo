@@ -38,10 +38,16 @@ Do not block the visible mobile experience on unfinished infrastructure when saf
 
 ## Current chapter assignment
 
-Chapter 4 (Session Lifecycle) engineering is complete; see
-`docs/CHAPTER_4_COMPLETION.md`. Chapter 5 first slice (one-way blocks) is in
-progress; see `docs/CHAPTER_5_NEXT_STEPS.md` and
-`docs/roadmap/CHAPTER_5_TRUST_AND_MODERATION.md`.
+The explicitly active implementation task is **HAPTIC-001 — Semantic haptic language foundation**.
+
+Read and execute:
+
+- `TASKS.md`
+- `docs/roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md`
+
+Implement the documented five-event semantic vocabulary, local user control, learning integration, and safety acknowledgements. Haptics must supplement visible and spoken meaning and must never represent remote consent, trust, safety, or another person's presence. Soft Signal and emergency-stop state transitions must remain independent of haptic playback success.
+
+Chapter 4 (Session Lifecycle) engineering is complete; see `docs/CHAPTER_4_COMPLETION.md`. Chapter 5 first slice (one-way blocks) is in progress; see `docs/CHAPTER_5_NEXT_STEPS.md` and `docs/roadmap/CHAPTER_5_TRUST_AND_MODERATION.md`.
 
 The human directing this work has stated their concrete near-term goal is a build they can run on their own physical iPhone via Expo Go. **Demo path status (2026-07-12):** backend-free demo mode exists (`docs/adr/0003-demo-mode-entry-point.md`); Face ID is required only for real account sessions (ADR 0007 amendment), so Expo Go can walk the fictional path without Docker or `.env`. Documented in `docs/LOCAL_DEVELOPMENT.md`. Chapter 4 session-lifecycle work continues for remaining gaps (blocking policy, later pre-activation expiry, new-request Realtime)—not for re-opening the demo entry path.
 
@@ -58,6 +64,7 @@ Read these files before changing code:
 9. `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
 10. `docs/CHAPTER_3_COMPLETION.md`
 11. `docs/CHAPTER_4_NEXT_STEPS.md` — exact next deliverable and how to resume mid-chapter
+12. `docs/roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md` — active implementation specification
 
 ## What “continue” means
 
