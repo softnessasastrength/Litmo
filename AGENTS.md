@@ -58,6 +58,7 @@ Read these files before changing code:
 8. `docs/roadmap/PHONE_VISIBLE_VERTICAL_SLICE.md`
 9. `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
 10. `docs/CHAPTER_3_COMPLETION.md`
+11. `docs/CHAPTER_4_NEXT_STEPS.md` — exact next deliverable and how to resume mid-chapter
 
 ## What “continue” means
 

@@ -10,7 +10,8 @@ import {
   Title,
 } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
-import { colors } from "../theme";
+import { colors, fonts } from "../theme";
+import { runtimeConfig } from "../config/runtime";
 
 export default function EntryScreen() {
   const router = useRouter();
@@ -30,28 +31,30 @@ export default function EntryScreen() {
         </View>
       </FadeIn>
 
-      <Card style={styles.card}>
-        <Text style={styles.cardTitle}>Demo mode</Text>
-        <Body>
-          Walk through Touch Language onboarding, boundaries, discovery,
-          consent, a practice session, Soft Signal, and private wrap-up.
-        </Body>
-        <View style={styles.notice} accessible accessibilityRole="text">
-          <Text style={styles.noticeTitle}>Important</Text>
-          <Text style={styles.noticeBody}>
-            Compatibility and trust examples are educational signals only. They
-            do not establish consent or prove that anyone is safe.
-          </Text>
-        </View>
-        <Button
-          label="Enter the fictional demo"
-          onPress={() => {
-            enterDemoMode();
-            router.replace("/onboarding/quiz");
-          }}
-          accessibilityHint="Starts the Litmo prototype with fictional local data. No account is created and nothing is saved."
-        />
-      </Card>
+      {runtimeConfig.allowDemo ? (
+        <Card style={styles.card}>
+          <Text style={styles.cardTitle}>Demo mode</Text>
+          <Body>
+            Walk through Touch Language onboarding, boundaries, discovery,
+            consent, a practice session, Soft Signal, and private wrap-up.
+          </Body>
+          <View style={styles.notice} accessible accessibilityRole="text">
+            <Text style={styles.noticeTitle}>Important</Text>
+            <Text style={styles.noticeBody}>
+              Compatibility and trust examples are educational signals only.
+              They do not establish consent or prove that anyone is safe.
+            </Text>
+          </View>
+          <Button
+            label="Enter the fictional demo"
+            onPress={() => {
+              enterDemoMode();
+              router.replace("/onboarding/about-you");
+            }}
+            accessibilityHint="Starts the Litmo prototype with fictional local data. No account is created and nothing is saved."
+          />
+        </Card>
+      ) : null}
 
       <Card style={styles.card}>
         <Text style={styles.cardTitle}>Account sign-in</Text>
@@ -81,9 +84,8 @@ const styles = StyleSheet.create({
   card: { gap: 16 },
   cardTitle: {
     color: colors.ink,
-    fontFamily: "Georgia",
-    fontSize: 26,
-    fontWeight: "600",
+    fontFamily: fonts.headline,
+    fontSize: 28,
   },
   notice: {
     gap: 6,

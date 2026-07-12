@@ -1,0 +1,94 @@
+# ADR 0005: Pure session-lifecycle state machine
+
+**Status:** Accepted
+**Date:** 2026-07-11
+
+## Context
+
+`docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md` requires "one canonical state machine controls all lifecycle transitions" and that "UI code must not invent or directly mutate lifecycle states." Chapter 3's consent snapshot work (`shared/src/consentSnapshot.ts`) already defined the full canonical state list — `consentLifecycleStates` — for withdrawal testing, but nothing yet enforces which transitions between those states are actually allowed. Following the same approach that worked for Chapter 3 (a pure, framework-independent domain module built and tested before any backend/DB wiring), this defines that transition graph as a first, self-contained slice of Chapter 4.
+
+## Decision
+
+Add `shared/src/sessionLifecycle.ts`, reusing `ConsentLifecycleState` from `consentSnapshot.ts` rather than redefining the same twelve states a second time. It exports:
+
+- `sessionTransitions`: a `Record<ConsentLifecycleState, ReadonlySet<ConsentLifecycleState>>` — the canonical directed graph, the single source of truth for "what can this session become next."
+- `isTerminalState(state)`: true for `completed`, `declined`, `cancelled`, `expired`, `soft_signaled`, `safety_ended` — states with no outgoing edges.
+- `canTransition(from, to)`: a pure boolean query against the graph, for UI code that wants to show/hide an action without attempting it.
+- `transition(from, to)`: the actual state-changing operation, returning `{ ok: true, state, changed }` or `{ ok: false, reason, state }`. Two safety properties, both required by the roadmap doc:
+  - **Idempotent no-op**: requesting a transition to the _current_ state succeeds with `changed: false` rather than being rejected, so a retried action (duplicate submission, a client that didn't see its own earlier success) never errors.
+  - **Fail-closed on terminal states**: once in any terminal state, every further transition attempt — including to itself — is rejected with `reason: "terminal_state"`. A completed, cancelled, or safety-ended session can never be reopened by replaying an action.
+
+### The graph
+
+```
+draft           -> requested
+requested       -> accepted | declined | cancelled | expired
+accepted        -> consent_pending
+consent_pending -> ready | cancelled | expired
+ready           -> active | cancelled | expired
+active          -> completed | soft_signaled | safety_ended
+```
+
+`declined`, `cancelled`, `expired`, `completed`, `soft_signaled`, `safety_ended` are terminal.
+
+Notes on specific decisions:
+
+- **Withdrawal maps to `cancelled`, not a new state.** The roadmap doc says "allow either participant to withdraw before activation without penalty"; there is no separate `withdrawn` state in the canonical list, so withdrawal from `consent_pending` or `ready` is just a transition to `cancelled`. The distinction between "the requester cancelled" and "a participant withdrew consent" is an _actor/reason_ detail for the audit trail (out of scope for this pure graph), not a different destination state.
+- **Material snapshot changes do not change the session's lifecycle state.** Chapter 3's `invalidateForMaterialChange` and `withdrawConsent` already clear a snapshot's `confirmations` map without touching session state; a session can sit in `consent_pending` through any number of confirm/invalidate cycles before either reaching `ready` or being cancelled/expired. This module does not duplicate that logic.
+- **`expired` is reachable from `requested`, `consent_pending`, and `ready`** — any state before actual activation can time out — but not from `accepted`, since acceptance immediately generates a snapshot and moves to `consent_pending` in the same step (there is no waiting period at `accepted` itself for a human timeout to apply to).
+
+## What this slice deliberately does not cover
+
+Consistent with Chapter 3's incremental approach, this is the transition graph only. Explicitly deferred, and requiring backend/DB work this machine cannot have without Docker (a pre-existing, unrelated blocker — see `docs/CHAPTER_2_COMPLETION.md`):
+
+- **Actor authorization** (can _this_ user trigger _this_ transition on _this_ session) — the roadmap's "Server-side transition rules" section requires validating actor authorization, current state, and snapshot/profile versions atomically in a transactional server action or DB function. This module answers "is the graph edge valid," not "is this specific caller allowed to traverse it."
+- **Idempotency-key deduplication** at the request layer (the roadmap's "return a stable result for repeated idempotency keys") — this module's `changed: false` no-op covers same-state retries at the state-machine level, but a real idempotency key (e.g., deduping two different session-request rows created from a double-tapped button) needs a database unique constraint or lookup, not a pure function.
+- **Snapshot-version matching** ("prevent activation when confirmations reference different snapshot versions") — this belongs to the `ready -> active` transition's precondition check, which needs the actual snapshot and confirmation records from the database, not just a state label.
+- **Realtime sync, connectivity recovery, wrap-up independence, and the audit trail's actual persistence** — all explicitly Chapter 4 scope, all requiring Supabase Realtime and RLS-protected tables this machine cannot exercise locally yet.
+
+## Alternatives considered
+
+- Encoding transitions as a flat list of `[from, to]` tuples instead of a `Record<state, Set<state>>` was rejected: the record form makes "what can X become" and "is this terminal" (empty outgoing set) both O(1) lookups, which matters once UI code queries it on every render to decide which actions to show.
+- Adding actor/role parameters to `transition()` now, even as unused placeholders, was rejected: it would invite half-implemented authorization checks that look enforced but aren't, which is exactly the kind of gap `docs/DOCUMENTATION_STANDARD.md` and this repo's safety-first conventions warn against. Better to add real parameters when the real (server-side, DB-backed) authorization logic exists.
+
+## Consequences
+
+UI code and, later, backend transition handlers can both import the same `sessionTransitions` graph and `transition()` function, so client-side "can I show this button" checks and server-side "is this actually allowed" checks can never silently drift into disagreeing about what's a valid move — they call the same function.
+
+## Follow-up work
+
+- Wire `transition()` into an actual server-side action (Postgres function or transactional Express handler) once local Supabase is available to test against, adding actor authorization and idempotency-key deduplication at that layer.
+- Extend the graph if a genuine need for a `consent_pending -> requested` (re-request after a snapshot becomes stale) or similar backward edge emerges — none is defined yet because the roadmap doc doesn't call for one.
+
+## Update: schema landed, transition function still pending
+
+Docker became available on this machine, unblocking the "requires backend/DB work" items above for the first time. Migration `007_session_lifecycle.sql` (`agent/chapter-4-session-lifecycle` branch) took the first step:
+
+- Replaced the Chapter 1/2-era `sessions.status` check constraint (`'requested','consent_pending','consented','active','completed','exited','cancelled'`) with this ADR's canonical twelve-state list. That old table had no rows and was never wired to a shipped feature, so this was a clean replacement, not a data migration.
+- Added `session_events`, the append-only audit trail table the roadmap doc requires (session id, actor id, event type, prior/resulting state, snapshot version, timestamp, idempotency key via a partial unique index on `(session_id, idempotency_key) where idempotency_key is not null`, and a `jsonb` metadata column).
+- Fixed the same missing-`GRANT` bug documented in `docs/CHANGELOG.md`'s 2026-07-12 entry: the `sessions` table's "participants read sessions" RLS policy (migration 002) had never had a matching `GRANT SELECT`, so it had never actually been reachable.
+- Deliberately granted **no** `INSERT`/`UPDATE` on `sessions` or `session_events` to `authenticated` yet. Both pgTAP-verified (`supabase/tests/session_lifecycle.test.sql`): a participant can read their own session and its audit trail; a non-participant can read neither; and any direct write attempt is rejected outright, since the transition function this ADR calls for — the only thing that should ever be allowed to write these rows — does not exist yet.
+
+Still not done: the `transition_session(...)`-style Postgres function itself (actor authorization, mirroring `sessionTransitions` in SQL, idempotency-key handling, snapshot-version preconditions for `ready -> active`), and everything downstream of it (realtime sync, connectivity recovery, wrap-up, request creation/accept/decline/cancel endpoints). This is the next concrete slice.
+
+## Update: transactional transition authority landed
+
+Migration `008_transition_session.sql` implements `transition_session(session_id, to_state, idempotency_key, metadata)` as the sole authenticated lifecycle write path:
+
+- `SECURITY DEFINER` with an empty search path, executable by `authenticated` but not `anon` or `public`;
+- locks the session row before checking replay or current state, serializing concurrent actions on one session;
+- verifies `auth.uid()` is either participant without revealing whether an unauthorized session exists;
+- returns the first event's resulting state for a repeated `(session_id, idempotency_key)` and writes no duplicate event;
+- mirrors the exact fifteen canonical graph edges in SQL, treats nonterminal same-state calls as no-op retries, and rejects every transition from a terminal state;
+- updates `sessions.status` and inserts one `session_events` record in the same transaction; and
+- restricts participant-readable metadata to enumerated `source` and `trigger` values, preventing raw notes or rejection reasons from entering the general audit trail.
+
+The SQL graph must be hand-mirrored because PostgreSQL cannot import the TypeScript module. The pgTAP test builds the canonical edge fixture explicitly and calls the function for all 144 state pairs; any accepted/rejected-edge drift, wrong resulting state, or wrong event count fails the suite. The same test covers RLS visibility, direct-write denial, non-participant and anonymous denial, idempotent replay, actor/event fields, and metadata rejection.
+
+This boundary currently answers only whether the caller is one of the two participants. Transition-specific roles (for example, only the recipient accepting or a trusted server expiring), request creation, and the snapshot-confirmation precondition for `ready -> active` require the next persistence slices and are intentionally not implied by this function.
+
+## Update: material profile changes invalidate ready consent
+
+Migration `011_invalidate_snapshots_on_profile_change.sql` adds the narrowly scoped `ready -> consent_pending` edge. This supersedes the original assumption above that material changes never affect lifecycle state: once a session has reached `ready`, clearing its confirmations while leaving it ready would make the displayed state contradict the agreement state and would prevent creation of a replacement snapshot. A material edit by either participant now marks every affected unwithdrawn pre-activation snapshot invalid, clears its confirmations, and atomically returns a ready session to `consent_pending` through the canonical transition function. Sessions already in `consent_pending` remain there and receive a distinct append-only `snapshot_invalidated` event. Active and terminal sessions are never altered.
+
+The edge is not a general-purpose rewind. The authenticated transition function technically exposes the canonical edge until transition-specific role enforcement lands, so mobile remains unwired. The profile-save function is currently its only intended caller and uses enumerated `material_profile_change` metadata.

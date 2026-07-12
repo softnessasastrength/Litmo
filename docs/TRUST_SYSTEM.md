@@ -13,3 +13,5 @@ The Trust Ledger records completed-session outcomes without presenting a person 
 - Ledger immutability protects history; correction and appeal records must be additive.
 
 The POC uses database constraints and append-only records. A production system requires independent abuse-prevention, identity, privacy, moderation, and legal review.
+
+Chapter 4 stores each participant's post-session wrap-up privately and immutably. The counterpart cannot read it, and uncomfortable or safety-concern outcomes do not automatically create a public trust event or penalty. Chapter 5 must route those outcomes into access-controlled human review before any moderation action exists.

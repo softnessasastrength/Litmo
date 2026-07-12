@@ -18,22 +18,27 @@ test("restored new user enters onboarding", () =>
     }).status,
     "onboarding",
   ));
-test("restored complete user reaches ready state", () =>
+test("restored complete user reaches authenticated state", () =>
   assert.equal(
     authReducer(initialAuthState, {
       type: "RESTORED",
       session,
       onboardingComplete: true,
     }).status,
-    "ready",
+    "authenticated",
   ));
 test("logout clears session authority", () =>
   assert.deepEqual(
     authReducer(
-      { ...initialAuthState, status: "ready", session, user: session.user },
+      {
+        ...initialAuthState,
+        status: "authenticated",
+        session,
+        user: session.user,
+      },
       { type: "SIGNED_OUT" },
     ),
-    { ...initialAuthState, status: "signed_out" },
+    { ...initialAuthState, status: "locked" },
   ));
 test("expired or failed restoration fails closed", () =>
   assert.equal(
@@ -45,7 +50,7 @@ test("expired or failed restoration fails closed", () =>
   ));
 test("protected route sends signed-out users to the entry choice screen", () =>
   assert.equal(
-    protectedRouteFor("signed_out", {
+    protectedRouteFor("locked", {
       inAuthGroup: false,
       isPublicRoute: false,
     }),
@@ -53,16 +58,19 @@ test("protected route sends signed-out users to the entry choice screen", () =>
   ));
 test("signed-out visitors reach the welcome and entry screens without redirect", () =>
   assert.equal(
-    protectedRouteFor("signed_out", {
+    protectedRouteFor("locked", {
       inAuthGroup: false,
       isPublicRoute: true,
     }),
     null,
   ));
-test("complete users leave auth for discovery", () =>
+test("complete users leave auth for the home tab", () =>
   assert.equal(
-    protectedRouteFor("ready", { inAuthGroup: true, isPublicRoute: true }),
-    "/match/discover",
+    protectedRouteFor("authenticated", {
+      inAuthGroup: true,
+      isPublicRoute: true,
+    }),
+    "/home",
   ));
 test("entering demo mode requires no backend session", () =>
   assert.deepEqual(

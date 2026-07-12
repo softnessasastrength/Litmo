@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { computeCompatibility } from "@litmo/domain";
@@ -16,12 +16,34 @@ import {
   mockSnapshotNow,
 } from "../../data/mockConsentProfiles";
 import { buildSnapshotRows } from "../../lib/consentSnapshotView";
+import { scheduleDemoNotification } from "../../services/notifications";
+import {
+  sessionRepository,
+  type PersistedSnapshot,
+} from "../../services/sessionRepository";
 import { colors } from "../../theme";
+import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 
 export default function ConsentSnapshotScreen() {
+  return (
+    <SensitiveAccessGate>
+      <ConsentSnapshotContent />
+    </SensitiveAccessGate>
+  );
+}
+
+function ConsentSnapshotContent() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, sessionId } = useLocalSearchParams<{
+    id: string;
+    sessionId?: string;
+  }>();
   const [decision, setDecision] = useState("");
+  const [confirmState, setConfirmState] = useState<
+    "idle" | "confirming" | "waiting" | "error"
+  >("idle");
+  const [confirmError, setConfirmError] = useState("");
+  const [snapshot, setSnapshot] = useState<PersistedSnapshot | null>(null);
   const rows = useMemo(() => {
     const result = computeCompatibility(
       mockConsentProfileVersion("self"),
@@ -30,9 +52,70 @@ export default function ConsentSnapshotScreen() {
     );
     return buildSnapshotRows(result);
   }, [id]);
+
+  const proceededRef = useRef(false);
+  const proceedToActive = async () => {
+    if (proceededRef.current) return;
+    proceededRef.current = true;
+    await sessionRepository.activateSession(sessionId!);
+    void scheduleDemoNotification(4);
+    router.push({ pathname: "/session/active", params: { sessionId } });
+  };
+
+  const confirmReal = async () => {
+    setConfirmState("confirming");
+    setConfirmError("");
+    try {
+      const created =
+        snapshot ?? (await sessionRepository.createSnapshot(sessionId!));
+      setSnapshot(created);
+      const result = await sessionRepository.confirmSnapshot(
+        created.id,
+        created.fingerprint,
+      );
+      if (result !== "ready") {
+        setConfirmState("waiting");
+        return;
+      }
+      await proceedToActive();
+    } catch (caught) {
+      setConfirmState("error");
+      setConfirmError(
+        caught instanceof Error
+          ? caught.message
+          : "This could not be confirmed right now.",
+      );
+    }
+  };
+
+  // While waiting on the other participant, listen for their confirmation
+  // instead of requiring a manual "Check again" tap.
+  useEffect(() => {
+    if (confirmState !== "waiting" || !sessionId) return;
+    const unsubscribe = sessionRepository.subscribeToSession(
+      sessionId,
+      (session) => {
+        if (session.status === "ready") void proceedToActive();
+      },
+    );
+    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [confirmState, sessionId]);
+
+  const confirm = () => {
+    if (sessionId) {
+      void confirmReal();
+      return;
+    }
+    void scheduleDemoNotification(4);
+    router.push("/session/active");
+  };
+
   return (
     <Screen>
-      <Eyebrow>MOCK CONSENT SNAPSHOT</Eyebrow>
+      <Eyebrow>
+        {sessionId ? "CONSENT SNAPSHOT" : "MOCK CONSENT SNAPSHOT"}
+      </Eyebrow>
       <Title>Read every boundary before you agree.</Title>
       <Body>
         This is the live, directional overlap of two mock preference sets
@@ -68,14 +151,46 @@ export default function ConsentSnapshotScreen() {
           </Text>
         </View>
       ) : null}
+      {confirmState === "waiting" ? (
+        <View style={styles.waiting}>
+          <Text style={styles.waitingTitle}>
+            Your confirmation is recorded.
+          </Text>
+          <Text style={styles.waitingBody}>
+            Waiting for the other person to confirm the same snapshot before
+            this session can begin. This screen doesn't update by itself yet —
+            check again once they have.
+          </Text>
+        </View>
+      ) : null}
       <Button
-        label="Confirm this mock snapshot"
-        disabled={decision !== "yes"}
-        onPress={() => router.push("/session/active")}
+        label={
+          confirmState === "confirming"
+            ? "Confirming…"
+            : confirmState === "waiting"
+              ? "Check again"
+              : sessionId
+                ? "Confirm this snapshot"
+                : "Confirm this mock snapshot"
+        }
+        disabled={decision !== "yes" || confirmState === "confirming"}
+        onPress={confirm}
       />
+      {confirmState === "error" ? (
+        <Text accessibilityRole="alert" style={styles.error}>
+          {confirmError}
+        </Text>
+      ) : null}
+      {!sessionId ? (
+        <Body muted center>
+          In a real Litmo session, each person would confirm independently. This
+          prototype simulates both confirmations.
+        </Body>
+      ) : null}
       <Body muted center>
-        In a real Litmo session, each person would confirm independently. This
-        prototype simulates both confirmations.
+        Confirming will ask for notification permission and send one real local
+        notification a few seconds later, so you can see how session alerts will
+        actually work — not just a mockup.
       </Body>
     </Screen>
   );
@@ -105,4 +220,8 @@ const styles = StyleSheet.create({
   stop: { padding: 16, borderRadius: 16, backgroundColor: colors.signalSoft },
   stopTitle: { color: colors.signal, fontWeight: "800" },
   stopBody: { color: colors.ink, lineHeight: 21, marginTop: 4 },
+  waiting: { padding: 16, borderRadius: 16, backgroundColor: colors.mossSoft },
+  waitingTitle: { color: colors.moss, fontWeight: "800" },
+  waitingBody: { color: colors.ink, lineHeight: 21, marginTop: 4 },
+  error: { color: colors.signal, textAlign: "center" },
 });

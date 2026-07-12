@@ -21,7 +21,9 @@
     "db:stop": "npx supabase stop",
     "db:lint": "npx supabase db lint --local --level error",
     "env:check": "node scripts/validate-env.mjs",
-    "state:check": "node scripts/validate-project-state.mjs"
+    "release:check": "node scripts/validate-release.mjs",
+    "bootstrap": "bash scripts/bootstrap-macos-dev-env.sh",
+    "postinstall": "node scripts/fix-expo-router-hoisting.mjs"
   },
   "devDependencies": {
     "supabase": "^2.50.5"

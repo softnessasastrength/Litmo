@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { Choice, FadeIn, Progress, Screen } from "../../components/ui";
 import { quizQuestions, type QuizAnswer } from "../../data/quiz";
 import { usePrototype } from "../../context/PrototypeContext";
-import { colors } from "../../theme";
+import { colors, fonts } from "../../theme";
 import { useAuth } from "../../context/AuthContext";
 import { profileRepository } from "../../services/profileRepository";
 export default function QuizScreen() {
@@ -99,9 +99,9 @@ const styles = StyleSheet.create({
   kicker: { color: colors.plum, fontSize: 15, fontWeight: "700" },
   prompt: {
     color: colors.ink,
-    fontFamily: "Georgia",
-    fontSize: 34,
-    lineHeight: 41,
+    fontFamily: fonts.headline,
+    fontSize: 36,
+    lineHeight: 43,
   },
   options: { gap: 12 },
   note: {

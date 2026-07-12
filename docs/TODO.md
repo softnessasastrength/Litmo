@@ -2,7 +2,9 @@
 
 Well-specified future work that has not yet been promoted into an active chapter (`AGENTS.md`'s "Current chapter assignment"). Recorded here so intent survives even without the conversation that produced it, per `docs/CONTINUITY_AND_STEWARDSHIP.md`. Do not begin implementation until a chapter assignment or explicit human instruction authorizes it.
 
-## Passwordless authentication (Sign in with Apple + platform passkeys)
+## Passwordless authentication (implemented decision; remaining operations work)
+
+ADR 0010 and `docs/PASSKEY_AUTHENTICATION.md` supersede the open architecture questions below for the iOS client: Supabase remains the backend of record, email OTP is bootstrap-only, and Apple passkeys are the routine credential. The historical proposal is retained here for decision provenance. Remaining production work is human-reviewed recovery, trusted server session revocation, hosted AASA verification, and non-iOS credential design.
 
 Status: **not started — planning only**
 
@@ -20,7 +22,7 @@ Replace (or sit alongside, pending a decision below) Chapter 2's Supabase email/
 - Immediately after a successful Sign in with Apple account creation, **prompt the user to create a passkey**.
 - The server stores **only public passkey credential material** — never a private key, never a client-side authenticator secret.
 - **Keychain**-backed storage for access and refresh tokens. Never `UserDefaults`, never any unencrypted local store.
-- Protect sensitive local access using **LocalAuthentication** (Face ID / Touch ID / passcode) at appropriate points, and **obscure the UI in app-switcher snapshots** (the standard `UIScreen`/`willResignActive` blur-overlay pattern) so sensitive screens don't appear in the multitasking preview.
+- Completed 2026-07-12: mandatory biometric-only Face ID locking and native app-switcher privacy cover. See `docs/adr/0007-mandatory-face-id-lock.md`. Remaining follow-up: notification-preview and screen-capture review before private alpha.
 - Explicit design for:
   - **Account recovery** (what happens when a user loses every enrolled passkey-capable device).
   - **Multi-device credential enrollment** (adding a passkey on a second device without treating the first device's presence as sufficient proof by itself).
@@ -42,3 +44,9 @@ This would replace Chapter 2's already-implemented and working Supabase email/pa
 - Whether this is scoped to iOS only (as specified) while other platforms (per `docs/roadmap/CHAPTERS_7_TO_13_PLATFORM_FUTURE.md`'s multi-platform chapter) get a separate, later-designed passwordless flow, or whether the architecture needs to anticipate cross-platform credential portability from the start.
 
 An ADR should be written to resolve these questions before implementation starts, per `docs/DOCUMENTATION_STANDARD.md`.
+
+## Dark mode (soft palette)
+
+Status: **not started — explicitly deferred, do not start until asked**
+
+Add a dark mode. Explicit direction from the founder: it should feel "soft," matching the existing warm/muted palette (`app/theme.ts` — cream/paper/moss/plum/apricot) rather than a stark black-and-white inversion. Whenever this is picked up, derive dark-mode equivalents that keep the same emotional register (calm, warm, unhurried) rather than just running the existing colors through an automatic inverter.

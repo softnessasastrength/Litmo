@@ -20,7 +20,7 @@ const touchId: Record<MockPersonaId, string> = {
   eli: "20000000-0000-4000-8000-000000000003",
   jonah: "20000000-0000-4000-8000-000000000004",
 };
-const userId: Record<MockPersonaId, string> = {
+export const personaUserId: Record<MockPersonaId, string> = {
   self: "10000000-0000-4000-8000-000000000001",
   maya: "10000000-0000-4000-8000-000000000002",
   eli: "10000000-0000-4000-8000-000000000003",
@@ -111,10 +111,24 @@ export function mockConsentProfileVersion(
     touchId: touchId[id],
     touchVersion: 1,
     consentVersion: 1,
-    userId: userId[id],
+    userId: personaUserId[id],
     createdAt: FIXED_CREATED_AT,
     touch: legacy.touch,
     consent: legacy.consent,
   });
 }
 export const mockSnapshotNow = new Date(FIXED_CREATED_AT);
+
+/**
+ * Inverse of personaUserId, for screens that only have a real requester's
+ * user id (e.g. an incoming session request) and need the matching mock
+ * persona id to look up display/preference fixtures. Falls back to "maya"
+ * for any account outside the fixed seeded personas, matching
+ * mockConsentProfileVersion's own fallback.
+ */
+export function personaIdForUserId(userId: string): MockPersonaId {
+  const match = (
+    Object.entries(personaUserId) as [MockPersonaId, string][]
+  ).find(([, value]) => value === userId);
+  return match?.[0] ?? "maya";
+}

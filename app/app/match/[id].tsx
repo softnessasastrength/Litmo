@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import {
@@ -11,12 +12,41 @@ import {
   Title,
 } from "../../components/ui";
 import { mockProfiles } from "../../data/mock";
+import {
+  personaUserId,
+  type MockPersonaId,
+} from "../../data/mockConsentProfiles";
+import { useAuth } from "../../context/AuthContext";
+import { sessionRepository } from "../../services/sessionRepository";
 import { colors } from "../../theme";
 export default function MatchDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const profile =
     mockProfiles.find((item) => item.id === id) ?? mockProfiles[0];
+  const { status } = useAuth();
+  const [requestState, setRequestState] = useState<
+    "idle" | "sending" | "sent" | "error"
+  >("idle");
+  const [requestError, setRequestError] = useState("");
+  const canRequest = status === "authenticated";
+  const sendRequest = async () => {
+    setRequestState("sending");
+    setRequestError("");
+    try {
+      await sessionRepository.requestSession(
+        personaUserId[profile.id as MockPersonaId],
+      );
+      setRequestState("sent");
+    } catch (caught) {
+      setRequestState("error");
+      setRequestError(
+        caught instanceof Error
+          ? caught.message
+          : "The request could not be sent. Try again.",
+      );
+    }
+  };
   return (
     <Screen>
       <View style={[styles.hero, { backgroundColor: profile.color }]}>
@@ -54,6 +84,38 @@ export default function MatchDetailScreen() {
           both mock preference sets.
         </Text>
       </View>
+      {canRequest ? (
+        <>
+          <Button
+            variant="secondary"
+            label={
+              requestState === "sending"
+                ? "Sending…"
+                : requestState === "sent"
+                  ? "Request sent"
+                  : `Request a session with ${profile.name}`
+            }
+            disabled={requestState === "sending" || requestState === "sent"}
+            onPress={() => void sendRequest()}
+          />
+          {requestState === "sent" ? (
+            <Body muted>
+              {profile.name} will see this the next time they sign in. This only
+              sends a request — nothing is scheduled or agreed yet.
+            </Body>
+          ) : null}
+          {requestState === "error" ? (
+            <Text accessibilityRole="alert" style={styles.error}>
+              {requestError}
+            </Text>
+          ) : null}
+        </>
+      ) : (
+        <Body muted>
+          Demo mode has no real account to send a request from. Sign in to send
+          a real session request.
+        </Body>
+      )}
       <Button
         label="Review a mock Consent Snapshot"
         onPress={() =>
@@ -89,4 +151,5 @@ const styles = StyleSheet.create({
   },
   separationTitle: { color: colors.ink, fontWeight: "800", fontSize: 16 },
   separationBody: { color: colors.muted, lineHeight: 21 },
+  error: { color: colors.signal, textAlign: "center" },
 });

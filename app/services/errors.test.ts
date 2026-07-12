@@ -19,3 +19,11 @@ test("network failures are retryable", () =>
     mapExternalError(new Error("network request failed")).retryable,
     true,
   ));
+test("an invalid session lifecycle transition is not retryable", () => {
+  const result = mapExternalError({
+    code: "55000",
+    message: "invalid session lifecycle transition",
+  });
+  assert.equal(result.code, "validation_failed");
+  assert.equal(result.retryable, false);
+});

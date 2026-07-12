@@ -1,3 +1,7 @@
+export const fonts = {
+  headline: "CormorantGaramond-Italic",
+  wordmark: "BeauRivage-Regular",
+} as const;
 export const colors = {
   ink: "#302D2A",
   muted: "#6E6861",

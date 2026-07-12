@@ -10,7 +10,7 @@ import {
   type ViewStyle,
 } from "react-native";
 import { useEffect, useRef } from "react";
-import { colors, radius, shadow } from "../theme";
+import { colors, fonts, radius, shadow } from "../theme";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 
 export function Screen({
@@ -226,10 +226,9 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.ink,
-    fontFamily: "Georgia",
+    fontFamily: fonts.headline,
     fontSize: 38,
     lineHeight: 45,
-    fontWeight: "600",
   },
   center: { textAlign: "center" },
   body: { color: colors.ink, fontSize: 17, lineHeight: 26 },
@@ -300,10 +299,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   sectionTitle: {
-    fontFamily: "Georgia",
+    fontFamily: fonts.headline,
     color: colors.ink,
     fontSize: 24,
-    fontWeight: "600",
   },
   progressTrack: {
     height: 8,

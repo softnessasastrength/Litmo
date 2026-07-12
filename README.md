@@ -173,6 +173,10 @@ Start with the [Founding Thesis](docs/philosophy/00_Founding_Thesis.md): it expl
 - [Security Model](docs/SECURITY_MODEL.md)
 - [Data Classification](docs/DATA_CLASSIFICATION.md)
 
+## Roadmap
+
+See [`ROADMAP.md`](ROADMAP.md) for chapter status and [`docs/roadmap/README.md`](docs/roadmap/README.md) for the full chapter sequence. Chapter 3 (Consent Engine) is complete (`docs/CHAPTER_3_COMPLETION.md`); Chapter 4 (Session Lifecycle) is active. Passkey behavior and deployment requirements are documented in [`docs/PASSKEY_AUTHENTICATION.md`](docs/PASSKEY_AUTHENTICATION.md).
+
 ## Contributing
 
 Contributions should preserve Litmo's core principle:

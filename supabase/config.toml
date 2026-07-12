@@ -21,6 +21,14 @@ site_url = "http://localhost:8081"
 additional_redirect_urls = ["exp://127.0.0.1:8081", "litmo://"]
 enable_signup = true
 
+[auth.passkey]
+enabled = true
+
+[auth.webauthn]
+rp_display_name = "Litmo"
+rp_id = "softnessasastrength.com"
+rp_origins = ["https://softnessasastrength.com"]
+
 [auth.email]
 enable_signup = true
 double_confirm_changes = true
