@@ -42,14 +42,20 @@ The `ready -> active` precondition is now enforced by a database trigger for eve
 - "End together" calls `transition_session(..., 'completed')` (`sessionRepository.completeSession`) before navigating to wrap-up; Soft Signal already called `transition_session`'s sibling `withdraw_session_consent` via `emergencyStopService`.
 - The wrap-up screen calls `submit_session_wrapup(...)` (`sessionWrapupService`) with the real five-value canonical outcome enum and an optional client-encrypted private note, when a real session ID and an authenticated (non-demo) user are present.
 
+Landed 2026-07-12 (`docs/adr/0015-session-request-creation-and-recipient-authorization.md`'s UI addendum):
+
+- `app/app/match/[id].tsx` has a real "Request a session" action for signed-in users (`sessionRepository.requestSession`).
+- `app/app/requests.tsx` (linked from the home tab) lists incoming pending requests and lets the recipient Accept or Decline (`sessionRepository.respondToRequest`/`listIncomingRequests`).
+
 Still not done:
 
 - Replace the local timer with a real `active` session row + Supabase Realtime subscription so both participants see the same state.
-- **No mobile screen calls `request_session(...)` yet**, even though the database side of request creation and recipient-only accept/decline now exists (migration 015, `docs/adr/0015-session-request-creation-and-recipient-authorization.md`). This is the actual next piece of Deliverable 3: a "request a session" action from `match/[id].tsx` or `discover.tsx`, an accept/decline UI for incoming requests, and a way to navigate into `/session/active?sessionId=...` from a real accepted session rather than the current no-param `router.push("/session/active")` in `consent-snapshot.tsx`.
+- **Accepting a request doesn't navigate anywhere yet** — `respond("accepted")` just refreshes the requests list. The accepted session still needs a path into the consent-snapshot/confirmation flow and eventually `/session/active?sessionId=...`, rather than the current no-param `router.push("/session/active")` in `consent-snapshot.tsx`. This is the actual next piece of Deliverable 3.
+- No Realtime/push notification when a new request arrives — the recipient only sees it by opening `/requests`.
 - Wrap-up submission itself has no offline retry/queue (only the Soft Signal path does, via `emergencyStopService`'s pending-storage pattern).
 - No blocking/eligibility checks before request creation (no blocking system exists anywhere in this codebase), and no request expiration timestamps/jobs.
 
-The database half of wrap-up is complete in migration 012 and ADR 0008: owner-only immutable rows, terminal-state validation, and retry-safe submission. The database half of request creation/response is complete in migration 015 and ADR 0015. The remaining mobile work is the request/accept/decline screens, replacing the local timer with Realtime, and wrap-up offline retry.
+The database half of wrap-up is complete in migration 012 and ADR 0008: owner-only immutable rows, terminal-state validation, and retry-safe submission. The database half and mobile UI for request creation/response are complete (migration 015, ADR 0015). The remaining mobile work is connecting an accepted request into the consent-snapshot/session flow, replacing the local timer with Realtime, and wrap-up offline retry.
 
 ## Not yet scoped (fine to leave for later)
 
@@ -65,4 +71,4 @@ If picking this up fresh (new session, new agent, or just after a break):
 
 1. `git checkout agent/chapter-4-session-lifecycle` (or start a new branch off it if it's already merged).
 2. Confirm Docker/Supabase still work: `npm run db:start && npm run db:reset && npx supabase test db` should show 100/100 passing.
-3. Deliverables 1–2 and the wrap-up/request-creation database boundaries (ADRs 0005, 0006, 0008, 0014, 0015) are complete, and all three mock discovery personas now have real backing accounts. The next task is the mobile request/accept/decline UI described in Deliverable 3 above — read ADR 0015 first for the exact function contracts (`request_session`, and `transition_session`'s recipient-only `requested -> accepted/declined`) it will call.
+3. Deliverables 1–2 and the wrap-up/request-creation database boundaries and mobile UI (ADRs 0005, 0006, 0008, 0014, 0015) are complete, and all three mock discovery personas now have real backing accounts. The next task is connecting an accepted request into the consent-snapshot/session flow (see "Still not done" above) — note that on-device iOS build verification may need a fresh Xcode Apple ID sign-in first if the free-tier session has expired again (see `docs/MACHINE_SETUP.md`).

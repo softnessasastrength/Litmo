@@ -33,6 +33,13 @@ export default function HomeTabScreen() {
         label="Meet the mock community"
         onPress={() => router.push("/discover")}
       />
+      {status === "authenticated" ? (
+        <Button
+          variant="secondary"
+          label="Session requests"
+          onPress={() => router.push("/requests")}
+        />
+      ) : null}
       <Button
         variant="secondary"
         label="View private trust history"

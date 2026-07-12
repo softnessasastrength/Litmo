@@ -4,7 +4,7 @@
   <dict>
     <key>com.apple.developer.associated-domains</key>
     <array>
-      <string>webcredentials:softnessasastrength.com</string>
+      <string>webcredentials:dev.softnessasastrength.com</string>
     </array>
   </dict>
 </plist>

@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — Mobile session request, accept, and decline UI
+
+### Summary
+
+Wired the mobile side of migration 015's request/response boundary: a "Request a session" action on the match screen, and a new incoming-requests screen with Accept/Decline.
+
+### User-visible impact
+
+Signed-in (non-demo) users can send a real session request from a match's detail screen, and see + respond to incoming requests from a new "Session requests" link on the home tab. Demo mode shows an honest explanation instead, matching the established pattern from wrap-up wiring (ADR 0014).
+
+### Developer impact
+
+Added `sessionRepository.requestSession`/`respondToRequest`/`listIncomingRequests`. `app/data/mockConsentProfiles.ts`'s persona-to-UUID map is now exported (`personaUserId`) so the match screen can resolve a real recipient id. The requests screen resolves requester display names via the existing `discovery_profiles()` RPC.
+
+### Migration and setup impact
+
+No new migration. Typecheck, 46 app / 60 shared / 12 backend tests, lint, and a clean `db:reset` with 100/100 pgTAP all pass. On-device build verification was blocked by an expired free-tier Xcode Apple ID sign-in (environment issue, unrelated to this change) — see the addendum in `docs/adr/0015-session-request-creation-and-recipient-authorization.md`.
+
+### Related decision and roadmap
+
+- `docs/adr/0015-session-request-creation-and-recipient-authorization.md`
+- `docs/CHAPTER_4_NEXT_STEPS.md`
+
 ## 2026-07-12 — Session request creation and recipient-only response authorization
 
 ### Summary
