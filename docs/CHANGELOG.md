@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — Chapter 4: session schema and audit trail (branch: agent/chapter-4-session-lifecycle)
+
+### Summary
+
+First database-backed slice of Chapter 4, on its own branch. Migration `007_session_lifecycle.sql` replaces the Chapter 1/2-era `sessions.status` values with the canonical twelve-state list already defined and tested in `shared/src/sessionLifecycle.ts` (ADR 0005), and adds `session_events`, the append-only audit trail table the roadmap requires. Also fixes the same missing-`GRANT` bug found earlier today on the `sessions` table itself.
+
+### User-visible impact
+
+None yet.
+
+### Developer impact
+
+New migration `supabase/migrations/007_session_lifecycle.sql`. New `supabase/tests/session_lifecycle.test.sql` (6 pgTAP assertions; repo pgTAP total now 14). Deliberately no `INSERT`/`UPDATE` grant on `sessions` or `session_events` yet — direct writes are rejected outright and tested as such, since only a future server-side transition function should ever be allowed to write these rows.
+
+### Migration and setup impact
+
+`npm run db:reset` picks up migration 007 automatically. The old `sessions` table had no rows and was never wired to a shipped feature, so this is a clean schema replacement, not a data migration.
+
+### Related decision and roadmap
+
+- `docs/adr/0005-session-lifecycle-state-machine.md` (see its "Update" section)
+- `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
+
 ## 2026-07-12 — Fixed missing table grants; Chapter 2's Docker-blocked checks now pass
 
 ### Summary

@@ -59,3 +59,14 @@ UI code and, later, backend transition handlers can both import the same `sessio
 
 - Wire `transition()` into an actual server-side action (Postgres function or transactional Express handler) once local Supabase is available to test against, adding actor authorization and idempotency-key deduplication at that layer.
 - Extend the graph if a genuine need for a `consent_pending -> requested` (re-request after a snapshot becomes stale) or similar backward edge emerges — none is defined yet because the roadmap doc doesn't call for one.
+
+## Update: schema landed, transition function still pending
+
+Docker became available on this machine, unblocking the "requires backend/DB work" items above for the first time. Migration `007_session_lifecycle.sql` (`agent/chapter-4-session-lifecycle` branch) took the first step:
+
+- Replaced the Chapter 1/2-era `sessions.status` check constraint (`'requested','consent_pending','consented','active','completed','exited','cancelled'`) with this ADR's canonical twelve-state list. That old table had no rows and was never wired to a shipped feature, so this was a clean replacement, not a data migration.
+- Added `session_events`, the append-only audit trail table the roadmap doc requires (session id, actor id, event type, prior/resulting state, snapshot version, timestamp, idempotency key via a partial unique index on `(session_id, idempotency_key) where idempotency_key is not null`, and a `jsonb` metadata column).
+- Fixed the same missing-`GRANT` bug documented in `docs/CHANGELOG.md`'s 2026-07-12 entry: the `sessions` table's "participants read sessions" RLS policy (migration 002) had never had a matching `GRANT SELECT`, so it had never actually been reachable.
+- Deliberately granted **no** `INSERT`/`UPDATE` on `sessions` or `session_events` to `authenticated` yet. Both pgTAP-verified (`supabase/tests/session_lifecycle.test.sql`): a participant can read their own session and its audit trail; a non-participant can read neither; and any direct write attempt is rejected outright, since the transition function this ADR calls for — the only thing that should ever be allowed to write these rows — does not exist yet.
+
+Still not done: the `transition_session(...)`-style Postgres function itself (actor authorization, mirroring `sessionTransitions` in SQL, idempotency-key handling, snapshot-version preconditions for `ready -> active`), and everything downstream of it (realtime sync, connectivity recovery, wrap-up, request creation/accept/decline/cancel endpoints). This is the next concrete slice.
