@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   Body,
   Button,
@@ -13,7 +13,9 @@ import { useAuth } from "../../context/AuthContext";
 import { personaIdForUserId } from "../../data/mockConsentProfiles";
 import { notifyPrivateUpdate } from "../../services/notifications";
 import { sessionRepository } from "../../services/sessionRepository";
-import { colors, fonts } from "../../theme";
+import { fonts, type AppColors } from "../../theme";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+
 
 type OpenSession = {
   id: string;
@@ -33,6 +35,7 @@ function resumeLabel(status: string): string {
 }
 
 export default function HomeTabScreen() {
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { status, user } = useAuth();
   const [pendingCount, setPendingCount] = useState(0);
@@ -219,7 +222,8 @@ export default function HomeTabScreen() {
     </Screen>
   );
 }
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   cardTitle: {
     color: colors.ink,
     fontFamily: fonts.headline,
@@ -227,4 +231,6 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   cardAction: { marginTop: 12 },
-});
+};
+}
+

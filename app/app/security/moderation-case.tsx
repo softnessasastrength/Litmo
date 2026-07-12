@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   Body,
@@ -21,7 +21,10 @@ import {
   type ModerationNote,
 } from "../../services/moderationService";
 import { REPORT_CATEGORIES } from "../../services/reportService";
-import { colors } from "../../theme";
+import { type AppColors } from "../../theme";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+import { useColors } from "../../context/ThemeContext";
+
 
 function categoryLabel(id: string): string {
   return REPORT_CATEGORIES.find((c) => c.id === id)?.label ?? id;
@@ -41,6 +44,8 @@ export default function ModerationCaseScreen() {
 }
 
 function ModerationCaseContent() {
+  const colors = useColors();
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const params = useLocalSearchParams<{
     caseId?: string;
@@ -358,7 +363,8 @@ function ModerationCaseContent() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   section: {
     color: colors.ink,
     fontWeight: "800",
@@ -393,4 +399,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   error: { color: colors.signal, textAlign: "center" },
-});
+};
+}
+

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   Body,
   Button,
@@ -17,7 +17,9 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { appealService, type OpenAppeal } from "../../services/appealService";
 import { moderationService } from "../../services/moderationService";
-import { colors } from "../../theme";
+import { type AppColors } from "../../theme";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+
 
 export default function StaffAppealsScreen() {
   return (
@@ -28,6 +30,7 @@ export default function StaffAppealsScreen() {
 }
 
 function StaffAppealsContent() {
+  const styles = useThemedStyles(makeStyles);
   const { status } = useAuth();
   const [state, setState] = useState<
     | { kind: "loading" }
@@ -182,7 +185,8 @@ function StaffAppealsContent() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   kind: {
     color: colors.ink,
     fontWeight: "800",
@@ -192,4 +196,6 @@ const styles = StyleSheet.create({
   },
   actions: { gap: 8, marginTop: 10 },
   error: { color: colors.signal, textAlign: "center" },
-});
+};
+}
+

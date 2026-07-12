@@ -3,15 +3,17 @@ import {
   ImageBackground,
   Linking,
   Pressable,
-  StyleSheet,
   Text,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Body, Button, FadeIn } from "../components/ui";
-import { colors, fonts } from "../theme";
+import { fonts, type AppColors } from "../theme";
+import { useThemedStyles } from "../hooks/useThemedStyles";
+
 
 export default function HomeScreen() {
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   return (
     <ImageBackground
@@ -59,7 +61,8 @@ export default function HomeScreen() {
     </ImageBackground>
   );
 }
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   wallpaper: { flex: 1 },
   safe: { flex: 1 },
   screen: {
@@ -106,4 +109,6 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     marginTop: 2,
   },
-});
+};
+}
+

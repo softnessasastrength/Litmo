@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AppState, type AppStateStatus } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   Body,
   Button,
@@ -10,13 +10,15 @@ import {
   Screen,
   Title,
 } from "../../components/ui";
-import { colors } from "../../theme";
+import { type AppColors } from "../../theme";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { useAuth } from "../../context/AuthContext";
 import { emergencyStopService } from "../../services/emergencyStopService";
 import { hapticService } from "../../services/hapticService";
 import { sessionCompleteService } from "../../services/sessionCompleteService";
 import { sessionRepository } from "../../services/sessionRepository";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+
 
 const terminalEndedReason: Record<string, string> = {
   soft_signaled: "soft-signal",
@@ -33,6 +35,7 @@ export default function ActiveSessionScreen() {
 }
 
 function ActiveSessionContent() {
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { user } = useAuth();
   const { sessionId } = useLocalSearchParams<{ sessionId?: string }>();
@@ -263,7 +266,8 @@ function ActiveSessionContent() {
     </Screen>
   );
 }
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   screen: { justifyContent: "space-between" },
   timerWrap: { alignItems: "center" },
   timer: {
@@ -295,4 +299,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   syncNoteText: { color: colors.ink, fontSize: 14, lineHeight: 20 },
-});
+};
+}
+

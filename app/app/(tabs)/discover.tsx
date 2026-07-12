@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import {
   Body,
   Button,
@@ -22,9 +22,12 @@ import {
   FailureState,
   LoadingState,
 } from "../../components/AsyncState";
-import { colors, fonts, radius, shadow } from "../../theme";
+import { fonts, radius, type AppColors } from "../../theme";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+
 
 export default function DiscoverScreen() {
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { selectProfile } = usePrototype();
   const { user, status } = useAuth();
@@ -201,7 +204,8 @@ export default function DiscoverScreen() {
     </Screen>
   );
 }
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
+  return {
   list: { gap: 14 },
   card: {
     flexDirection: "row",
@@ -235,4 +239,6 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   signalsNote: { color: colors.muted, fontSize: 11, lineHeight: 15 },
-});
+};
+}
+

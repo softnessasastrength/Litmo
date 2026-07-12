@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { Linking } from "react-native";
 import { Body, Button, Eyebrow, Screen, Title } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import { SensitiveAccessGate } from "../components/SensitiveAccessGate";
 import { runtimeConfig } from "../config/runtime";
 import { hapticService } from "../services/hapticService";
@@ -19,6 +20,7 @@ export default function SettingsScreen() {
 function SettingsContent() {
   const router = useRouter();
   const { status, signOut } = useAuth();
+  const { scheme, isDark, toggleScheme } = useTheme();
   const [isStaff, setIsStaff] = useState(false);
   const [hapticsOn, setHapticsOn] = useState(true);
 
@@ -53,6 +55,17 @@ function SettingsContent() {
       <Body muted>
         Manage access without passwords. Security changes require a fresh
         device-owner check.
+      </Body>
+      <Button
+        variant="secondary"
+        label={isDark ? "Appearance: dark" : "Appearance: light"}
+        onPress={toggleScheme}
+        accessibilityHint="Switches between Litmo’s cream light theme and a soft dark theme. Preference stays on this device."
+      />
+      <Body muted>
+        {scheme === "dark"
+          ? "Dark mode softens the surface for low light. Safety colors stay distinct; meaning is never color-only."
+          : "Light mode is the default cream journal surface. Switch anytime on this device only."}
       </Body>
       <Button
         variant="secondary"

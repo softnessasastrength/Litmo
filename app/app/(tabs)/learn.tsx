@@ -1,16 +1,21 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { learningModules } from "../../data/learningModules";
 import { learningProgressService } from "../../services/learningProgress";
 import {
   completionCount,
   LearningProgress,
 } from "../../services/learningProgressCore";
-import { colors, fonts, radius, shadow } from "../../theme";
+import { fonts, radius, type AppColors } from "../../theme";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+import { useColors } from "../../context/ThemeContext";
+
 
 export default function LearningHomeScreen() {
+  const colors = useColors();
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const [progress, setProgress] = useState<LearningProgress>({});
 
@@ -96,7 +101,8 @@ export default function LearningHomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
+  return {
   container: {
     padding: 22,
     paddingBottom: 48,
@@ -162,4 +168,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
   action: { color: colors.moss, fontWeight: "700", marginLeft: "auto" },
-});
+};
+}
+

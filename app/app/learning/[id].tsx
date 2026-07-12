@@ -1,12 +1,15 @@
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { findLearningModule } from "../../data/learningModules";
 import { hapticService } from "../../services/hapticService";
 import { learningProgressService } from "../../services/learningProgress";
-import { colors, fonts, radius } from "../../theme";
+import { fonts, radius, type AppColors } from "../../theme";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+
 
 export default function LearningModuleScreen() {
+  const styles = useThemedStyles(makeStyles);
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const module = useMemo(() => findLearningModule(id), [id]);
@@ -99,6 +102,7 @@ export default function LearningModuleScreen() {
   }
 
   async function goBackStep() {
+  const styles = useThemedStyles(makeStyles);
     if (stepIndex === 0) {
       router.back();
       return;
@@ -206,7 +210,8 @@ export default function LearningModuleScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   container: {
     padding: 24,
     paddingBottom: 48,
@@ -305,4 +310,6 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: { color: colors.moss, fontSize: 16, fontWeight: "700" },
   disabled: { opacity: 0.45 },
-});
+};
+}
+

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, Text } from "react-native";
+import { Text } from "react-native";
 import {
   Body,
   Button,
@@ -20,7 +20,9 @@ import {
   reportService,
   type MyReport,
 } from "../../services/reportService";
-import { colors } from "../../theme";
+import { type AppColors } from "../../theme";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+
 
 function categoryLabel(id: string): string {
   return REPORT_CATEGORIES.find((c) => c.id === id)?.label ?? id;
@@ -45,6 +47,7 @@ export default function MyReportsScreen() {
 }
 
 function MyReportsContent() {
+  const styles = useThemedStyles(makeStyles);
   const { status } = useAuth();
   const [state, setState] = useState<
     | { kind: "loading" }
@@ -139,11 +142,14 @@ function MyReportsContent() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   category: {
     color: colors.ink,
     fontWeight: "800",
     fontSize: 16,
     marginBottom: 4,
   },
-});
+};
+}
+

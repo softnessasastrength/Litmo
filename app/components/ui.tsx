@@ -4,20 +4,147 @@ import {
   Pressable,
   SafeAreaView,
   ScrollView,
-  StyleSheet,
   Text,
   View,
   type ViewStyle,
 } from "react-native";
 import { useEffect, useRef } from "react";
-import { colors, fonts, radius, shadow } from "../theme";
+import { fonts, radius, type AppColors, type lightShadow } from "../theme";
+import { useThemedStyles } from "../hooks/useThemedStyles";
 import { useReducedMotion } from "../hooks/useReducedMotion";
+
+function makeUiStyles(
+  colors: AppColors,
+  shadow: typeof lightShadow,
+  _isDark: boolean,
+) {
+  return {
+    safe: { flex: 1, backgroundColor: colors.cream },
+    scroll: { flexGrow: 1 },
+    content: { flexGrow: 1, padding: 24, paddingBottom: 40, gap: 18 },
+    flex: { flex: 1 },
+    eyebrow: {
+      color: colors.moss,
+      fontSize: 13,
+      fontWeight: "800" as const,
+      letterSpacing: 1.3,
+      textTransform: "uppercase" as const,
+    },
+    title: {
+      color: colors.ink,
+      fontFamily: fonts.headline,
+      fontSize: 38,
+      lineHeight: 45,
+    },
+    center: { textAlign: "center" as const },
+    body: { color: colors.ink, fontSize: 17, lineHeight: 26 },
+    muted: { color: colors.muted },
+    card: {
+      backgroundColor: colors.paper,
+      borderRadius: radius.md,
+      padding: 20,
+      borderWidth: 1,
+      borderColor: colors.line,
+      ...shadow,
+    },
+    button: {
+      minHeight: 54,
+      borderRadius: radius.pill,
+      paddingHorizontal: 24,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      backgroundColor: colors.moss,
+    },
+    primaryButton: { backgroundColor: colors.moss },
+    secondaryButton: {
+      backgroundColor: colors.paper,
+      borderWidth: 1.5,
+      borderColor: colors.moss,
+    },
+    signalButton: { backgroundColor: colors.signal, minHeight: 64 },
+    buttonText: {
+      color: colors.white,
+      fontSize: 17,
+      fontWeight: "800" as const,
+    },
+    secondaryText: { color: colors.moss },
+    disabled: { opacity: 0.45 },
+    pressed: { opacity: 0.78, transform: [{ scale: 0.99 }] },
+    choice: {
+      minHeight: 78,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: 14,
+      padding: 16,
+      backgroundColor: colors.paper,
+      borderRadius: radius.md,
+      borderWidth: 1.5,
+      borderColor: colors.line,
+    },
+    choiceSelected: {
+      borderColor: colors.moss,
+      backgroundColor: colors.mossSoft,
+    },
+    glyph: {
+      width: 36,
+      color: colors.plum,
+      fontFamily: "Georgia",
+      fontSize: 25,
+      textAlign: "center" as const,
+    },
+    choiceLabel: {
+      color: colors.ink,
+      fontSize: 17,
+      fontWeight: "700" as const,
+    },
+    choiceDetail: { color: colors.muted, fontSize: 14, marginTop: 4 },
+    radio: { color: colors.moss, fontSize: 21 },
+    pill: {
+      alignSelf: "flex-start" as const,
+      borderRadius: radius.pill,
+      paddingHorizontal: 12,
+      paddingVertical: 7,
+      backgroundColor: colors.mossSoft,
+    },
+    pillText: {
+      color: colors.moss,
+      fontSize: 13,
+      fontWeight: "700" as const,
+    },
+    sectionRow: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      alignItems: "center" as const,
+    },
+    sectionTitle: {
+      fontFamily: fonts.headline,
+      color: colors.ink,
+      fontSize: 24,
+    },
+    progressTrack: {
+      height: 8,
+      borderRadius: radius.pill,
+      overflow: "hidden" as const,
+      backgroundColor: colors.line,
+    },
+    progressFill: {
+      height: 8,
+      borderRadius: radius.pill,
+      backgroundColor: colors.apricot,
+    },
+  };
+}
+
+function useUiStyles() {
+  return useThemedStyles(makeUiStyles);
+}
 
 export function Screen({
   children,
   scroll = true,
   style,
 }: PropsWithChildren<{ scroll?: boolean; style?: ViewStyle }>) {
+  const styles = useUiStyles();
   const content = <View style={[styles.content, style]}>{children}</View>;
   return (
     <SafeAreaView style={styles.safe}>
@@ -59,12 +186,14 @@ export function FadeIn({ children }: PropsWithChildren) {
   );
 }
 export function Eyebrow({ children }: PropsWithChildren) {
+  const styles = useUiStyles();
   return <Text style={styles.eyebrow}>{children}</Text>;
 }
 export function Title({
   children,
   center = false,
 }: PropsWithChildren<{ center?: boolean }>) {
+  const styles = useUiStyles();
   return (
     <Text style={[styles.title, center && styles.center]}>{children}</Text>
   );
@@ -74,6 +203,7 @@ export function Body({
   center = false,
   muted = false,
 }: PropsWithChildren<{ center?: boolean; muted?: boolean }>) {
+  const styles = useUiStyles();
   return (
     <Text style={[styles.body, center && styles.center, muted && styles.muted]}>
       {children}
@@ -84,6 +214,7 @@ export function Card({
   children,
   style,
 }: PropsWithChildren<{ style?: ViewStyle }>) {
+  const styles = useUiStyles();
   return <View style={[styles.card, style]}>{children}</View>;
 }
 export function Button({
@@ -99,6 +230,7 @@ export function Button({
   disabled?: boolean;
   accessibilityHint?: string;
 }) {
+  const styles = useUiStyles();
   return (
     <Pressable
       accessibilityRole="button"
@@ -136,6 +268,7 @@ export function Choice({
   selected: boolean;
   onPress: () => void;
 }) {
+  const styles = useUiStyles();
   return (
     <Pressable
       accessibilityRole="radio"
@@ -157,6 +290,7 @@ export function Choice({
   );
 }
 export function Pill({ children }: PropsWithChildren) {
+  const styles = useUiStyles();
   return (
     <View style={styles.pill}>
       <Text style={styles.pillText}>{children}</Text>
@@ -167,6 +301,7 @@ export function SectionTitle({
   children,
   action,
 }: PropsWithChildren<{ action?: ReactNode }>) {
+  const styles = useUiStyles();
   return (
     <View style={styles.sectionRow}>
       <Text style={styles.sectionTitle}>{children}</Text>
@@ -181,6 +316,7 @@ export function Progress({
   current: number;
   total: number;
 }) {
+  const styles = useUiStyles();
   const reduced = useReducedMotion();
   const width = useRef(new Animated.Value(current / total)).current;
   useEffect(() => {
@@ -212,107 +348,3 @@ export function Progress({
     </View>
   );
 }
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.cream },
-  scroll: { flexGrow: 1 },
-  content: { flexGrow: 1, padding: 24, paddingBottom: 40, gap: 18 },
-  flex: { flex: 1 },
-  eyebrow: {
-    color: colors.moss,
-    fontSize: 13,
-    fontWeight: "800",
-    letterSpacing: 1.3,
-    textTransform: "uppercase",
-  },
-  title: {
-    color: colors.ink,
-    fontFamily: fonts.headline,
-    fontSize: 38,
-    lineHeight: 45,
-  },
-  center: { textAlign: "center" },
-  body: { color: colors.ink, fontSize: 17, lineHeight: 26 },
-  muted: { color: colors.muted },
-  card: {
-    backgroundColor: colors.paper,
-    borderRadius: radius.md,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: colors.line,
-    ...shadow,
-  },
-  button: {
-    minHeight: 54,
-    borderRadius: radius.pill,
-    paddingHorizontal: 24,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.moss,
-  },
-  primaryButton: { backgroundColor: colors.moss },
-  secondaryButton: {
-    backgroundColor: colors.paper,
-    borderWidth: 1.5,
-    borderColor: colors.moss,
-  },
-  signalButton: { backgroundColor: colors.signal, minHeight: 64 },
-  buttonText: { color: colors.white, fontSize: 17, fontWeight: "800" },
-  secondaryText: { color: colors.moss },
-  disabled: { opacity: 0.45 },
-  pressed: { opacity: 0.78, transform: [{ scale: 0.99 }] },
-  choice: {
-    minHeight: 78,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-    padding: 16,
-    backgroundColor: colors.paper,
-    borderRadius: radius.md,
-    borderWidth: 1.5,
-    borderColor: colors.line,
-  },
-  choiceSelected: {
-    borderColor: colors.moss,
-    backgroundColor: colors.mossSoft,
-  },
-  glyph: {
-    width: 36,
-    color: colors.plum,
-    fontFamily: "Georgia",
-    fontSize: 25,
-    textAlign: "center",
-  },
-  choiceLabel: { color: colors.ink, fontSize: 17, fontWeight: "700" },
-  choiceDetail: { color: colors.muted, fontSize: 14, marginTop: 4 },
-  radio: { color: colors.moss, fontSize: 21 },
-  pill: {
-    alignSelf: "flex-start",
-    borderRadius: radius.pill,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    backgroundColor: colors.mossSoft,
-  },
-  pillText: { color: colors.moss, fontSize: 13, fontWeight: "700" },
-  sectionRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  sectionTitle: {
-    fontFamily: fonts.headline,
-    color: colors.ink,
-    fontSize: 24,
-  },
-  progressTrack: {
-    height: 8,
-    borderRadius: radius.pill,
-    overflow: "hidden",
-    backgroundColor: colors.line,
-  },
-  progressFill: {
-    height: 8,
-    borderRadius: radius.pill,
-    backgroundColor: colors.apricot,
-  },
-});
-export const uiStyles = styles;

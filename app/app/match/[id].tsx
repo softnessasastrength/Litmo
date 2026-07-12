@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   Body,
   Button,
@@ -25,12 +25,15 @@ import {
   type DiscoveryProfile,
 } from "../../services/discoveryService";
 import { LoadingState, FailureState } from "../../components/AsyncState";
-import { colors } from "../../theme";
+import { type AppColors } from "../../theme";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+
 
 const uuidRe =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export default function MatchDetailScreen() {
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const routeId = typeof id === "string" ? id : "";
@@ -403,7 +406,8 @@ export default function MatchDetailScreen() {
     </Screen>
   );
 }
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   hero: {
     height: 190,
     borderRadius: 30,
@@ -427,4 +431,6 @@ const styles = StyleSheet.create({
   separationTitle: { color: colors.ink, fontWeight: "800", fontSize: 16 },
   separationBody: { color: colors.muted, lineHeight: 21 },
   error: { color: colors.signal, textAlign: "center" },
-});
+};
+}
+

@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   Body,
   Button,
@@ -11,12 +11,15 @@ import {
 } from "../../components/ui";
 import { touchOptions } from "../../data/mock";
 import { usePrototype } from "../../context/PrototypeContext";
-import { colors, fonts } from "../../theme";
+import { fonts, type AppColors } from "../../theme";
 import { useAuth } from "../../context/AuthContext";
 import { profileRepository } from "../../services/profileRepository";
 import { archetypes } from "../../data/quiz";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+
 
 export default function TouchLanguageScreen() {
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { touchChoices, setTouchChoice } = usePrototype();
   const { user, refreshProfile } = useAuth();
@@ -151,7 +154,8 @@ export default function TouchLanguageScreen() {
     </Screen>
   );
 }
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   group: { gap: 12, marginTop: 12 },
   question: {
     color: colors.ink,
@@ -169,4 +173,6 @@ const styles = StyleSheet.create({
   safetyTitle: { color: colors.ink, fontSize: 16, fontWeight: "800" },
   safetyBody: { color: colors.muted, lineHeight: 21 },
   error: { color: colors.signal, lineHeight: 21 },
-});
+};
+}
+

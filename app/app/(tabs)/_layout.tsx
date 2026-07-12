@@ -1,10 +1,34 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs, useRouter } from "expo-router";
-import { Pressable, StyleSheet, Text } from "react-native";
-import { colors, fonts } from "../../theme";
+import { Pressable, Text } from "react-native";
+import { fonts, type AppColors } from "../../theme";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+import { useColors } from "../../context/ThemeContext";
+
+function makeChromeStyles(colors: AppColors) {
+  return {
+    headerButton: { paddingHorizontal: 16 },
+    avatar: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: colors.plumSoft,
+      justifyContent: "center" as const,
+      alignItems: "center" as const,
+      marginRight: 16,
+    },
+    avatarText: {
+      color: colors.plum,
+      fontFamily: fonts.wordmark,
+      fontSize: 22,
+    },
+  };
+}
 
 function SettingsButton() {
   const router = useRouter();
+  const colors = useColors();
+  const styles = useThemedStyles(makeChromeStyles);
   return (
     <Pressable
       accessibilityRole="button"
@@ -17,8 +41,10 @@ function SettingsButton() {
     </Pressable>
   );
 }
+
 function ProfileButton() {
   const router = useRouter();
+  const styles = useThemedStyles(makeChromeStyles);
   return (
     <Pressable
       accessibilityRole="button"
@@ -33,6 +59,7 @@ function ProfileButton() {
 }
 
 export default function TabsLayout() {
+  const colors = useColors();
   return (
     <Tabs
       screenOptions={{
@@ -43,7 +70,10 @@ export default function TabsLayout() {
         headerShadowVisible: false,
         tabBarActiveTintColor: colors.moss,
         tabBarInactiveTintColor: colors.muted,
-        tabBarStyle: { backgroundColor: colors.paper },
+        tabBarStyle: {
+          backgroundColor: colors.paper,
+          borderTopColor: colors.line,
+        },
       }}
     >
       <Tabs.Screen
@@ -85,16 +115,3 @@ export default function TabsLayout() {
     </Tabs>
   );
 }
-const styles = StyleSheet.create({
-  headerButton: { paddingHorizontal: 16 },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.plumSoft,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 16,
-  },
-  avatarText: { color: colors.plum, fontFamily: fonts.wordmark, fontSize: 22 },
-});

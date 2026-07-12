@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   Body,
   Button,
@@ -17,7 +17,9 @@ import {
 } from "../../components/AsyncState";
 import { blockService } from "../../services/blockService";
 import { supabase } from "../../services/supabase";
-import { colors } from "../../theme";
+import { type AppColors } from "../../theme";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+
 
 type BlockedRow = {
   blockedId: string;
@@ -34,6 +36,7 @@ export default function BlockedAccountsScreen() {
 }
 
 function BlockedAccountsContent() {
+  const styles = useThemedStyles(makeStyles);
   const { status } = useAuth();
   const [state, setState] = useState<
     | { kind: "loading" }
@@ -143,8 +146,11 @@ function BlockedAccountsContent() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   center: { justifyContent: "center", gap: 18 },
   list: { gap: 14 },
   name: { color: colors.ink, fontWeight: "800", fontSize: 17, marginBottom: 6 },
-});
+};
+}
+
