@@ -20,8 +20,9 @@ The learning system uses short, step-by-step modules inspired by station trainin
 1. **Consent Snapshots** — nothing is inferred; the strictest compatible boundary wins; both people affirm the same current snapshot.
 2. **The Soft Signal** — stopping is unilateral, immediate, and requires no explanation.
 3. **Understanding Touch Language** — preferences are contextual and never obligations.
+4. **A full practice session** (LEARN-002) — fictional River & Sam walk request → snapshot → dual confirm → active → Soft Signal → wrap-up. No real session authority. Completing it is never safety certification.
 
-The two safety-critical modules are labeled as recommended before a first session. This first implementation does not yet hard-block session creation because gating behavior requires a separate product decision and accessibility review.
+Safety-critical modules (including the full practice path) are labeled as recommended before a first session. This implementation does not yet hard-block session creation because gating behavior requires a separate product decision and accessibility review.
 
 ## Architecture
 
@@ -51,7 +52,7 @@ Future validation should include VoiceOver, Dynamic Type, reduced motion, and ph
 
 - Authoring schema and content validation.
 - More modules, including respectful communication, ending sessions well, accessibility, privacy, and the Trust Ledger.
-- Practice mode covering the full session lifecycle with fictional participants.
+- ~~Practice mode covering the full session lifecycle with fictional participants.~~ **Landed 2026-07-12** as module `full-session-practice` (content-only; not a separate interactive simulator).
 - Optional account synchronization without exposing learning data publicly.
 - A separately reviewed decision about whether specific modules gate first-session features.
 - Localization and plain-language editorial review.

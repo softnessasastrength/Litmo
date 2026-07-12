@@ -71,7 +71,7 @@ Started 2026-07-12 after Chapter 4 engineering completion
 
 1. **Execute** physical walkthrough on device; file defects by checklist ID.
 2. Optional: end active sessions on matching_hold (product still open for blocks).
-3. Guided two-person practice flow without real session authority (LEARN-002).
+3. Optional: mid-session block ending active sessions (product open).
 
 ## Product decisions still open
 

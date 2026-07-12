@@ -124,6 +124,132 @@ export const learningModules: LearningModule[] = [
       },
     ],
   },
+  {
+    id: "full-session-practice",
+    title: "A full practice session",
+    summary:
+      "Walk a fictional two-person path from request through Soft Signal and wrap-up — without creating a real session.",
+    minutes: 8,
+    requiredBeforeFirstSession: true,
+    steps: [
+      {
+        id: "practice-frame",
+        title: "This is practice, not a real match",
+        body: "You will follow two fictional adults, River and Sam. Nothing here creates a real request, Consent Snapshot, or session. Completing this module is never proof that anyone is safe.",
+        takeaway: "Practice teaches the map. It does not certify the traveler.",
+      },
+      {
+        id: "practice-request",
+        title: "Invitation is not consent",
+        body: "River sends Sam a session request. Sam can accept, decline, or let it expire. A request is only an invitation to begin consent review — never permission to touch.",
+        takeaway: "Asking is allowed. Assuming yes is not.",
+        scenario: {
+          prompt: "Sam is unsure. What should Sam do?",
+          options: [
+            {
+              label: "Decline without explaining",
+              feedback:
+                "Yes. Decline is complete. Sam does not owe a reason, and River should not press.",
+            },
+            {
+              label: "Accept so River does not feel rejected",
+              feedback:
+                "Accepting to manage someone else’s feelings is not free consent. Decline or wait until Sam truly wants to review boundaries.",
+            },
+            {
+              label: "Ignore the request forever",
+              feedback:
+                "Letting a request expire is also valid. The safer teaching path is a clear decline when Sam already knows the answer is no.",
+            },
+          ],
+        },
+      },
+      {
+        id: "practice-profiles",
+        title: "Profiles are inputs, not permission",
+        body: "Both people have saved Touch Language and boundary preferences. Litmo will only ever show the overlapping, more restrictive set. A warm Vibe Profile still grants nothing.",
+        takeaway: "Profiles describe. Snapshots decide what may be affirmed.",
+      },
+      {
+        id: "practice-snapshot",
+        title: "Read the Consent Snapshot",
+        body: "After Sam accepts, both open the same immutable Consent Snapshot. They read every shared boundary. If either profile changes later, this snapshot is no longer current.",
+        takeaway: "Both people must affirm the same current document.",
+        scenario: {
+          prompt:
+            "River wants to add a body zone that is not on the snapshot. What happens?",
+          options: [
+            {
+              label: "They improvise because they both seem comfortable",
+              feedback:
+                "No. Anything outside the confirmed snapshot is outside consent for this session.",
+            },
+            {
+              label:
+                "They stop, update profiles if they want, and create a new snapshot",
+              feedback:
+                "Yes. New intentions need a new, mutual snapshot — not mid-session expansion.",
+            },
+            {
+              label: "River proceeds because Sam smiled",
+              feedback:
+                "Nonverbal cues never replace the snapshot. Smile is not a written boundary.",
+            },
+          ],
+        },
+      },
+      {
+        id: "practice-dual-confirm",
+        title: "Both confirm independently",
+        body: "River confirms first and waits. Sam confirms the same fingerprint. Only then can the session become ready and active. One confirmation never activates alone.",
+        takeaway: "Mutual confirmation is the gate — not enthusiasm.",
+      },
+      {
+        id: "practice-active",
+        title: "During the active session",
+        body: "While active, the Soft Signal stays easy to find. Either person can stop immediately. Reporting mid-session is available without ending first. Nothing requires negotiation to pause or leave.",
+        takeaway: "Comfort can change after the session has started.",
+      },
+      {
+        id: "practice-soft-signal",
+        title: "Soft Signal ends it",
+        body: "Sam uses Soft Signal. The session ends for both people. River’s job is to stop, give space, and not demand an explanation. Litmo does not publish why the stop happened.",
+        takeaway: "A stop is the whole message.",
+        scenario: {
+          prompt: "River feels embarrassed after Soft Signal. Best next step?",
+          options: [
+            {
+              label: "Ask Sam to explain so River can improve",
+              feedback:
+                "That pressures Sam. Improvement happens later, privately — never by demanding a reason at the stop.",
+            },
+            {
+              label: "Complete wrap-up privately and leave Sam alone",
+              feedback:
+                "Yes. Private wrap-up is for River’s reflection. Sam owes nothing further.",
+            },
+            {
+              label: "Send another session request immediately to smooth it over",
+              feedback:
+                "No. Immediate re-requests can feel like pressure. Wait and respect the stop.",
+            },
+          ],
+        },
+      },
+      {
+        id: "practice-wrap-up",
+        title: "Private wrap-up, not a public review",
+        body: "Each person can leave a private outcome and optional note for themselves. Wrap-ups are not ratings of the other person and never become a safety score. Serious concerns go through report and human review, not star ratings.",
+        takeaway: "Reflection stays private. Harm reports use structured intake.",
+      },
+      {
+        id: "practice-close",
+        title: "What this practice did not do",
+        body: "You did not create a real session, grant real consent, or prove readiness for strangers. When you use Litmo with a real account, every gate still applies: eligibility, request, dual snapshot confirm, Soft Signal, and the right to stop without explanation.",
+        takeaway: "The real path still requires real, current consent.",
+      },
+    ],
+  },
 ];
 
 export function findLearningModule(id: string | undefined) {
