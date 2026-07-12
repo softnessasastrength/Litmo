@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { Body, Button, Eyebrow, Screen, Title } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { runtimeConfig } from "../../config/runtime";
 import { ageGateService } from "../../services/ageGateService";
-import { colors } from "../../theme";
+import { type AppColors } from "../../theme";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+
 
 /**
  * Adult eligibility gate after account auth / onboarding.
@@ -12,6 +14,7 @@ import { colors } from "../../theme";
  * only outside production when the native API is unavailable.
  */
 export default function AgeGateScreen() {
+  const styles = useThemedStyles(makeStyles);
   const { user, refreshProfile, status } = useAuth();
   const [busy, setBusy] = useState(false);
   const [nativeAvailable, setNativeAvailable] = useState(false);
@@ -144,7 +147,8 @@ export default function AgeGateScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   notice: {
     gap: 6,
     borderLeftWidth: 4,
@@ -166,4 +170,6 @@ const styles = StyleSheet.create({
   blockedTitle: { color: colors.ink, fontWeight: "800", fontSize: 14 },
   blockedBody: { color: colors.muted, fontSize: 14, lineHeight: 21 },
   error: { color: colors.signal, lineHeight: 21, marginTop: 8 },
-});
+};
+}
+

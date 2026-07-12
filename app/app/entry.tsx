@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   Body,
   Button,
@@ -10,11 +10,14 @@ import {
   Title,
 } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
-import { colors, fonts } from "../theme";
+import { fonts, type AppColors } from "../theme";
 import { runtimeConfig } from "../config/runtime";
 import { environmentError } from "../services/supabase";
+import { useThemedStyles } from "../hooks/useThemedStyles";
+
 
 export default function EntryScreen() {
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { enterDemoMode } = useAuth();
 
@@ -89,7 +92,8 @@ export default function EntryScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   screen: { paddingTop: 32 },
   heading: { gap: 14, marginBottom: 6 },
   card: { gap: 16 },
@@ -114,4 +118,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 4,
   },
-});
+};
+}
+

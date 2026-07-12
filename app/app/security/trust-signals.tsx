@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, Text } from "react-native";
+import { Text } from "react-native";
 import {
   Body,
   Button,
@@ -23,7 +23,9 @@ import {
   matchingAccessService,
   type MatchingAccess,
 } from "../../services/matchingAccessService";
-import { colors } from "../../theme";
+import { type AppColors } from "../../theme";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+
 
 export default function TrustSignalsScreen() {
   return (
@@ -34,6 +36,7 @@ export default function TrustSignalsScreen() {
 }
 
 function TrustSignalsContent() {
+  const styles = useThemedStyles(makeStyles);
   const { status } = useAuth();
   const [state, setState] = useState<
     | { kind: "loading" }
@@ -161,7 +164,8 @@ function TrustSignalsContent() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   rowLabel: {
     color: colors.muted,
     fontSize: 13,
@@ -175,4 +179,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "800",
   },
-});
+};
+}
+

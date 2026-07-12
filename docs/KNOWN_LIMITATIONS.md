@@ -1,5 +1,11 @@
 # Known limitations
 
+## Appearance
+
+- Dark mode is device-local (Settings toggle) and does not follow system
+  appearance yet. Preference is not synced across devices. Contrast and Soft
+  Signal distinctness should be checked on a physical phone under BETA-001.
+
 ## Haptics
 
 - Semantic haptics (ADR 0039) use `expo-haptics`. Simulator and desktop cannot

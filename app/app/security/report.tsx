@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 import * as Crypto from "expo-crypto";
 import {
   Body,
@@ -17,7 +17,10 @@ import {
   reportService,
   type ReportCategoryId,
 } from "../../services/reportService";
-import { colors } from "../../theme";
+import { type AppColors } from "../../theme";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+import { useColors } from "../../context/ThemeContext";
+
 
 export default function ReportScreen() {
   return (
@@ -28,6 +31,8 @@ export default function ReportScreen() {
 }
 
 function ReportContent() {
+  const colors = useColors();
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { status } = useAuth();
   const params = useLocalSearchParams<{
@@ -182,7 +187,8 @@ function ReportContent() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   options: { gap: 10 },
   noteLabel: {
     color: colors.ink,
@@ -201,4 +207,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.cream,
   },
   error: { color: colors.signal, textAlign: "center" },
-});
+};
+}
+

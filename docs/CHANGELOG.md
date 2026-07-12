@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — Dark mode toggle in Settings
+
+### Summary
+
+Device-local light/dark appearance preference with a Settings toggle. Soft dark
+palette preserves distinct Soft Signal / safety colors. Theme applies across
+shared UI, navigation chrome, and themed screens.
+
+### User-visible impact
+
+- Settings: **Appearance: light / dark**
+- Preference persists on device (AsyncStorage); not account-synced
+
+### Developer impact
+
+- `ThemeProvider` / `useTheme` / `useColors` / `useThemedStyles`
+- `lightColors` / `darkColors` in `theme.ts`
+- `themePreference` service + unit tests
+
+### Related decision and roadmap
+
+- Settings alongside haptics; physical validation still under BETA-001
+
 ## 2026-07-12 — HAPTIC-001 + matching hold ends open sessions
 
 ### Summary

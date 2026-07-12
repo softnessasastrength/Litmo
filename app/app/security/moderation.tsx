@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import {
   Body,
@@ -22,7 +22,9 @@ import {
   type QueueStatus,
 } from "../../services/moderationService";
 import { REPORT_CATEGORIES } from "../../services/reportService";
-import { colors } from "../../theme";
+import { type AppColors } from "../../theme";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+
 
 function categoryLabel(id: string): string {
   return REPORT_CATEGORIES.find((c) => c.id === id)?.label ?? id;
@@ -41,6 +43,7 @@ export default function ModerationQueueScreen() {
 }
 
 function ModerationQueueContent() {
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { status } = useAuth();
   const [filter, setFilter] = useState<QueueStatus | "all">("open");
@@ -185,7 +188,8 @@ function ModerationQueueContent() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   filters: { gap: 8 },
   priority: {
     color: colors.signal,
@@ -201,4 +205,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
     marginBottom: 4,
   },
-});
+};
+}
+

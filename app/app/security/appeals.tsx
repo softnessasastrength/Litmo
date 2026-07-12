@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 import {
   Body,
   Button,
@@ -20,7 +20,10 @@ import {
   type ActiveRestriction,
   type MyAppeal,
 } from "../../services/appealService";
-import { colors } from "../../theme";
+import { type AppColors } from "../../theme";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+import { useColors } from "../../context/ThemeContext";
+
 
 export default function AppealsScreen() {
   return (
@@ -31,6 +34,8 @@ export default function AppealsScreen() {
 }
 
 function AppealsContent() {
+  const colors = useColors();
+  const styles = useThemedStyles(makeStyles);
   const { status } = useAuth();
   const [state, setState] = useState<
     | { kind: "loading" }
@@ -196,7 +201,8 @@ function AppealsContent() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   section: {
     color: colors.ink,
     fontWeight: "800",
@@ -222,4 +228,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   error: { color: colors.signal, textAlign: "center" },
-});
+};
+}
+

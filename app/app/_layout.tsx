@@ -3,10 +3,10 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { PrototypeProvider } from "../context/PrototypeContext";
 import { AuthProvider, useAuth } from "../context/AuthContext";
+import { ThemeProvider, useTheme } from "../context/ThemeContext";
 import { AppErrorBoundary } from "../components/AppErrorBoundary";
 import { FailureState, LoadingState } from "../components/AsyncState";
 import { environmentError } from "../services/supabase";
-import { colors } from "../theme";
 import {
   BiometricLockProvider,
   useBiometricLock,
@@ -18,37 +18,44 @@ export default function RootLayout() {
     "CormorantGaramond-Italic": require("../assets/fonts/CormorantGaramond-Italic.ttf"),
     "BeauRivage-Regular": require("../assets/fonts/BeauRivage-Regular.ttf"),
   });
-  if (!fontsLoaded && !fontError)
-    return <LoadingState label="Preparing Litmo…" />;
   return (
-    <AppErrorBoundary>
-      <PrototypeProvider>
-        {/* Auth must wrap biometric lock so Face ID can be skipped in demo /
-            pre-account states (see biometricRequiredForAuthStatus). */}
-        <AuthProvider>
-          <BiometricLockProvider>
-            <StatusBar style="dark" />
-            <AuthenticatedStack />
-            <BiometricPrivacyCover />
-          </BiometricLockProvider>
-        </AuthProvider>
-      </PrototypeProvider>
-    </AppErrorBoundary>
+    <ThemeProvider>
+      {!fontsLoaded && !fontError ? (
+        <LoadingState label="Preparing Litmo…" />
+      ) : (
+        <AppErrorBoundary>
+          <PrototypeProvider>
+            <AuthProvider>
+              <BiometricLockProvider>
+                <ThemedChrome />
+                <AuthenticatedStack />
+                <BiometricPrivacyCover />
+              </BiometricLockProvider>
+            </AuthProvider>
+          </PrototypeProvider>
+        </AppErrorBoundary>
+      )}
+    </ThemeProvider>
   );
 }
+
+function ThemedChrome() {
+  const { isDark } = useTheme();
+  return <StatusBar style={isDark ? "light" : "dark"} />;
+}
+
 function BiometricPrivacyCover() {
   const { state, required } = useBiometricLock();
   if (!required) return null;
   if (state.status === "unlocked" && !state.privacyShielded) return null;
   return <BiometricLockScreen />;
 }
+
 function AuthenticatedStack() {
   const auth = useAuth();
+  const { colors } = useTheme();
   if (auth.status === "authenticating" || auth.status === "registering")
     return <LoadingState label="Restoring your private session…" />;
-  // Missing Supabase config no longer hard-blocks the UI: AuthContext
-  // restores as locked so welcome → entry → demo works without Docker.
-  // Unexpected auth failures still fail closed with retry.
   if (auth.status === "error")
     return (
       <FailureState
@@ -69,6 +76,7 @@ function AuthenticatedStack() {
         headerStyle: { backgroundColor: colors.cream },
         headerShadowVisible: false,
         headerTitle: "",
+        contentStyle: { backgroundColor: colors.cream },
       }}
     />
   );

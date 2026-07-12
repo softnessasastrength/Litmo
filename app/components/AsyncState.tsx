@@ -1,11 +1,38 @@
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import { Body, Button, Screen, Title } from "./ui";
-import { colors } from "../theme";
+import type { AppColors } from "../theme";
+import { useThemedStyles } from "../hooks/useThemedStyles";
+import { useColors } from "../context/ThemeContext";
+
+function makeStyles(colors: AppColors) {
+  return {
+    center: { justifyContent: "center" as const, gap: 18 },
+    label: {
+      textAlign: "center" as const,
+      color: colors.muted,
+      fontSize: 16,
+    },
+    empty: { padding: 24, alignItems: "center" as const, gap: 8 },
+    emptyTitle: {
+      color: colors.ink,
+      fontSize: 18,
+      fontWeight: "800" as const,
+    },
+    emptyBody: {
+      color: colors.muted,
+      textAlign: "center" as const,
+      lineHeight: 22,
+    },
+  };
+}
+
 export function LoadingState({
   label = "Settling things in…",
 }: {
   label?: string;
 }) {
+  const colors = useColors();
+  const styles = useThemedStyles(makeStyles);
   return (
     <Screen scroll={false} style={styles.center}>
       <ActivityIndicator
@@ -26,6 +53,7 @@ export function FailureState({
   message: string;
   onRetry?: () => void;
 }) {
+  const styles = useThemedStyles(makeStyles);
   return (
     <Screen scroll={false} style={styles.center}>
       <Title center>{title}</Title>
@@ -41,6 +69,7 @@ export function EmptyState({
   title: string;
   message: string;
 }) {
+  const styles = useThemedStyles(makeStyles);
   return (
     <View style={styles.empty}>
       <Text style={styles.emptyTitle}>{title}</Text>
@@ -48,10 +77,3 @@ export function EmptyState({
     </View>
   );
 }
-const styles = StyleSheet.create({
-  center: { justifyContent: "center", gap: 18 },
-  label: { textAlign: "center", color: colors.muted, fontSize: 16 },
-  empty: { padding: 24, alignItems: "center", gap: 8 },
-  emptyTitle: { color: colors.ink, fontSize: 18, fontWeight: "800" },
-  emptyBody: { color: colors.muted, textAlign: "center", lineHeight: 22 },
-});

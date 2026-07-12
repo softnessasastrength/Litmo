@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { Choice, FadeIn, Progress, Screen } from "../../components/ui";
 import { quizQuestions, type QuizAnswer } from "../../data/quiz";
 import { usePrototype } from "../../context/PrototypeContext";
-import { colors, fonts } from "../../theme";
+import { fonts, type AppColors } from "../../theme";
 import { useAuth } from "../../context/AuthContext";
 import { profileRepository } from "../../services/profileRepository";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+
 export default function QuizScreen() {
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { answers, setAnswer, hydrateAnswers } = usePrototype();
   const { user } = useAuth();
@@ -88,7 +91,8 @@ export default function QuizScreen() {
     </Screen>
   );
 }
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   count: {
     color: colors.muted,
     fontSize: 11,
@@ -111,4 +115,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: "auto",
   },
-});
+};
+}
+

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 import {
   Body,
   Button,
@@ -9,11 +9,14 @@ import {
   Screen,
   Title,
 } from "../../components/ui";
-import { colors, fonts, radius } from "../../theme";
+import { fonts, radius, type AppColors } from "../../theme";
 import { useAuth } from "../../context/AuthContext";
 import { sessionWrapupService } from "../../services/sessionWrapupService";
 import type { WrapupOutcome } from "../../services/sessionWrapupServiceCore";
 import { sessionRepository } from "../../services/sessionRepository";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+import { useColors } from "../../context/ThemeContext";
+
 
 const outcomeChoices: Array<{
   value: WrapupOutcome;
@@ -48,6 +51,8 @@ const outcomeChoices: Array<{
 ];
 
 export default function SessionWrapUpScreen() {
+  const colors = useColors();
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { ended, sessionId } = useLocalSearchParams<{
     ended?: string;
@@ -232,7 +237,8 @@ export default function SessionWrapUpScreen() {
     </Screen>
   );
 }
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   question: { gap: 14, marginTop: 18 },
   questionText: {
     color: colors.ink,
@@ -263,4 +269,6 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
   },
   error: { color: colors.signal, textAlign: "center" },
-});
+};
+}
+

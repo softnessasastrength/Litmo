@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { computeCompatibility, type CompatibilityResult } from "@litmo/domain";
 import {
   Body,
@@ -25,9 +25,11 @@ import {
   type PersistedSnapshot,
 } from "../../services/sessionRepository";
 import { hapticService } from "../../services/hapticService";
-import { colors } from "../../theme";
+import { type AppColors } from "../../theme";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { FailureState, LoadingState } from "../../components/AsyncState";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+
 
 export default function ConsentSnapshotScreen() {
   return (
@@ -38,6 +40,7 @@ export default function ConsentSnapshotScreen() {
 }
 
 function ConsentSnapshotContent() {
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { id, sessionId } = useLocalSearchParams<{
     id?: string;
@@ -373,7 +376,8 @@ function ConsentSnapshotContent() {
     </Screen>
   );
 }
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   snapshot: { gap: 0 },
   row: {
     paddingVertical: 13,
@@ -402,4 +406,6 @@ const styles = StyleSheet.create({
   waitingTitle: { color: colors.moss, fontWeight: "800" },
   waitingBody: { color: colors.ink, lineHeight: 21, marginTop: 4 },
   error: { color: colors.signal, textAlign: "center" },
-});
+};
+}
+

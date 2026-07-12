@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "expo-router";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 import {
   Body,
   Button,
@@ -11,12 +11,17 @@ import {
 } from "../../components/ui";
 import { genderOptions, orientationOptions } from "../../data/aboutYou";
 import { usePrototype } from "../../context/PrototypeContext";
-import { colors, fonts, radius } from "../../theme";
+import { fonts, radius, type AppColors } from "../../theme";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+import { useColors } from "../../context/ThemeContext";
+
 
 type Step = "name" | "age" | "gender" | "orientation";
 const steps: Step[] = ["name", "age", "gender", "orientation"];
 
 export default function AboutYouScreen() {
+  const colors = useColors();
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { aboutYou, setAboutYou } = usePrototype();
   const [stepIndex, setStepIndex] = useState(0);
@@ -178,7 +183,8 @@ export default function AboutYouScreen() {
     </Screen>
   );
 }
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   count: {
     color: colors.muted,
     fontSize: 11,
@@ -207,4 +213,6 @@ const styles = StyleSheet.create({
   },
   buttons: { flexDirection: "row", gap: 12, marginTop: "auto" },
   buttonFlex: { flex: 1 },
-});
+};
+}
+

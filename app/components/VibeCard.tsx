@@ -1,8 +1,11 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { archetypes, type ArchetypeId } from "../data/quiz";
-import { colors, fonts, radius, shadow } from "../theme";
+import { fonts, radius, type AppColors } from "../theme";
 import { Pill } from "./ui";
+import { useThemedStyles } from "../hooks/useThemedStyles";
+
 export function VibeCard({ archetypeId }: { archetypeId: ArchetypeId }) {
+  const styles = useThemedStyles(makeStyles);
   const vibe = archetypes[archetypeId];
   return (
     <View
@@ -30,7 +33,8 @@ export function VibeCard({ archetypeId }: { archetypeId: ArchetypeId }) {
     </View>
   );
 }
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
+  return {
   card: {
     borderRadius: radius.lg,
     padding: 24,
@@ -73,4 +77,6 @@ const styles = StyleSheet.create({
   tagline: { color: colors.ink, fontSize: 17, lineHeight: 25, marginTop: 8 },
   traits: { flexDirection: "row", flexWrap: "wrap", gap: 7, marginTop: 18 },
   note: { color: colors.muted, fontSize: 12, marginTop: 20 },
-});
+};
+}
+

@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   Body,
   Button,
@@ -13,7 +13,9 @@ import {
   type BoundaryStatus,
   usePrototype,
 } from "../../context/PrototypeContext";
-import { colors, fonts } from "../../theme";
+import { fonts, type AppColors } from "../../theme";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+
 
 const statuses: Array<{
   value: BoundaryStatus;
@@ -42,6 +44,7 @@ const statuses: Array<{
  * Does not grant consent; values stay in PrototypeContext only.
  */
 export default function BoundariesScreen() {
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { bodyBoundaries, setBodyBoundary } = usePrototype();
   const complete = demoBodyZones.every((zone) => bodyBoundaries[zone.id]);
@@ -87,7 +90,8 @@ export default function BoundariesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   group: { gap: 12, marginTop: 12 },
   question: {
     color: colors.ink,
@@ -105,4 +109,6 @@ const styles = StyleSheet.create({
   },
   safetyTitle: { color: colors.ink, fontSize: 16, fontWeight: "800" },
   safetyBody: { color: colors.muted, lineHeight: 21 },
-});
+};
+}
+

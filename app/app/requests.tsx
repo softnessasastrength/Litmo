@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   Body,
   Button,
@@ -15,7 +15,8 @@ import { personaIdForUserId } from "../data/mockConsentProfiles";
 import { notifyPrivateUpdate } from "../services/notifications";
 import { sessionRepository } from "../services/sessionRepository";
 import { supabase } from "../services/supabase";
-import { colors } from "../theme";
+import { type AppColors } from "../theme";
+import { useThemedStyles } from "../hooks/useThemedStyles";
 import {
   EmptyState,
   FailureState,
@@ -39,6 +40,7 @@ type OutgoingRequest = {
 };
 
 export default function IncomingRequestsScreen() {
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { user, status } = useAuth();
   const [state, setState] = useState<
@@ -277,9 +279,12 @@ export default function IncomingRequestsScreen() {
     </Screen>
   );
 }
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   center: { justifyContent: "center", gap: 18 },
   list: { gap: 14, marginBottom: 18 },
   name: { color: colors.ink, fontWeight: "800", fontSize: 17 },
   actions: { flexDirection: "row", gap: 10, marginTop: 10 },
-});
+};
+}
+

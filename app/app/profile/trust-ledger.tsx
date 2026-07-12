@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   Body,
   Button,
@@ -10,9 +10,11 @@ import {
   Title,
 } from "../../components/ui";
 import { ledgerEntries } from "../../data/mock";
-import { colors, fonts } from "../../theme";
+import { fonts, type AppColors } from "../../theme";
 import { useAuth } from "../../context/AuthContext";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
+
 
 export default function TrustLedgerScreen() {
   return (
@@ -23,6 +25,7 @@ export default function TrustLedgerScreen() {
 }
 
 function TrustLedgerContent() {
+  const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { signOut, status } = useAuth();
   return (
@@ -74,7 +77,8 @@ function TrustLedgerContent() {
     </Screen>
   );
 }
-const styles = StyleSheet.create({
+function makeStyles(colors: AppColors) {
+  return {
   number: { color: colors.moss, fontFamily: fonts.headline, fontSize: 56 },
   metric: { color: colors.muted, fontSize: 15 },
   timeline: { gap: 0 },
@@ -105,4 +109,6 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   noticeTitle: { color: colors.ink, fontSize: 17, fontWeight: "800" },
-});
+};
+}
+
