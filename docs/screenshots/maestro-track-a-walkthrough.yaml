@@ -1,0 +1,119 @@
+appId: com.litmo.app.dev
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: ".*Explore the prototype.*"
+    timeout: 60000
+- takeScreenshot: track-a-01-welcome
+- tapOn: ".*Explore the prototype.*"
+- extendedWaitUntil:
+    visible: ".*Enter the fictional demo.*"
+    timeout: 20000
+- takeScreenshot: track-a-02-entry
+- tapOn: ".*Enter the fictional demo.*"
+- extendedWaitUntil:
+    visible: ".*What should we call you.*"
+    timeout: 20000
+- inputText: "River"
+- tapOn: ".*A LITTLE ABOUT YOU.*"
+- tapOn: "Next"
+- extendedWaitUntil:
+    visible: ".*trips around the sun.*"
+    timeout: 15000
+- inputText: "28"
+- tapOn: ".*A LITTLE ABOUT YOU.*"
+- scroll
+- tapOn: "Next"
+- extendedWaitUntil:
+    visible: "Non-binary"
+    timeout: 15000
+- takeScreenshot: track-a-03-about
+- tapOn: "Non-binary"
+- tapOn: "Next"
+- extendedWaitUntil:
+    visible: "Queer"
+    timeout: 15000
+- tapOn: "Queer"
+- tapOn: "Continue to the quiz"
+- extendedWaitUntil:
+    visible: "The window nook"
+    timeout: 20000
+- takeScreenshot: track-a-04-quiz
+- tapOn: "The window nook"
+- extendedWaitUntil:
+    visible: "Build a tiny nest"
+    timeout: 15000
+- tapOn: "Build a tiny nest"
+- extendedWaitUntil:
+    visible: "Offering commentary"
+    timeout: 15000
+- tapOn: "Offering commentary"
+- extendedWaitUntil:
+    visible: "A sleepy fireplace"
+    timeout: 15000
+- tapOn: "A sleepy fireplace"
+- extendedWaitUntil:
+    visible: "Quiet company"
+    timeout: 15000
+- tapOn: "Quiet company"
+- extendedWaitUntil:
+    visible: "Let it unfold slowly"
+    timeout: 15000
+- tapOn: "Let it unfold slowly"
+- extendedWaitUntil:
+    visible: ".*Keep this Vibe Profile.*"
+    timeout: 20000
+- takeScreenshot: track-a-05-vibe
+- tapOn: "Keep this Vibe Profile"
+- extendedWaitUntil:
+    visible: "Feather-light"
+    timeout: 20000
+- takeScreenshot: track-a-06-touch
+- tapOn: "Feather-light"
+- tapOn: "A brief hello"
+- tapOn: "A calm public place"
+- tapOn: "Save and meet the mock community"
+- extendedWaitUntil:
+    visible: "Welcomed"
+    timeout: 20000
+- takeScreenshot: track-a-07-boundaries
+- tapOn: "Welcomed"
+- scroll
+- tapOn: "Welcomed"
+- scroll
+- tapOn: "Welcomed"
+- scroll
+- tapOn: "Welcomed"
+- tapOn: "Save boundaries and continue"
+- extendedWaitUntil:
+    visible: "People"
+    timeout: 20000
+- takeScreenshot: track-a-08-home
+- tapOn: "People"
+- extendedWaitUntil:
+    visible: ".*Maya.*"
+    timeout: 20000
+- takeScreenshot: track-a-09-discover
+- tapOn: ".*Maya.*"
+- extendedWaitUntil:
+    visible: ".*Consent Snapshot.*"
+    timeout: 15000
+- takeScreenshot: track-a-10-match
+- tapOn: ".*Consent Snapshot.*"
+- extendedWaitUntil:
+    visible: ".*MOCK.*|.*mock.*"
+    timeout: 15000
+- takeScreenshot: track-a-11-consent
+- tapOn: "Yes, this matches what I agree to now"
+- tapOn: "Confirm this mock snapshot"
+- extendedWaitUntil:
+    visible: ".*Soft Signal.*"
+    timeout: 20000
+- takeScreenshot: track-a-12-active
+- assertVisible: ".*Soft Signal.*"
+- tapOn: ".*Soft Signal.*"
+- extendedWaitUntil:
+    visible: ".*Soft Signal.*|.*I used Soft Signal.*|.*wrap.*"
+    timeout: 20000
+- takeScreenshot: track-a-13-wrapup

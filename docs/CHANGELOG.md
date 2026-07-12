@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-07-12 — Soft Signal label + walkthrough automation start
+
+### Summary
+
+Active session stop control is labeled **Soft Signal — end now** (not
+“Emergency stop”). Maestro Track A helper flow and a partial BETA-001 results
+log added. Full physical/Face ID / Track B still founder-owned when Docker is up.
+
+### User-visible impact
+
+- Soft Signal naming matches product language on the active session screen.
+
+### Developer impact
+
+- `docs/screenshots/maestro-track-a-walkthrough.yaml`
+- `docs/PHYSICAL_BETA_WALKTHROUGH_RESULTS.md`
+
 ## 2026-07-12 — Block ends open sessions + system appearance
 
 ### Summary
