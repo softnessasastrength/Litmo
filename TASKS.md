@@ -25,8 +25,9 @@ Only one implementation task should normally be `active`. Every status change mu
 - **Status:** pending
 - **Owner:** founder plus current coding agent
 - **Goal:** Verify the integrated `main` experience on a physical iPhone from entry through learning, consent, session, stop, and wrap-up.
-- **Acceptance criteria:** documented test script; exact build/install method; passkey and Face ID behavior; privacy-safe backgrounding; session request; Consent Snapshot; realtime transition; Soft Signal; wrap-up; failures recorded without euphemism.
-- **Next action:** create a validation branch only if fixes are required; otherwise record results in a dedicated test report.
+- **Specification:** `docs/PHYSICAL_BETA_WALKTHROUGH.md` (Tracks A demo, B real two-account, C accessibility)
+- **Acceptance criteria:** documented test script (done); exact build/install method; passkey and Face ID behavior; privacy-safe backgrounding; session request; **real** Consent Snapshot (ADR 0036); realtime transition; Soft Signal; wrap-up; Chapter 5 safety smoke; failures recorded without euphemism.
+- **Next action:** execute the walkthrough on device; fill the result columns and environment matrix; open fix PRs only when Fail items need code changes.
 
 ### ACCESS-001 — Physical-device accessibility review
 

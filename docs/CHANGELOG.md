@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-07-12 — Physical beta walkthrough checklist
+
+### Summary
+
+Founder/private physical-device validation checklist covering demo (Expo Go) and
+real two-account session paths, Chapter 5 safety smoke, accessibility, and
+evidence rules. Not external TestFlight approval.
+
+### User-visible impact
+
+- None in app code; operators use `docs/PHYSICAL_BETA_WALKTHROUGH.md`.
+
+### Developer impact
+
+- Single checklist before claiming on-device success or inviting humans
+- Points at RELEASE_AND_TESTFLIGHT blockers and KNOWN_LIMITATIONS
+
+### Related decision and roadmap
+
+- `docs/PHYSICAL_BETA_WALKTHROUGH.md`
+- `docs/CHAPTER_5_NEXT_STEPS.md`
+
 ## 2026-07-12 — Chapter 5: real Consent Snapshot display
 
 ### Summary

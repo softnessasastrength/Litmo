@@ -4,6 +4,10 @@
 
 Automated release hardening exists, but this repository is **not yet approved for TestFlight use with real interactions**. Hosted staging/production services, AASA endpoints, push credentials, account deletion/session-revocation operations, legal privacy disclosures, independent security/accessibility review, and signed archive upload remain manual blockers.
 
+For **founder / private physical validation** before those blockers clear, use
+[`docs/PHYSICAL_BETA_WALKTHROUGH.md`](PHYSICAL_BETA_WALKTHROUGH.md). Completing
+that checklist is not TestFlight approval.
+
 ## Xcode Source Kit releases
 
 GitHub Releases can publish a developer-facing source archive named `Litmo-Xcode-Source-<tag>.zip`.

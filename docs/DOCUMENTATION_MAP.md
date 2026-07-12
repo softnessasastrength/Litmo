@@ -39,6 +39,7 @@ Use these documents when modifying or reviewing implemented behavior:
 - [`CONSENT_WITHDRAWAL_AND_EMERGENCY_STOP.md`](CONSENT_WITHDRAWAL_AND_EMERGENCY_STOP.md)
 - [`LEARNING_SYSTEM.md`](LEARNING_SYSTEM.md)
 - [`RELEASE_AND_TESTFLIGHT.md`](RELEASE_AND_TESTFLIGHT.md)
+- [`PHYSICAL_BETA_WALKTHROUGH.md`](PHYSICAL_BETA_WALKTHROUGH.md) — founder/private on-device checklist (not external TestFlight)
 - [`LOCAL_DEVELOPMENT.md`](LOCAL_DEVELOPMENT.md)
 - [`MACHINE_SETUP.md`](MACHINE_SETUP.md)
 

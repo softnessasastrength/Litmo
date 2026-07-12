@@ -4,10 +4,10 @@
 
 ## Active milestone
 
-- **Name:** Private-beta validation and guided-practice expansion
+- **Name:** Private-beta validation (physical walkthrough) and guided-practice expansion
 - **Status:** active
 - **Branch:** `main` is the current integrated baseline; use a feature branch for new work.
-- **Latest known coherent milestone:** Chapters 1–4, secure-auth foundation, GitHub Wiki source, and the first guided-learning vertical slice are merged.
+- **Latest known coherent milestone:** Chapters 1–5 trust/moderation slices, real discovery, real Consent Snapshot display (ADR 0036), and `docs/PHYSICAL_BETA_WALKTHROUGH.md` checklist.
 
 ## Completed foundation
 
@@ -19,18 +19,20 @@
 - Model-portable workflow files and `npm run state:check` enforcement.
 - Publish-ready GitHub Wiki source under `wiki/`.
 - Guided learning catalog, lesson player, fictional scenarios, private device-local progress, resume behavior, and progress tests.
+- Chapter 5: blocks, age gate, reports, review queue, rate limits, trust events, restrictions, moderator console, peer signals, appeals, real discovery, ban ends open sessions, real Consent Snapshot UI.
+- Physical beta walkthrough checklist for founder/private validation (not external TestFlight).
 
 ## Work in progress
 
-No implementation branch is designated active at this handoff. The next coherent milestone should be selected from the prioritized tasks below rather than inferred from old chapter documents.
+Execute `docs/PHYSICAL_BETA_WALKTHROUGH.md` on a physical iPhone (demo track + real two-account track). File defects by checklist ID; do not claim external beta readiness until RELEASE_AND_TESTFLIGHT blockers clear.
 
 ## Priority next work
 
-1. Run the integrated build and complete a physical-iPhone walkthrough of authentication, app lock, learning, session request, Consent Snapshot, active session, Soft Signal, and wrap-up.
-2. Validate VoiceOver, Dynamic Type, reduced motion, focus order, and large touch targets on a physical device.
+1. **Run** the physical-iPhone walkthrough (Tracks A/B + accessibility) using `docs/PHYSICAL_BETA_WALKTHROUGH.md`.
+2. Reconcile walkthrough findings into tests, ADRs, `KNOWN_LIMITATIONS.md`, and release docs.
 3. Build a fictional two-person guided-practice flow that teaches the full session lifecycle without creating a real session.
-4. Define moderation, reporting, blocking, invitation expiry, eligibility, and beta-operations policies before stranger discovery or wider distribution.
-5. Reconcile any findings into tests, ADRs, `KNOWN_LIMITATIONS.md`, and release documentation.
+4. Staff encrypted-note evidence access; optional matching_hold ending active sessions (product open).
+5. Clear external TestFlight blockers only when intentionally starting private alpha distribution.
 
 ## Verification baseline
 
