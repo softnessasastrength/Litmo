@@ -13,16 +13,21 @@ Started 2026-07-12 after Chapter 4 engineering completion
   - Mobile: block on match profile; Settings → Blocked accounts
 - **Adult eligibility** (ADR 0025, migration 023) — Apple Declared Age Range
   gate; composed with blocks on discovery/`request_session`.
+- **Structured reports intake** (ADR 0026, migration 024):
+  - `user_reports`, `submit_report` / `list_my_reports`
+  - Categories + optional encrypted note + optional session reference
+  - Reporter-visible coarse status only; reported party has zero access
+  - Mobile: report on match profile; Settings → My reports
 
 ## Next coherent slices (in order)
 
-1. **Structured reports** — categories + private note (encrypted), session
-   reference, reporter-visible status only.
-2. **Human-review queue tables** — triage, assignment, internal notes, no
+1. **Human-review queue tables** — triage, assignment, internal notes, no
    public punishment automation.
-3. **Trust event append-only model** for non-score signals (account age,
+2. **Trust event append-only model** for non-score signals (account age,
    completed sessions count for self, etc.) — never a universal safety score.
-4. **Rate limits** on requests, reports, block thrash.
+3. **Rate limits** on requests, reports, block thrash.
+4. **Report entry from active session / wrap-up** when a real session ID is
+   present (intake API already accepts `session_id`).
 
 ## Product decisions still open
 

@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-07-12 — Chapter 5: structured user reports (intake)
+
+### Summary
+
+Reporters can submit structured safety categories with an optional
+device-encrypted private note and optional session link. Status is
+reporter-visible only; the reported party has no access. Human-review
+queue is still deferred.
+
+### User-visible impact
+
+- **Report** on a match profile (signed-in).
+- Settings → **My reports** with coarse private status.
+- Acknowledgment copy: not emergency response; no promised outcome.
+
+### Developer impact
+
+- Migration `024_structured_reports.sql`
+- `reportService`; `/security/report`, `/security/reports`
+- pgTAP `structured_reports.test.sql`; ADR 0026
+
+### Migration and setup impact
+
+`npm run db:reset` (or apply 024).
+
+### Related decision and roadmap
+
+- `docs/adr/0026-structured-user-reports.md`
+- `docs/CHAPTER_5_NEXT_STEPS.md`
+
 ## 2026-07-12 — Apple Declared Age Range adult eligibility gate
 
 ### Summary
