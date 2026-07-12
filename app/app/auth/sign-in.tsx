@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, Text } from "react-native";
 import { Body, Button, Eyebrow, Screen, Title } from "../../components/ui";
@@ -6,8 +6,10 @@ import { useAuth } from "../../context/AuthContext";
 import { mapExternalError } from "../../services/errors";
 import { colors } from "../../theme";
 import { runtimeConfig } from "../../config/runtime";
+import { environmentError } from "../../services/supabase";
 
 export default function SignInScreen() {
+  const router = useRouter();
   const { signInWithPasskey, enterDemoMode, status } = useAuth();
   const [error, setError] = useState("");
   const busy = status === "authenticating";
@@ -27,6 +29,11 @@ export default function SignInScreen() {
         Apple verifies you with Face ID or your device passcode. Litmo never
         receives biometric data, and there is no password to remember.
       </Body>
+      {environmentError ? (
+        <Text accessibilityRole="alert" style={styles.error}>
+          {environmentError} Use demo mode below to explore without a backend.
+        </Text>
+      ) : null}
       {error ? (
         <Text accessibilityRole="alert" style={styles.error}>
           {error}
@@ -34,21 +41,29 @@ export default function SignInScreen() {
       ) : null}
       <Button
         label={busy ? "Checking with Apple…" : "Sign in with passkey"}
-        disabled={busy}
+        disabled={busy || Boolean(environmentError)}
         onPress={() => void submit()}
       />
-      <Link href="/auth/sign-up" style={styles.link}>
-        New here? Create an account
-      </Link>
-      <Link href={"/auth/recovery" as never} style={styles.link}>
-        Can’t access your passkey?
-      </Link>
+      {!environmentError ? (
+        <>
+          <Link href="/auth/sign-up" style={styles.link}>
+            New here? Create an account
+          </Link>
+          <Link href={"/auth/recovery" as never} style={styles.link}>
+            Can’t access your passkey?
+          </Link>
+        </>
+      ) : null}
       {runtimeConfig.allowDemo ? (
         <>
           <Button
             variant="secondary"
             label="Continue without an account (demo mode)"
-            onPress={enterDemoMode}
+            onPress={() => {
+              enterDemoMode();
+              router.replace("/onboarding/about-you");
+            }}
+            accessibilityHint="Starts the fictional local demo. No account is created."
           />
           <Body muted center>
             Demo mode uses imaginary people and local data only.

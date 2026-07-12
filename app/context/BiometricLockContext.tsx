@@ -12,28 +12,53 @@ import { biometricAuthService } from "../services/biometricAuthService";
 import { sensitiveDataService } from "../services/sensitiveDataService";
 import {
   biometricReducer,
+  biometricRequiredForAuthStatus,
   canRevealAfterAuthentication,
   initialBiometricState,
   shouldRequireReauthentication,
 } from "../services/biometricAuthState";
+import { useAuth } from "./AuthContext";
 
 type BiometricLockContextValue = {
   state: typeof initialBiometricState;
   unlock: () => Promise<boolean>;
   authenticateSensitiveAction: () => Promise<boolean>;
+  /** True when Face ID is enforced for the current auth status. */
+  required: boolean;
 };
 
 const BiometricLockContext = createContext<BiometricLockContextValue | null>(
   null,
 );
 
+/**
+ * Must mount under AuthProvider. Mandatory Face ID applies only when a real
+ * account session is present (authenticated/onboarding/auth ceremony). Demo
+ * mode and signed-out exploration skip the gate so Expo Go can run the
+ * fictional phone-visible path without a development build.
+ */
 export function BiometricLockProvider({ children }: PropsWithChildren) {
-  const [state, dispatch] = useReducer(biometricReducer, initialBiometricState);
+  const { status: authStatus } = useAuth();
+  const required = biometricRequiredForAuthStatus(authStatus);
+  const requiredRef = useRef(required);
+  requiredRef.current = required;
+
+  const [state, dispatch] = useReducer(biometricReducer, {
+    ...initialBiometricState,
+    // Pre-account / demo starts revealed; real sessions re-lock below.
+    status: "unlocked",
+    message: "",
+    privacyShielded: false,
+  });
   const inFlight = useRef<Promise<boolean> | null>(null);
   const backgroundedAt = useRef<number | null>(null);
   const appState = useRef<AppStateStatus>(AppState.currentState);
 
   const authenticate = useCallback(async () => {
+    if (!requiredRef.current) {
+      dispatch({ type: "UNLOCK" });
+      return true;
+    }
     if (inFlight.current) return inFlight.current;
     const request = (async () => {
       dispatch({ type: "CHECK" });
@@ -74,14 +99,29 @@ export function BiometricLockProvider({ children }: PropsWithChildren) {
     return request;
   }, []);
 
+  // When a real session appears (or an auth ceremony starts), lock and require
+  // Face ID. When the session ends or demo mode is entered, unlock and clear
+  // the privacy shield without calling LocalAuthentication.
   useEffect(() => {
+    if (!required) {
+      sensitiveDataService.lock();
+      dispatch({ type: "UNLOCK" });
+      return;
+    }
+    sensitiveDataService.lock();
+    dispatch({
+      type: "LOCK",
+      message: "Face ID is required to open your Litmo account.",
+    });
     void authenticate();
-  }, [authenticate]);
+  }, [required, authenticate]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextState) => {
       const previous = appState.current;
       appState.current = nextState;
+      if (!requiredRef.current) return;
+
       if (nextState !== "active") {
         sensitiveDataService.lock();
         if (previous === "active") backgroundedAt.current = Date.now();
@@ -105,6 +145,7 @@ export function BiometricLockProvider({ children }: PropsWithChildren) {
   }, [authenticate]);
 
   const authenticateSensitiveAction = useCallback(async () => {
+    if (!requiredRef.current) return true;
     sensitiveDataService.lock();
     dispatch({
       type: "LOCK",
@@ -115,7 +156,12 @@ export function BiometricLockProvider({ children }: PropsWithChildren) {
 
   return (
     <BiometricLockContext.Provider
-      value={{ state, unlock: authenticate, authenticateSensitiveAction }}
+      value={{
+        state,
+        unlock: authenticate,
+        authenticateSensitiveAction,
+        required,
+      }}
     >
       {children}
     </BiometricLockContext.Provider>

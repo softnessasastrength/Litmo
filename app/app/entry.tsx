@@ -12,6 +12,7 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { colors, fonts } from "../theme";
 import { runtimeConfig } from "../config/runtime";
+import { environmentError } from "../services/supabase";
 
 export default function EntryScreen() {
   const router = useRouter();
@@ -62,11 +63,21 @@ export default function EntryScreen() {
           Sign in or create a real account. Your general profile, touch
           preferences, and consent boundaries persist across visits.
         </Body>
+        {environmentError ? (
+          <View style={styles.notice} accessible accessibilityRole="text">
+            <Text style={styles.noticeTitle}>Local service not configured</Text>
+            <Text style={styles.noticeBody}>
+              Real accounts need a Supabase URL and anon key (see
+              docs/LOCAL_DEVELOPMENT.md). Demo mode still works without them.
+            </Text>
+          </View>
+        ) : null}
         <Button
           label="Sign in with an account"
           onPress={() => router.push("/auth/sign-in")}
           variant="secondary"
           accessibilityHint="Opens sign-in for a real, persistent account"
+          disabled={Boolean(environmentError)}
         />
       </Card>
 

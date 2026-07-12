@@ -4,17 +4,24 @@ Setting up a machine from scratch (new laptop, wiped disk, disaster recovery)? S
 
 ## Backend-free demo mode (no Docker required)
 
-If Docker Desktop is unavailable, demo mode still needs no backend. Mandatory Face ID requires an iOS development or standalone build on a Face ID iPhone; Expo Go cannot evaluate Face ID:
+If Docker Desktop is unavailable, demo mode still needs **no backend, no `.env`, and no Face ID**. Face ID is mandatory only for real account sessions (ADR 0007 amendment); the fictional demo path is reachable in Expo Go.
 
 ```bash
 npm ci
-cd app
-npx expo run:ios --device
+npm run mobile
+# or: cd app && npx expo start
 ```
 
-Unlock the installed development build with Face ID, then tap **"Continue without an account (demo mode)"**. This runs the full synthetic path locally. Expo Go fails closed because Apple does not expose Face ID evaluation to it; this is expected, not a reason to bypass the gate.
+On a physical iPhone on the same network as the Metro bundler:
 
-Real account creation and sign-in additionally require the Associated Domains entitlement, the AASA file, and Supabase experimental passkeys described in `docs/PASSKEY_AUTHENTICATION.md`. Local builds can compile the native bridge, but a complete ceremony requires the configured HTTPS relying-party domain; demo mode remains the backend-free device-review path.
+1. Open **Expo Go** and scan the QR code (or enter the URL).
+2. On the welcome screen, tap **"Explore the prototype"**.
+3. On the entry screen, tap **"Enter the fictional demo"** (clearly labeled: no account, nothing saved).
+4. Walk the path: about you → vibe quiz → touch language → discovery → match → consent snapshot → active session (Soft Signal or end) → wrap-up → trust ledger.
+
+You do **not** need `app/.env` for this path. If Supabase env vars are missing, real sign-in is disabled with an honest notice; demo mode remains available.
+
+**Real accounts** (passkeys, persistence, live sessions) still need local Supabase, `app/.env`, and—for full passkey + mandatory Face ID—an iOS development or standalone build on a Face ID iPhone. See below and `docs/PASSKEY_AUTHENTICATION.md`.
 
 ## Standalone iOS build (installs directly on a physical device, no Expo Go)
 

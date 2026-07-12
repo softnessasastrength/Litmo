@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   BACKGROUND_REAUTH_MS,
   biometricReducer,
+  biometricRequiredForAuthStatus,
   canRevealAfterAuthentication,
   initialBiometricState,
   shouldRequireReauthentication,
@@ -11,6 +12,26 @@ import {
 test("launch starts fully covered and locked", () => {
   assert.equal(initialBiometricState.status, "locked");
   assert.equal(initialBiometricState.privacyShielded, true);
+});
+
+test("Face ID is required only for real account sessions", () => {
+  for (const status of [
+    "authenticated",
+    "onboarding",
+    "authenticating",
+    "registering",
+  ] as const) {
+    assert.equal(biometricRequiredForAuthStatus(status), true);
+  }
+  for (const status of [
+    "locked",
+    "demo",
+    "error",
+    "expired",
+    "revoked",
+  ] as const) {
+    assert.equal(biometricRequiredForAuthStatus(status), false);
+  }
 });
 
 test("content remains covered while checking and authenticating", () => {

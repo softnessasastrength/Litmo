@@ -69,3 +69,30 @@ export function shouldRequireReauthentication(
 export function canRevealAfterAuthentication(appState: string) {
   return appState === "active";
 }
+
+/**
+ * Face ID is mandatory only while a real Supabase session is in play
+ * (ADR 0007, amended). Demo mode and pre-account exploration use only
+ * fictional fixtures and must remain reachable on Expo Go without Face ID.
+ *
+ * Statuses that keep the gate off: locked, demo, error, expired, revoked.
+ */
+export function biometricRequiredForAuthStatus(
+  status:
+    | "locked"
+    | "authenticating"
+    | "registering"
+    | "onboarding"
+    | "authenticated"
+    | "expired"
+    | "revoked"
+    | "error"
+    | "demo",
+): boolean {
+  return (
+    status === "authenticated" ||
+    status === "onboarding" ||
+    status === "authenticating" ||
+    status === "registering"
+  );
+}

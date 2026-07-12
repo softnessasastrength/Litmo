@@ -1,6 +1,10 @@
 import { spawnSync } from "node:child_process";
 let integrationEnv = { ...process.env };
-if (!integrationEnv.SUPABASE_URL || !integrationEnv.SUPABASE_ANON_KEY) {
+if (
+  !integrationEnv.SUPABASE_URL ||
+  !integrationEnv.SUPABASE_ANON_KEY ||
+  !integrationEnv.SUPABASE_SERVICE_ROLE_KEY
+) {
   const status = spawnSync("npx", ["supabase", "status", "-o", "json"], {
     encoding: "utf8",
   });
@@ -8,8 +12,12 @@ if (!integrationEnv.SUPABASE_URL || !integrationEnv.SUPABASE_ANON_KEY) {
     const local = JSON.parse(status.stdout);
     integrationEnv = {
       ...integrationEnv,
-      SUPABASE_URL: local.API_URL,
-      SUPABASE_ANON_KEY: local.ANON_KEY,
+      SUPABASE_URL: integrationEnv.SUPABASE_URL ?? local.API_URL,
+      SUPABASE_ANON_KEY: integrationEnv.SUPABASE_ANON_KEY ?? local.ANON_KEY,
+      // Service role is required only for the trusted snapshot-creation
+      // boundary exercised by the Chapter 4 two-client lifecycle scenario.
+      SUPABASE_SERVICE_ROLE_KEY:
+        integrationEnv.SUPABASE_SERVICE_ROLE_KEY ?? local.SERVICE_ROLE_KEY,
     };
   }
 }

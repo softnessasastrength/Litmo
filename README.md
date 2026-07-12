@@ -36,6 +36,10 @@ Describe preferred hold types, pressure, duration, body zones, environment, and 
 
 Short, step-by-step modules explain Consent Snapshots, the Soft Signal, and Touch Language through plain-language instruction and fictional scenarios. Progress is private and device-local in the current implementation.
 
+### Backend-free demo (Expo Go)
+
+A clearly labeled **demo mode** (`docs/adr/0003-demo-mode-entry-point.md`) runs the full fictional tap-through path on a physical iPhone through Expo Go with no Supabase, Docker, or `.env`. Face ID is mandatory only for real account sessions (ADR 0007 amendment). From the welcome screen: **Explore the prototype** → **Enter the fictional demo**. Real accounts still need local Supabase and a Face ID development or standalone build — see `docs/LOCAL_DEVELOPMENT.md`.
+
 ### Consent Snapshot
 
 Both participants review and affirm the exact intersection of their current boundaries. Nothing is inferred from a match, prior interaction, profile, or trust history.
@@ -69,7 +73,7 @@ Litmo currently includes:
 - a complete tap-through prototype and backend-free demo mode;
 - Expo Router navigation and a native iOS development build path;
 - Supabase-backed authentication, device registration, and persistent profiles;
-- passkey-first authentication architecture and mandatory biometric app locking on supported devices;
+- passkey-first authentication architecture and mandatory Face ID for real account sessions (demo path remains Expo Go–friendly);
 - owner-only row-level security and database-enforced session transitions;
 - immutable touch profiles and Consent Snapshots;
 - private session requests, realtime updates, unilateral withdrawal, emergency stop, and private wrap-ups;
@@ -114,11 +118,20 @@ Litmo/
 
 - Node.js 20.19+
 - npm 10+
-- Docker Desktop for local Supabase and integration tests
-- Expo Go or an iOS development build on an iPhone
-- Xcode for native passkey, biometric, and release-build work
+- Docker Desktop for local Supabase and integration tests (not required for demo-only)
+- Expo Go for the fictional demo path on an iPhone
+- Xcode / Face ID development build for real accounts, passkeys, and release work
 
-### Setup
+### Demo only (no Docker)
+
+```bash
+npm ci
+npm run mobile
+```
+
+Scan the QR code in Expo Go → **Explore the prototype** → **Enter the fictional demo**.
+
+### Full local stack (accounts + DB)
 
 ```bash
 npm ci

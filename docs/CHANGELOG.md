@@ -1,5 +1,109 @@
 # Changelog
 
+## 2026-07-12 — Expo Go / backend-free demo path unblocked
+
+### Summary
+
+Unblocked the phone-visible fictional demo on a physical iPhone through Expo
+Go without Docker or Supabase. Missing env no longer hard-fails the app, and
+mandatory Face ID now applies only to real account sessions (not demo /
+pre-account exploration).
+
+### User-visible impact
+
+- Welcome → entry → **"Enter the fictional demo"** works with no `app/.env`.
+- Demo mode no longer requires Face ID or a development build.
+- Real sign-in still requires Supabase config; when env is missing, sign-in is
+  disabled with an honest notice and demo remains available.
+- Restored or newly signed-in accounts still fail closed behind Face ID.
+
+### Developer impact
+
+- `AuthContext` restores as `locked` when Supabase URL/anon key are missing.
+- `biometricRequiredForAuthStatus` + `BiometricLockProvider` under `AuthProvider`.
+- Sensitive screens skip step-up Face ID in demo via the same gate.
+- Docs: ADR 0007 amendment, `LOCAL_DEVELOPMENT.md`, `KNOWN_LIMITATIONS.md`.
+
+### Related decision and roadmap
+
+- `docs/adr/0003-demo-mode-entry-point.md`
+- `docs/adr/0007-mandatory-face-id-lock.md`
+- `docs/roadmap/PHONE_VISIBLE_VERTICAL_SLICE.md`
+
+## 2026-07-12 — Two-client Chapter 4 lifecycle integration test
+
+### Summary
+
+Added the deterministic two-client Chapter 4 integration scenario the
+roadmap requires: request → accept → dual Consent Snapshot confirmation →
+activation → Soft Signal → independent private wrap-ups, against local
+Supabase. Fixed a pre-existing service-role SELECT grant gap that made
+trusted snapshot creation fail closed before any snapshot could be computed.
+
+### User-visible impact
+
+None directly. The same trusted snapshot path the mobile app uses is now
+exercised end-to-end by automation; service-role read grants unblocked the
+backend repository that was already documented in ADR 0006.
+
+### Developer impact
+
+- `integration/chapter4-session-lifecycle.test.mjs` — two authenticated
+  clients exercise the existing RPC and snapshot-service boundaries.
+- `scripts/run-integration.mjs` — also supplies `SUPABASE_SERVICE_ROLE_KEY`
+  from local `supabase status` when unset.
+- Migration `018_service_role_snapshot_read_grants.sql` — `SELECT` only for
+  `service_role` on `sessions`, `touch_profile_versions`, and
+  `consent_preference_versions` (no authenticated privilege change).
+
+### Migration and setup impact
+
+Run `npm run db:reset` to apply migration 018. Verify with
+`npm run test:integration` (requires local Supabase).
+
+### Related decision and roadmap
+
+- `docs/adr/0006-snapshot-computation-and-persistence-boundary.md`
+- `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
+- `docs/CHAPTER_4_NEXT_STEPS.md`
+
+## 2026-07-12 — Request expiration and visible deadlines
+
+### Summary
+
+Implemented Chapter 4's unanswered-request expiration policy. A `requested`
+session now expires after 24 hours, stale requests no longer block a fresh
+request between the same two people forever, and the incoming-requests screen
+shows each request's deadline.
+
+### User-visible impact
+
+Incoming requests now show when they expire. Opening the requests screen clears
+out stale requests automatically, and responding after the deadline fails
+closed instead of silently reviving old intent.
+
+### Developer impact
+
+Added migration 017 with `request_expires_at(...)`,
+`list_incoming_requests()`, and stale-request handling inside both
+`request_session(...)` and `transition_session(...)`. The mobile repository now
+lists requests through the RPC boundary instead of reading `sessions`
+directly, and it treats a stale response as a validation failure after the
+database has already persisted the terminal `expired` state. Added
+`supabase/tests/session_request_expiration.test.sql` and updated the verified
+pgTAP count from 101 to 111.
+
+### Migration and setup impact
+
+Run `npm run db:reset` to apply migration 017. Verified locally with
+`npm --workspace app run typecheck`, `npm run lint`, a clean `db:reset`, and
+`env HOME=/tmp npx supabase test db` passing 111/111 assertions.
+
+### Related decision and roadmap
+
+- `docs/adr/0018-request-expiration-check-on-read.md`
+- `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
+
 ## 2026-07-12 — Wrap-up offline retry, precise pending-sync copy, snapshot-wait Realtime
 
 ### Summary
