@@ -40,7 +40,7 @@ function ConsentSnapshotContent() {
   }>();
   const [decision, setDecision] = useState("");
   const [confirmState, setConfirmState] = useState<
-    "idle" | "confirming" | "waiting" | "error"
+    "idle" | "confirming" | "waiting" | "error" | "withdrawing"
   >("idle");
   const [confirmError, setConfirmError] = useState("");
   const [snapshot, setSnapshot] = useState<PersistedSnapshot | null>(null);
@@ -111,6 +111,26 @@ function ConsentSnapshotContent() {
     router.push("/session/active");
   };
 
+  const withdraw = async () => {
+    if (!sessionId) {
+      router.replace("/home");
+      return;
+    }
+    setConfirmState("withdrawing");
+    setConfirmError("");
+    try {
+      await sessionRepository.withdrawConsent(sessionId);
+      router.replace("/home");
+    } catch (caught) {
+      setConfirmState("error");
+      setConfirmError(
+        caught instanceof Error
+          ? caught.message
+          : "Withdrawal could not be recorded right now.",
+      );
+    }
+  };
+
   return (
     <Screen>
       <Eyebrow>
@@ -146,9 +166,22 @@ function ConsentSnapshotContent() {
         <View style={styles.stop}>
           <Text style={styles.stopTitle}>Nothing moves forward.</Text>
           <Text style={styles.stopBody}>
-            You never owe an explanation. In this prototype, you can return and
-            choose another path.
+            You never owe an explanation. Withdrawal cancels pre-activation
+            consent without penalty.
           </Text>
+          <Button
+            variant="signal"
+            label={
+              confirmState === "withdrawing"
+                ? "Withdrawing…"
+                : sessionId
+                  ? "Withdraw and leave"
+                  : "Leave this mock snapshot"
+            }
+            disabled={confirmState === "withdrawing"}
+            onPress={() => void withdraw()}
+            accessibilityHint="Ends this consent process without requiring a reason. Does not grant consent."
+          />
         </View>
       ) : null}
       {confirmState === "waiting" ? (
@@ -157,25 +190,26 @@ function ConsentSnapshotContent() {
             Your confirmation is recorded.
           </Text>
           <Text style={styles.waitingBody}>
-            Waiting for the other person to confirm the same snapshot before
-            this session can begin. This screen doesn't update by itself yet —
-            check again once they have.
+            Waiting for the other person to confirm the same snapshot. This
+            screen updates automatically when they do.
           </Text>
         </View>
       ) : null}
-      <Button
-        label={
-          confirmState === "confirming"
-            ? "Confirming…"
-            : confirmState === "waiting"
-              ? "Check again"
-              : sessionId
-                ? "Confirm this snapshot"
-                : "Confirm this mock snapshot"
-        }
-        disabled={decision !== "yes" || confirmState === "confirming"}
-        onPress={confirm}
-      />
+      {decision !== "no" ? (
+        <Button
+          label={
+            confirmState === "confirming"
+              ? "Confirming…"
+              : confirmState === "waiting"
+                ? "Check again"
+                : sessionId
+                  ? "Confirm this snapshot"
+                  : "Confirm this mock snapshot"
+          }
+          disabled={decision !== "yes" || confirmState === "confirming"}
+          onPress={confirm}
+        />
+      ) : null}
       {confirmState === "error" ? (
         <Text accessibilityRole="alert" style={styles.error}>
           {confirmError}

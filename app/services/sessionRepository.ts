@@ -333,4 +333,56 @@ export const sessionRepository = {
       throw mapExternalError(error);
     }
   },
+  /**
+   * Mid-lifecycle sessions for the signed-in participant (accepted through
+   * active). Used to resume consent review or an active session after restart.
+   * Requested rows stay on list_incoming / list_outgoing.
+   */
+  async listOpenSessions(): Promise<
+    Array<{
+      id: string;
+      counterpartId: string;
+      status: string;
+      startedAt: string | null;
+      createdAt: string;
+    }>
+  > {
+    try {
+      const { data, error } = await supabase.rpc("list_open_sessions");
+      if (error) throw error;
+      return (
+        (data as Array<{
+          id: string;
+          counterpart_id: string;
+          status: string;
+          started_at: string | null;
+          created_at: string;
+        }> | null) ?? []
+      ).map((row) => ({
+        id: row.id as string,
+        counterpartId: row.counterpart_id as string,
+        status: row.status as string,
+        startedAt: row.started_at as string | null,
+        createdAt: row.created_at as string,
+      }));
+    } catch (error) {
+      throw mapExternalError(error);
+    }
+  },
+  /**
+   * Pre-activation or active withdrawal via withdraw_session_consent
+   * (ADR 0012). Reason-free; returns the terminal or resulting state.
+   */
+  async withdrawConsent(sessionId: string): Promise<string> {
+    try {
+      const { data, error } = await supabase.rpc("withdraw_session_consent", {
+        p_session_id: sessionId,
+        p_idempotency_key: `withdraw-ui-${Crypto.randomUUID()}`,
+      });
+      if (error) throw error;
+      return data as string;
+    } catch (error) {
+      throw mapExternalError(error);
+    }
+  },
 };

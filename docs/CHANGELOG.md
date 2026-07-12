@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-07-12 — Open-session resume and pre-activation withdraw UI
+
+### Summary
+
+Participants can resume mid-lifecycle sessions from Home after restart.
+Consent Snapshot “No” now withdraws real sessions via the existing
+reason-free authority. Active sessions re-sync on foreground and show a
+display-only connectivity note when the server is unreachable.
+
+### User-visible impact
+
+- Home lists open `accepted` / `consent_pending` / `ready` / `active` sessions
+  with resume actions that do not invent consent.
+- Choosing “No” on a real Consent Snapshot cancels pre-activation consent.
+- Active session warns when connection is uncertain without disabling Soft Signal.
+
+### Developer impact
+
+- Migration `020_list_open_sessions.sql`
+- `sessionRepository.listOpenSessions` / `withdrawConsent`
+- pgTAP `session_open_list.test.sql`; ADR 0022
+
+### Migration and setup impact
+
+`npm run db:reset` (or apply migration 020).
+
+### Related decision and roadmap
+
+- `docs/adr/0022-open-session-resume-and-preactivation-withdraw.md`
+- `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md` (connectivity and recovery)
+
 ## 2026-07-12 — Outgoing requests, cancel, and local request alert
 
 ### Summary
