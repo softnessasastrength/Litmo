@@ -50,3 +50,27 @@ export const pendingWrapupStorage = {
   clear: () =>
     SecureStore.deleteItemAsync("pending-wrapup-v1", pendingWrapupOptions),
 };
+
+const pendingCompleteOptions: SecureStore.SecureStoreOptions = {
+  keychainService: "com.litmo.app.pending-session-complete",
+  keychainAccessible: SecureStore.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
+};
+/** Queued "End together" transitions after a network failure (ADR 0020). */
+export const pendingSessionCompleteStorage = {
+  get: () =>
+    SecureStore.getItemAsync(
+      "pending-session-complete-v1",
+      pendingCompleteOptions,
+    ),
+  set: (value: string) =>
+    SecureStore.setItemAsync(
+      "pending-session-complete-v1",
+      value,
+      pendingCompleteOptions,
+    ),
+  clear: () =>
+    SecureStore.deleteItemAsync(
+      "pending-session-complete-v1",
+      pendingCompleteOptions,
+    ),
+};

@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-07-12 — Durable offline retry for End together
+
+### Summary
+
+"End together" now queues a durable Keychain pending action when the network
+fails, and retries on the next signed-in restore — matching Soft Signal and
+wrap-up recovery. Permanent invalid transitions clear the queue instead of
+retrying forever.
+
+### User-visible impact
+
+If mutual end fails only because of connectivity, the completion intent is
+kept and applied when the app can reach Supabase again. A session that was
+never active still fails closed without a false "will retry" promise.
+
+### Developer impact
+
+- `sessionCompleteService` / `sessionCompleteServiceCore` + Keychain storage
+- `AuthContext` restore reconciles completion after emergency stop
+- ADR 0020; unit tests for queue, permanent failure, and reconcile
+
+### Related decision and roadmap
+
+- `docs/adr/0020-session-complete-offline-retry.md`
+- `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md` (connectivity and recovery)
+
 ## 2026-07-12 — Incoming session-request Realtime
 
 ### Summary
