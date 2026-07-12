@@ -10,7 +10,7 @@ import {
   Title,
 } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
-import { colors } from "../theme";
+import { colors, fonts } from "../theme";
 
 export default function EntryScreen() {
   const router = useRouter();
@@ -81,9 +81,8 @@ const styles = StyleSheet.create({
   card: { gap: 16 },
   cardTitle: {
     color: colors.ink,
-    fontFamily: "Georgia",
-    fontSize: 26,
-    fontWeight: "600",
+    fontFamily: fonts.headline,
+    fontSize: 28,
   },
   notice: {
     gap: 6,

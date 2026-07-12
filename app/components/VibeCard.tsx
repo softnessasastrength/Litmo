@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import { archetypes, type ArchetypeId } from "../data/quiz";
-import { colors, radius, shadow } from "../theme";
+import { colors, fonts, radius, shadow } from "../theme";
 import { Pill } from "./ui";
 export function VibeCard({ archetypeId }: { archetypeId: ArchetypeId }) {
   const vibe = archetypes[archetypeId];
@@ -65,9 +65,9 @@ const styles = StyleSheet.create({
   },
   name: {
     color: colors.ink,
-    fontFamily: "Georgia",
-    fontSize: 34,
-    lineHeight: 40,
+    fontFamily: fonts.headline,
+    fontSize: 36,
+    lineHeight: 42,
     marginTop: 7,
   },
   tagline: { color: colors.ink, fontSize: 17, lineHeight: 25, marginTop: 8 },

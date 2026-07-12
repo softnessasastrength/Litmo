@@ -11,7 +11,7 @@ import {
 import { mockProfiles } from "../../data/mock";
 import { usePrototype } from "../../context/PrototypeContext";
 import { useAuth } from "../../context/AuthContext";
-import { colors, radius, shadow } from "../../theme";
+import { colors, fonts, radius, shadow } from "../../theme";
 
 export default function DiscoverScreen() {
   const router = useRouter();
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   glyph: { color: colors.plum, fontFamily: "Georgia", fontSize: 34 },
   main: { flex: 1, gap: 7 },
   nameRow: { flexDirection: "row", justifyContent: "space-between" },
-  name: { color: colors.ink, fontFamily: "Georgia", fontSize: 21 },
+  name: { color: colors.ink, fontFamily: fonts.headline, fontSize: 23 },
   arrow: { color: colors.moss, fontSize: 26 },
   pronouns: { color: colors.muted, fontSize: 12 },
   vibe: { color: colors.ink, fontSize: 13, lineHeight: 19 },

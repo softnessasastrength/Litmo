@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — Bundled display typography and welcome artwork
+
+### Summary
+
+Replaced device-dependent Georgia headings with bundled Cormorant Garamond Italic, reserved bundled Beau Rivage for Litmo identity marks, and added a calm decorative wallpaper to the welcome screen. The root layout now provides a visible font-loading state and retains a system-font fallback if a local asset fails.
+
+### User-visible impact
+
+The welcome, onboarding, discovery, session wrap-up, and trust-history surfaces now share a consistent display voice across Expo Go and standalone iOS builds. Body text remains in the platform sans-serif for legibility, and the wallpaper carries no product or safety meaning.
+
+### Developer impact
+
+Display-family names are centralized in `app/theme.ts`; font and wallpaper files live under `app/assets`. `expo-font` is now an explicit SDK-55-compatible app dependency rather than an accidental transitive import.
+
+### Migration and setup impact
+
+Run `npm install` after pulling. No environment variable or network-at-runtime requirement was added.
+
+### Related documentation
+
+- `docs/FIRST_PLAYABLE.md`
+- `docs/roadmap/PHONE_VISIBLE_VERTICAL_SLICE.md`
+
 ## 2026-07-12 — Chapter 4: session schema and audit trail (branch: agent/chapter-4-session-lifecycle)
 
 ### Summary

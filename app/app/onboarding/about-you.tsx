@@ -11,7 +11,7 @@ import {
 } from "../../components/ui";
 import { genderOptions, orientationOptions } from "../../data/aboutYou";
 import { usePrototype } from "../../context/PrototypeContext";
-import { colors, radius } from "../../theme";
+import { colors, fonts, radius } from "../../theme";
 
 type Step = "name" | "age" | "gender" | "orientation";
 const steps: Step[] = ["name", "age", "gender", "orientation"];
@@ -188,9 +188,9 @@ const styles = StyleSheet.create({
   block: { gap: 10, marginTop: 16, marginBottom: 20 },
   kicker: {
     color: colors.ink,
-    fontFamily: "Georgia",
-    fontSize: 28,
-    lineHeight: 34,
+    fontFamily: fonts.headline,
+    fontSize: 30,
+    lineHeight: 36,
   },
   prompt: { color: colors.muted, fontSize: 15, lineHeight: 21 },
   options: { gap: 9, marginTop: 6 },

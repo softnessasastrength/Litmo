@@ -25,7 +25,9 @@ The quiz uses ordinary scenes—rain, kitchens, rooms, sounds, and friendship pa
 
 ### Typography
 
-Georgia provides an available-on-device editorial voice for important headings and cards; the platform sans-serif remains the body face for legibility. Avoiding a downloaded font keeps Expo Go setup local and removes font-loading failure states.
+Bundled Cormorant Garamond Italic gives important headings and cards a soft editorial voice, while Beau Rivage is reserved for the Litmo wordmark and small identity marks. The platform sans-serif remains the body face for legibility. Both display fonts ship as local assets, so loading does not require a network request; the root layout shows a named loading state while they initialize and falls back to the platform face if a local font cannot load.
+
+The welcome screen uses a bundled, low-detail pastel wallpaper behind the existing explicit prototype-entry copy. This artwork is decorative: no safety, consent, or navigation meaning depends on it.
 
 ### Color
 

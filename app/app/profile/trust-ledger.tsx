@@ -10,7 +10,7 @@ import {
   Title,
 } from "../../components/ui";
 import { ledgerEntries } from "../../data/mock";
-import { colors } from "../../theme";
+import { colors, fonts } from "../../theme";
 import { useAuth } from "../../context/AuthContext";
 
 export default function TrustLedgerScreen() {
@@ -66,7 +66,7 @@ export default function TrustLedgerScreen() {
   );
 }
 const styles = StyleSheet.create({
-  number: { color: colors.moss, fontFamily: "Georgia", fontSize: 50 },
+  number: { color: colors.moss, fontFamily: fonts.headline, fontSize: 56 },
   metric: { color: colors.muted, fontSize: 15 },
   timeline: { gap: 0 },
   entry: { flexDirection: "row", minHeight: 130 },
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     letterSpacing: 1,
   },
-  person: { color: colors.ink, fontFamily: "Georgia", fontSize: 20 },
+  person: { color: colors.ink, fontFamily: fonts.headline, fontSize: 22 },
   detail: { color: colors.muted, fontSize: 13 },
   notice: {
     borderTopWidth: 1,

@@ -9,7 +9,7 @@ import {
   Title,
 } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
-import { colors } from "../../theme";
+import { colors, fonts } from "../../theme";
 
 export default function HomeTabScreen() {
   const router = useRouter();
@@ -44,8 +44,8 @@ export default function HomeTabScreen() {
 const styles = StyleSheet.create({
   cardTitle: {
     color: colors.ink,
-    fontFamily: "Georgia",
-    fontSize: 20,
+    fontFamily: fonts.headline,
+    fontSize: 22,
     marginBottom: 6,
   },
 });

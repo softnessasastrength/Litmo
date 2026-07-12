@@ -9,7 +9,7 @@ import {
   Screen,
   Title,
 } from "../../components/ui";
-import { colors } from "../../theme";
+import { colors, fonts } from "../../theme";
 
 export default function SessionWrapUpScreen() {
   const router = useRouter();
@@ -74,9 +74,9 @@ const styles = StyleSheet.create({
   question: { gap: 14, marginTop: 18 },
   questionText: {
     color: colors.ink,
-    fontFamily: "Georgia",
-    fontSize: 26,
-    lineHeight: 32,
+    fontFamily: fonts.headline,
+    fontSize: 28,
+    lineHeight: 34,
   },
   options: { gap: 10 },
   support: {

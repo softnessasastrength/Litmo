@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs, useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text } from "react-native";
-import { colors } from "../../theme";
+import { colors, fonts } from "../../theme";
 
 function SettingsButton() {
   const router = useRouter();
@@ -87,5 +87,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 16,
   },
-  avatarText: { color: colors.plum, fontFamily: "Georgia", fontWeight: "700" },
+  avatarText: { color: colors.plum, fontFamily: fonts.wordmark, fontSize: 22 },
 });

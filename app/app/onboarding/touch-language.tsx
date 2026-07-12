@@ -11,7 +11,7 @@ import {
 } from "../../components/ui";
 import { touchOptions } from "../../data/mock";
 import { usePrototype } from "../../context/PrototypeContext";
-import { colors } from "../../theme";
+import { colors, fonts } from "../../theme";
 import { useAuth } from "../../context/AuthContext";
 import { profileRepository } from "../../services/profileRepository";
 import { archetypes } from "../../data/quiz";
@@ -153,9 +153,9 @@ const styles = StyleSheet.create({
   group: { gap: 12, marginTop: 12 },
   question: {
     color: colors.ink,
-    fontFamily: "Georgia",
-    fontSize: 23,
-    lineHeight: 29,
+    fontFamily: fonts.headline,
+    fontSize: 25,
+    lineHeight: 31,
   },
   choices: { gap: 9 },
   safety: {

@@ -2,3 +2,7 @@ node_modules
 .expo
 dist
 package-lock.json
+expo-env.d.ts
+ios/Pods
+ios/build
+ios/Litmo/Images.xcassets

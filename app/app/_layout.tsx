@@ -1,3 +1,4 @@
+import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { PrototypeProvider } from "../context/PrototypeContext";
@@ -9,6 +10,12 @@ import { environmentError } from "../services/supabase";
 import { colors } from "../theme";
 
 export default function RootLayout() {
+  const [fontsLoaded, fontError] = useFonts({
+    "CormorantGaramond-Italic": require("../assets/fonts/CormorantGaramond-Italic.ttf"),
+    "BeauRivage-Regular": require("../assets/fonts/BeauRivage-Regular.ttf"),
+  });
+  if (!fontsLoaded && !fontError)
+    return <LoadingState label="Preparing Litmo…" />;
   return (
     <AppErrorBoundary>
       <PrototypeProvider>
