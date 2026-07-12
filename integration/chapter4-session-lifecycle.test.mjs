@@ -275,3 +275,76 @@ test("two clients: request, accept, dual snapshot confirm, activate, Soft Signal
   assert.equal((await a.supabase.auth.signOut()).error, null);
   assert.equal((await b.supabase.auth.signOut()).error, null);
 });
+
+test("two clients: cancel outgoing request and list open mid-lifecycle sessions", async () => {
+  assert.ok(url && anonKey);
+  const nonce = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  const a = await signUp("cancel-a", nonce);
+  const b = await signUp("cancel-b", nonce);
+  await saveCompatibleProfiles(a.supabase);
+  await saveCompatibleProfiles(b.supabase);
+
+  const request = await a.supabase.rpc("request_session", {
+    p_recipient_id: b.userId,
+    p_idempotency_key: `cancel-req-${nonce}`,
+  });
+  assert.equal(request.error, null, request.error?.message);
+  const sessionId = request.data;
+
+  const outgoing = await a.supabase.rpc("list_outgoing_requests");
+  assert.equal(outgoing.error, null);
+  assert.ok(
+    (outgoing.data ?? []).some((row) => row.id === sessionId),
+    "requester sees outgoing request",
+  );
+
+  const cancel = await a.supabase.rpc("transition_session", {
+    p_session_id: sessionId,
+    p_to_state: "cancelled",
+    p_idempotency_key: `cancel-${nonce}`,
+  });
+  assert.equal(cancel.error, null, cancel.error?.message);
+  assert.equal(cancel.data, "cancelled");
+
+  const outgoingAfter = await a.supabase.rpc("list_outgoing_requests");
+  assert.equal(outgoingAfter.error, null);
+  assert.equal(
+    (outgoingAfter.data ?? []).some((row) => row.id === sessionId),
+    false,
+  );
+
+  // Fresh request → accept → consent_pending shows in list_open_sessions.
+  const request2 = await a.supabase.rpc("request_session", {
+    p_recipient_id: b.userId,
+    p_idempotency_key: `open-req-${nonce}`,
+  });
+  assert.equal(request2.error, null, request2.error?.message);
+  const openId = request2.data;
+
+  const accept = await b.supabase.rpc("transition_session", {
+    p_session_id: openId,
+    p_to_state: "accepted",
+    p_idempotency_key: `open-accept-${nonce}`,
+  });
+  assert.equal(accept.error, null);
+  const pending = await b.supabase.rpc("transition_session", {
+    p_session_id: openId,
+    p_to_state: "consent_pending",
+    p_idempotency_key: `open-pending-${nonce}`,
+  });
+  assert.equal(pending.error, null);
+
+  const openA = await a.supabase.rpc("list_open_sessions");
+  const openB = await b.supabase.rpc("list_open_sessions");
+  assert.equal(openA.error, null, openA.error?.message);
+  assert.equal(openB.error, null, openB.error?.message);
+  assert.ok((openA.data ?? []).some((row) => row.id === openId));
+  assert.ok((openB.data ?? []).some((row) => row.id === openId));
+  assert.equal(
+    (openA.data ?? []).find((row) => row.id === openId)?.status,
+    "consent_pending",
+  );
+
+  assert.equal((await a.supabase.auth.signOut()).error, null);
+  assert.equal((await b.supabase.auth.signOut()).error, null);
+});

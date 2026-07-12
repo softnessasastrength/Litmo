@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-07-12 — Ready-session resume and consent cancel watch
+
+### Summary
+
+Resuming a `ready` session activates and opens the active timer. Consent
+Snapshot watches the session row for counterpart cancel/expire and leaves
+cleanly without inventing consent. Integration coverage for cancel + open
+session list.
+
+### User-visible impact
+
+- Home “both confirmed” resumes into the active session (after activation).
+- If the other person withdraws during consent review, this screen explains
+  that nothing will begin and offers Home.
+
+### Developer impact
+
+- Home resume path for `ready` calls `activateSession`
+- Consent Snapshot lifecycle subscription for terminal statuses
+- Integration test: cancel outgoing + `list_open_sessions`
+
 ## 2026-07-12 — Live open-session refresh and match-detail cancel
 
 ### Summary
