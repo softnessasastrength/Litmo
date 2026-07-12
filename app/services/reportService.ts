@@ -32,7 +32,12 @@ export const reportService = {
     reportedId: string;
     category: ReportCategoryId;
     sessionId?: string | null;
-    /** Must already be a litmo:encrypted:v1: envelope or null/omitted. */
+    /**
+     * Optional free text shared with human reviewers (staff-readable).
+     * Not device-encrypted — see ADR 0037.
+     */
+    staffSharedMessage?: string | null;
+    /** Legacy optional device-encrypted envelope; staff cannot decrypt. */
     encryptedPrivateNote?: string | null;
     idempotencyKey?: string | null;
   }): Promise<string> {
@@ -43,6 +48,7 @@ export const reportService = {
         p_session_id: input.sessionId ?? null,
         p_private_note: input.encryptedPrivateNote ?? null,
         p_idempotency_key: input.idempotencyKey ?? null,
+        p_staff_shared_message: input.staffSharedMessage ?? null,
       });
       if (error) throw error;
       if (typeof data !== "string" || data.length < 1) {

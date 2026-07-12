@@ -61,12 +61,17 @@ Started 2026-07-12 after Chapter 4 engineering completion
   - Track A demo (Expo Go) + Track B real two-account path
   - Chapter 5 safety smoke + accessibility matrix
   - Evidence rules; not external TestFlight approval
+- **Staff case evidence** (ADR 0037, migration 033):
+  - `staff_shared_message` on reports (human-reviewer readable)
+  - `get_moderation_case_evidence` pack: message, session meta, restriction,
+    prior report counts (not a score)
+  - Device-encrypted `private_note` remains optional/legacy opaque to staff
 
 ## Next coherent slices (in order)
 
 1. **Execute** physical walkthrough on device; file defects by checklist ID.
-2. Richer staff evidence access (encrypted notes are device-bound today).
-3. Optional: end active sessions on matching_hold (product still open for blocks).
+2. Optional: end active sessions on matching_hold (product still open for blocks).
+3. Guided two-person practice flow without real session authority (LEARN-002).
 
 ## Product decisions still open
 

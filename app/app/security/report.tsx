@@ -17,7 +17,6 @@ import {
   reportService,
   type ReportCategoryId,
 } from "../../services/reportService";
-import { sensitiveDataService } from "../../services/sensitiveDataService";
 import { colors } from "../../theme";
 
 export default function ReportScreen() {
@@ -86,22 +85,13 @@ function ReportContent() {
     setState("sending");
     setError("");
     try {
-      let encryptedPrivateNote: string | null = null;
       const trimmed = note.trim();
-      if (trimmed.length > 0) {
-        encryptedPrivateNote = await sensitiveDataService.encryptText(
-          trimmed,
-          `report:${reportedId}:private-note`,
-        );
-        if (!encryptedPrivateNote) {
-          throw new Error("Private note could not be encrypted.");
-        }
-      }
       await reportService.submitReport({
         reportedId,
         category,
         sessionId,
-        encryptedPrivateNote,
+        // Staff-readable free text for human review (ADR 0037). Not device-encrypted.
+        staffSharedMessage: trimmed.length > 0 ? trimmed : null,
         idempotencyKey,
       });
       setState("sent");
@@ -148,8 +138,8 @@ function ReportContent() {
       <Eyebrow>REPORT</Eyebrow>
       <Title>Report {displayName}</Title>
       <Body muted>
-        Choose a category. An optional private note is encrypted on this device
-        before it is stored. Reports are never public.
+        Choose a category. An optional message is shared only with human
+        reviewers (not with the other person, and never public).
       </Body>
       <View accessibilityRole="radiogroup" style={styles.options}>
         {REPORT_CATEGORIES.map((item) => (
@@ -161,16 +151,16 @@ function ReportContent() {
           />
         ))}
       </View>
-      <Text style={styles.noteLabel}>Private note (optional)</Text>
+      <Text style={styles.noteLabel}>Message for reviewers (optional)</Text>
       <TextInput
-        accessibilityLabel="Private report note"
+        accessibilityLabel="Message for human reviewers"
         multiline
         value={note}
         onChangeText={setNote}
-        placeholder="Only human reviewers may use this. The other person cannot read it."
+        placeholder="Shared with human reviewers only. The other person cannot read this."
         placeholderTextColor={colors.muted}
         style={styles.note}
-        maxLength={1200}
+        maxLength={2000}
       />
       <Body muted>
         Submitting does not automatically punish anyone. A person reviews
