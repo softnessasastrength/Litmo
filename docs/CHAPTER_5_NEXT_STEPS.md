@@ -18,16 +18,20 @@ Started 2026-07-12 after Chapter 4 engineering completion
   - Categories + optional encrypted note + optional session reference
   - Reporter-visible coarse status only; reported party has zero access
   - Mobile: report on match profile; Settings → My reports
+- **Human-review queue** (ADR 0027, migration 025):
+  - `staff_roles`, `moderation_cases` (1:1 with reports), internal notes
+  - Claim / note / resolve RPCs; category-based priority; no auto-ban
+  - Ops grants staff; consumer moderator console still deferred
 
 ## Next coherent slices (in order)
 
-1. **Human-review queue tables** — triage, assignment, internal notes, no
-   public punishment automation.
-2. **Trust event append-only model** for non-score signals (account age,
+1. **Trust event append-only model** for non-score signals (account age,
    completed sessions count for self, etc.) — never a universal safety score.
-3. **Rate limits** on requests, reports, block thrash.
+2. **Rate limits** on requests, reports, block thrash.
+3. **Account restrictions** (temporary/permanent) with audit — human action only.
 4. **Report entry from active session / wrap-up** when a real session ID is
    present (intake API already accepts `session_id`).
+5. **Moderator console UI** (internal tool) on top of existing RPCs.
 
 ## Product decisions still open
 
