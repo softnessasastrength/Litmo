@@ -22,16 +22,21 @@ Started 2026-07-12 after Chapter 4 engineering completion
   - `staff_roles`, `moderation_cases` (1:1 with reports), internal notes
   - Claim / note / resolve RPCs; category-based priority; no auto-ban
   - Ops grants staff; consumer moderator console still deferred
+- **Rate limits** (ADR 0028, migration 026):
+  - `session_request` 20/h; `report` 15/d; `block`/`unblock` 40/d
+  - Non-revealing over-limit error; no auto-suspend
+- **Trust events** (ADR 0029, migration 027):
+  - Append-only ledger + triggers; `my_trust_signals` self-only
+  - Settings → Your private signals (not a score)
 
 ## Next coherent slices (in order)
 
-1. **Trust event append-only model** for non-score signals (account age,
-   completed sessions count for self, etc.) — never a universal safety score.
-2. **Rate limits** on requests, reports, block thrash.
-3. **Account restrictions** (temporary/permanent) with audit — human action only.
-4. **Report entry from active session / wrap-up** when a real session ID is
+1. **Account restrictions** (temporary/permanent) with audit — human action only.
+2. **Report entry from active session / wrap-up** when a real session ID is
    present (intake API already accepts `session_id`).
-5. **Moderator console UI** (internal tool) on top of existing RPCs.
+3. **Moderator console UI** (internal tool) on top of existing RPCs.
+4. **Optional peer-visible specific indicators** (e.g. account age) after
+   product copy review — still never a universal score.
 
 ## Product decisions still open
 
