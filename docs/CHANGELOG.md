@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-07-12 — Wrap-up mobile wiring and real session completion
+
+### Summary
+
+Wired the previously mock-only wrap-up screen to the persisted `submit_session_wrapup(...)` boundary from ADR 0008, and made "End together" call `transition_session(..., 'completed')` first so a real session actually reaches the terminal state that function requires.
+
+### User-visible impact
+
+The wrap-up screen now presents the real five-outcome canonical enum (`completed_comfortably`, `ended_normally`, `soft_signal_used`, `felt_uncomfortable`, `safety_concern`) plus an optional private note, instead of three ad hoc mock labels. In demo mode or without a real session ID, the screen still shows the real outcomes but says explicitly that nothing is saved.
+
+### Developer impact
+
+Added `sessionWrapupServiceCore.ts`/`sessionWrapupService.ts` (pure core plus platform wiring, matching `emergencyStopServiceCore.ts`'s pattern) and `sessionRepository.completeSession(...)`. The private note is encrypted client-side via the existing `sensitiveDataService` vault before submission, matching migration 013's mandatory encrypted-envelope constraint. Three new unit tests for the pure core (46 app tests total, up from 43); typecheck, format, and the full 88-assertion pgTAP suite remain green.
+
+### Migration and setup impact
+
+No new migration. No caller yet threads a real `sessionId` into `/session/active` — that remains separately tracked follow-up work in `docs/CHAPTER_4_NEXT_STEPS.md`, so live demo behavior otherwise proceeds exactly as before.
+
+### Related decision and roadmap
+
+- `docs/adr/0008-private-session-wrapups.md`
+- `docs/adr/0014-wrap-up-mobile-wiring.md`
+- `docs/CHAPTER_4_NEXT_STEPS.md`
+
 ## 2026-07-12 — TestFlight and production-readiness hardening
 
 Added explicit development/staging/production bundle/domain profiles, production-disabled demo/diagnostics surfaces, automated release validation, a non-sensitive diagnostics screen, privacy-policy draft, and structured TestFlight/release/rollback plan. Automated hardening passes with synthetic release variables; hosted services, deletion operations, reviewed onboarding/privacy disclosures, signed archive, and physical-device plan remain explicit blockers, so TestFlight readiness is not claimed.

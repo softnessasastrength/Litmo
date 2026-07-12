@@ -12,6 +12,7 @@ import {
 import { colors } from "../../theme";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { emergencyStopService } from "../../services/emergencyStopService";
+import { sessionRepository } from "../../services/sessionRepository";
 
 export default function ActiveSessionScreen() {
   return (
@@ -29,6 +30,7 @@ function ActiveSessionContent() {
   const [stopState, setStopState] = useState<"idle" | "stopping" | "pending">(
     "idle",
   );
+  const [completing, setCompleting] = useState(false);
   useEffect(() => {
     if (ended) return;
     const timer = setInterval(() => setSeconds((value) => value + 1), 1000);
@@ -48,7 +50,30 @@ function ActiveSessionContent() {
     }
     router.replace({
       pathname: "/session/wrap-up",
-      params: { ended: pendingSync ? "pending-sync" : "soft-signal" },
+      params: {
+        ended: pendingSync ? "pending-sync" : "soft-signal",
+        sessionId: sessionId ?? "",
+      },
+    });
+  };
+  const endTogether = async () => {
+    setEnded(true);
+    setCompleting(true);
+    let readyForWrapup = !sessionId;
+    if (sessionId) {
+      try {
+        await sessionRepository.completeSession(sessionId);
+        readyForWrapup = true;
+      } catch {
+        readyForWrapup = false;
+      }
+    }
+    router.replace({
+      pathname: "/session/wrap-up",
+      params: {
+        ended: readyForWrapup ? "together" : "pending-sync",
+        sessionId: sessionId ?? "",
+      },
     });
   };
   return (
@@ -87,14 +112,9 @@ function ActiveSessionContent() {
         </Text>
         <Button
           variant="secondary"
-          label="End together"
-          onPress={() => {
-            setEnded(true);
-            router.replace({
-              pathname: "/session/wrap-up",
-              params: { ended: "together" },
-            });
-          }}
+          label={completing ? "Ending…" : "End together"}
+          disabled={ended}
+          onPress={() => void endTogether()}
         />
       </View>
     </Screen>

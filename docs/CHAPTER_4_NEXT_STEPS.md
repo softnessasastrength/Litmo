@@ -37,15 +37,18 @@ The `ready -> active` precondition is now enforced by a database trigger for eve
 
 ## Deliverable 3 — wire the mock session screens to real data
 
-`app/app/session/active.tsx` and `session/wrap-up.tsx` are still fully local, fake-timer mocks (confirmed in this session — no backend calls at all). Once Deliverables 1–2 exist:
+`app/app/session/active.tsx`'s timer is still a local fake timer (no backend calls). What's now real, as of 2026-07-12 (`docs/adr/0014-wrap-up-mobile-wiring.md`):
+
+- "End together" calls `transition_session(..., 'completed')` (`sessionRepository.completeSession`) before navigating to wrap-up; Soft Signal already called `transition_session`'s sibling `withdraw_session_consent` via `emergencyStopService`.
+- The wrap-up screen calls `submit_session_wrapup(...)` (`sessionWrapupService`) with the real five-value canonical outcome enum and an optional client-encrypted private note, when a real session ID and an authenticated (non-demo) user are present.
+
+Still not done:
 
 - Replace the local timer with a real `active` session row + Supabase Realtime subscription so both participants see the same state.
-- Wire the Soft Signal / "End together" buttons to call `transition_session(..., 'soft_signaled' | 'completed')`.
-- Wrap-up: persist each participant's private outcome independently (never visible to the other participant — this is a hard product requirement, not just a nice-to-have).
+- **No caller anywhere threads a real `sessionId` into `/session/active` yet** — session creation and request/accept flow don't exist. The wiring above is correct and unit-tested but dormant until that exists. This is the actual next piece of Deliverable 3, and is bigger than the wrap-up wiring was: it needs a `sessions` row created from a request, an accept step, and a way to navigate into `/session/active?sessionId=...` from a real match rather than the current no-param `router.push("/session/active")` in `consent-snapshot.tsx`.
+- Wrap-up submission itself has no offline retry/queue (only the Soft Signal path does, via `emergencyStopService`'s pending-storage pattern).
 
-The database half of wrap-up is complete in migration 012 and ADR 0008: owner-only immutable rows, terminal-state validation, and retry-safe submission. The remaining work is the typed mobile repository and screen state/recovery wiring.
-
-This is bigger and should probably be its own follow-up plan once 1–2 land; listed here so it's not forgotten.
+The database half of wrap-up is complete in migration 012 and ADR 0008: owner-only immutable rows, terminal-state validation, and retry-safe submission. The remaining mobile work is session creation/request-accept, replacing the local timer with Realtime, and wrap-up offline retry.
 
 ## Not yet scoped (fine to leave for later)
 
