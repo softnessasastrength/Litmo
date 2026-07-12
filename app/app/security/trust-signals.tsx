@@ -144,9 +144,17 @@ function TrustSignalsContent() {
           {s.safetyEndedSessions}. Counts never prove someone is safe.
         </Body>
       </Card>
+      <Card>
+        <Text style={styles.rowLabel}>What peers may see</Text>
+        <Body muted>
+          Discovery may show account age in days and completed session count as
+          separate facts — never a star rating or universal safety score.
+          Matching holds you appeal are reviewed by a person.
+        </Body>
+      </Card>
       <EmptyState
-        title="Private to you"
-        message="Other people do not see this screen. Positive history never overrides current consent."
+        title="Mostly private"
+        message="This full screen is for you. Positive history never overrides current consent."
       />
       <Button variant="secondary" label="Refresh" onPress={() => void load()} />
     </Screen>

@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-07-12 — Chapter 5: peer signals + restriction appeals
+
+### Summary
+
+Discovery exposes account age (days) and completed session counts as separate
+facts — never a safety score. Users can appeal active matching holds/bans for
+human review; staff can uphold or lift.
+
+### User-visible impact
+
+- Peer context: specific days/counts with anti-score copy.
+- Settings → **Appeals**; staff → **Open appeals (staff)**.
+
+### Developer impact
+
+- Migration `031_peer_signals_and_appeals.sql`
+- `peerSignalsService`, `appealService`
+- ADR 0033 / 0034; pgTAP `peer_signals_and_appeals.test.sql`
+
+### Related decision and roadmap
+
+- `docs/adr/0033-peer-visible-specific-signals.md`
+- `docs/adr/0034-restriction-appeals.md`
+
 ## 2026-07-12 — Chapter 5: moderator console UI
 
 ### Summary

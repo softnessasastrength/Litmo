@@ -113,13 +113,15 @@ export default function MatchDetailScreen() {
         <Body>{profile.vibe}</Body>
       </Card>
       <Card>
-        <SectionTitle>Trust context</SectionTitle>
+        <SectionTitle>Specific context (not a score)</SectionTitle>
         <Text style={styles.affirmed}>
-          {profile.affirmed} affirmed mock sessions
+          {profile.affirmed} completed mock sessions listed for demo
         </Text>
         <Body muted>
-          Past outcomes are limited context. They never prove that someone is
-          safe or replace your current boundaries.
+          Account age on this synthetic profile is illustrative only. Real
+          discovery shows account age in days and completed session counts as
+          separate facts — never a single safety rating. Positive history never
+          replaces current consent.
         </Body>
       </Card>
       <View style={styles.separation}>
