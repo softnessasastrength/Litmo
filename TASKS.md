@@ -2,40 +2,82 @@
 
 Allowed statuses: `pending`, `active`, `blocked`, `completed`, `abandoned`.
 
-Only one task should normally be `active`. Every status change must include a short note.
+Only one implementation task should normally be `active`. Every status change must include a short note and verification evidence where applicable.
 
 ## Active
 
-### RESUME-001 — Model-portable resumable development workflow
-
-- **Status:** active
-- **Owner:** current human or coding agent
-- **Goal:** Make long-running repository work resumable across rate limits, context limits, tool failures, interruptions, and model/provider changes.
-- **Acceptance criteria:**
-  - durable human-readable handoff;
-  - machine-readable state;
-  - architectural decision log;
-  - validation script;
-  - CI enforcement;
-  - contributor/agent instructions;
-  - documented stop and resume procedures.
-- **Next action:** Add remaining state files, validator, CI, and documentation.
+None. Select one pending milestone explicitly before beginning implementation.
 
 ## Pending
 
-### RESUME-002 — Adopt workflow for future milestones
+### BETA-001 — Integrated physical-iPhone validation
 
 - **Status:** pending
-- **Depends on:** RESUME-001
-- **Goal:** Require future implementation milestones to update handoff state at coherent boundaries.
+- **Owner:** founder plus current coding agent
+- **Goal:** Verify the integrated `main` experience on a physical iPhone from entry through learning, consent, session, stop, and wrap-up.
+- **Acceptance criteria:** documented test script; exact build/install method; passkey and Face ID behavior; privacy-safe backgrounding; session request; Consent Snapshot; realtime transition; Soft Signal; wrap-up; failures recorded without euphemism.
+- **Next action:** create a validation branch only if fixes are required; otherwise record results in a dedicated test report.
+
+### ACCESS-001 — Physical-device accessibility review
+
+- **Status:** pending
+- **Owner:** founder plus current coding agent
+- **Depends on:** BETA-001
+- **Goal:** Validate VoiceOver, Dynamic Type, reduced motion, focus order, contrast, large touch targets, and non-color-only meaning.
+- **Acceptance criteria:** screen-by-screen findings; severity; reproducible steps; fixes and regression tests for material failures.
+
+### LEARN-002 — Full fictional guided-practice session
+
+- **Status:** pending
+- **Owner:** current coding agent
+- **Depends on:** BETA-001
+- **Goal:** Teach the complete two-person session lifecycle with fictional participants and no real session authority or sensitive user data.
+- **Acceptance criteria:** invitation; profile comparison; Consent Snapshot; mutual confirmation; active-session expectations; Soft Signal; wrap-up; explanatory feedback; private progress; accessibility coverage.
+
+### SAFETY-OPS-001 — Moderation and beta-operations design
+
+- **Status:** pending
+- **Owner:** founder plus safety/product reviewer
+- **Goal:** Define reporting, blocking, invitation expiry, eligibility, human review, escalation, retention, and beta kill-switch behavior before broader discovery.
+- **Acceptance criteria:** product specification; threat/abuse cases; data handling; operational roles; unresolved legal and clinical boundaries clearly identified.
+
+### DOCS-002 — Keep documentation synchronized
+
+- **Status:** pending
+- **Owner:** every contributor and coding agent
+- **Goal:** Treat documentation as part of each implementation unit.
+- **Acceptance criteria:** update current state, task ledger, changelog, known limitations, architecture, ADRs, and release docs whenever behavior changes.
 
 ## Blocked
 
-None.
+None recorded. External credentials, signing, App Store configuration, or policy review may block specific tasks and must be documented when encountered.
 
 ## Completed
 
-None yet.
+### RESUME-001 — Model-portable resumable development workflow
+
+- **Status:** completed
+- **Result:** durable handoff, task ledger, decision ledger, machine-readable state, validator, CI workflow, and stop/resume procedures merged.
+
+### FOUNDATION-001 — Chapters 1–4 application foundation
+
+- **Status:** completed
+- **Result:** playable mobile flow, persistence, consent engine, session lifecycle, requests, snapshots, realtime behavior, private wrap-ups, withdrawal, and emergency stop merged at foundation level.
+
+### AUTH-001 — Secure authentication and local protection foundation
+
+- **Status:** completed
+- **Result:** passkey-first architecture, device registration, biometric locking, secure storage boundaries, and deployment documentation merged.
+
+### LEARN-001 — Guided learning vertical slice
+
+- **Status:** completed
+- **Result:** Learn tab, three initial modules, lesson player, fictional scenarios, private local progress, resume behavior, tests, and educational documentation merged.
+
+### WIKI-001 — Publish-ready GitHub Wiki source
+
+- **Status:** completed
+- **Result:** navigable wiki source and publishing instructions merged under `wiki/`.
 
 ## Abandoned
 
@@ -51,7 +93,7 @@ None.
 - **Goal:** one clear outcome
 - **Depends on:** task IDs or `none`
 - **Acceptance criteria:** observable definition of done
-- **Verification:** commands and results
+- **Verification:** commands and exact results
 - **Notes:** constraints, risks, or handoff details
 - **Next action:** exact next step
 ```

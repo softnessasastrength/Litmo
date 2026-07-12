@@ -1,37 +1,100 @@
 # Litmo Roadmap
 
+This file is a concise status map. Detailed chapter specifications remain under `docs/roadmap/`; current execution state lives in `CURRENT_STATE.md` and `TASKS.md`.
+
 ## Chapter 1 — First playable front-end
 
-Status: **implemented; awaiting founder review**
+Status: **implemented at foundation level**
 
 - [x] Welcome and local navigation
-- [x] Deterministic Vibe Quiz with animated, accessible progress
+- [x] Deterministic Vibe Quiz with accessible progress
 - [x] Provisional archetype result and Vibe Profile card
-- [x] Friendly Touch Language setup
+- [x] Touch Language setup
 - [x] Synthetic Discover profiles and match detail
 - [x] Explicit mock Consent Snapshot
 - [x] Simulated timer and prominent Soft Signal
 - [x] Private wrap-up and synthetic Trust Ledger
 - [x] Shared visual system, reduced-motion support, and non-color status language
-- [x] Expo Go-compatible SDK and documented setup
-- [ ] Founder review on an iPhone
-
-Chapter 1 uses in-memory state and synthetic data only. It contains no authentication, backend networking, Supabase integration, location, payments, identity verification, or production analytics.
-
-## Approval gate
-
-Do not begin Chapter 2 until Branden explicitly approves Chapter 1 after review.
-
-## Later chapters
-
-Later work may include real product architecture, stronger accessibility validation, safeguarding, moderation, authentication, privacy, and backend integration. Scope and sequence require founder approval before implementation.
+- [x] Expo-compatible setup and native iOS development-build path
+- [ ] Full founder acceptance pass on the latest integrated physical-iPhone build
 
 ## Chapter 2 — Production-grade foundation
 
-Status: **implemented; environment-limited verification documented in `docs/CHAPTER_2_COMPLETION.md`**
+Status: **implemented at foundation level; environment-specific verification remains documented**
 
-The Chapter 2 scope and acceptance criteria are maintained in [`docs/roadmap/CHAPTER_2_FOUNDATION.md`](docs/roadmap/CHAPTER_2_FOUNDATION.md). Chapter 3 remains gated.
+The Chapter 2 scope and acceptance criteria are maintained in [`docs/roadmap/CHAPTER_2_FOUNDATION.md`](docs/roadmap/CHAPTER_2_FOUNDATION.md). See [`docs/CHAPTER_2_COMPLETION.md`](docs/CHAPTER_2_COMPLETION.md) for completed work and verification limits.
 
-## Unscheduled future work
+## Chapter 3 — Consent Engine
 
-See [`docs/TODO.md`](docs/TODO.md) for well-specified future work not yet assigned to a chapter, including a passwordless (Sign in with Apple + platform passkeys) authentication redesign.
+Status: **implemented**
+
+- [x] Canonical consent compatibility engine
+- [x] Strictest-compatible-boundary semantics
+- [x] Property-based safety tests
+- [x] Immutable profile-version adapter
+- [x] Canonical backend compatibility route
+- [x] Mobile Consent Snapshot integration
+
+See [`docs/CHAPTER_3_COMPLETION.md`](docs/CHAPTER_3_COMPLETION.md).
+
+## Chapter 4 — Session Lifecycle
+
+Status: **implemented at private-beta foundation level**
+
+- [x] Database-enforced session state machine
+- [x] Immutable Consent Snapshot persistence and invalidation
+- [x] Session requests and recipient authorization
+- [x] Realtime session updates and authoritative start time
+- [x] Private wrap-ups and offline retry
+- [x] Unilateral withdrawal and emergency stop
+- [x] Passkey-first authentication architecture and device registration
+- [x] Mandatory biometric app lock
+- [x] Sensitive-data protection and privacy-safe notifications
+- [x] Release/TestFlight boundaries and supporting ADRs
+
+Known gaps and follow-up decisions are maintained in [`docs/CHAPTER_4_NEXT_STEPS.md`](docs/CHAPTER_4_NEXT_STEPS.md), [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md), and the relevant ADRs.
+
+## Guided Learning — First vertical slice
+
+Status: **implemented**
+
+- [x] Learn tab and module catalog
+- [x] Consent Snapshots module
+- [x] Soft Signal module
+- [x] Touch Language module
+- [x] One-step lesson player
+- [x] Fictional scenario feedback
+- [x] Private device-local progress and resume behavior
+- [x] Deterministic progress tests
+- [ ] Full fictional two-person practice session
+- [ ] Physical-device accessibility validation
+- [ ] Product decision on first-session learning gates
+
+See [`docs/LEARNING_SYSTEM.md`](docs/LEARNING_SYSTEM.md).
+
+## Current private-beta priorities
+
+1. Integrated physical-iPhone validation of the latest `main`.
+2. VoiceOver, Dynamic Type, reduced-motion, focus-order, and touch-target review.
+3. Full fictional two-person guided-practice flow.
+4. Moderation, reporting, blocking, eligibility, invitation expiry, human review, and beta kill-switch design.
+5. Invite-only beta operations and release evidence.
+
+The prioritized execution ledger is [`TASKS.md`](TASKS.md).
+
+## Explicitly deferred
+
+Do not treat the following as authorized merely because roadmap documents discuss them:
+
+- stranger-scale discovery;
+- public safety scores or certifications;
+- engagement-maximizing recommendations;
+- production AI companion access to user data;
+- payments, tokens, or blockchain systems;
+- precise live location;
+- broad third-party integrations;
+- desktop clients without a separately approved milestone.
+
+## Future work
+
+See [`docs/TODO.md`](docs/TODO.md), [`docs/roadmap/README.md`](docs/roadmap/README.md), and [`docs/AI_COMPANION_ROADMAP.md`](docs/AI_COMPANION_ROADMAP.md). Future documents preserve intent; they do not authorize implementation without an explicit active task.
