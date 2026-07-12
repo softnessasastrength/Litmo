@@ -38,8 +38,17 @@ select throws_ok(
 );
 
 reset role;
+-- Look up the actual latest version save_profile_versions() just created
+-- for user 0001, rather than a hardcoded literal: real callers always
+-- resolve "latest" dynamically, and a hardcoded number would be fragile
+-- against any other fixture (seed data included) that changes how many
+-- versions this user already has.
 select lives_ok(
- $$ select public.create_session_snapshot('33000000-0000-4000-8000-000000000001',(select id from public.touch_profile_versions where user_id='10000000-0000-4000-8000-000000000001' and version=2),2,'23000000-0000-4000-8000-000000000002',1,repeat('a',64),'{"consentGranted":false}') $$,
+ format(
+   $$ select public.create_session_snapshot('33000000-0000-4000-8000-000000000001',%L,%s,'23000000-0000-4000-8000-000000000002',1,repeat('a',64),'{"consentGranted":false}') $$,
+   (select id from public.touch_profile_versions where user_id='10000000-0000-4000-8000-000000000001' order by version desc limit 1),
+   (select version from public.touch_profile_versions where user_id='10000000-0000-4000-8000-000000000001' order by version desc limit 1)
+ ),
  'the trusted persistence boundary can replace the stale agreement with exact latest versions'
 );
 

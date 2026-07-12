@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — Real snapshot creation and confirmation wiring
+
+### Summary
+
+`consent-snapshot.tsx` now calls the real backend snapshot-creation endpoint and `confirm_session_snapshot`/`transition_session` when a real session id is present, instead of only navigating forward locally.
+
+### User-visible impact
+
+A real accepted session can now progress through actual snapshot confirmation. If the other participant hasn't confirmed yet, the screen shows an honest "waiting for the other person" state (no Realtime auto-refresh yet — manual "Check again").
+
+### Developer impact
+
+Added `sessionRepository.createSnapshot`/`confirmSnapshot`/`activateSession`, and `runtimeConfig.backendUrl`/`EXPO_PUBLIC_BACKEND_URL` (must be a LAN address on a physical device, same as `EXPO_PUBLIC_SUPABASE_URL`). Seeded version-1000 profile-version rows for all four demo accounts so snapshot creation doesn't fail closed on missing profile data; fixed a resulting test fragility in `snapshot_invalidation.test.sql` (a hardcoded absolute version number) to look up the latest version dynamically instead. Fixed stale password-based demo-account docs in `docs/LOCAL_DEVELOPMENT.md` (sign-in has been passkey-only since ADR 0010).
+
+### Migration and setup impact
+
+No new migration (seed data only). Typecheck, 46 app tests, lint, and a clean `db:reset` with 100/100 pgTAP plus the integration test all pass.
+
+### Related decision and roadmap
+
+- `docs/adr/0015-session-request-creation-and-recipient-authorization.md`
+- `docs/LOCAL_DEVELOPMENT.md`
+
 ## 2026-07-12 — Free-tier local build fix and on-device verification
 
 ### Summary

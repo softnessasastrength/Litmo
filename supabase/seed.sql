@@ -31,3 +31,32 @@ update public.profiles set pronouns = 'she/her', bio = 'Synthetic account for lo
 update public.profiles set pronouns = 'they/them', bio = 'Synthetic account for local RLS testing.', vibe_archetype = 'Wandering Lantern', onboarding_completed_at = now() where user_id = '10000000-0000-4000-8000-000000000002';
 update public.profiles set pronouns = 'they/them', bio = 'Synthetic mock-discovery persona for local request-flow testing.', vibe_archetype = 'Wandering Lantern', onboarding_completed_at = now() where user_id = '10000000-0000-4000-8000-000000000003';
 update public.profiles set pronouns = 'he/him', bio = 'Synthetic mock-discovery persona for local request-flow testing.', vibe_archetype = 'Gentle Hearth', onboarding_completed_at = now() where user_id = '10000000-0000-4000-8000-000000000004';
+
+-- Touch/consent profiles for all four seeded accounts, matching
+-- app/data/mockConsentProfiles.ts's legacyProfiles fixtures exactly, so
+-- POST /api/sessions/:sessionId/snapshot (backend/routes/sessionSnapshots.js)
+-- can actually compute a real canonical Consent Snapshot for these accounts
+-- without first requiring a manual onboarding pass through the mobile app.
+-- Without these rows, snapshot creation fails closed with
+-- profile_versions_missing for every seeded account.
+--
+-- Version 1000 (not 1) deliberately: several pgTAP fixtures hardcode small
+-- version numbers (1, 2, 99) for these exact user ids within their own
+-- rolled-back transactions. Since this file's inserts commit permanently
+-- before any test runs, colliding on the same (user_id, version) unique key
+-- would break those fixtures' own inserts. getLatestProfileVersions always
+-- orders by version descending, so any sufficiently high, unused version
+-- number is equally correct here.
+insert into public.touch_profile_versions (user_id, version, profile) values
+  ('10000000-0000-4000-8000-000000000001', 1000, '{"pressure":"medium","duration":"few_minutes","environments":["hosted_community"],"holdTypes":["side_by_side"]}'),
+  ('10000000-0000-4000-8000-000000000002', 1000, '{"pressure":"medium","duration":"brief","environments":["hosted_community","public_calm"],"holdTypes":["side_by_side","hand_holding"]}'),
+  ('10000000-0000-4000-8000-000000000003', 1000, '{"pressure":"light","duration":"decide_together","environments":["outdoors"],"holdTypes":["hand_holding"]}'),
+  ('10000000-0000-4000-8000-000000000004', 1000, '{"pressure":"firm","duration":"few_minutes","environments":["hosted_community"],"holdTypes":["side_by_side"]}')
+on conflict (user_id, version) do nothing;
+
+insert into public.consent_preference_versions (user_id, version, preferences) values
+  ('10000000-0000-4000-8000-000000000001', 1000, '{"bodyZones":[{"zone":"hands","status":"welcomed","pressure":"medium"},{"zone":"shoulders","status":"ask_first","pressure":"light"},{"zone":"upper_back","status":"welcomed","pressure":"medium"}],"hardStops":["face"]}'),
+  ('10000000-0000-4000-8000-000000000002', 1000, '{"bodyZones":[{"zone":"hands","status":"welcomed","pressure":"medium"},{"zone":"shoulders","status":"ask_first","pressure":"medium"},{"zone":"upper_back","status":"welcomed","pressure":"firm"}],"hardStops":[]}'),
+  ('10000000-0000-4000-8000-000000000003', 1000, '{"bodyZones":[{"zone":"hands","status":"welcomed","pressure":"light"}],"hardStops":["shoulders"]}'),
+  ('10000000-0000-4000-8000-000000000004', 1000, '{"bodyZones":[{"zone":"hands","status":"welcomed","pressure":"firm"},{"zone":"upper_back","status":"welcomed","pressure":"firm"}],"hardStops":[]}')
+on conflict (user_id, version) do nothing;

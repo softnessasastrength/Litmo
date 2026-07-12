@@ -17,6 +17,10 @@ import {
 } from "../../data/mockConsentProfiles";
 import { buildSnapshotRows } from "../../lib/consentSnapshotView";
 import { scheduleDemoNotification } from "../../services/notifications";
+import {
+  sessionRepository,
+  type PersistedSnapshot,
+} from "../../services/sessionRepository";
 import { colors } from "../../theme";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 
@@ -35,6 +39,11 @@ function ConsentSnapshotContent() {
     sessionId?: string;
   }>();
   const [decision, setDecision] = useState("");
+  const [confirmState, setConfirmState] = useState<
+    "idle" | "confirming" | "waiting" | "error"
+  >("idle");
+  const [confirmError, setConfirmError] = useState("");
+  const [snapshot, setSnapshot] = useState<PersistedSnapshot | null>(null);
   const rows = useMemo(() => {
     const result = computeCompatibility(
       mockConsentProfileVersion("self"),
@@ -43,9 +52,49 @@ function ConsentSnapshotContent() {
     );
     return buildSnapshotRows(result);
   }, [id]);
+
+  const confirmReal = async () => {
+    setConfirmState("confirming");
+    setConfirmError("");
+    try {
+      const created =
+        snapshot ?? (await sessionRepository.createSnapshot(sessionId!));
+      setSnapshot(created);
+      const result = await sessionRepository.confirmSnapshot(
+        created.id,
+        created.fingerprint,
+      );
+      if (result !== "ready") {
+        setConfirmState("waiting");
+        return;
+      }
+      await sessionRepository.activateSession(sessionId!);
+      void scheduleDemoNotification(4);
+      router.push({ pathname: "/session/active", params: { sessionId } });
+    } catch (caught) {
+      setConfirmState("error");
+      setConfirmError(
+        caught instanceof Error
+          ? caught.message
+          : "This could not be confirmed right now.",
+      );
+    }
+  };
+
+  const confirm = () => {
+    if (sessionId) {
+      void confirmReal();
+      return;
+    }
+    void scheduleDemoNotification(4);
+    router.push("/session/active");
+  };
+
   return (
     <Screen>
-      <Eyebrow>MOCK CONSENT SNAPSHOT</Eyebrow>
+      <Eyebrow>
+        {sessionId ? "CONSENT SNAPSHOT" : "MOCK CONSENT SNAPSHOT"}
+      </Eyebrow>
       <Title>Read every boundary before you agree.</Title>
       <Body>
         This is the live, directional overlap of two mock preference sets
@@ -81,22 +130,42 @@ function ConsentSnapshotContent() {
           </Text>
         </View>
       ) : null}
+      {confirmState === "waiting" ? (
+        <View style={styles.waiting}>
+          <Text style={styles.waitingTitle}>
+            Your confirmation is recorded.
+          </Text>
+          <Text style={styles.waitingBody}>
+            Waiting for the other person to confirm the same snapshot before
+            this session can begin. This screen doesn't update by itself yet —
+            check again once they have.
+          </Text>
+        </View>
+      ) : null}
       <Button
-        label="Confirm this mock snapshot"
-        disabled={decision !== "yes"}
-        onPress={() => {
-          void scheduleDemoNotification(4);
-          router.push(
-            sessionId
-              ? { pathname: "/session/active", params: { sessionId } }
-              : "/session/active",
-          );
-        }}
+        label={
+          confirmState === "confirming"
+            ? "Confirming…"
+            : confirmState === "waiting"
+              ? "Check again"
+              : sessionId
+                ? "Confirm this snapshot"
+                : "Confirm this mock snapshot"
+        }
+        disabled={decision !== "yes" || confirmState === "confirming"}
+        onPress={confirm}
       />
-      <Body muted center>
-        In a real Litmo session, each person would confirm independently. This
-        prototype simulates both confirmations.
-      </Body>
+      {confirmState === "error" ? (
+        <Text accessibilityRole="alert" style={styles.error}>
+          {confirmError}
+        </Text>
+      ) : null}
+      {!sessionId ? (
+        <Body muted center>
+          In a real Litmo session, each person would confirm independently. This
+          prototype simulates both confirmations.
+        </Body>
+      ) : null}
       <Body muted center>
         Confirming will ask for notification permission and send one real local
         notification a few seconds later, so you can see how session alerts will
@@ -130,4 +199,8 @@ const styles = StyleSheet.create({
   stop: { padding: 16, borderRadius: 16, backgroundColor: colors.signalSoft },
   stopTitle: { color: colors.signal, fontWeight: "800" },
   stopBody: { color: colors.ink, lineHeight: 21, marginTop: 4 },
+  waiting: { padding: 16, borderRadius: 16, backgroundColor: colors.mossSoft },
+  waitingTitle: { color: colors.moss, fontWeight: "800" },
+  waitingBody: { color: colors.ink, lineHeight: 21, marginTop: 4 },
+  error: { color: colors.signal, textAlign: "center" },
 });

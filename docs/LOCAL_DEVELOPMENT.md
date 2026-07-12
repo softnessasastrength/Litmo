@@ -82,16 +82,20 @@ npm run api
 
 Set `SUPABASE_URL` to the local API URL and `SUPABASE_SERVICE_ROLE_KEY` to the local `service_role` key. This key bypasses row-level security: keep it only in `backend/.env`, never use an `EXPO_PUBLIC_` name, never copy it into `app/.env`, and never commit it. Without both variables, `POST /api/sessions/:sessionId/snapshot` returns `snapshot_service_unavailable` and persists nothing.
 
-On a physical iPhone, `127.0.0.1` points to the phone rather than the development computer. Replace the URL host in `app/.env` with the computer's trusted LAN address. Do not expose local Supabase to an untrusted network.
+On a physical iPhone, `127.0.0.1` points to the phone rather than the development computer. Replace the URL host in `app/.env` with the computer's trusted LAN address (find it with `ipconfig getifaddr en0` on macOS). Do not expose local Supabase to an untrusted network. Set `EXPO_PUBLIC_BACKEND_URL` in `app/.env` the same way (default port 3001, `npm run api` to start it) — it's a separate host replacement from `EXPO_PUBLIC_SUPABASE_URL` since they're different processes.
 
 ## Demo accounts
 
-The reset seed creates two synthetic local-only accounts:
+The reset seed creates four synthetic local-only accounts, matching `app/data/mockConsentProfiles.ts`'s mock discovery personas (`docs/adr/0015-session-request-creation-and-recipient-authorization.md`'s seeding addendum):
 
-- `maya.demo@litmo.local`
-- `eli.demo@litmo.local`
+- `maya.demo@litmo.local` (the "self" persona's account)
+- `eli.demo@litmo.local` (the "maya" mock-discovery persona, despite the email — the two labels predate the persona mapping and don't line up)
+- `eli-persona.demo@litmo.local` (the "eli" persona)
+- `jonah-persona.demo@litmo.local` (the "jonah" persona)
 
-Both use `LitmoDemo123!`. These credentials are deliberately non-production and must never be deployed.
+**Sign-in is passkey-only (ADR 0010) — there is no password sign-in anymore.** The `crypt(...)` password set in `supabase/seed.sql` is a vestige of the pre-passkey schema and cannot be used to sign in through the app. To actually sign in as one of these accounts on a physical device, you must complete a real passkey registration ceremony (Face ID) for it — there is no scripted way to do this. In practice this means: verifying a single-participant flow (sending a request, viewing your own screens) needs only your own signed-in account; verifying a flow that requires **two** independent participants (e.g. both sides confirming the same Consent Snapshot) requires either a second physical device signed in as a different account, or manually registering a second passkey identity on the same device and switching between them.
+
+Each of the four accounts also has version-1000 `touch_profile_versions`/`consent_preference_versions` rows seeded (matching `mockConsentProfiles.ts`'s fixtures) so `POST /api/sessions/:sessionId/snapshot` can compute a real snapshot for them without a manual onboarding pass first.
 
 ## Database lifecycle
 

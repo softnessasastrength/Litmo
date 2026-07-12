@@ -1,6 +1,12 @@
 import * as Crypto from "expo-crypto";
-import { mapExternalError } from "./errors.ts";
+import { runtimeConfig } from "../config/runtime.ts";
+import { PublicAppError, mapExternalError } from "./errors.ts";
 import { supabase } from "./supabase.ts";
+
+export type PersistedSnapshot = {
+  id: string;
+  fingerprint: string;
+};
 
 export const sessionRepository = {
   /**
@@ -68,6 +74,85 @@ export const sessionRepository = {
         p_session_id: sessionId,
         p_to_state: "consent_pending",
         p_idempotency_key: `consent-pending-${Crypto.randomUUID()}`,
+      });
+      if (error) throw error;
+      return data as string;
+    } catch (error) {
+      throw mapExternalError(error);
+    }
+  },
+  /**
+   * Calls the privileged backend endpoint (backend/routes/sessionSnapshots.js)
+   * that computes and persists a real canonical Consent Snapshot from both
+   * participants' exact latest profile versions. Requires
+   * EXPO_PUBLIC_BACKEND_URL to be configured and reachable (see
+   * docs/LOCAL_DEVELOPMENT.md) -- there is no Supabase-only fallback.
+   */
+  async createSnapshot(sessionId: string): Promise<PersistedSnapshot> {
+    if (!runtimeConfig.backendUrl) {
+      throw new PublicAppError(
+        "unexpected_error",
+        "No backend service is configured. This step can't run right now.",
+      );
+    }
+    try {
+      const { data: sessionData, error: sessionError } =
+        await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
+      const accessToken = sessionData.session?.access_token;
+      if (!accessToken)
+        throw new PublicAppError(
+          "auth_session_expired",
+          "Your session ended. Please sign in again.",
+        );
+      const response = await fetch(
+        `${runtimeConfig.backendUrl}/api/sessions/${sessionId}/snapshot`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
+      );
+      const body = (await response.json()) as {
+        snapshot?: { id: string; fingerprint: string };
+        error?: string;
+      };
+      if (!response.ok || !body.snapshot) throw new Error(body.error);
+      return { id: body.snapshot.id, fingerprint: body.snapshot.fingerprint };
+    } catch (error) {
+      throw mapExternalError(error);
+    }
+  },
+  /**
+   * Records this participant's confirmation of an exact snapshot fingerprint
+   * (migration 009/011). Returns "ready" once both participants have
+   * confirmed (which also auto-transitions the session to `ready`), or
+   * "consent_pending" while still waiting on the other participant.
+   */
+  async confirmSnapshot(
+    snapshotId: string,
+    fingerprint: string,
+  ): Promise<"ready" | "consent_pending"> {
+    try {
+      const { data, error } = await supabase.rpc("confirm_session_snapshot", {
+        p_snapshot_id: snapshotId,
+        p_fingerprint: fingerprint,
+      });
+      if (error) throw error;
+      return data as "ready" | "consent_pending";
+    } catch (error) {
+      throw mapExternalError(error);
+    }
+  },
+  /**
+   * Transitions a `ready` session (both participants confirmed the same
+   * snapshot) to `active`. Either participant may call this.
+   */
+  async activateSession(sessionId: string): Promise<string> {
+    try {
+      const { data, error } = await supabase.rpc("transition_session", {
+        p_session_id: sessionId,
+        p_to_state: "active",
+        p_idempotency_key: `activate-${Crypto.randomUUID()}`,
       });
       if (error) throw error;
       return data as string;
