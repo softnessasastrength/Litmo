@@ -47,7 +47,7 @@ export default function EntryScreen() {
           label="Enter the fictional demo"
           onPress={() => {
             enterDemoMode();
-            router.replace("/onboarding/quiz");
+            router.replace("/onboarding/about-you");
           }}
           accessibilityHint="Starts the Litmo prototype with fictional local data. No account is created and nothing is saved."
         />
