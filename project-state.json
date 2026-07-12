@@ -9,8 +9,8 @@
   },
   "git": {
     "branch": "fix/seed-password-sign-in-gotrue-tokens",
-    "latestCoherentCommit": "main@22fe53f plus seed GoTrue token fix",
-    "workingTreeExpectedClean": false
+    "latestCoherentCommit": "beb6678 fix: seed GoTrue tokens so Track B password sign-in works",
+    "workingTreeExpectedClean": true
   },
   "verification": {
     "status": "partial",
@@ -24,7 +24,7 @@
     ],
     "failures": []
   },
-  "nextAction": "Merge seed password fix; founder runs docs/PHYSICAL_BETA_WALKTHROUGH.md Track B B1–B26 on device(s) with bash scripts/setup-track-b-local.sh.",
+  "nextAction": "Merge PR #59 (seed password fix); founder runs docs/PHYSICAL_BETA_WALKTHROUGH.md Track B B1–B26 on device(s) with bash scripts/setup-track-b-local.sh.",
   "blockedBy": [],
   "risks": [
     "Track B physical two-account UI walkthrough not yet founder-signed.",
