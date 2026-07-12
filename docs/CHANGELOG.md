@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-07-12 — Dual-confirmation verified on-device; backend architecture decision
+
+### Summary
+
+The founder manually verified two-participant snapshot confirmation on-device: both sides confirmed, and the session correctly reached `active`. This closes Chapter 4's request/accept/confirm/activate chain end to end.
+
+### User-visible impact
+
+None (verification only, no code change).
+
+### Developer impact
+
+Decision recorded: the Express backend + LAN-address approach for snapshot creation stays as-is for now (single-developer, single-device local testing). Revisit moving `createConsentSnapshot` into a Supabase Postgres/Edge function specifically when scaling past the founder's own iPhone.
+
+### Related decision and roadmap
+
+- `docs/adr/0015-session-request-creation-and-recipient-authorization.md`
+- `docs/CHAPTER_4_NEXT_STEPS.md`
+
 ## 2026-07-12 — Real snapshot creation and confirmation wiring
 
 ### Summary

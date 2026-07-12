@@ -48,13 +48,14 @@ Landed 2026-07-12 (`docs/adr/0015-session-request-creation-and-recipient-authori
 - `app/app/requests.tsx` (linked from the home tab) lists incoming pending requests and lets the recipient Accept or Decline (`sessionRepository.respondToRequest`/`listIncomingRequests`).
 - Accepting now calls `sessionRepository.beginConsentReview` (`accepted -> consent_pending`, best-effort) and navigates into `/match/consent-snapshot` with the real `sessionId` and the requester's resolved mock persona id (`personaIdForUserId`), which now forwards `sessionId` into `/session/active` on "Confirm this mock snapshot."
 
-Landed 2026-07-12 (`docs/adr/0015-session-request-creation-and-recipient-authorization.md`'s snapshot-wiring addendum): `consent-snapshot.tsx` now calls the real backend (`POST /api/sessions/:sessionId/snapshot`, requires `EXPO_PUBLIC_BACKEND_URL`) and `confirm_session_snapshot`/`transition_session(..., 'active')` when a real `sessionId` is present. A real session can now genuinely reach `active` — **if both participants confirm**.
+Landed 2026-07-12 (`docs/adr/0015-session-request-creation-and-recipient-authorization.md`'s snapshot-wiring addendum): `consent-snapshot.tsx` now calls the real backend (`POST /api/sessions/:sessionId/snapshot`, requires `EXPO_PUBLIC_BACKEND_URL`) and `confirm_session_snapshot`/`transition_session(..., 'active')` when a real `sessionId` is present.
 
-**Still genuinely incomplete**: verifying true two-participant confirmation could not be completed this session. Sign-in is passkey-only (ADR 0010); there's no scripted way to sign in as a second seeded account without a physical Face ID registration ceremony for it. Until someone does that manually (or tests with a second physical device), this path is code-correct and unit-verified but not end-to-end device-verified for the dual-confirmation case specifically. Single-participant behavior (own confirmation gets recorded, "waiting for the other person" state shows correctly) can be and was reasoned through, but not click-tested.
+**Verified on-device 2026-07-12: both participants confirming the same snapshot works, and the session correctly reaches `active`.** This closes out the request -> accept -> confirm -> active chain end to end on a physical device.
+
+**Architecture decision (2026-07-12):** the Express backend + LAN-address approach for snapshot creation is deliberately kept as-is rather than moved to a Supabase Postgres/Edge function. Reasoning: single-developer, single-device local testing today — the LAN dependency is a non-issue at this scale. Revisit moving `createConsentSnapshot`'s logic into an Edge function specifically when scaling past the founder's own iPhone (multiple real testers/devices, or a hosted deployment), since that's when "backend must be running on a specific laptop reachable on the same network" actually becomes a blocker.
 
 Not done:
 
-- **Verify dual-participant confirmation on-device** — needs a second passkey identity (manual Face ID ceremony) or a second physical device. This is the actual next step to close this out.
 - Replace `/session/active`'s local timer with a real Realtime subscription now that a session can actually become `active`.
 - More precise wrap-up copy for "this session never got activated" vs. genuine connectivity pending-sync (currently the same copy covers both).
 - No Realtime/push notification when a new request arrives, or when the other participant confirms — `consent-snapshot.tsx`'s "waiting" state requires manually tapping "Check again."
