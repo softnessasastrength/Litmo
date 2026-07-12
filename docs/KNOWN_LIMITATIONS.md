@@ -30,6 +30,8 @@
 
 ## Safety limitations
 
+- Transactional withdrawal and offline local stop exist, but the full real session-request UI and Supabase Realtime/push delivery are not wired. Impact: server authority and pending reconciliation are enforceable when a real session ID is supplied, while the default visible flow remains synthetic. Mitigation: the local UI stops immediately and terminal database state rejects reactivation; notification delivery is never authority. Removal criterion: persisted request flow, two-device Realtime, push delivery, and physical offline/termination chaos tests.
+
 - Consent explanations have not received independent trauma-informed, safeguarding, or legal review. Impact: wording may omit important interpretations. Mitigation: explanations disclose conservative outcomes and never private reasoning. Removal criterion: documented expert and user review.
 - Duplicate rules are excluded as contradictory even when duplicates are textually identical. Impact: false exclusions are possible, but no permission is broadened. Removal criterion: canonical input deduplication with tests proving identical duplicates are harmless.
 

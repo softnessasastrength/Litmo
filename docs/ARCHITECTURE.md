@@ -33,6 +33,8 @@ Migration 012 and ADR 0008 add participant-private wrap-up persistence. Each par
 
 ADR 0011 and migration 013 add the application-encryption boundary for highly sensitive free text. The native vault owns CryptoKit AES-GCM and biometric-current-set, passcode-required, this-device-only Keychain keys; JavaScript receives only versioned ciphertext envelopes. Profile and wrap-up tables reject plaintext notes. Structured canonical snapshots stay server-readable under participant RLS so both people and PostgreSQL can enforce the same agreement.
 
+Migration 014 and ADR 0012 add the single-party withdrawal authority. Snapshot-first/session-second locking serializes confirmation, activation, and withdrawal; one transaction invalidates confirmations, ends the session, and appends one reason-free audit fact. The mobile emergency-stop service locks decrypted state and stores a minimal Keychain pending action before network I/O, then replays the same idempotency key on restoration.
+
 ## Authentication and routing
 
 `AuthContext` is the sole mobile authority for session state. It restores the Supabase session from the passcode-required, this-device-only iOS Keychain, verifies the installation registration, fetches the owner's profile, distinguishes incomplete onboarding from an authenticated account, subscribes to auth changes, and redirects protected routes conservatively. Account creation uses an email one-time code only as bootstrap proof before mandatory Apple passkey registration; routine sign-in is a server-challenged passkey ceremony through the local `LitmoPasskeys` Expo module. Explicit locked, authenticating, registering, expired, revoked, error, onboarding, authenticated, and demo states fail closed.

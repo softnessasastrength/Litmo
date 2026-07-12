@@ -24,3 +24,16 @@ export const deviceSecretStorage = {
     SecureStore.setItemAsync("device-secret-v1", secret, options),
   clear: () => SecureStore.deleteItemAsync("device-secret-v1", options),
 };
+
+const emergencyOptions: SecureStore.SecureStoreOptions = {
+  keychainService: "com.litmo.app.pending-safety-actions",
+  keychainAccessible: SecureStore.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
+};
+export const pendingSafetyActionStorage = {
+  get: () =>
+    SecureStore.getItemAsync("pending-withdrawal-v1", emergencyOptions),
+  set: (value: string) =>
+    SecureStore.setItemAsync("pending-withdrawal-v1", value, emergencyOptions),
+  clear: () =>
+    SecureStore.deleteItemAsync("pending-withdrawal-v1", emergencyOptions),
+};

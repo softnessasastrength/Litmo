@@ -22,7 +22,9 @@ export default function SessionWrapUpScreen() {
       <Body>
         {ended === "soft-signal"
           ? "Soft Signal ended the session immediately. You do not need to explain why."
-          : "You ended the session together."}
+          : ended === "pending-sync"
+            ? "The session stopped on this device. Litmo will keep retrying the private stop request when a connection returns. It cannot resume here."
+            : "You ended the session together."}
       </Body>
       <View style={styles.question}>
         <Text style={styles.questionText}>

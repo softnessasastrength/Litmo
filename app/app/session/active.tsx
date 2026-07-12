@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import {
   Body,
@@ -11,6 +11,7 @@ import {
 } from "../../components/ui";
 import { colors } from "../../theme";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
+import { emergencyStopService } from "../../services/emergencyStopService";
 
 export default function ActiveSessionScreen() {
   return (
@@ -22,19 +23,32 @@ export default function ActiveSessionScreen() {
 
 function ActiveSessionContent() {
   const router = useRouter();
+  const { sessionId } = useLocalSearchParams<{ sessionId?: string }>();
   const [seconds, setSeconds] = useState(0);
   const [ended, setEnded] = useState(false);
+  const [stopState, setStopState] = useState<"idle" | "stopping" | "pending">(
+    "idle",
+  );
   useEffect(() => {
     if (ended) return;
     const timer = setInterval(() => setSeconds((value) => value + 1), 1000);
     return () => clearInterval(timer);
   }, [ended]);
   const time = `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
-  const stop = () => {
+  const stop = async () => {
     setEnded(true);
+    setStopState("stopping");
+    let pendingSync = false;
+    if (sessionId) {
+      const result = await emergencyStopService.stop(sessionId);
+      if (result.status === "stopped_pending_sync") {
+        pendingSync = true;
+        setStopState("pending");
+      }
+    }
     router.replace({
       pathname: "/session/wrap-up",
-      params: { ended: "soft-signal" },
+      params: { ended: pendingSync ? "pending-sync" : "soft-signal" },
     });
   };
   return (
@@ -61,8 +75,11 @@ function ActiveSessionContent() {
       <View style={styles.controls}>
         <Button
           variant="signal"
-          label="Soft Signal — end now"
-          onPress={stop}
+          label={
+            stopState === "stopping" ? "Stopping…" : "Emergency stop — end now"
+          }
+          disabled={ended}
+          onPress={() => void stop()}
           accessibilityHint="Immediately ends the simulated session without requiring an explanation"
         />
         <Text style={styles.explain}>

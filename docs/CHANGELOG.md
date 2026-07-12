@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-12 — Consent withdrawal and offline emergency stop
+
+Added a reason-free, single-party transactional withdrawal authority and an offline-first mobile emergency stop. Migration 014 serializes against activation, clears confirmations, terminalizes the session, and writes one idempotent minimal audit event. Mobile disables locally, locks decrypted state, persists only a Keychain request identifier/session identifier, and reconciles after connectivity returns. ADR 0012 documents atomicity, privacy, race behavior, and remaining Realtime/push limitations.
+
 ## 2026-07-12 — Sensitive-data encryption and privacy-safe storage
 
 Added a CryptoKit AES-256-GCM vault with versioned biometric-current-set Keychain keys, a locked application decrypt boundary, encrypted private profile/wrap-up note persistence, recursive diagnostic redaction, and generic notification content. Migration 013 rejects plaintext highly sensitive notes while preserving RLS, immutable snapshots, and server session authority. ADR 0011 and `docs/SENSITIVE_DATA_ENCRYPTION.md` document classification, hierarchy, rotation, recovery, backup behavior, and residual risk.
