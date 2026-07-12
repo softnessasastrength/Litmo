@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — Chapter 5: moderator console UI
+
+### Summary
+
+Staff-only mobile queue for human review: list cases, claim, internal notes,
+resolve with coarse reporter outcomes, optional 7-day matching hold. Built on
+existing moderation RPCs plus `list_moderation_case_notes`.
+
+### User-visible impact
+
+- Staff: Settings → **Moderation queue (staff)**.
+- Non-staff: link hidden; RPCs still deny.
+
+### Developer impact
+
+- Migration `030_moderation_case_notes_list.sql`
+- `moderationService`; `/security/moderation`, `/security/moderation-case`
+- ADR 0032; pgTAP `moderation_console.test.sql`
+
+### Related decision and roadmap
+
+- `docs/adr/0032-moderator-console-ui.md`
+
 ## 2026-07-12 — Chapter 5: restriction lifecycle gates + active report
 
 ### Summary
