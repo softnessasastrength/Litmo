@@ -20,7 +20,8 @@
     "db:reset": "npx supabase db reset",
     "db:stop": "npx supabase stop",
     "db:lint": "npx supabase db lint --local --level error",
-    "env:check": "node scripts/validate-env.mjs"
+    "env:check": "node scripts/validate-env.mjs",
+    "state:check": "node scripts/validate-project-state.mjs"
   },
   "devDependencies": {
     "supabase": "^2.50.5"
