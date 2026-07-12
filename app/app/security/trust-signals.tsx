@@ -19,6 +19,10 @@ import {
   trustSignalsService,
   type MyTrustSignals,
 } from "../../services/trustSignalsService";
+import {
+  matchingAccessService,
+  type MatchingAccess,
+} from "../../services/matchingAccessService";
 import { colors } from "../../theme";
 
 export default function TrustSignalsScreen() {
@@ -34,14 +38,17 @@ function TrustSignalsContent() {
   const [state, setState] = useState<
     | { kind: "loading" }
     | { kind: "error"; message: string }
-    | { kind: "ready"; signals: MyTrustSignals }
+    | { kind: "ready"; signals: MyTrustSignals; access: MatchingAccess }
   >({ kind: "loading" });
 
   const load = useCallback(async () => {
     setState({ kind: "loading" });
     try {
-      const signals = await trustSignalsService.myTrustSignals();
-      setState({ kind: "ready", signals });
+      const [signals, access] = await Promise.all([
+        trustSignalsService.myTrustSignals(),
+        matchingAccessService.myMatchingAccess(),
+      ]);
+      setState({ kind: "ready", signals, access });
     } catch (caught) {
       setState({
         kind: "error",
@@ -84,6 +91,7 @@ function TrustSignalsContent() {
   }
 
   const s = state.signals;
+  const access = state.access;
 
   return (
     <Screen>
@@ -93,6 +101,21 @@ function TrustSignalsContent() {
         Litmo never reduces a person to a single safety rating. What follows is
         only about your account, for your awareness.
       </Body>
+      <Card>
+        <Text style={styles.rowLabel}>Matching access</Text>
+        <Text style={styles.rowValue}>
+          {access.matchingAllowed ? "Open" : "Paused"}
+        </Text>
+        {!access.matchingAllowed ? (
+          <Body muted>
+            {access.restrictionKind === "permanent_ban"
+              ? "Matching is closed on this account. Contact support if you believe this is a mistake."
+              : access.endsAt
+                ? `Matching is paused until ${new Date(access.endsAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}.`
+                : "Matching is paused on this account while a review is active."}
+          </Body>
+        ) : null}
+      </Card>
       <Card>
         <Text style={styles.rowLabel}>Account age</Text>
         <Text style={styles.rowValue}>

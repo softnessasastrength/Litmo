@@ -28,15 +28,20 @@ Started 2026-07-12 after Chapter 4 engineering completion
 - **Trust events** (ADR 0029, migration 027):
   - Append-only ledger + triggers; `my_trust_signals` self-only
   - Settings → Your private signals (not a score)
+- **Account restrictions** (ADR 0030, migration 028):
+  - Staff `matching_hold` / `permanent_ban`; lift; audit trust events
+  - Discovery + `request_session` enforcement; self-only access status
 
 ## Next coherent slices (in order)
 
-1. **Account restrictions** (temporary/permanent) with audit — human action only.
-2. **Report entry from active session / wrap-up** when a real session ID is
+1. **Report entry from active session / wrap-up** when a real session ID is
    present (intake API already accepts `session_id`).
+2. **Gate accept/transition** while restricted; optional cancel open requests
+   on apply.
 3. **Moderator console UI** (internal tool) on top of existing RPCs.
 4. **Optional peer-visible specific indicators** (e.g. account age) after
    product copy review — still never a universal score.
+5. **Appeals** workflow.
 
 ## Product decisions still open
 
