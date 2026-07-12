@@ -67,13 +67,27 @@ function SettingsContent() {
             onPress={() => router.push("/security/trust-signals" as never)}
             accessibilityHint="View specific facts about your own account. Not a safety score."
           />
+          <Button
+            variant="secondary"
+            label="Appeals"
+            onPress={() => router.push("/security/appeals" as never)}
+            accessibilityHint="Appeal an active matching hold or ban for human review"
+          />
           {isStaff ? (
-            <Button
-              variant="secondary"
-              label="Moderation queue (staff)"
-              onPress={() => router.push("/security/moderation" as never)}
-              accessibilityHint="Staff-only human review queue for structured reports"
-            />
+            <>
+              <Button
+                variant="secondary"
+                label="Moderation queue (staff)"
+                onPress={() => router.push("/security/moderation" as never)}
+                accessibilityHint="Staff-only human review queue for structured reports"
+              />
+              <Button
+                variant="secondary"
+                label="Open appeals (staff)"
+                onPress={() => router.push("/security/staff-appeals" as never)}
+                accessibilityHint="Staff review of restriction appeals"
+              />
+            </>
           ) : null}
         </>
       ) : null}

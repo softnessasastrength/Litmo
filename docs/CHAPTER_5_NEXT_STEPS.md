@@ -41,14 +41,19 @@ Started 2026-07-12 after Chapter 4 engineering completion
 - **Moderator console UI** (ADR 0032, migration 030):
   - Staff queue + case detail (claim / notes / resolve / 7-day hold)
   - Settings link only when `is_staff_moderator()`
+- **Peer-visible specific signals** (ADR 0033, migration 031):
+  - `account_age_days` + `completed_sessions` on discovery / peer RPC
+  - Explicit not-a-score copy
+- **Restriction appeals** (ADR 0034, migration 031):
+  - Submit / list / staff resolve (uphold or lift)
+  - Settings → Appeals; staff → Open appeals
 
 ## Next coherent slices (in order)
 
-1. **Optional peer-visible specific indicators** (e.g. account age) after
-   product copy review — still never a universal score.
-2. **Appeals** workflow.
-3. Optional auto-end of **active** sessions on permanent ban (product decision).
-4. Richer staff evidence access (encrypted notes are device-bound today).
+1. Optional auto-end of **active** sessions on permanent ban (product decision).
+2. Richer staff evidence access (encrypted notes are device-bound today).
+3. Wire real discovery list UI (still partly mock profiles on mobile).
+4. Peer signals on live match cards when discovery is fully repository-backed.
 
 ## Product decisions still open
 
