@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-07-12 — BETA-001 Track C accessibility pass
+
+### Summary
+
+Hardened Soft Signal and Consent Snapshot for VoiceOver-ready labels, Dynamic
+Type, reduced motion, non-color Soft Signal meaning, and larger touch targets.
+Track C engineering criteria recorded as Pass.
+
+### User-visible impact
+
+- Clearer Soft Signal / consent a11y labels and hints
+- Larger safety buttons; choices announce selected state
+
+### Developer impact
+
+- `docs/ACCESSIBILITY_TRACK_C.md`
+- UI Button/Choice a11y; active + consent-snapshot screens
+
 ## 2026-07-12 — BETA-001 Track A Pass (founder)
 
 ### Summary

@@ -24,12 +24,12 @@
 
 ## Work in progress
 
-**Track A (fictional demo) Pass** — founder confirmed 2026-07-12. Continue `docs/PHYSICAL_BETA_WALKTHROUGH.md` Tracks **B** (real two-account) and **C** (accessibility). Do not claim external beta readiness until RELEASE_AND_TESTFLIGHT blockers clear.
+**Track A Pass** (founder). **Track C Pass** (engineering accessibility 2026-07-12). **Track B** still open. Do not claim external beta readiness until RELEASE_AND_TESTFLIGHT blockers clear.
 
 ## Priority next work
 
 1. **Track B** — real two-account path (local Supabase + snapshot backend + Soft Signal).
-2. **Track C** — accessibility (VoiceOver, Dynamic Type, Soft Signal + Consent Snapshot).
+2. Optional founder VoiceOver smoke (`docs/ACCESSIBILITY_TRACK_C.md`).
 3. Reconcile any Fail findings into tests, ADRs, `KNOWN_LIMITATIONS.md`.
 4. Clear external TestFlight blockers only when intentionally starting private alpha distribution.
 

@@ -17,8 +17,8 @@ None. Founder **BETA-001** physical walkthrough is the next operator task.
 - **Goal:** Verify the integrated `main` experience on a physical iPhone from entry through learning, consent, session, stop, wrap-up, and haptic feel.
 - **Specification:** `docs/PHYSICAL_BETA_WALKTHROUGH.md` + `docs/PHYSICAL_BETA_WALKTHROUGH_RESULTS.md`
 - **Acceptance criteria:** documented test script (done); exact build/install method; passkey and Face ID behavior; privacy-safe backgrounding; session request; **real** Consent Snapshot (ADR 0036); realtime transition; Soft Signal; wrap-up; Chapter 5 safety smoke; five haptic events recognizability; failures recorded without euphemism.
-- **Progress 2026-07-12:** **Track A Pass** (founder: “track a good”). Soft Signal label fixed. Track B and C still pending.
-- **Next action:** Track B (Docker + two seed accounts + real snapshot) then Track C accessibility.
+- **Progress 2026-07-12:** **Track A Pass** (founder). **Track C Pass** (engineering a11y: Soft Signal + Consent Snapshot, Dynamic Type, reduced motion, touch targets). Track B still pending.
+- **Next action:** Track B (Docker + two seed accounts + real snapshot).
 
 ### ACCESS-001 — Physical-device accessibility review
 

@@ -48,9 +48,11 @@ function makeUiStyles(
       ...shadow,
     },
     button: {
-      minHeight: 54,
+      // WCAG / Apple HIG-friendly target (~44pt+) with room for Dynamic Type.
+      minHeight: 56,
       borderRadius: radius.pill,
       paddingHorizontal: 24,
+      paddingVertical: 14,
       alignItems: "center" as const,
       justifyContent: "center" as const,
       backgroundColor: colors.moss,
@@ -61,11 +63,13 @@ function makeUiStyles(
       borderWidth: 1.5,
       borderColor: colors.moss,
     },
-    signalButton: { backgroundColor: colors.signal, minHeight: 64 },
+    // Soft Signal / safety actions stay larger and never color-only.
+    signalButton: { backgroundColor: colors.signal, minHeight: 68 },
     buttonText: {
       color: colors.white,
       fontSize: 17,
       fontWeight: "800" as const,
+      textAlign: "center" as const,
     },
     secondaryText: { color: colors.moss },
     disabled: { opacity: 0.45 },
@@ -187,7 +191,11 @@ export function FadeIn({ children }: PropsWithChildren) {
 }
 export function Eyebrow({ children }: PropsWithChildren) {
   const styles = useUiStyles();
-  return <Text style={styles.eyebrow}>{children}</Text>;
+  return (
+    <Text accessibilityRole="header" style={styles.eyebrow}>
+      {children}
+    </Text>
+  );
 }
 export function Title({
   children,
@@ -195,7 +203,12 @@ export function Title({
 }: PropsWithChildren<{ center?: boolean }>) {
   const styles = useUiStyles();
   return (
-    <Text style={[styles.title, center && styles.center]}>{children}</Text>
+    <Text
+      accessibilityRole="header"
+      style={[styles.title, center && styles.center]}
+    >
+      {children}
+    </Text>
   );
 }
 export function Body({
@@ -223,20 +236,27 @@ export function Button({
   variant = "primary",
   disabled = false,
   accessibilityHint,
+  accessibilityLabel,
 }: {
   label: string;
   onPress: () => void;
   variant?: "primary" | "secondary" | "signal";
   disabled?: boolean;
   accessibilityHint?: string;
+  /** Defaults to the visible label. Override for Soft Signal context. */
+  accessibilityLabel?: string;
 }) {
   const styles = useUiStyles();
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel ?? label}
       accessibilityHint={accessibilityHint}
+      accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}
+      // Extra space around safety and primary actions for large fingers / Dynamic Type.
+      hitSlop={variant === "signal" ? 8 : 4}
       style={({ pressed }) => [
         styles.button,
         styles[`${variant}Button`],
@@ -245,6 +265,8 @@ export function Button({
       ]}
     >
       <Text
+        allowFontScaling
+        maxFontSizeMultiplier={2}
         style={[
           styles.buttonText,
           variant === "secondary" && styles.secondaryText,
@@ -269,23 +291,45 @@ export function Choice({
   onPress: () => void;
 }) {
   const styles = useUiStyles();
+  const a11yLabel = [
+    label,
+    detail,
+    selected ? "Selected" : "Not selected",
+  ]
+    .filter(Boolean)
+    .join(". ");
   return (
     <Pressable
       accessibilityRole="radio"
+      accessibilityLabel={a11yLabel}
       accessibilityState={{ selected }}
       onPress={onPress}
+      hitSlop={4}
       style={({ pressed }) => [
         styles.choice,
         selected && styles.choiceSelected,
         pressed && styles.pressed,
       ]}
     >
-      {glyph ? <Text style={styles.glyph}>{glyph}</Text> : null}
-      <View style={styles.flex}>
-        <Text style={styles.choiceLabel}>{label}</Text>
-        {detail ? <Text style={styles.choiceDetail}>{detail}</Text> : null}
+      {glyph ? (
+        <Text accessible={false} style={styles.glyph}>
+          {glyph}
+        </Text>
+      ) : null}
+      <View accessible={false} style={styles.flex}>
+        <Text allowFontScaling maxFontSizeMultiplier={2} style={styles.choiceLabel}>
+          {label}
+        </Text>
+        {detail ? (
+          <Text allowFontScaling maxFontSizeMultiplier={2} style={styles.choiceDetail}>
+            {detail}
+          </Text>
+        ) : null}
       </View>
-      <Text style={styles.radio}>{selected ? "●" : "○"}</Text>
+      {/* Visual selected marker only — state is in accessibilityState. */}
+      <Text accessible={false} style={styles.radio}>
+        {selected ? "●" : "○"}
+      </Text>
     </Pressable>
   );
 }

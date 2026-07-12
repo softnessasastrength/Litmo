@@ -252,7 +252,11 @@ function ActiveSessionContent() {
         <Text style={styles.prompt}>A gentle check-in</Text>
         <Body>Are your breath, shoulders, and attention still saying yes?</Body>
       </Card>
-      <View style={styles.controls}>
+      <View
+        style={styles.controls}
+        accessibilityRole="summary"
+        accessibilityLabel="Session controls. Soft Signal is first and ends the session immediately."
+      >
         <Button
           variant="signal"
           label={
@@ -260,9 +264,18 @@ function ActiveSessionContent() {
           }
           disabled={ended}
           onPress={() => void stop()}
-          accessibilityHint="Soft Signal ends the session immediately for both people. No explanation required. Not emergency response."
+          accessibilityLabel={
+            stopState === "stopping"
+              ? "Stopping session"
+              : "Soft Signal, end session now"
+          }
+          accessibilityHint="Ends the session immediately for both people. No explanation required. Not emergency response or crisis services."
         />
-        <Text style={styles.explain}>
+        <Text
+          accessibilityRole="text"
+          style={styles.explain}
+          // Meaning is also in the button label — not color-only.
+        >
           Soft Signal ends the session immediately. No explanation needed. No
           penalty. Litmo is not emergency response or crisis services.
         </Text>
@@ -271,6 +284,7 @@ function ActiveSessionContent() {
           label={completing ? "Ending…" : "End together"}
           disabled={ended}
           onPress={() => void endTogether()}
+          accessibilityHint="Ends the session as completed when both people are ready. Soft Signal is still available if you need to stop immediately."
         />
         {sessionId && peerUserId && !ended ? (
           <>
@@ -322,12 +336,14 @@ function ActiveSessionContent() {
 function makeStyles(colors: AppColors) {
   return {
   screen: { justifyContent: "space-between" },
-  timerWrap: { alignItems: "center" },
+  timerWrap: { alignItems: "center", paddingHorizontal: 8 },
   timer: {
     color: colors.ink,
     fontFamily: "Georgia",
     fontSize: 66,
     fontVariant: ["tabular-nums"],
+    // Timer is decorative; cap so Soft Signal controls keep room under Dynamic Type.
+    maxFontSizeMultiplier: 1.35,
   },
   timerLabel: {
     color: colors.muted,
@@ -336,12 +352,12 @@ function makeStyles(colors: AppColors) {
     fontWeight: "800",
   },
   prompt: { color: colors.plum, fontWeight: "800", marginBottom: 7 },
-  controls: { gap: 12 },
+  controls: { gap: 12, width: "100%" },
   explain: {
     color: colors.muted,
-    fontSize: 12,
+    fontSize: 13,
     textAlign: "center",
-    lineHeight: 18,
+    lineHeight: 20,
   },
   syncNote: {
     marginTop: 12,
