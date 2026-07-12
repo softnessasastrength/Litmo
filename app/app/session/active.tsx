@@ -256,14 +256,15 @@ function ActiveSessionContent() {
         <Button
           variant="signal"
           label={
-            stopState === "stopping" ? "Stopping…" : "Emergency stop — end now"
+            stopState === "stopping" ? "Stopping…" : "Soft Signal — end now"
           }
           disabled={ended}
           onPress={() => void stop()}
-          accessibilityHint="Immediately ends the simulated session without requiring an explanation"
+          accessibilityHint="Soft Signal ends the session immediately for both people. No explanation required. Not emergency response."
         />
         <Text style={styles.explain}>
-          No explanation needed. Using Soft Signal carries no penalty.
+          Soft Signal ends the session immediately. No explanation needed. No
+          penalty. Litmo is not emergency response or crisis services.
         </Text>
         <Button
           variant="secondary"
