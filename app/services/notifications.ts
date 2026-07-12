@@ -1,4 +1,5 @@
 import * as Notifications from "expo-notifications";
+import { privacySafeNotificationContent } from "./notificationsCore.ts";
 
 /**
  * Real, device-level local notifications -- not an in-app mock banner. Used
@@ -22,18 +23,16 @@ export async function requestNotificationPermission(): Promise<boolean> {
   return requested.granted;
 }
 
-export async function scheduleDemoNotification(input: {
-  title: string;
-  body: string;
-  secondsFromNow: number;
-}): Promise<boolean> {
+export async function scheduleDemoNotification(
+  secondsFromNow: number,
+): Promise<boolean> {
   const granted = await requestNotificationPermission();
   if (!granted) return false;
   await Notifications.scheduleNotificationAsync({
-    content: { title: input.title, body: input.body },
+    content: privacySafeNotificationContent(),
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-      seconds: input.secondsFromNow,
+      seconds: secondsFromNow,
     },
   });
   return true;

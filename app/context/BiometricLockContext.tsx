@@ -9,6 +9,7 @@ import {
 } from "react";
 import { AppState, type AppStateStatus } from "react-native";
 import { biometricAuthService } from "../services/biometricAuthService";
+import { sensitiveDataService } from "../services/sensitiveDataService";
 import {
   biometricReducer,
   canRevealAfterAuthentication,
@@ -42,6 +43,7 @@ export function BiometricLockProvider({ children }: PropsWithChildren) {
         if (result.ok) {
           if (canRevealAfterAuthentication(appState.current)) {
             dispatch({ type: "UNLOCK" });
+            sensitiveDataService.unlock();
             return true;
           }
           dispatch({
@@ -81,6 +83,7 @@ export function BiometricLockProvider({ children }: PropsWithChildren) {
       const previous = appState.current;
       appState.current = nextState;
       if (nextState !== "active") {
+        sensitiveDataService.lock();
         if (previous === "active") backgroundedAt.current = Date.now();
         dispatch({ type: "PRIVACY_SHIELD", enabled: true });
         return;
@@ -91,6 +94,7 @@ export function BiometricLockProvider({ children }: PropsWithChildren) {
           type: "LOCK",
           message: "Litmo locked after being in the background.",
         });
+        sensitiveDataService.lock();
         void authenticate();
       } else {
         dispatch({ type: "PRIVACY_SHIELD", enabled: false });
@@ -101,6 +105,7 @@ export function BiometricLockProvider({ children }: PropsWithChildren) {
   }, [authenticate]);
 
   const authenticateSensitiveAction = useCallback(async () => {
+    sensitiveDataService.lock();
     dispatch({
       type: "LOCK",
       message: "Face ID is required again for this private area.",

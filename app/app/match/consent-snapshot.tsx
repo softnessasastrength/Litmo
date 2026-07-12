@@ -82,11 +82,7 @@ function ConsentSnapshotContent() {
         label="Confirm this mock snapshot"
         disabled={decision !== "yes"}
         onPress={() => {
-          void scheduleDemoNotification({
-            title: "Litmo (demo)",
-            body: "Your practice session is ready to begin.",
-            secondsFromNow: 4,
-          });
+          void scheduleDemoNotification(4);
           router.push("/session/active");
         }}
       />

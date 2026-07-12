@@ -39,14 +39,14 @@ export function createSupabaseSessionSnapshotRepository() {
       const [touchResult, consentResult] = await Promise.all([
         client
           .from('touch_profile_versions')
-          .select('id,user_id,version,profile,private_nervous_system_notes,created_at')
+          .select('id,user_id,version,profile,created_at')
           .eq('user_id', userId)
           .order('version', { ascending: false })
           .limit(1)
           .maybeSingle(),
         client
           .from('consent_preference_versions')
-          .select('user_id,version,preferences,private_nervous_system_notes,created_at')
+          .select('user_id,version,preferences,created_at')
           .eq('user_id', userId)
           .order('version', { ascending: false })
           .limit(1)

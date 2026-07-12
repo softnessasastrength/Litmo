@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-12 — Sensitive-data encryption and privacy-safe storage
+
+Added a CryptoKit AES-256-GCM vault with versioned biometric-current-set Keychain keys, a locked application decrypt boundary, encrypted private profile/wrap-up note persistence, recursive diagnostic redaction, and generic notification content. Migration 013 rejects plaintext highly sensitive notes while preserving RLS, immutable snapshots, and server session authority. ADR 0011 and `docs/SENSITIVE_DATA_ENCRYPTION.md` document classification, hierarchy, rotation, recovery, backup behavior, and residual risk.
+
 ## 2026-07-12 — Participant-private immutable session wrap-ups
 
 ### Summary

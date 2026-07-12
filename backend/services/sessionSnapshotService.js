@@ -23,11 +23,11 @@ function profileVersion(touch, consent) {
     createdAt: touch.created_at,
     touch: {
       ...touch.profile,
-      privateNervousSystemNotes: touch.private_nervous_system_notes,
+      privateNervousSystemNotes: null,
     },
     consent: {
       ...consent.preferences,
-      privateNervousSystemNotes: consent.private_nervous_system_notes,
+      privateNervousSystemNotes: null,
     },
   });
 }

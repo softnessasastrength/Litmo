@@ -8,6 +8,8 @@ Service-role keys, JWT secrets, database passwords, and moderation credentials m
 
 ## Private data controls
 
+Highly sensitive private profile and wrap-up notes receive application-layer AES-256-GCM encryption before persistence. Versioned keys remain inside the iOS Keychain with passcode, this-device-only, and biometric-current-set controls; malformed/tampered/wrong-purpose ciphertext fails closed. Migration 013 rejects plaintext note storage. See ADR 0011 and `docs/SENSITIVE_DATA_ENCRYPTION.md` for hierarchy, rotation, recovery, and residual risks.
+
 - Every Chapter 2 user-data table has RLS enabled. RLS policies alone are not sufficient: Postgres also requires an underlying table-level `GRANT` to a role, checked before RLS is even evaluated. A real bug — RLS policies with no matching `GRANT` on four tables, silently masked because Docker-backed tests were never run locally until 2026-07-12 — is documented in `docs/CHANGELOG.md` and fixed in `supabase/migrations/006_grant_authenticated_table_privileges.sql`. When adding a new table, both must be reviewed, not just RLS policies.
 - General private records are owner-select/update only.
 - Touch and consent histories are owner-select/append only.

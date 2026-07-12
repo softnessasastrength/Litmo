@@ -9,6 +9,7 @@ import {
 import { PublicAppError, mapExternalError } from "./errors";
 import { safeLog } from "./logger";
 import { supabase } from "./supabase";
+import { sensitiveDataService } from "./sensitiveDataService";
 
 const TIMEOUT_MS = 10_000;
 async function withTimeout<T>(operation: PromiseLike<T>): Promise<T> {
@@ -114,8 +115,14 @@ export const profileRepository = {
   ) {
     const touch = TouchLanguageProfileSchema.parse(touchInput);
     const consent = ConsentPreferenceSchema.parse(consentInput);
-    const touchPrivate = touch.privateNervousSystemNotes;
-    const consentPrivate = consent.privateNervousSystemNotes;
+    const touchPrivate = await sensitiveDataService.encryptText(
+      touch.privateNervousSystemNotes,
+      `profile:${userId}:touch-note`,
+    );
+    const consentPrivate = await sensitiveDataService.encryptText(
+      consent.privateNervousSystemNotes,
+      `profile:${userId}:consent-note`,
+    );
     const publicProfile = UserProfileSchema.parse(profile);
     try {
       const { error: versionError } = await withTimeout(

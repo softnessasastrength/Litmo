@@ -14,6 +14,7 @@ import { profileRepository } from "../services/profileRepository";
 import { environmentError, supabase } from "../services/supabase";
 import { authService } from "../services/authService";
 import { deviceRegistrationService } from "../services/deviceRegistrationService";
+import { sensitiveDataService } from "../services/sensitiveDataService";
 import { authReducer, initialAuthState, protectedRouteFor } from "./authState";
 type AuthValue = ReturnType<typeof authReducer> & {
   requestAccountCode(email: string, displayName: string): Promise<void>;
@@ -123,6 +124,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         }
       },
       async signOut() {
+        sensitiveDataService.lock();
         if (state.status === "demo") return dispatch({ type: "SIGNED_OUT" });
         await authService.signOut();
         dispatch({ type: "SIGNED_OUT" });
