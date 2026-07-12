@@ -24,7 +24,7 @@
 
 ## Work in progress
 
-**Track A Pass** (founder). **Track C Pass** (engineering). **Track B automated backend Pass** (2026-07-12): Docker + setup + seed password grant for all four emails + integration 3/3 + pgTAP 240/240. Seed GoTrue token NULL bug fixed. **Track B physical UI (B1–B26)** still founder-owned. Do not claim external beta readiness until RELEASE_AND_TESTFLIGHT blockers clear.
+**Track A Pass** (founder). **Track C Pass** (engineering). **Track B automated backend Pass** (2026-07-12): Docker + setup + seed password grant for all four emails + integration **5/5** (includes seed maya↔eli request→snapshot→Soft Signal) + pgTAP 240/240. Seed GoTrue token NULL bug fixed. **Track B physical UI (B1–B26)** still founder-owned. Do not claim external beta readiness until RELEASE_AND_TESTFLIGHT blockers clear.
 
 ## Priority next work
 

@@ -13,9 +13,9 @@ Only one implementation task should normally be `active`. Every status change mu
 - **Goal:** Verify the integrated `main` experience on a physical iPhone from entry through learning, consent, session, stop, wrap-up, and haptic feel.
 - **Specification:** `docs/PHYSICAL_BETA_WALKTHROUGH.md` + `docs/PHYSICAL_BETA_WALKTHROUGH_RESULTS.md`
 - **Acceptance criteria:** documented test script (done); exact build/install method; passkey and Face ID behavior; privacy-safe backgrounding; session request; **real** Consent Snapshot (ADR 0036); realtime transition; Soft Signal; wrap-up; Chapter 5 safety smoke; five haptic events recognizability; failures recorded without euphemism.
-- **Progress 2026-07-12:** **Track A Pass** (founder). **Track C Pass** (engineering a11y). **Track B automated:** Docker + setup + all four seed password grants + integration 3/3 + pgTAP 240/240; fixed seed GoTrue NULL token columns that caused HTTP 500 on password login.
-- **Next action:** Founder completes B1–B26 on device(s); agent merges seed fix and only opens fix PRs for Fail items.
-- **Verification (agent, 2026-07-12):** `npm run typecheck` pass; `npm test` pass; `npm run test:integration` 3/3; `env HOME=/tmp npx supabase test db` 240/240; seed emails `maya`/`eli`/`eli-persona`/`jonah-persona` password grant HTTP 200.
+- **Progress 2026-07-12:** **Track A Pass** (founder). **Track C Pass** (engineering a11y). **Track B automated:** Docker + setup + all four seed password grants + integration **5/5** (seed maya↔eli lifecycle) + pgTAP 240/240; fixed seed GoTrue NULL token columns; seed lifecycle regression test landed.
+- **Next action:** Founder completes B1–B26 on device(s); agent only opens fix PRs for Fail items.
+- **Verification (agent, 2026-07-12):** `npm run typecheck` pass; `npm test` pass; `npm run test:integration` 5/5; `env HOME=/tmp npx supabase test db` 240/240; seed emails `maya`/`eli`/`eli-persona`/`jonah-persona` password grant HTTP 200.
 
 ## Pending
 
