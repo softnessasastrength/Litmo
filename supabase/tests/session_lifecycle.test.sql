@@ -30,6 +30,7 @@ insert into lifecycle_edges (from_state, to_state) values
   ('consent_pending', 'ready'),
   ('consent_pending', 'cancelled'),
   ('consent_pending', 'expired'),
+  ('ready', 'consent_pending'),
   ('ready', 'active'),
   ('ready', 'cancelled'),
   ('ready', 'expired'),

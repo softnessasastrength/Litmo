@@ -27,8 +27,9 @@ The adapter needs `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in the backend 
 
 The legacy `consent_records` table remains inert for migration history and must be removed only through a later documented migration.
 
+Migration 011 completes persisted invalidation. Saving a new immutable profile pair marks every affected unwithdrawn pre-activation snapshot invalid, records the actor and server time, clears its confirmations, and audits the change. A ready session moves back to `consent_pending` through the canonical transition function; an already-pending session stays pending and receives a same-state `snapshot_invalidated` event. Active and terminal sessions remain historical records and are never rewritten. The trusted adapter can then compute a replacement from both latest exact version pairs.
+
 ## Follow-up work
 
-- Add snapshot replacement/invalidation when material profile versions change.
 - Wire the mobile session-request flow to the authenticated endpoint after request creation and transition-specific actor authorization exist.
 - Define retention and deletion policy before production.

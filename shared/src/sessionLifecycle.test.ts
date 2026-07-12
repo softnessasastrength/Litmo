@@ -130,6 +130,11 @@ test("a session cannot activate without first reaching ready", () => {
   assert.equal(canTransition("draft", "active"), false);
 });
 
+test("a material profile change returns a ready session to consent pending", () => {
+  assert.equal(canTransition("ready", "consent_pending"), true);
+  assert.equal(canTransition("active", "consent_pending"), false);
+});
+
 test("draft has no incoming transitions from any other state", () => {
   for (const from of sessionLifecycleStates) {
     if (from === "draft") continue;

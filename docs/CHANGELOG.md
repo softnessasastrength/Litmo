@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-07-12 — Transactional snapshot invalidation after profile edits
+
+### Summary
+
+Completed the persisted Consent Snapshot boundary: a material touch/consent profile edit now invalidates affected unwithdrawn pre-activation snapshots, clears their confirmations, and audits the change atomically. The canonical graph adds the conservative `ready -> consent_pending` edge so displayed lifecycle state cannot imply that stale confirmations remain current.
+
+### User-visible impact
+
+A session that had been ready cannot activate from stale consent after either person changes a material preference. Both people must review and confirm a replacement snapshot computed from the latest exact versions.
+
+### Developer impact
+
+Migration 011 extends `consent_snapshots` with paired invalidation actor/time fields, hardens confirmation and activation checks, and integrates invalidation into `save_profile_versions(...)`. The domain suite adds the new edge test; pgTAP adds nine invalidation/replacement assertions and updates the exhaustive 144-pair SQL graph matrix.
+
+### Migration and setup impact
+
+Run `npm run db:reset` to apply migration 011. Verified with a clean local reset, 49/49 pgTAP assertions, and database lint with no schema errors.
+
+### Related decision and roadmap
+
+- `docs/adr/0005-session-lifecycle-state-machine.md`
+- `docs/adr/0006-snapshot-computation-and-persistence-boundary.md`
+- `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
+
 ## 2026-07-12 — Trusted canonical snapshot creation adapter
 
 ### Summary

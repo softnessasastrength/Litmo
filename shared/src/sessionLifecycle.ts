@@ -17,7 +17,7 @@ export const sessionTransitions: Readonly<
   requested: new Set(["accepted", "declined", "cancelled", "expired"]),
   accepted: new Set(["consent_pending"]),
   consent_pending: new Set(["ready", "cancelled", "expired"]),
-  ready: new Set(["active", "cancelled", "expired"]),
+  ready: new Set(["consent_pending", "active", "cancelled", "expired"]),
   active: new Set(["completed", "soft_signaled", "safety_ended"]),
   completed: new Set(),
   declined: new Set(),

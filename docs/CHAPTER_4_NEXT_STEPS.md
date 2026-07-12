@@ -27,11 +27,11 @@ Implemented in migration `008_transition_session.sql`. The function and the 144-
 
 **Don't implement yet** (explicitly deferred per ADR 0005): snapshot-version matching at `ready -> active` (needs the canonical snapshot persisted somewhere first — see Deliverable 2) and realtime broadcast of the change (Supabase Realtime, separate concern).
 
-## Deliverable 2 — persist the canonical Consent Snapshot (database boundary complete)
+## Deliverable 2 — persist the canonical Consent Snapshot (complete)
 
-`shared/src/consentSnapshot.ts` already has `createConsentSnapshot`, `confirmSnapshot`, `invalidateForMaterialChange`, and `withdrawConsent` — all pure, all tested. None of it is persisted anywhere yet (`docs/KNOWN_LIMITATIONS.md`'s "Release blockers" section calls this out explicitly).
+`shared/src/consentSnapshot.ts` provides the pure snapshot semantics; migrations 009 and 011 persist and enforce their exact-version confirmation, withdrawal, activation, and material-change invalidation boundaries.
 
-Implemented in migration 009 and ADR 0006. The trusted server owns canonical engine computation; PostgreSQL owns service-only persistence, exact versions, private confirmations, withdrawal, and activation enforcement. `POST /api/sessions/:sessionId/snapshot` now authenticates a participant, loads exact latest profile pairs, computes with `@litmo/domain`, and invokes the service-only persistence function. Remaining work within this deliverable is persisted invalidation/replacement after material profile changes.
+Implemented in migrations 009 and 011 plus ADRs 0005–0006. The trusted server owns canonical engine computation; PostgreSQL owns service-only persistence, exact versions, private confirmations, withdrawal, activation enforcement, and material profile-change invalidation. `POST /api/sessions/:sessionId/snapshot` authenticates a participant, loads exact latest profile pairs, computes with `@litmo/domain`, and invokes the service-only persistence function. A material profile edit invalidates affected pre-activation snapshots, clears confirmations, returns `ready` to `consent_pending`, and permits replacement from the new exact versions.
 
 The `ready -> active` precondition is now enforced by a database trigger for every write path.
 
