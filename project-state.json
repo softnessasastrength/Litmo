@@ -1,44 +1,40 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-12T15:55:00-04:00",
+  "updatedAt": "2026-07-12T18:30:00-04:00",
   "milestone": {
-    "id": "HAPTIC-001",
-    "name": "Semantic haptic language foundation",
+    "id": "BETA-001",
+    "name": "Integrated physical-iPhone validation",
     "status": "active"
   },
   "git": {
-    "branch": "docs/haptic-language-implementation",
-    "latestCoherentCommit": "haptic-language-implementation-spec",
+    "branch": "main",
+    "latestCoherentCommit": "chapter-5-real-consent-snapshot-and-walkthrough-checklist",
     "workingTreeExpectedClean": true
   },
   "verification": {
     "status": "partial",
     "commands": [
       "Review latest GitHub Actions for current main",
-      "Run npm run state:check",
-      "Run npm run lint",
       "Run npm run typecheck",
       "Run npm test",
       "Run npm run test:integration with local Supabase where relevant",
-      "Run npm run build",
-      "Perform physical-iPhone haptic validation before claiming sensory acceptance"
+      "Execute docs/PHYSICAL_BETA_WALKTHROUGH.md on a physical iPhone (Tracks A/B/C)"
     ],
     "failures": []
   },
-  "nextAction": "Read docs/roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md, inspect current haptic dependencies and preference-storage patterns, then implement the semantic haptic service as the first coherent commit.",
+  "nextAction": "Execute docs/PHYSICAL_BETA_WALKTHROUGH.md on a physical iPhone for demo and real two-account paths; record pass/fail by checklist ID; open fix PRs only for Fail items.",
   "blockedBy": [],
   "risks": [
-    "Haptics could be mistaken for remote consent or another person's presence if semantics are not carefully constrained.",
-    "Simulator-only testing cannot validate recognizability, comfort, intensity, or timing on a physical iPhone.",
-    "Playback failure must never delay or undo Soft Signal or emergency-stop state transitions.",
-    "The integrated current main has not been represented here as fully verified on a physical iPhone.",
-    "Learning completion must never be interpreted as evidence of safety or consent competence."
+    "Physical walkthrough not yet completed end-to-end after Chapter 5 slices.",
+    "Real Consent Snapshot requires LAN-reachable snapshot backend and saved profiles.",
+    "External TestFlight remains blocked (deletion, staging, AASA, disclosures, independent review).",
+    "Simulator-only testing cannot validate Face ID, haptics, or real-device accessibility."
   ],
   "notes": [
     "Repository artifacts are the source of truth; prior chat context is optional context only.",
-    "HAPTIC-001 is explicitly authorized for autonomous implementation after this documentation branch is merged.",
-    "The first slice is limited to presence, attention, confirmation, softSignal, and emergencyStop semantic events.",
-    "No custom Core Haptics waveform work is authorized unless the Expo-compatible path is documented as insufficient."
+    "Chapters 1–5 trust/moderation foundation is merged including real Consent Snapshot display (ADR 0036).",
+    "PHYSICAL_BETA_WALKTHROUGH.md is the founder/private checklist; completing it is not external beta approval.",
+    "HAPTIC-001 remains a pending implementation track after BETA-001 findings or in parallel if preferred."
   ]
 }

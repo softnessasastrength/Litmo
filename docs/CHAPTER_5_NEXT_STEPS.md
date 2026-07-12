@@ -57,10 +57,14 @@ Started 2026-07-12 after Chapter 4 engineering completion
     `compatibility` rows (no mock fixtures)
   - Demo path (no `sessionId`) unchanged
   - Requires `EXPO_PUBLIC_BACKEND_URL` + snapshot service for create
+- **Physical beta walkthrough checklist** (`docs/PHYSICAL_BETA_WALKTHROUGH.md`):
+  - Track A demo (Expo Go) + Track B real two-account path
+  - Chapter 5 safety smoke + accessibility matrix
+  - Evidence rules; not external TestFlight approval
 
 ## Next coherent slices (in order)
 
-1. Physical-device accessibility + beta validation walkthrough.
+1. **Execute** physical walkthrough on device; file defects by checklist ID.
 2. Richer staff evidence access (encrypted notes are device-bound today).
 3. Optional: end active sessions on matching_hold (product still open for blocks).
 
