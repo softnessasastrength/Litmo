@@ -70,3 +70,19 @@ Docker became available on this machine, unblocking the "requires backend/DB wor
 - Deliberately granted **no** `INSERT`/`UPDATE` on `sessions` or `session_events` to `authenticated` yet. Both pgTAP-verified (`supabase/tests/session_lifecycle.test.sql`): a participant can read their own session and its audit trail; a non-participant can read neither; and any direct write attempt is rejected outright, since the transition function this ADR calls for — the only thing that should ever be allowed to write these rows — does not exist yet.
 
 Still not done: the `transition_session(...)`-style Postgres function itself (actor authorization, mirroring `sessionTransitions` in SQL, idempotency-key handling, snapshot-version preconditions for `ready -> active`), and everything downstream of it (realtime sync, connectivity recovery, wrap-up, request creation/accept/decline/cancel endpoints). This is the next concrete slice.
+
+## Update: transactional transition authority landed
+
+Migration `008_transition_session.sql` implements `transition_session(session_id, to_state, idempotency_key, metadata)` as the sole authenticated lifecycle write path:
+
+- `SECURITY DEFINER` with an empty search path, executable by `authenticated` but not `anon` or `public`;
+- locks the session row before checking replay or current state, serializing concurrent actions on one session;
+- verifies `auth.uid()` is either participant without revealing whether an unauthorized session exists;
+- returns the first event's resulting state for a repeated `(session_id, idempotency_key)` and writes no duplicate event;
+- mirrors the exact fifteen canonical graph edges in SQL, treats nonterminal same-state calls as no-op retries, and rejects every transition from a terminal state;
+- updates `sessions.status` and inserts one `session_events` record in the same transaction; and
+- restricts participant-readable metadata to enumerated `source` and `trigger` values, preventing raw notes or rejection reasons from entering the general audit trail.
+
+The SQL graph must be hand-mirrored because PostgreSQL cannot import the TypeScript module. The pgTAP test builds the canonical edge fixture explicitly and calls the function for all 144 state pairs; any accepted/rejected-edge drift, wrong resulting state, or wrong event count fails the suite. The same test covers RLS visibility, direct-write denial, non-participant and anonymous denial, idempotent replay, actor/event fields, and metadata rejection.
+
+This boundary currently answers only whether the caller is one of the two participants. Transition-specific roles (for example, only the recipient accepting or a trusted server expiring), request creation, and the snapshot-confirmation precondition for `ready -> active` require the next persistence slices and are intentionally not implied by this function.

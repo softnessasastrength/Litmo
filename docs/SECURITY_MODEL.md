@@ -15,6 +15,7 @@ Service-role keys, JWT secrets, database passwords, and moderation credentials m
 - Cross-user discovery uses a narrow security-definer function that omits private notes, consent preferences, and touch details.
 - Structured development logs redact keys containing consent, body-zone, nervous-system, note, password, token, secret, or session terms.
 - External errors map to stable public codes and never return raw policy or database details.
+- Session lifecycle rows and their append-only audit events are participant-readable but not directly writable by authenticated clients. `transition_session(...)` is a `SECURITY DEFINER` function with an empty search path; it row-locks before validation, requires `auth.uid()` to match either participant, and deliberately returns the same error for a missing session and a stranger-owned session. Its audit metadata is an enumerated object rather than arbitrary text. Snapshot confirmation and transition-specific role authorization are not yet enforced and remain release blockers.
 
 ## Authentication
 

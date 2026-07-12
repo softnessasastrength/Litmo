@@ -9,9 +9,9 @@ Written 2026-07-12 so a break in work (or a new session/agent) can resume withou
 - Docker/local Supabase is working on this machine (a real, hard-won milestone — see `docs/MACHINE_SETUP.md` if it ever needs rebuilding). `npm run db:start && npm run db:reset` gets a fully working local backend.
 - Branch: `agent/chapter-4-session-lifecycle`, pushed. No PR opened yet.
 
-## Deliverable 1 — the `transition_session(...)` Postgres function
+## Deliverable 1 — the `transition_session(...)` Postgres function (complete)
 
-The single most important next piece. Everything else in Chapter 4 depends on it existing.
+Implemented in migration `008_transition_session.sql`. The function and the 144-pair graph matrix pass locally; see ADR 0005's latest update and the 2026-07-12 changelog entry. Snapshot-version matching at `ready -> active` remains correctly deferred to Deliverable 2.
 
 **What it needs to do**, atomically, in one transaction:
 
@@ -27,7 +27,7 @@ The single most important next piece. Everything else in Chapter 4 depends on it
 
 **Don't implement yet** (explicitly deferred per ADR 0005): snapshot-version matching at `ready -> active` (needs the canonical snapshot persisted somewhere first — see Deliverable 2) and realtime broadcast of the change (Supabase Realtime, separate concern).
 
-## Deliverable 2 — persist the canonical Consent Snapshot
+## Deliverable 2 — persist the canonical Consent Snapshot (next)
 
 `shared/src/consentSnapshot.ts` already has `createConsentSnapshot`, `confirmSnapshot`, `invalidateForMaterialChange`, and `withdrawConsent` — all pure, all tested. None of it is persisted anywhere yet (`docs/KNOWN_LIMITATIONS.md`'s "Release blockers" section calls this out explicitly).
 

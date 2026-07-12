@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — Chapter 4: transactional session transitions
+
+### Summary
+
+Added migration `008_transition_session.sql`, the sole authenticated write boundary for lifecycle state changes. It applies participant authorization, row locking, graph validation, session-scoped idempotency, atomic audit insertion, and constrained privacy-safe metadata. The SQL test now exercises all 144 state pairs against the canonical graph and covers replay, authorization, RLS visibility, direct-write denial, and audit contents.
+
+### User-visible impact
+
+None yet; mobile session screens still use isolated demo state. This establishes the durable server authority they will call later.
+
+### Developer impact
+
+Authenticated clients may execute `transition_session(...)` but still cannot directly insert or update `sessions` or `session_events`. The function currently permits either participant to invoke any graph-valid edge; transition-specific requester/recipient/system roles remain deliberately unimplemented until request creation and expiration are designed.
+
+### Migration and setup impact
+
+Run `npm run db:reset` to apply migration 008. `npx supabase test db` now runs 25 pgTAP assertions across the RLS and lifecycle files (17 lifecycle assertions, including the exhaustive transition matrix).
+
+### Related decision and roadmap
+
+- `docs/adr/0005-session-lifecycle-state-machine.md`
+- `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
+
 ## 2026-07-12 — Bundled display typography and welcome artwork
 
 ### Summary

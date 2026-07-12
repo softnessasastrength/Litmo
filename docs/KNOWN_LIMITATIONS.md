@@ -9,6 +9,7 @@
 ## Security and privacy limitations
 
 - Snapshot fingerprints detect deterministic changes but are not cryptographic signatures. Impact: they must not be treated as tamper-proof evidence. Mitigation: confirmation compares the full canonical fingerprint in the domain. Removal criterion: server-generated cryptographic hashes stored transactionally with immutable snapshots.
+- `transition_session(...)` currently authorizes either participant for every graph-valid edge; it does not yet distinguish requester-only, recipient-only, or system-only actions. Impact: this is sufficient to prove the transactional state boundary but not to ship request acceptance, decline, or expiration. Mitigation: no mobile screen calls the function and no authenticated client can create a session directly. Removal criterion: document and enforce actor roles for each transition alongside the request-creation and expiration actions.
 - ~~Docker-backed RLS and integration tests remain blocked on this machine.~~ **Resolved 2026-07-12**: Docker installed, the full pgTAP RLS suite (`supabase/tests/rls.test.sql`, 8 assertions) and the two-client integration test (`npm run test:integration`) now pass locally. This surfaced and fixed a real bug (migration `006_grant_authenticated_table_privileges.sql`): migration 005's RLS policies existed with no underlying table-level `GRANT` to `authenticated`, so every signed-in user got "permission denied" on `profiles`, `onboarding_progress`, `touch_profile_versions`, and `consent_preference_versions` — not just in the test, in the real app too. Hosted CI (GitHub Actions) remains unrun from this branch.
 
 ## Safety limitations
@@ -23,5 +24,5 @@
 
 ## Release blockers
 
-- Canonical snapshot persistence, participant authorization, database immutability, mobile preview, and server-side confirmation are not implemented yet.
+- Canonical snapshot persistence, snapshot-version enforcement at `ready -> active`, transition-specific actor authorization, mobile preview, and server-side confirmation are not implemented yet. Basic participant authorization, idempotent transactional state changes, and append-only audit persistence now exist in migration 008.
 - Hosted CI (GitHub Actions) has not been run from this branch. The local Docker blocker is resolved (see above).
