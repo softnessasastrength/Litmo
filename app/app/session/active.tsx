@@ -12,6 +12,7 @@ import {
 import { colors } from "../../theme";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { emergencyStopService } from "../../services/emergencyStopService";
+import { PublicAppError } from "../../services/errors";
 import { sessionRepository } from "../../services/sessionRepository";
 
 const terminalEndedReason: Record<string, string> = {
@@ -115,19 +116,31 @@ function ActiveSessionContent() {
     endedRef.current = true;
     setEnded(true);
     setCompleting(true);
-    let readyForWrapup = !sessionId;
+    // "pending-sync" and "not-active" are different problems: a network
+    // failure is genuinely worth retrying later, while a session that
+    // was never actually active (e.g. reached here before both
+    // participants confirmed) cannot become completed by retrying -- it
+    // needs the earlier steps finished first. Distinguish by the mapped
+    // error's retryable flag rather than collapsing both into one vague
+    // "pending" state.
+    let reason: "together" | "pending-sync" | "not-active" = sessionId
+      ? "not-active"
+      : "together";
     if (sessionId) {
       try {
         await sessionRepository.completeSession(sessionId);
-        readyForWrapup = true;
-      } catch {
-        readyForWrapup = false;
+        reason = "together";
+      } catch (caught) {
+        reason =
+          caught instanceof PublicAppError && caught.retryable
+            ? "pending-sync"
+            : "not-active";
       }
     }
     router.replace({
       pathname: "/session/wrap-up",
       params: {
-        ended: readyForWrapup ? "together" : "pending-sync",
+        ended: reason,
         sessionId: sessionId ?? "",
       },
     });

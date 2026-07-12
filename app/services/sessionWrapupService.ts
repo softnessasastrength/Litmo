@@ -1,10 +1,12 @@
 import * as Crypto from "expo-crypto";
 import { sensitiveDataService } from "./sensitiveDataService.ts";
+import { pendingWrapupStorage } from "./secureSessionStorage.ts";
 import { supabase } from "./supabase.ts";
 import { createSessionWrapupService } from "./sessionWrapupServiceCore.ts";
 
 export const sessionWrapupService = createSessionWrapupService({
   newId: Crypto.randomUUID,
+  storage: pendingWrapupStorage,
   async encryptNote(sessionId, note) {
     const envelope = await sensitiveDataService.encryptText(
       note,

@@ -37,3 +37,16 @@ export const pendingSafetyActionStorage = {
   clear: () =>
     SecureStore.deleteItemAsync("pending-withdrawal-v1", emergencyOptions),
 };
+
+const pendingWrapupOptions: SecureStore.SecureStoreOptions = {
+  keychainService: "com.litmo.app.pending-wrapups",
+  keychainAccessible: SecureStore.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
+};
+export const pendingWrapupStorage = {
+  get: () =>
+    SecureStore.getItemAsync("pending-wrapup-v1", pendingWrapupOptions),
+  set: (value: string) =>
+    SecureStore.setItemAsync("pending-wrapup-v1", value, pendingWrapupOptions),
+  clear: () =>
+    SecureStore.deleteItemAsync("pending-wrapup-v1", pendingWrapupOptions),
+};

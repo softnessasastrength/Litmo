@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { computeCompatibility } from "@litmo/domain";
@@ -53,6 +53,15 @@ function ConsentSnapshotContent() {
     return buildSnapshotRows(result);
   }, [id]);
 
+  const proceededRef = useRef(false);
+  const proceedToActive = async () => {
+    if (proceededRef.current) return;
+    proceededRef.current = true;
+    await sessionRepository.activateSession(sessionId!);
+    void scheduleDemoNotification(4);
+    router.push({ pathname: "/session/active", params: { sessionId } });
+  };
+
   const confirmReal = async () => {
     setConfirmState("confirming");
     setConfirmError("");
@@ -68,9 +77,7 @@ function ConsentSnapshotContent() {
         setConfirmState("waiting");
         return;
       }
-      await sessionRepository.activateSession(sessionId!);
-      void scheduleDemoNotification(4);
-      router.push({ pathname: "/session/active", params: { sessionId } });
+      await proceedToActive();
     } catch (caught) {
       setConfirmState("error");
       setConfirmError(
@@ -80,6 +87,20 @@ function ConsentSnapshotContent() {
       );
     }
   };
+
+  // While waiting on the other participant, listen for their confirmation
+  // instead of requiring a manual "Check again" tap.
+  useEffect(() => {
+    if (confirmState !== "waiting" || !sessionId) return;
+    const unsubscribe = sessionRepository.subscribeToSession(
+      sessionId,
+      (session) => {
+        if (session.status === "ready") void proceedToActive();
+      },
+    );
+    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [confirmState, sessionId]);
 
   const confirm = () => {
     if (sessionId) {

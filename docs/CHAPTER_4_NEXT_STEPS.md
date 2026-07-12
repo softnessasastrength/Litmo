@@ -56,12 +56,15 @@ Landed 2026-07-12 (`docs/adr/0015-session-request-creation-and-recipient-authori
 
 Landed 2026-07-12 (`docs/adr/0016-session-realtime-and-real-timer.md`): `/session/active`'s timer now computes real elapsed time from `sessions.started_at` (set by `transition_session` on `ready -> active`), and a Realtime subscription (`sessions`/`session_events` added to `supabase_realtime`) navigates a participant to wrap-up automatically when the other participant ends the session.
 
-Not done:
+Landed 2026-07-12 (`docs/adr/0017-wrapup-offline-retry-and-remaining-realtime-gaps.md`): wrap-up submissions now durably retry after a network failure (mirroring `emergencyStopService`'s pending-storage pattern); `mapExternalError` correctly marks an invalid-transition error as non-retryable, so `session/active.tsx` can distinguish a genuine network failure (`ended=pending-sync`) from a session that was never actually activated (`ended=not-active`), each with accurate wrap-up copy; and `consent-snapshot.tsx`'s "waiting for the other person" state now proceeds automatically via Realtime instead of requiring "Check again."
 
-- Realtime/push notification when a new request arrives, or when the other participant confirms a snapshot — `consent-snapshot.tsx`'s "waiting" state still requires manually tapping "Check again" (no subscription wired there yet, only on the active-session screen).
-- More precise wrap-up copy for "this session never got activated" vs. genuine connectivity pending-sync (currently the same copy covers both).
-- Wrap-up submission itself has no offline retry/queue (only the Soft Signal path does, via `emergencyStopService`'s pending-storage pattern).
-- No blocking/eligibility checks before request creation (no blocking system exists anywhere in this codebase), and no request expiration timestamps/jobs.
+Not done — both require a product design decision, not just wiring, and are deliberately not invented here:
+
+- **Blocking/eligibility checks before request creation.** No blocking system exists anywhere in this codebase. Needs a decision on what "blocked" means (mutual block, one-way block, report-triggered) before it can be built.
+- **Request expiration timestamps/jobs.** Needs a decision on mechanism (a scheduled job vs. a check-on-read pattern evaluated whenever a request is loaded) and on the actual expiration window.
+
+Also still open: the Express backend's LAN dependency for snapshot creation (accepted trade-off for now, see ADR 0015's addendum), and the two-client Chapter 4 integration test the original roadmap doc calls for.
+
 - The Express backend snapshot-creation dependency only works when the backend process is running and reachable on the same LAN as the phone — an accepted trade-off for now (see the architecture decision above), revisit when scaling past one device.
 
 The database half of wrap-up is complete in migration 012 and ADR 0008. The database half and mobile UI for request creation, response, snapshot creation, and confirmation are all complete and locally verified (migrations 015, ADR 0015). The next real piece of Deliverable 3 is device-verifying dual confirmation, then replacing the local timer with Realtime.

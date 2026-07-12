@@ -16,6 +16,7 @@ import { authService } from "../services/authService";
 import { deviceRegistrationService } from "../services/deviceRegistrationService";
 import { sensitiveDataService } from "../services/sensitiveDataService";
 import { emergencyStopService } from "../services/emergencyStopService";
+import { sessionWrapupService } from "../services/sessionWrapupService";
 import { authReducer, initialAuthState, protectedRouteFor } from "./authState";
 type AuthValue = ReturnType<typeof authReducer> & {
   requestAccountCode(email: string, displayName: string): Promise<void>;
@@ -37,6 +38,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     try {
       await deviceRegistrationService.verify();
       await emergencyStopService.reconcile();
+      await sessionWrapupService.reconcile();
       const profile = await profileRepository.getOwnProfile(session.user.id);
       dispatch({
         type: "RESTORED",

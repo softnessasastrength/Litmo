@@ -74,6 +74,11 @@ export function mapExternalError(error: unknown): PublicAppError {
       "permission_denied",
       "This information is private or unavailable.",
     );
+  if (candidate?.code === "55000")
+    return new PublicAppError(
+      "validation_failed",
+      "That action isn't available for this session right now.",
+    );
   if (message.includes("network") || message.includes("fetch"))
     return new PublicAppError(
       "network_unavailable",

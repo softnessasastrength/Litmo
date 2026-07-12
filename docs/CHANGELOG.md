@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — Wrap-up offline retry, precise pending-sync copy, snapshot-wait Realtime
+
+### Summary
+
+Closed three remaining small gaps from `docs/CHAPTER_4_NEXT_STEPS.md`: wrap-up submissions now durably retry after a network failure, the "pending-sync" wrap-up copy no longer conflates a real network failure with a session that was never activated, and the consent-snapshot "waiting for the other person" state updates live via Realtime instead of needing a manual recheck.
+
+### User-visible impact
+
+A wrap-up reflection is never lost to a flaky connection — it retries automatically next app launch. Ending a session together shows accurate copy depending on what actually happened. Confirming a snapshot while waiting on the other participant now proceeds automatically the moment they confirm.
+
+### Developer impact
+
+`sessionWrapupServiceCore.submit` now returns `{status: "saved"|"pending_sync"}` instead of throwing on network failure, with a new `reconcile()` wired into `AuthContext.tsx` alongside the existing `emergencyStopService.reconcile()`. Added `pendingWrapupStorage` (Keychain). Fixed `mapExternalError` to map Postgres errcode `55000` to non-retryable `validation_failed` — previously it fell into the generic always-retryable fallback, making a genuine state error indistinguishable from a real network failure. `session/active.tsx`'s `endTogether()` now branches on `error.retryable` to choose between `ended=not-active` and `ended=pending-sync`.
+
+### Migration and setup impact
+
+No new migration. Typecheck, 51 app tests (up from 46), lint, integration test, and a clean `db:reset` with 101/101 pgTAP all pass.
+
+### Related decision and roadmap
+
+- `docs/adr/0017-wrapup-offline-retry-and-remaining-realtime-gaps.md`
+- `docs/CHAPTER_4_NEXT_STEPS.md`
+
 ## 2026-07-12 — Real session timer and Realtime updates
 
 ### Summary

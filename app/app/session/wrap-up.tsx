@@ -68,6 +68,11 @@ export default function SessionWrapUpScreen() {
     setBusy(true);
     setError("");
     try {
+      // Both "saved" and "pending_sync" mean this device has durably
+      // recorded the reflection -- pending_sync just means the network
+      // call failed and will retry on next app restart (mirrors
+      // emergencyStopService's offline-queue pattern), not that anything
+      // was lost.
       await sessionWrapupService.submit(sessionId!, outcome, note || null);
       router.push("/profile/trust-ledger");
     } catch (caught) {
@@ -92,7 +97,9 @@ export default function SessionWrapUpScreen() {
           ? "Soft Signal ended the session immediately. You do not need to explain why."
           : ended === "pending-sync"
             ? "The session stopped on this device. Litmo will keep retrying the private stop request when a connection returns. It cannot resume here."
-            : "You ended the session together."}
+            : ended === "not-active"
+              ? "This session hadn't fully started yet, so it can't be marked complete. Nothing was recorded as ended — you can return and pick up where you left off."
+              : "You ended the session together."}
       </Body>
       <View style={styles.question}>
         <Text style={styles.questionText}>
