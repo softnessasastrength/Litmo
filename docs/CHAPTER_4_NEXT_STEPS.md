@@ -81,6 +81,8 @@ Landed 2026-07-12 (`docs/adr/0022-open-session-resume-and-preactivation-withdraw
 
 Landed 2026-07-12: Home open-session cards refresh via `subscribeToParticipantSessions`; resume of `accepted` calls `beginConsentReview`; match detail can cancel a just-sent request by session id.
 
+Landed 2026-07-12: resume of `ready` activates and opens `/session/active`; Consent Snapshot leaves cleanly if the counterpart cancels/expires the session; integration covers cancel + `list_open_sessions`.
+
 The database half of wrap-up is complete in migration 012 and ADR 0008. Request create/accept/decline/cancel/expire, snapshot, Realtime, offline retry, resume, and two-client integration are largely complete. This document is mainly a handoff for remaining policy/release items.
 
 ## Not yet scoped (fine to leave for later)

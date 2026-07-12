@@ -25,7 +25,7 @@ type OpenSession = {
 
 function resumeLabel(status: string): string {
   if (status === "active") return "Return to active session";
-  if (status === "ready") return "Continue — both confirmed";
+  if (status === "ready") return "Start session — both confirmed";
   if (status === "consent_pending") return "Continue consent review";
   if (status === "accepted") return "Begin consent review";
   return "Open session";
@@ -81,6 +81,19 @@ export default function HomeTabScreen() {
     setResumingId(session.id);
     try {
       if (session.status === "active") {
+        router.push({
+          pathname: "/session/active",
+          params: { sessionId: session.id },
+        });
+        return;
+      }
+      // Both confirmed: activate (idempotent if already active) and resume timer.
+      if (session.status === "ready") {
+        try {
+          await sessionRepository.activateSession(session.id);
+        } catch {
+          // If activation races, still open active — getSession will reflect truth.
+        }
         router.push({
           pathname: "/session/active",
           params: { sessionId: session.id },

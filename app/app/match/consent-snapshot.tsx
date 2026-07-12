@@ -40,9 +40,10 @@ function ConsentSnapshotContent() {
   }>();
   const [decision, setDecision] = useState("");
   const [confirmState, setConfirmState] = useState<
-    "idle" | "confirming" | "waiting" | "error" | "withdrawing"
+    "idle" | "confirming" | "waiting" | "error" | "withdrawing" | "ended"
   >("idle");
   const [confirmError, setConfirmError] = useState("");
+  const [lifecycleNote, setLifecycleNote] = useState<string | null>(null);
   const [snapshot, setSnapshot] = useState<PersistedSnapshot | null>(null);
   const rows = useMemo(() => {
     const result = computeCompatibility(
@@ -54,12 +55,20 @@ function ConsentSnapshotContent() {
   }, [id]);
 
   const proceededRef = useRef(false);
+  const leftRef = useRef(false);
   const proceedToActive = async () => {
-    if (proceededRef.current) return;
+    if (proceededRef.current || leftRef.current) return;
     proceededRef.current = true;
     await sessionRepository.activateSession(sessionId!);
     void scheduleDemoNotification(4);
     router.push({ pathname: "/session/active", params: { sessionId } });
+  };
+
+  const leaveEnded = (message: string) => {
+    if (leftRef.current) return;
+    leftRef.current = true;
+    setConfirmState("ended");
+    setLifecycleNote(message);
   };
 
   const confirmReal = async () => {
@@ -88,19 +97,47 @@ function ConsentSnapshotContent() {
     }
   };
 
-  // While waiting on the other participant, listen for their confirmation
-  // instead of requiring a manual "Check again" tap.
+  // Real sessions: hydrate status, leave if the counterpart already cancelled,
+  // activate if already ready, and listen for ready / terminal changes.
   useEffect(() => {
-    if (confirmState !== "waiting" || !sessionId) return;
+    if (!sessionId) return;
+    let cancelled = false;
+    const handleStatus = (status: string) => {
+      if (cancelled || leftRef.current) return;
+      if (status === "ready" || status === "active") {
+        void proceedToActive();
+        return;
+      }
+      if (
+        status === "cancelled" ||
+        status === "expired" ||
+        status === "declined" ||
+        status === "soft_signaled" ||
+        status === "safety_ended" ||
+        status === "completed"
+      ) {
+        leaveEnded(
+          status === "cancelled" || status === "declined"
+            ? "This consent process ended. No session will begin."
+            : status === "expired"
+              ? "This request expired before consent finished."
+              : "This session is no longer available for consent review.",
+        );
+      }
+    };
+    void sessionRepository.getSession(sessionId).then((session) => {
+      handleStatus(session.status);
+    });
     const unsubscribe = sessionRepository.subscribeToSession(
       sessionId,
-      (session) => {
-        if (session.status === "ready") void proceedToActive();
-      },
+      (session) => handleStatus(session.status),
     );
-    return unsubscribe;
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [confirmState, sessionId]);
+  }, [sessionId]);
 
   const confirm = () => {
     if (sessionId) {
@@ -191,11 +228,21 @@ function ConsentSnapshotContent() {
           </Text>
           <Text style={styles.waitingBody}>
             Waiting for the other person to confirm the same snapshot. This
-            screen updates automatically when they do.
+            screen updates automatically when they do — or if they withdraw.
           </Text>
         </View>
       ) : null}
-      {decision !== "no" ? (
+      {confirmState === "ended" && lifecycleNote ? (
+        <View style={styles.stop}>
+          <Text style={styles.stopTitle}>Consent review ended</Text>
+          <Text style={styles.stopBody}>{lifecycleNote}</Text>
+          <Button
+            label="Back to home"
+            onPress={() => router.replace("/home")}
+          />
+        </View>
+      ) : null}
+      {decision !== "no" && confirmState !== "ended" ? (
         <Button
           label={
             confirmState === "confirming"
@@ -206,7 +253,11 @@ function ConsentSnapshotContent() {
                   ? "Confirm this snapshot"
                   : "Confirm this mock snapshot"
           }
-          disabled={decision !== "yes" || confirmState === "confirming"}
+          disabled={
+            decision !== "yes" ||
+            confirmState === "confirming" ||
+            confirmState === "waiting"
+          }
           onPress={confirm}
         />
       ) : null}
