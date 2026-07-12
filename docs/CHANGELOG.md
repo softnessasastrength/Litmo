@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — Chapter 5: restriction lifecycle gates + active report
+
+### Summary
+
+Staff restrictions now cancel pending requests and block forward session
+lifecycle transitions (accept → active). Decline, cancel, and safety exits
+remain available. Active sessions gain a calm mid-session report entry.
+
+### User-visible impact
+
+- Restricted accounts cannot accept or advance sessions.
+- Applying a hold/ban cancels open requests involving that account.
+- Active session: **Report for human review** (does not end the session).
+
+### Developer impact
+
+- Migration `029_restriction_transition_gates.sql`
+- ADR 0031; pgTAP `restriction_transition_gates.test.sql`
+
+### Related decision and roadmap
+
+- `docs/adr/0031-restriction-lifecycle-gates.md`
+
 ## 2026-07-12 — Chapter 5: report entry from session wrap-up
 
 ### Summary
