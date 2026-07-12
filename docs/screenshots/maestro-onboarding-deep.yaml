@@ -1,0 +1,42 @@
+appId: com.litmo.app.dev
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    text: "Cancel"
+    optional: true
+- extendedWaitUntil:
+    visible: ".*Explore the prototype.*"
+    timeout: 20000
+- takeScreenshot: deep-01-welcome
+- tapOn: ".*Explore the prototype.*"
+- extendedWaitUntil:
+    visible: ".*Enter the fictional demo.*"
+    timeout: 15000
+- takeScreenshot: deep-02-entry
+- tapOn: ".*Enter the fictional demo.*"
+- extendedWaitUntil:
+    visible: ".*What should we call you.*"
+    timeout: 15000
+- takeScreenshot: deep-03-name
+- tapOn: "Your name"
+- inputText: "River"
+- hideKeyboard
+- takeScreenshot: deep-04-name-filled
+- tapOn:
+    text: ".*Continue.*|.*Next.*"
+    optional: true
+- takeScreenshot: deep-05-after-name
+- tapOn:
+    text: ".*Continue.*|.*Next.*"
+    optional: true
+- takeScreenshot: deep-06
+- tapOn:
+    text: ".*Continue.*|.*Next.*"
+    optional: true
+- takeScreenshot: deep-07
+- tapOn:
+    text: ".*Continue.*|.*Next.*|.*Finish.*|.*Done.*"
+    optional: true
+- takeScreenshot: deep-08
+- takeScreenshot: deep-09-final
