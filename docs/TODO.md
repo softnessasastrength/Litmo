@@ -42,3 +42,9 @@ This would replace Chapter 2's already-implemented and working Supabase email/pa
 - Whether this is scoped to iOS only (as specified) while other platforms (per `docs/roadmap/CHAPTERS_7_TO_13_PLATFORM_FUTURE.md`'s multi-platform chapter) get a separate, later-designed passwordless flow, or whether the architecture needs to anticipate cross-platform credential portability from the start.
 
 An ADR should be written to resolve these questions before implementation starts, per `docs/DOCUMENTATION_STANDARD.md`.
+
+## Dark mode (soft palette)
+
+Status: **not started — explicitly deferred, do not start until asked**
+
+Add a dark mode. Explicit direction from the founder: it should feel "soft," matching the existing warm/muted palette (`app/theme.ts` — cream/paper/moss/plum/apricot) rather than a stark black-and-white inversion. Whenever this is picked up, derive dark-mode equivalents that keep the same emotional register (calm, warm, unhurried) rather than just running the existing colors through an automatic inverter.
