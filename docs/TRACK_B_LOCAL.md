@@ -40,9 +40,14 @@ Sign-in → **Sign in with seed account** (development only; ADR 0041).
 With Docker + reset:
 
 ```bash
-npm run test:integration   # Chapter 4 two-client lifecycle + snapshot
+npm run test:integration   # includes Track B seed lifecycle + Chapter 4
 env HOME=/tmp npx supabase test db
 ```
+
+`integration/track-b-seed-accounts.test.mjs` signs in as the real seed emails
+(`maya.demo` / `eli.demo`), checks discovery, and runs request → snapshot →
+active → Soft Signal → wrap-up. That is the automated half of B7–B15/B17;
+physical B1–B6 / Face ID / UI chrome remains founder-owned.
 
 ## Checklist
 

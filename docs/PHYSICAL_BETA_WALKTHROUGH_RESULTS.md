@@ -48,7 +48,7 @@
 | Prep | `bash scripts/setup-track-b-local.sh` then `npm run api` + `npm run mobile` |
 | Sign-in | Development seed form: `maya.demo@litmo.local` / `LitmoDemo123!` (ADR 0041) |
 | Guide | `docs/TRACK_B_LOCAL.md` |
-| Automated (2026-07-12 agent) | Docker up; setup script; **all four seed emails** password grant HTTP 200; `npm run test:integration` **3/3**; `env HOME=/tmp npx supabase test db` **240/240** |
+| Automated (2026-07-12 agent) | Docker up; setup script; **all four seed emails** password grant HTTP 200; `npm run test:integration` **5/5** (includes seed maya↔eli full lifecycle); `env HOME=/tmp npx supabase test db` **240/240** |
 | Seed bug fixed | Seed rows left GoTrue token columns NULL → password login 500; fixed in `supabase/seed.sql` + setup verification (ADR 0041 addendum) |
 | Next | Founder/operator completes **B1–B26 on device(s)** with two accounts (Face ID + UI path) |
 

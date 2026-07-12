@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-07-12 — Track B seed-account integration test
+
+### Summary
+
+Added an integration scenario that exercises the real BETA-001 seed accounts
+(password grant, discovery, full session lifecycle with trusted snapshot), so
+the founder Track B path cannot regress without failing `npm run test:integration`.
+
+### Developer impact
+
+- `integration/track-b-seed-accounts.test.mjs` (2 tests; suite total 5)
+- Documented under `docs/TRACK_B_LOCAL.md`
+
+### Related decision and roadmap
+
+- `docs/TRACK_B_LOCAL.md`, BETA-001 / ADR 0041
+
 ## 2026-07-12 — Fix Track B seed password sign-in (GoTrue tokens)
 
 ### Summary
