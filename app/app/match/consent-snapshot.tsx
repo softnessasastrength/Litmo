@@ -24,6 +24,7 @@ import {
   sessionRepository,
   type PersistedSnapshot,
 } from "../../services/sessionRepository";
+import { hapticService } from "../../services/hapticService";
 import { colors } from "../../theme";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { FailureState, LoadingState } from "../../components/AsyncState";
@@ -72,6 +73,7 @@ function ConsentSnapshotContent() {
 
   const proceededRef = useRef(false);
   const leftRef = useRef(false);
+  const attentionPlayedRef = useRef(false);
   const proceedToActive = async () => {
     if (proceededRef.current || leftRef.current) return;
     proceededRef.current = true;
@@ -125,6 +127,16 @@ function ConsentSnapshotContent() {
     if (isReal) void loadRealSnapshot();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [realSessionId]);
+
+  // attention once when the snapshot is ready to read — invites a pause only;
+  // never implies mutual agreement (confirmation is a separate, dual action).
+  useEffect(() => {
+    if (attentionPlayedRef.current) return;
+    if (isReal && realLoad !== "ready") return;
+    if (isReal && realLoad === "error") return;
+    attentionPlayedRef.current = true;
+    void hapticService.play("attention");
+  }, [isReal, realLoad]);
 
   const confirmReal = async () => {
     setConfirmState("confirming");

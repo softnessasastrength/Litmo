@@ -4,10 +4,10 @@
 
 ## Active milestone
 
-- **Name:** Private-beta validation (physical walkthrough) and guided-practice expansion
+- **Name:** Private-beta validation (physical walkthrough)
 - **Status:** active
 - **Branch:** `main` is the current integrated baseline; use a feature branch for new work.
-- **Latest known coherent milestone:** Chapters 1–5 trust/moderation slices, real discovery, real Consent Snapshot display (ADR 0036), and `docs/PHYSICAL_BETA_WALKTHROUGH.md` checklist.
+- **Latest known coherent milestone:** Chapters 1–5, LEARN-002, HAPTIC-001, matching-hold ends open sessions (ADR 0038), semantic haptics (ADR 0039), physical walkthrough checklist.
 
 ## Completed foundation
 
@@ -28,11 +28,10 @@ Execute `docs/PHYSICAL_BETA_WALKTHROUGH.md` on a physical iPhone (demo track + r
 
 ## Priority next work
 
-1. **Run** the physical-iPhone walkthrough (Tracks A/B + accessibility) using `docs/PHYSICAL_BETA_WALKTHROUGH.md`.
+1. **Run** the physical-iPhone walkthrough (Tracks A/B + accessibility + haptic feel) using `docs/PHYSICAL_BETA_WALKTHROUGH.md`.
 2. Reconcile walkthrough findings into tests, ADRs, `KNOWN_LIMITATIONS.md`, and release docs.
-3. Build a fictional two-person guided-practice flow that teaches the full session lifecycle without creating a real session.
-4. Staff encrypted-note evidence access; optional matching_hold ending active sessions (product open).
-5. Clear external TestFlight blockers only when intentionally starting private alpha distribution.
+3. Optional: mid-session block ending active sessions (product open).
+4. Clear external TestFlight blockers only when intentionally starting private alpha distribution.
 
 ## Verification baseline
 

@@ -6,17 +6,7 @@ Only one implementation task should normally be `active`. Every status change mu
 
 ## Active
 
-### HAPTIC-001 — Semantic haptic language foundation
-
-- **Status:** active
-- **Owner:** current coding agent
-- **Goal:** Implement a restrained, accessible, user-controlled semantic haptic vocabulary for guided learning, Soft Signal acknowledgement, and emergency-stop acknowledgement.
-- **Depends on:** LEARN-001, FOUNDATION-001
-- **Specification:** `docs/roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md`
-- **Acceptance criteria:** one semantic service; five documented events; local preference; no direct platform haptic calls outside the adapter; learning integration; safety actions independent of playback; unit/integration coverage; synchronized documentation; physical-device validation documented or explicitly deferred to BETA-001.
-- **Verification:** pending implementation. Record exact commands and results; never claim physical haptic validation from simulator-only testing.
-- **Notes:** Haptics supplement visible and spoken meaning. They never represent remote consent, trust, safety, or another person’s presence. Do not add custom Core Haptics waveforms in the first slice unless the documented Expo-compatible path is insufficient.
-- **Next action:** read `AGENTS.md` and `docs/roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md`, inspect current dependencies and preference patterns, then implement the semantic service as the first coherent commit.
+None. Founder **BETA-001** physical walkthrough is the next operator task.
 
 ## Pending
 
@@ -24,9 +14,9 @@ Only one implementation task should normally be `active`. Every status change mu
 
 - **Status:** pending
 - **Owner:** founder plus current coding agent
-- **Goal:** Verify the integrated `main` experience on a physical iPhone from entry through learning, consent, session, stop, and wrap-up.
+- **Goal:** Verify the integrated `main` experience on a physical iPhone from entry through learning, consent, session, stop, wrap-up, and haptic feel.
 - **Specification:** `docs/PHYSICAL_BETA_WALKTHROUGH.md` (Tracks A demo, B real two-account, C accessibility)
-- **Acceptance criteria:** documented test script (done); exact build/install method; passkey and Face ID behavior; privacy-safe backgrounding; session request; **real** Consent Snapshot (ADR 0036); realtime transition; Soft Signal; wrap-up; Chapter 5 safety smoke; failures recorded without euphemism.
+- **Acceptance criteria:** documented test script (done); exact build/install method; passkey and Face ID behavior; privacy-safe backgrounding; session request; **real** Consent Snapshot (ADR 0036); realtime transition; Soft Signal; wrap-up; Chapter 5 safety smoke; five haptic events recognizability; failures recorded without euphemism.
 - **Next action:** execute the walkthrough on device; fill the result columns and environment matrix; open fix PRs only when Fail items need code changes.
 
 ### ACCESS-001 — Physical-device accessibility review
@@ -56,6 +46,11 @@ Only one implementation task should normally be `active`. Every status change mu
 None recorded. External credentials, signing, App Store configuration, or policy review may block specific tasks and must be documented when encountered.
 
 ## Completed
+
+### HAPTIC-001 — Semantic haptic language foundation
+
+- **Status:** completed
+- **Result:** `hapticService` + `expo-haptics` adapter; five events; Settings toggle; learning / Soft Signal / Consent Snapshot integrations; unit tests. Physical feel validation deferred to BETA-001. ADR 0039.
 
 ### LEARN-002 — Full fictional guided-practice session
 

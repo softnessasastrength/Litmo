@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-07-12 — HAPTIC-001 + matching hold ends open sessions
+
+### Summary
+
+Semantic haptic vocabulary (`presence`, `attention`, `confirmation`,
+`softSignal`, `emergencyStop`) via `expo-haptics`, local Settings toggle, and
+limited learning / Soft Signal / Consent Snapshot integrations. Matching holds
+now cancel pre-activation and safety-end active sessions (same as permanent ban).
+
+### User-visible impact
+
+- Settings: **Haptics: on/off** (device-local).
+- Gentle haptics on learn entry, scenarios, module complete, Soft Signal, Consent Snapshot pause.
+- Staff matching hold closes live matching work for the restricted account.
+
+### Developer impact
+
+- `hapticService` / `hapticServiceCore` + unit tests; ADR 0039
+- Migration `034_matching_hold_ends_open_sessions.sql`; ADR 0038
+- pgTAP `matching_hold_sessions.test.sql`; permanent-ban test residual updated
+
+### Related decision and roadmap
+
+- `docs/adr/0038-matching-hold-ends-open-sessions.md`
+- `docs/adr/0039-semantic-haptic-language.md`
+- `docs/roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md`
+
 ## 2026-07-12 — LEARN-002: full fictional session practice module
 
 ### Summary

@@ -17,13 +17,13 @@ On `apply_account_restriction` with `kind = permanent_ban`:
 - Cancel `accepted` / `consent_pending` / `ready` sessions involving the user.
 - Transition `active` sessions involving the user to `safety_ended`.
 
-`matching_hold` still only cancels `requested` — does **not** auto-end active
-sessions (product choice: temporary holds should not yank people mid-session
-without a separate decision).
+~~`matching_hold` still only cancels `requested`~~ **Superseded for holds by
+ADR 0038 (2026-07-12):** matching holds now also cancel pre-activation and
+safety-end active sessions.
 
 ## Alternatives considered
 
-- Also end active sessions on matching_hold. Deferred.
+- Also end active sessions on matching_hold. ~~Deferred.~~ Accepted in ADR 0038.
 - Only cancel requested. Rejected for permanent ban residual risk.
 
 ## Consequences

@@ -1,5 +1,12 @@
 # Known limitations
 
+## Haptics
+
+- Semantic haptics (ADR 0039) use `expo-haptics`. Simulator and desktop cannot
+  validate comfort, intensity, or recognizability. Physical-device validation is
+  part of `docs/PHYSICAL_BETA_WALKTHROUGH.md` / BETA-001 — do not claim feel
+  acceptance from unit tests alone. Preference is device-local only (no sync).
+
 ## Age eligibility
 
 - Adult confirmation uses Apple Declared Age Range when the native module and

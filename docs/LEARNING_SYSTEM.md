@@ -34,6 +34,13 @@ Safety-critical modules (including the full practice path) are labeled as recomm
 
 Progress is intentionally local in this first slice. It contains only module identifiers, step positions, completion flags, and timestamps. It contains no reflections, sensitive free text, or social data.
 
+### Haptics (HAPTIC-001)
+
+Learning uses the semantic haptic service only at restrained points: `presence`
+on module entry, `attention` on scenario steps, `softSignal` when leaving Soft
+Signal practice steps, `confirmation` on module complete. Never on every Next.
+Haptics can be disabled in Settings; meaning always remains in copy.
+
 ## Progress behavior
 
 - Opening an unfinished module resumes at the saved step.

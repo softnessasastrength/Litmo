@@ -66,12 +66,16 @@ Started 2026-07-12 after Chapter 4 engineering completion
   - `get_moderation_case_evidence` pack: message, session meta, restriction,
     prior report counts (not a score)
   - Device-encrypted `private_note` remains optional/legacy opaque to staff
+- **Matching hold ends open work** (ADR 0038, migration 034):
+  - Holds cancel pre-activation and safety-end active (aligned with permanent ban)
+- **Semantic haptics** (ADR 0039 / HAPTIC-001):
+  - Five-event local vocabulary; Settings toggle; Soft Signal + learning hooks
 
 ## Next coherent slices (in order)
 
-1. **Execute** physical walkthrough on device; file defects by checklist ID.
-2. Optional: end active sessions on matching_hold (product still open for blocks).
-3. Optional: mid-session block ending active sessions (product open).
+1. **Execute** physical walkthrough on device (incl. haptic feel); file defects.
+2. Optional: mid-session block ending active sessions (product open).
+3. Optional: dedicated emergency-stop control distinct from Soft Signal UI copy.
 
 ## Product decisions still open
 
