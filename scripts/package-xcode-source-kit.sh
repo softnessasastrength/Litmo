@@ -5,7 +5,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 VERSION="${1:-dev}"
 NAME="Litmo-Xcode-Source-${VERSION}"
 STAGE="$ROOT/dist/$NAME"
-ARCHIVE="$ROOT/dist/$NAME.zip"
+ARCHIVE="$ROOT/dist/$NAME.tar.gz"
 
 rm -rf "$STAGE" "$ARCHIVE"
 mkdir -p "$STAGE"
@@ -42,8 +42,8 @@ cp "$STAGE/release/README-XCODE.md" "$STAGE/README.md"
 
 (
   cd "$ROOT/dist"
-  /usr/bin/zip -qry "$NAME.zip" "$NAME"
+  /usr/bin/tar -czf "$NAME.tar.gz" "$NAME"
 )
 
-/usr/bin/unzip -tq "$ARCHIVE" >/dev/null
+/usr/bin/tar -tzf "$ARCHIVE" >/dev/null
 printf '%s\n' "$ARCHIVE"
