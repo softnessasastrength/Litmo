@@ -160,6 +160,58 @@ export const sessionRepository = {
       throw mapExternalError(error);
     }
   },
+  /** Current status and activation time of a session (migration 016). */
+  async getSession(
+    sessionId: string,
+  ): Promise<{ status: string; startedAt: string | null }> {
+    try {
+      const { data, error } = await supabase
+        .from("sessions")
+        .select("status,started_at")
+        .eq("id", sessionId)
+        .single();
+      if (error) throw error;
+      return {
+        status: data.status as string,
+        startedAt: data.started_at as string | null,
+      };
+    } catch (error) {
+      throw mapExternalError(error);
+    }
+  },
+  /**
+   * Subscribes to real-time changes on a session row (migration 016 adds
+   * `sessions` to the `supabase_realtime` publication) so a participant sees
+   * the other participant's actions -- soft signal, completion -- without
+   * manually refreshing. Returns an unsubscribe function.
+   */
+  subscribeToSession(
+    sessionId: string,
+    onChange: (session: { status: string; startedAt: string | null }) => void,
+  ): () => void {
+    const channel = supabase
+      .channel(`session-${sessionId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "sessions",
+          filter: `id=eq.${sessionId}`,
+        },
+        (payload) => {
+          const row = payload.new as {
+            status: string;
+            started_at: string | null;
+          };
+          onChange({ status: row.status, startedAt: row.started_at });
+        },
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  },
   /** Incoming pending requests where the signed-in user is the recipient. */
   async listIncomingRequests(userId: string): Promise<
     Array<{

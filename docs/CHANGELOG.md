@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — Real session timer and Realtime updates
+
+### Summary
+
+Replaced `/session/active`'s fake local timer with a real one computed from `sessions.started_at`, and added a Realtime subscription so one participant sees the other's Soft Signal or completion without a manual refresh.
+
+### User-visible impact
+
+The elapsed timer on a real session now reflects actual activation time and survives backgrounding correctly. Ending a session on one device now automatically navigates the other participant's screen to wrap-up.
+
+### Developer impact
+
+Migration 016: `transition_session(...)` now sets `started_at` on `ready -> active`, and `sessions`/`session_events` are added to the `supabase_realtime` publication. Added `sessionRepository.getSession`/`subscribeToSession`. One new pgTAP assertion (101 total). See `docs/adr/0016-session-realtime-and-real-timer.md` for the full design, including a documented same-device double-navigation guard.
+
+### Migration and setup impact
+
+Run `npm run db:reset` to apply migration 016. Typecheck, 46 app tests, lint, integration test, and a clean `db:reset` with 101/101 pgTAP all pass.
+
+### Related decision and roadmap
+
+- `docs/adr/0016-session-realtime-and-real-timer.md`
+- `docs/CHAPTER_4_NEXT_STEPS.md`
+
 ## 2026-07-12 — Dual-confirmation verified on-device; backend architecture decision
 
 ### Summary

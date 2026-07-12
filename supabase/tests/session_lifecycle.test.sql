@@ -1,5 +1,5 @@
 begin;
-select plan(17);
+select plan(18);
 
 -- Canonical graph fixture. This edge list is intentionally explicit and must
 -- stay synchronized with shared/src/sessionLifecycle.ts. The cross-product
@@ -192,6 +192,16 @@ select is(
   ),
   0,
   'every valid edge writes exactly one event and invalid or no-op cases write none'
+);
+select is(
+  (
+    select count(*)::integer
+    from public.sessions s
+    join lifecycle_cases c on c.session_id = s.id
+    where c.from_state = 'ready' and c.to_state = 'active' and s.started_at is null
+  ),
+  0,
+  'reaching active records started_at (migration 016)'
 );
 
 select is(

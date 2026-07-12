@@ -54,14 +54,15 @@ Landed 2026-07-12 (`docs/adr/0015-session-request-creation-and-recipient-authori
 
 **Architecture decision (2026-07-12):** the Express backend + LAN-address approach for snapshot creation is deliberately kept as-is rather than moved to a Supabase Postgres/Edge function. Reasoning: single-developer, single-device local testing today — the LAN dependency is a non-issue at this scale. Revisit moving `createConsentSnapshot`'s logic into an Edge function specifically when scaling past the founder's own iPhone (multiple real testers/devices, or a hosted deployment), since that's when "backend must be running on a specific laptop reachable on the same network" actually becomes a blocker.
 
+Landed 2026-07-12 (`docs/adr/0016-session-realtime-and-real-timer.md`): `/session/active`'s timer now computes real elapsed time from `sessions.started_at` (set by `transition_session` on `ready -> active`), and a Realtime subscription (`sessions`/`session_events` added to `supabase_realtime`) navigates a participant to wrap-up automatically when the other participant ends the session.
+
 Not done:
 
-- Replace `/session/active`'s local timer with a real Realtime subscription now that a session can actually become `active`.
+- Realtime/push notification when a new request arrives, or when the other participant confirms a snapshot — `consent-snapshot.tsx`'s "waiting" state still requires manually tapping "Check again" (no subscription wired there yet, only on the active-session screen).
 - More precise wrap-up copy for "this session never got activated" vs. genuine connectivity pending-sync (currently the same copy covers both).
-- No Realtime/push notification when a new request arrives, or when the other participant confirms — `consent-snapshot.tsx`'s "waiting" state requires manually tapping "Check again."
 - Wrap-up submission itself has no offline retry/queue (only the Soft Signal path does, via `emergencyStopService`'s pending-storage pattern).
 - No blocking/eligibility checks before request creation (no blocking system exists anywhere in this codebase), and no request expiration timestamps/jobs.
-- The Express backend snapshot-creation dependency only works when the backend process is running and reachable on the same LAN as the phone — not viable for real-world (non-local) use. Revisit whether this logic should move into a Postgres/Edge function instead (flagged, not decided).
+- The Express backend snapshot-creation dependency only works when the backend process is running and reachable on the same LAN as the phone — an accepted trade-off for now (see the architecture decision above), revisit when scaling past one device.
 
 The database half of wrap-up is complete in migration 012 and ADR 0008. The database half and mobile UI for request creation, response, snapshot creation, and confirmation are all complete and locally verified (migrations 015, ADR 0015). The next real piece of Deliverable 3 is device-verifying dual confirmation, then replacing the local timer with Realtime.
 
