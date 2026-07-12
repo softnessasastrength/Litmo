@@ -7,13 +7,18 @@
     "scheme": "litmo",
     "userInterfaceStyle": "light",
     "icon": "./assets/icon.png",
-    "plugins": ["expo-router", "./plugins/withIOSXcode27Fixes.cjs"],
+    "plugins": [
+      "expo-router",
+      "./plugins/withIOSXcode27Fixes.cjs",
+      "./plugins/withoutPushEntitlement.cjs"
+    ],
     "experiments": {
       "typedRoutes": true
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.litmo.app"
+      "bundleIdentifier": "com.litmo.app",
+      "appleTeamId": "FHZSE6U4R5"
     },
     "android": {
       "adaptiveIcon": {

@@ -16,6 +16,7 @@ import {
   mockSnapshotNow,
 } from "../../data/mockConsentProfiles";
 import { buildSnapshotRows } from "../../lib/consentSnapshotView";
+import { scheduleDemoNotification } from "../../services/notifications";
 import { colors } from "../../theme";
 
 export default function ConsentSnapshotScreen() {
@@ -71,11 +72,23 @@ export default function ConsentSnapshotScreen() {
       <Button
         label="Confirm this mock snapshot"
         disabled={decision !== "yes"}
-        onPress={() => router.push("/session/active")}
+        onPress={() => {
+          void scheduleDemoNotification({
+            title: "Litmo (demo)",
+            body: "Your practice session is ready to begin.",
+            secondsFromNow: 4,
+          });
+          router.push("/session/active");
+        }}
       />
       <Body muted center>
         In a real Litmo session, each person would confirm independently. This
         prototype simulates both confirmations.
+      </Body>
+      <Body muted center>
+        Confirming will ask for notification permission and send one real local
+        notification a few seconds later, so you can see how session alerts will
+        actually work — not just a mockup.
       </Body>
     </Screen>
   );
