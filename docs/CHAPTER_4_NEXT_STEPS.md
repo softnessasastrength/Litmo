@@ -37,7 +37,7 @@ The `ready -> active` precondition is now enforced by a database trigger for eve
 
 ## Deliverable 3 — wire the mock session screens to real data
 
-`app/app/session/active.tsx`'s timer is still a local fake timer (no backend calls). What's now real, as of 2026-07-12 (`docs/adr/0014-wrap-up-mobile-wiring.md`):
+What is now real, as of 2026-07-12:
 
 - "End together" calls `transition_session(..., 'completed')` (`sessionRepository.completeSession`) before navigating to wrap-up; Soft Signal already called `transition_session`'s sibling `withdraw_session_consent` via `emergencyStopService`.
 - The wrap-up screen calls `submit_session_wrapup(...)` (`sessionWrapupService`) with the real five-value canonical outcome enum and an optional client-encrypted private note, when a real session ID and an authenticated (non-demo) user are present.
@@ -58,20 +58,24 @@ Landed 2026-07-12 (`docs/adr/0016-session-realtime-and-real-timer.md`): `/sessio
 
 Landed 2026-07-12 (`docs/adr/0017-wrapup-offline-retry-and-remaining-realtime-gaps.md`): wrap-up submissions now durably retry after a network failure (mirroring `emergencyStopService`'s pending-storage pattern); `mapExternalError` correctly marks an invalid-transition error as non-retryable, so `session/active.tsx` can distinguish a genuine network failure (`ended=pending-sync`) from a session that was never actually activated (`ended=not-active`), each with accurate wrap-up copy; and `consent-snapshot.tsx`'s "waiting for the other person" state now proceeds automatically via Realtime instead of requiring "Check again."
 
+Landed 2026-07-12 (`docs/adr/0018-request-expiration-check-on-read.md`): unanswered `requested` sessions now expire after 24 hours. PostgreSQL owns the rule through `request_expires_at(...)`, `list_incoming_requests()`, and stale-request handling inside both `request_session(...)` and `transition_session(...)`. The requests screen now shows each request's expiration timestamp, stale requests disappear the next time the recipient opens the list, and an old unanswered request no longer blocks a fresh request between the same two people forever.
+
 Not done — both require a product design decision, not just wiring, and are deliberately not invented here:
 
 - **Blocking/eligibility checks before request creation.** No blocking system exists anywhere in this codebase. Needs a decision on what "blocked" means (mutual block, one-way block, report-triggered) before it can be built.
-- **Request expiration timestamps/jobs.** Needs a decision on mechanism (a scheduled job vs. a check-on-read pattern evaluated whenever a request is loaded) and on the actual expiration window.
+- **Later pre-activation expiry beyond `requested`.** The canonical graph still permits `expired` from `consent_pending` and `ready`, but no product policy exists yet for how long mutual confirmation may remain pending before timing out.
 
-Also still open: the Express backend's LAN dependency for snapshot creation (accepted trade-off for now, see ADR 0015's addendum), and the two-client Chapter 4 integration test the original roadmap doc calls for.
+Also still open: the Express backend's LAN dependency for snapshot creation (accepted trade-off for now, see ADR 0015's addendum).
 
 - The Express backend snapshot-creation dependency only works when the backend process is running and reachable on the same LAN as the phone — an accepted trade-off for now (see the architecture decision above), revisit when scaling past one device.
 
-The database half of wrap-up is complete in migration 012 and ADR 0008. The database half and mobile UI for request creation, response, snapshot creation, and confirmation are all complete and locally verified (migrations 015, ADR 0015). The next real piece of Deliverable 3 is device-verifying dual confirmation, then replacing the local timer with Realtime.
+Landed 2026-07-12: the deterministic two-client Chapter 4 integration scenario (`integration/chapter4-session-lifecycle.test.mjs`, run via `npm run test:integration`). It covers request → accept → dual snapshot confirmation → activation → Soft Signal → independent private wrap-ups against local Supabase, using authenticated RPCs plus the same trusted snapshot service the Express route uses. Migration `018_service_role_snapshot_read_grants.sql` grants `service_role` SELECT on the three tables that repository must read (a pre-existing gap that made trusted snapshot creation fail closed with `snapshot_storage_failed`).
+
+The database half of wrap-up is complete in migration 012 and ADR 0008. The database half and mobile UI for request creation, response, request expiration, snapshot creation, and confirmation are all complete and locally verified (migrations 015 and 017, ADRs 0015 and 0018). Dual-confirmation device verification, the real timer/Realtime sync, and the two-client integration scenario are also already complete; this document is therefore now mainly a "what remains" handoff rather than an implementation checklist for those pieces.
 
 ## Not yet scoped (fine to leave for later)
 
-Realtime sync details, connectivity/offline recovery, request expiration (needs either a scheduled job or a check-on-read pattern — undecided), blocking/eligibility checks, and the two-client Chapter 4 integration test the roadmap doc calls for.
+Connectivity/offline recovery edge cases, later pre-activation expiry policy beyond `requested`, blocking/eligibility checks, and Realtime delivery for new incoming requests.
 
 ## Resolved 2026-07-12: mock discovery now has real accounts to request
 
@@ -82,5 +86,5 @@ Tracing exactly what `request_session(p_recipient_id uuid, ...)` would be called
 If picking this up fresh (new session, new agent, or just after a break):
 
 1. `git checkout agent/chapter-4-session-lifecycle` (or start a new branch off it if it's already merged).
-2. Confirm Docker/Supabase still work: `npm run db:start && npm run db:reset && npx supabase test db` should show 100/100 passing.
-3. Deliverables 1–2 and the wrap-up/request-creation database boundaries and mobile UI (ADRs 0005, 0006, 0008, 0014, 0015) are complete, and all three mock discovery personas now have real backing accounts. The next task is connecting an accepted request into the consent-snapshot/session flow (see "Still not done" above) — note that on-device iOS build verification may need a fresh Xcode Apple ID sign-in first if the free-tier session has expired again (see `docs/MACHINE_SETUP.md`).
+2. Confirm Docker/Supabase still work: `npm run db:start && npm run db:reset && env HOME=/tmp npx supabase test db` should show 111/111 passing.
+3. Deliverables 1–3's major request/confirm/activate/wrap-up boundaries are complete, including 24-hour request expiration and the two-client integration scenario (ADRs 0005, 0006, 0008, 0014, 0015, 0018; migration 018). The next task is one of the remaining chapter gaps above (blocking/eligibility policy, later pre-activation expiry, new-request Realtime, or offline recovery edge cases).

@@ -57,6 +57,12 @@ export const sessionRepository = {
         p_idempotency_key: `${decision}-${Crypto.randomUUID()}`,
       });
       if (error) throw error;
+      if (data !== decision) {
+        throw new PublicAppError(
+          "validation_failed",
+          "That request expired before you responded.",
+        );
+      }
       return data as string;
     } catch (error) {
       throw mapExternalError(error);
@@ -213,25 +219,29 @@ export const sessionRepository = {
     };
   },
   /** Incoming pending requests where the signed-in user is the recipient. */
-  async listIncomingRequests(userId: string): Promise<
+  async listIncomingRequests(): Promise<
     Array<{
       id: string;
       requesterId: string;
       createdAt: string;
+      expiresAt: string;
     }>
   > {
     try {
-      const { data, error } = await supabase
-        .from("sessions")
-        .select("id,user_a,created_at")
-        .eq("user_b", userId)
-        .eq("status", "requested")
-        .order("created_at", { ascending: false });
+      const { data, error } = await supabase.rpc("list_incoming_requests");
       if (error) throw error;
-      return (data ?? []).map((row) => ({
+      return (
+        (data as Array<{
+          id: string;
+          requester_id: string;
+          created_at: string;
+          expires_at: string;
+        }> | null) ?? []
+      ).map((row) => ({
         id: row.id as string,
-        requesterId: row.user_a as string,
+        requesterId: row.requester_id as string,
         createdAt: row.created_at as string,
+        expiresAt: row.expires_at as string,
       }));
     } catch (error) {
       throw mapExternalError(error);

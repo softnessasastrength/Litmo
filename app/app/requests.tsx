@@ -18,6 +18,7 @@ type IncomingRequest = {
   requesterId: string;
   requesterName: string;
   createdAt: string;
+  expiresAt: string;
 };
 
 export default function IncomingRequestsScreen() {
@@ -36,7 +37,7 @@ export default function IncomingRequestsScreen() {
     try {
       const [requests, { data: profiles, error: profilesError }] =
         await Promise.all([
-          sessionRepository.listIncomingRequests(user.id),
+          sessionRepository.listIncomingRequests(),
           supabase.rpc("discovery_profiles"),
         ]);
       if (profilesError) throw profilesError;
@@ -148,6 +149,15 @@ export default function IncomingRequestsScreen() {
                 {new Date(request.createdAt).toLocaleDateString(undefined, {
                   month: "short",
                   day: "numeric",
+                })}
+              </Body>
+              <Body muted>
+                Expires{" "}
+                {new Date(request.expiresAt).toLocaleString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
                 })}
               </Body>
               <View style={styles.actions}>

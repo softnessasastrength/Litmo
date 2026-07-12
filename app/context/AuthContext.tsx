@@ -57,11 +57,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
   };
   useEffect(() => {
-    if (environmentError)
-      return dispatch({
-        type: "FAILED",
-        error: mapExternalError(new Error(environmentError)),
-      });
+    // Missing Supabase URL/key must not trap the app on a hard error screen:
+    // the phone-visible demo path (ADR 0003) needs welcome → entry → demo
+    // with no Docker. Real sign-in still fails closed when env is absent.
+    if (environmentError) {
+      dispatch({ type: "RESTORED", session: null });
+      return;
+    }
     supabase.auth
       .getSession()
       .then(({ data, error }) =>

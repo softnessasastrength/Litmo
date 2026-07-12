@@ -27,11 +27,24 @@ If Face ID is absent, unenrolled, locked out, cancelled, unsupported, or fails, 
 
 ## Consequences
 
-Devices without Face ID cannot run Litmo. Expo Go is no longer a valid end-to-end iPhone path. The 30-second threshold is process-memory state; a process restart always returns to the stricter cold-launch lock.
+Devices without Face ID cannot open a **real authenticated** Litmo account session. The 30-second threshold is process-memory state; a process restart with a restored session always returns to the stricter cold-launch lock.
+
+## Amendment (2026-07-12): demo and pre-account exploration
+
+`docs/roadmap/PHONE_VISIBLE_VERTICAL_SLICE.md` requires a physical-iPhone path through Expo Go when compatible, using clearly labeled fictional demo data and no backend. Applying Face ID before any account exists made that path impossible: Expo Go cannot complete the same biometric policy, and demo mode never holds real private account data.
+
+**Refinement (does not weaken real-account policy):**
+
+- `biometricRequiredForAuthStatus(...)` returns true only for `authenticated`, `onboarding`, `authenticating`, and `registering`.
+- Demo mode (`demo`), signed-out exploration (`locked`), and non-session error/expired/revoked states skip the full-screen Face ID cover and SensitiveAccessGate step-up.
+- As soon as a real Supabase session is restored or an auth ceremony begins, Face ID is required again with the same fail-closed rules as this ADR originally defined (no passcode fallback).
+
+Rationale: Face ID protects real consent preferences, session state, and wrap-ups. The fictional demo path uses local fixtures only and is already labeled non-account, non-production. Skipping biometrics there is not a recovery bypass for real sessions.
 
 ## Follow-up work
 
-- Verify cold launch, 29/30-second background boundaries, lockout, cancellation, and app-switcher appearance on a physical Face ID iPhone.
+- Verify cold launch, 29/30-second background boundaries, lockout, cancellation, and app-switcher appearance on a physical Face ID iPhone with a real account.
+- Confirm Expo Go can walk the full demo path without Face ID prompts.
 - Review notification previews and screen-capture detection before private alpha.
 
 ## Verification performed

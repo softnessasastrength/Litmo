@@ -90,3 +90,19 @@ test("demo mode leaves the auth screens for the welcome screen, not discovery", 
     protectedRouteFor("demo", { inAuthGroup: true, isPublicRoute: true }),
     "/",
   ));
+test("signed-out users never skip the entry choice for the sign-in form", () => {
+  assert.equal(
+    protectedRouteFor("locked", {
+      inAuthGroup: false,
+      isPublicRoute: false,
+    }),
+    "/entry",
+  );
+  assert.notEqual(
+    protectedRouteFor("locked", {
+      inAuthGroup: false,
+      isPublicRoute: false,
+    }),
+    "/auth/sign-in",
+  );
+});

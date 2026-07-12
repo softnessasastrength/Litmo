@@ -44,7 +44,7 @@ Implement **Chapter 4: Session Lifecycle** from:
 
 `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
 
-The human directing this work has stated their concrete near-term goal is a build they can run on their own physical iPhone via Expo Go. `docs/CHAPTER_3_COMPLETION.md` section 13 identifies the actual blocker: `AuthContext` unconditionally redirects every signed-out visitor to sign-in, which requires a local Supabase instance this machine cannot run (no Docker). `docs/roadmap/PHONE_VISIBLE_VERTICAL_SLICE.md` already specifies the fix — a clearly labeled, backend-free demo-mode entry point. Do that work first, ahead of the session-lifecycle state machine itself, since it is what unblocks the stated goal.
+The human directing this work has stated their concrete near-term goal is a build they can run on their own physical iPhone via Expo Go. **Demo path status (2026-07-12):** backend-free demo mode exists (`docs/adr/0003-demo-mode-entry-point.md`); Face ID is required only for real account sessions (ADR 0007 amendment), so Expo Go can walk the fictional path without Docker or `.env`. Documented in `docs/LOCAL_DEVELOPMENT.md`. Chapter 4 session-lifecycle work continues for remaining gaps (blocking policy, later pre-activation expiry, new-request Realtime)—not for re-opening the demo entry path.
 
 Read these files before changing code:
 
