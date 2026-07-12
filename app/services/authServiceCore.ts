@@ -99,6 +99,20 @@ export function createAuthService(
       });
     },
 
+    /**
+     * Development / Track B only: email + password for local seed accounts
+     * (e.g. maya.demo@litmo.local). Production and staging must not call this —
+     * passkeys remain the product path (ADR 0010 / 0041).
+     */
+    async signInWithPassword(email: string, password: string) {
+      const { data, error } = await client.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+      if (error || !data.session) throw mapExternalError(error);
+      return data.session;
+    },
+
     async listPasskeys() {
       const { data, error } = await client.auth.passkey.list();
       if (error) throw mapExternalError(error);

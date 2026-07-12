@@ -43,9 +43,13 @@
 
 ## Track B — Real accounts
 
-| Status | **Pending** |
-|--------|-------------|
-| Next | Docker → `npm run db:start && npm run db:reset` → `npm run api` → LAN `app/.env` → two seed accounts → checklist B1–B26 |
+| Status | **Ready to run** (tooling landed; Docker required for execution) |
+|--------|-------------------------------------------------------------------|
+| Prep | `bash scripts/setup-track-b-local.sh` then `npm run api` + `npm run mobile` |
+| Sign-in | Development seed form: `maya.demo@litmo.local` / `LitmoDemo123!` (ADR 0041) |
+| Guide | `docs/TRACK_B_LOCAL.md` |
+| Automated | `npm run test:integration` when Docker is up |
+| Next | Founder/operator completes B1–B26 with two accounts |
 
 ## Track C — Accessibility
 

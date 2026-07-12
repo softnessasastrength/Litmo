@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — Track B development seed sign-in + local setup
+
+### Summary
+
+Development builds can sign in with local seed emails/passwords for BETA-001
+Track B without passkeys. Setup script writes Supabase + backend env from
+`supabase status`. Passkeys remain the product path outside development.
+
+### User-visible impact
+
+- Sign-in (development only): **Sign in with seed account** form
+- Demo mode and passkey path unchanged
+
+### Developer impact
+
+- `authService.signInWithPassword`; ADR 0041
+- `scripts/setup-track-b-local.sh`; `docs/TRACK_B_LOCAL.md`
+
+### Related decision and roadmap
+
+- `docs/adr/0041-development-seed-password-sign-in.md`
+- `docs/TRACK_B_LOCAL.md`
+
 ## 2026-07-12 — BETA-001 Track C accessibility pass
 
 ### Summary

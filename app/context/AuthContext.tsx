@@ -24,6 +24,8 @@ type AuthValue = ReturnType<typeof authReducer> & {
   requestAccountCode(email: string, displayName: string): Promise<void>;
   confirmAccountAndCreatePasskey(email: string, code: string): Promise<void>;
   signInWithPasskey(): Promise<void>;
+  /** Development seed accounts only (runtimeConfig.allowDemo). */
+  signInWithPassword(email: string, password: string): Promise<void>;
   signOut(): Promise<void>;
   refreshProfile(): Promise<void>;
   enterDemoMode(): void;
@@ -142,6 +144,21 @@ export function AuthProvider({ children }: PropsWithChildren) {
         ceremonyInProgress.current = true;
         try {
           const session = await authService.signInWithPasskey();
+          await deviceRegistrationService.register();
+          await restore(session);
+        } catch (error) {
+          await supabase.auth.signOut();
+          dispatch({ type: "FAILED", error: mapExternalError(error) });
+          throw error;
+        } finally {
+          ceremonyInProgress.current = false;
+        }
+      },
+      async signInWithPassword(email, password) {
+        dispatch({ type: "AUTHENTICATING" });
+        ceremonyInProgress.current = true;
+        try {
+          const session = await authService.signInWithPassword(email, password);
           await deviceRegistrationService.register();
           await restore(session);
         } catch (error) {
