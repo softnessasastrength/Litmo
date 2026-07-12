@@ -31,7 +31,7 @@ Implemented in migration `008_transition_session.sql`. The function and the 144-
 
 `shared/src/consentSnapshot.ts` already has `createConsentSnapshot`, `confirmSnapshot`, `invalidateForMaterialChange`, and `withdrawConsent` — all pure, all tested. None of it is persisted anywhere yet (`docs/KNOWN_LIMITATIONS.md`'s "Release blockers" section calls this out explicitly).
 
-Implemented in migration 009 and ADR 0006. The trusted server owns canonical engine computation; PostgreSQL owns service-only persistence, exact versions, private confirmations, withdrawal, and activation enforcement. Remaining work within this deliverable is wiring the Express/trusted adapter and persisted invalidation after material profile changes.
+Implemented in migration 009 and ADR 0006. The trusted server owns canonical engine computation; PostgreSQL owns service-only persistence, exact versions, private confirmations, withdrawal, and activation enforcement. `POST /api/sessions/:sessionId/snapshot` now authenticates a participant, loads exact latest profile pairs, computes with `@litmo/domain`, and invokes the service-only persistence function. Remaining work within this deliverable is persisted invalidation/replacement after material profile changes.
 
 The `ready -> active` precondition is now enforced by a database trigger for every write path.
 

@@ -70,6 +70,16 @@ npm run mobile
 npm run api
 ```
 
+The canonical session-snapshot endpoint is a privileged backend operation. To exercise it locally, create `backend/.env` from the documented template and copy the local values printed by `npx supabase status`:
+
+```bash
+cp backend/.env.example backend/.env
+npx supabase status
+npm run api
+```
+
+Set `SUPABASE_URL` to the local API URL and `SUPABASE_SERVICE_ROLE_KEY` to the local `service_role` key. This key bypasses row-level security: keep it only in `backend/.env`, never use an `EXPO_PUBLIC_` name, never copy it into `app/.env`, and never commit it. Without both variables, `POST /api/sessions/:sessionId/snapshot` returns `snapshot_service_unavailable` and persists nothing.
+
 On a physical iPhone, `127.0.0.1` points to the phone rather than the development computer. Replace the URL host in `app/.env` with the computer's trusted LAN address. Do not expose local Supabase to an untrusted network.
 
 ## Demo accounts

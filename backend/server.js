@@ -3,6 +3,7 @@ import cors from 'cors';
 import express from 'express';
 import consentRouter from './routes/consent.js';
 import compatibilityRouter from './routes/compatibility.js';
+import sessionSnapshotsRouter from './routes/sessionSnapshots.js';
 
 const app = express();
 app.use(cors());
@@ -14,6 +15,7 @@ app.get('/health', (_req, res) => res.json({ ok: true, service: 'litmo-backend' 
 // must use compatibilityRouter, the canonical Chapter 3 engine.
 app.use('/api/consent', consentRouter);
 app.use('/api/consent', compatibilityRouter);
+app.use('/api/sessions', sessionSnapshotsRouter);
 
 const port = Number(process.env.PORT ?? 3001);
 app.listen(port, () => console.log(`Litmo API listening on ${port}`));

@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — Trusted canonical snapshot creation adapter
+
+### Summary
+
+Added an authenticated Express route and injected service/repository boundary that loads both session participants' latest immutable profile versions, computes the canonical Consent Snapshot with `@litmo/domain`, and persists it only through the service-role-only `create_session_snapshot(...)` function.
+
+### User-visible impact
+
+None yet. The mobile session flow remains demo-only; this establishes the trusted server boundary it will call.
+
+### Developer impact
+
+`POST /api/sessions/:sessionId/snapshot` requires a Supabase bearer token. Missing authentication, stranger-owned sessions, invalid or divergent profiles, ineligible overlap, unavailable configuration, and storage errors fail closed with stable public codes. Four focused tests cover successful exact-version persistence, authentication short-circuiting, opaque participant denial, private-note exclusion, and profile-version divergence.
+
+### Migration and setup impact
+
+No database migration. The backend process needs server-only `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`; `backend/.env.example` and `docs/LOCAL_DEVELOPMENT.md` document local setup. Existing demo and mobile configuration are unchanged.
+
+### Related decision and roadmap
+
+- `docs/adr/0006-snapshot-computation-and-persistence-boundary.md`
+- `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
+
 ## 2026-07-12 — Mandatory Face ID security lock
 
 ### Summary

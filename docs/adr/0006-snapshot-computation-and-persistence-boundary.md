@@ -21,10 +21,14 @@ Confirmations use a separate table and are owner-readable: one participant canno
 
 ## Consequences
 
-The Express/trusted server adapter still needs wiring to call the creation function. Local database tests can seed canonical payloads directly, but mobile cannot create them. The legacy `consent_records` table remains inert for migration history and must be removed only through a later documented migration.
+`POST /api/sessions/:sessionId/snapshot` is the trusted creation adapter. It authenticates a Supabase bearer token, returns the same opaque result for missing and stranger-owned sessions, loads both participants' latest immutable touch/consent version pairs with a server-only service-role client, computes the snapshot through `@litmo/domain`, rejects ineligible overlap, and invokes `create_session_snapshot(...)`. Private nervous-system notes are supplied only to domain validation and never enter the compatibility result or persistence call. The route returns stable public error codes without database messages.
+
+The adapter needs `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in the backend process only. It fails closed with `snapshot_service_unavailable` when either is absent. Neither value may enter Expo configuration, client source, or logs.
+
+The legacy `consent_records` table remains inert for migration history and must be removed only through a later documented migration.
 
 ## Follow-up work
 
-- Wire the trusted backend adapter to compute and persist snapshots.
 - Add snapshot replacement/invalidation when material profile versions change.
+- Wire the mobile session-request flow to the authenticated endpoint after request creation and transition-specific actor authorization exist.
 - Define retention and deletion policy before production.

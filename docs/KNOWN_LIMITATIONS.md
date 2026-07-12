@@ -26,5 +26,5 @@
 
 ## Release blockers
 
-- Canonical snapshot persistence, exact-fingerprint confirmation, withdrawal, and `ready -> active` enforcement exist in migration 009. The trusted Express/server adapter that computes and creates snapshots is not wired, material profile changes do not yet replace/invalidate a persisted snapshot, and transition-specific actor authorization remains unimplemented. Mobile session screens therefore remain demo-only.
+- Canonical snapshot persistence, trusted server computation/creation, exact-fingerprint confirmation, withdrawal, and `ready -> active` enforcement now exist. Material profile changes do not yet replace/invalidate a persisted snapshot, transition-specific actor authorization remains unimplemented, and no mobile screen calls the trusted endpoint. Mobile session screens therefore remain demo-only. Mitigation: profile history is immutable, creation always chooses both latest version pairs, and activation remains database-gated. Removal criterion: transactional invalidation/replacement plus authenticated request/mobile wiring and two-client tests.
 - Hosted CI (GitHub Actions) has not been run from this branch. The local Docker blocker is resolved (see above).

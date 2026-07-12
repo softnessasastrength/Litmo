@@ -25,6 +25,8 @@ Migration `007_session_lifecycle.sql` aligns the Chapter 1/2 `sessions` table's 
 
 Migration `009_consent_snapshot_persistence.sql` and ADR 0006 split snapshot responsibility deliberately: the trusted server computes compatibility/fingerprints with `@litmo/domain`, while service-role-only creation and PostgreSQL enforce exact participant profile versions, RLS, independent private confirmations, withdrawal, and activation preconditions. The second exact confirmation transitions the session to `ready`; withdrawal clears confirmations and transitions to `cancelled`. A table trigger prevents `active` through every write path unless both participants confirmed the current unwithdrawn fingerprint.
 
+`backend/services/sessionSnapshotService.js` is the framework-independent orchestration boundary for snapshot creation; `backend/services/supabaseSessionSnapshotRepository.js` is its privileged persistence adapter. `POST /api/sessions/:sessionId/snapshot` validates the caller's Supabase bearer token before any participant data is returned, loads both exact latest version pairs, computes one canonical snapshot, and persists it through `create_session_snapshot(...)`. The service-role key exists only in the backend process. Material profile-change invalidation and mobile request wiring remain pending.
+
 ## Authentication and routing
 
 `AuthContext` is the sole mobile authority for session state. It restores the Supabase session from device storage, fetches the owner's profile, distinguishes incomplete onboarding from a ready account, subscribes to auth changes, and redirects protected routes conservatively. Expired sessions return to sign-in.
