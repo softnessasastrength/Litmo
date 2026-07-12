@@ -6,7 +6,10 @@ select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000001
 
 select is((select count(*)::integer from public.profiles), 1, 'user sees only their own private profile row');
 select is((select count(*)::integer from public.onboarding_progress), 1, 'user sees only their own onboarding progress');
-select is((select count(*)::integer from public.discovery_profiles()), 1, 'discovery function exposes another completed synthetic profile');
+-- Three other completed synthetic profiles as of migration 015's seed data
+-- (docs/adr/0015): 0002 was already seeded, 0003/0004 were added so mock
+-- discovery's "eli"/"jonah" personas map to real, requestable accounts.
+select is((select count(*)::integer from public.discovery_profiles()), 3, 'discovery function exposes other completed synthetic profiles');
 select is((select count(*)::integer from public.discovery_profiles() where user_id = '10000000-0000-4000-8000-000000000002'), 1, 'discovery exposes only intentional safe projection');
 
 select lives_ok($$ select * from public.save_profile_versions('{"pressure":"light"}'::jsonb, '{"bodyZones":[]}'::jsonb) $$, 'authenticated user can append own profile versions');

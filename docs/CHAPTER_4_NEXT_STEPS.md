@@ -55,10 +55,14 @@ The database half of wrap-up is complete in migration 012 and ADR 0008: owner-on
 
 Realtime sync details, connectivity/offline recovery, request expiration (needs either a scheduled job or a check-on-read pattern — undecided), blocking/eligibility checks, and the two-client Chapter 4 integration test the roadmap doc calls for.
 
+## Resolved 2026-07-12: mock discovery now has real accounts to request
+
+Tracing exactly what `request_session(p_recipient_id uuid, ...)` would be called with from `app/app/match/[id].tsx` surfaced that only one of the three mock discovery personas (`maya`/`eli`/`jonah` in `app/data/mock.ts`, mapped to UUIDs by `app/data/mockConsentProfiles.ts`) had a real backing `public.profiles` row. Fixed by seeding two more synthetic accounts in `supabase/seed.sql` for `eli`'s and `jonah`'s existing UUIDs (see ADR 0015's addendum for the full trace and why the seed's pre-existing 0001/0002 account labels don't match the "maya"/"eli" persona names). All three mock personas now resolve to real, requestable accounts.
+
 ## How to resume
 
 If picking this up fresh (new session, new agent, or just after a break):
 
 1. `git checkout agent/chapter-4-session-lifecycle` (or start a new branch off it if it's already merged).
 2. Confirm Docker/Supabase still work: `npm run db:start && npm run db:reset && npx supabase test db` should show 100/100 passing.
-3. Deliverables 1–2 and the wrap-up/request-creation database boundaries (ADRs 0005, 0006, 0008, 0014, 0015) are complete. The next task is the mobile request/accept/decline UI described in Deliverable 3 above — read ADR 0015 first for the exact function contracts (`request_session`, and `transition_session`'s recipient-only `requested -> accepted/declined`) it will call.
+3. Deliverables 1–2 and the wrap-up/request-creation database boundaries (ADRs 0005, 0006, 0008, 0014, 0015) are complete, and all three mock discovery personas now have real backing accounts. The next task is the mobile request/accept/decline UI described in Deliverable 3 above — read ADR 0015 first for the exact function contracts (`request_session`, and `transition_session`'s recipient-only `requested -> accepted/declined`) it will call.
