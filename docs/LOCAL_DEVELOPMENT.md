@@ -17,7 +17,7 @@ On a physical iPhone on the same network as the Metro bundler:
 1. Open **Expo Go** and scan the QR code (or enter the URL).
 2. On the welcome screen, tap **"Explore the prototype"**.
 3. On the entry screen, tap **"Enter the fictional demo"** (clearly labeled: no account, nothing saved).
-4. Walk the path: about you → vibe quiz → touch language → discovery → match → consent snapshot → active session (Soft Signal or end) → wrap-up → trust ledger.
+4. Walk the path: about you → vibe quiz → touch language → body-zone boundaries → discovery → match → practice session request (demo) → mock Consent Snapshot → active session (Soft Signal or end) → wrap-up → trust ledger.
 
 You do **not** need `app/.env` for this path. If Supabase env vars are missing, real sign-in is disabled with an honest notice; demo mode remains available.
 

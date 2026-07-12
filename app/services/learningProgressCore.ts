@@ -54,7 +54,8 @@ export function parseLearningProgress(value: string | null): LearningProgress {
   if (!value) return emptyLearningProgress;
   try {
     const parsed = JSON.parse(value) as unknown;
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return emptyLearningProgress;
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed))
+      return emptyLearningProgress;
     return parsed as LearningProgress;
   } catch {
     return emptyLearningProgress;

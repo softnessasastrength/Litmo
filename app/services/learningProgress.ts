@@ -26,10 +26,20 @@ export const learningProgressService = {
   },
   async recordStep(moduleId: string, stepIndex: number, stepCount: number) {
     const current = await load();
-    return save(recordStep(current, moduleId, stepIndex, stepCount, new Date().toISOString()));
+    return save(
+      recordStep(
+        current,
+        moduleId,
+        stepIndex,
+        stepCount,
+        new Date().toISOString(),
+      ),
+    );
   },
   async complete(moduleId: string, stepCount: number) {
     const current = await load();
-    return save(completeModule(current, moduleId, stepCount, new Date().toISOString()));
+    return save(
+      completeModule(current, moduleId, stepCount, new Date().toISOString()),
+    );
   },
 };

@@ -110,20 +110,51 @@ export default function MatchDetailScreen() {
             </Text>
           ) : null}
         </>
+      ) : status === "demo" ? (
+        <>
+          <Button
+            variant="secondary"
+            label={
+              requestState === "sent"
+                ? "Practice request recorded (demo)"
+                : `Practice requesting a session with ${profile.name}`
+            }
+            disabled={requestState === "sent"}
+            onPress={() => setRequestState("sent")}
+            accessibilityHint="Records a fictional practice request only. No message is sent to a real person."
+          />
+          {requestState === "sent" ? (
+            <Body muted>
+              Demo only — nothing was delivered. A real request needs a
+              signed-in account. You can still practice the Consent Snapshot
+              next.
+            </Body>
+          ) : (
+            <Body muted>
+              You are in demo mode. This practice request stays on this phone
+              and never contacts a real person.
+            </Body>
+          )}
+        </>
       ) : (
         <Body muted>
-          Demo mode has no real account to send a request from. Sign in to send
-          a real session request.
+          Sign in to send a real session request, or enter demo mode from the
+          entry screen to practice with fictional people.
         </Body>
       )}
       <Button
-        label="Review a mock Consent Snapshot"
+        label={
+          status === "demo"
+            ? "Continue to mock Consent Snapshot"
+            : "Review a mock Consent Snapshot"
+        }
         onPress={() =>
           router.push({
             pathname: "/match/consent-snapshot",
             params: { id: profile.id },
           })
         }
+        accessibilityHint="Opens the mock Consent Snapshot. Confirming is practice only unless a real session ID is present."
       />
     </Screen>
   );

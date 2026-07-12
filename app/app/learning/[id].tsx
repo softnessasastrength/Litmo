@@ -38,19 +38,36 @@ export default function LearningModuleScreen() {
     );
   }
 
-  const step = module.steps[stepIndex];
-  const isLast = stepIndex === module.steps.length - 1;
+  // Capture after the null check so nested async handlers keep a defined type.
+  const current = module;
+  const step = current.steps[stepIndex];
+  if (!step) {
+    return (
+      <View style={styles.missing}>
+        <Text style={styles.title}>Lesson step unavailable</Text>
+        <Pressable onPress={() => router.back()} style={styles.secondaryButton}>
+          <Text style={styles.secondaryButtonText}>Go back</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  const isLast = stepIndex === current.steps.length - 1;
   const canContinue = !step.scenario || selectedOption !== null;
 
   async function advance() {
-    if (!module || !canContinue) return;
+    if (!canContinue) return;
     if (isLast) {
-      await learningProgressService.complete(module.id, module.steps.length);
+      await learningProgressService.complete(current.id, current.steps.length);
       router.replace("/(tabs)/learn");
       return;
     }
     const next = stepIndex + 1;
-    await learningProgressService.recordStep(module.id, next, module.steps.length);
+    await learningProgressService.recordStep(
+      current.id,
+      next,
+      current.steps.length,
+    );
     setSelectedOption(null);
     setStepIndex(next);
   }
@@ -61,18 +78,41 @@ export default function LearningModuleScreen() {
       return;
     }
     const previous = stepIndex - 1;
-    await learningProgressService.recordStep(module.id, previous, module.steps.length);
+    await learningProgressService.recordStep(
+      current.id,
+      previous,
+      current.steps.length,
+    );
     setSelectedOption(null);
     setStepIndex(previous);
   }
 
   return (
     <>
-      <Stack.Screen options={{ title: module.title, headerBackTitle: "Learn" }} />
+      <Stack.Screen
+        options={{ title: current.title, headerBackTitle: "Learn" }}
+      />
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.progress}>STEP {stepIndex + 1} OF {module.steps.length}</Text>
-        <View style={styles.track} accessibilityRole="progressbar" accessibilityValue={{ min: 1, max: module.steps.length, now: stepIndex + 1 }}>
-          <View style={[styles.fill, { width: `${((stepIndex + 1) / module.steps.length) * 100}%` }]} />
+        <Text style={styles.progress}>
+          STEP {stepIndex + 1} OF {current.steps.length}
+        </Text>
+        <View
+          style={styles.track}
+          accessibilityRole="progressbar"
+          accessibilityValue={{
+            min: 1,
+            max: current.steps.length,
+            now: stepIndex + 1,
+          }}
+        >
+          <View
+            style={[
+              styles.fill,
+              {
+                width: `${((stepIndex + 1) / current.steps.length) * 100}%`,
+              },
+            ]}
+          />
         </View>
 
         <Text style={styles.title}>{step.title}</Text>
@@ -96,8 +136,17 @@ export default function LearningModuleScreen() {
                   onPress={() => setSelectedOption(index)}
                   style={[styles.option, selected && styles.optionSelected]}
                 >
-                  <Text style={[styles.optionLabel, selected && styles.optionLabelSelected]}>{option.label}</Text>
-                  {selected ? <Text style={styles.feedback}>{option.feedback}</Text> : null}
+                  <Text
+                    style={[
+                      styles.optionLabel,
+                      selected && styles.optionLabelSelected,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                  {selected ? (
+                    <Text style={styles.feedback}>{option.feedback}</Text>
+                  ) : null}
                 </Pressable>
               );
             })}
@@ -105,15 +154,25 @@ export default function LearningModuleScreen() {
         ) : null}
 
         <View style={styles.actions}>
-          <Pressable onPress={() => void goBackStep()} style={styles.secondaryButton}>
-            <Text style={styles.secondaryButtonText}>{stepIndex === 0 ? "Exit" : "Back"}</Text>
+          <Pressable
+            onPress={() => void goBackStep()}
+            style={styles.secondaryButton}
+          >
+            <Text style={styles.secondaryButtonText}>
+              {stepIndex === 0 ? "Exit" : "Back"}
+            </Text>
           </Pressable>
           <Pressable
             disabled={!canContinue || !loaded}
             onPress={() => void advance()}
-            style={[styles.primaryButton, (!canContinue || !loaded) && styles.disabled]}
+            style={[
+              styles.primaryButton,
+              (!canContinue || !loaded) && styles.disabled,
+            ]}
           >
-            <Text style={styles.primaryButtonText}>{isLast ? "Complete module" : "Continue"}</Text>
+            <Text style={styles.primaryButtonText}>
+              {isLast ? "Complete module" : "Continue"}
+            </Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -122,27 +181,102 @@ export default function LearningModuleScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 24, paddingBottom: 48, backgroundColor: colors.cream, gap: 20, flexGrow: 1 },
-  missing: { flex: 1, justifyContent: "center", alignItems: "center", padding: 24, backgroundColor: colors.cream, gap: 20 },
-  progress: { color: colors.moss, fontSize: 12, fontWeight: "700", letterSpacing: 1.3 },
-  track: { height: 7, borderRadius: radius.pill, backgroundColor: colors.line, overflow: "hidden" },
-  fill: { height: "100%", backgroundColor: colors.moss, borderRadius: radius.pill },
-  title: { color: colors.ink, fontFamily: fonts.headline, fontSize: 40, lineHeight: 44 },
+  container: {
+    padding: 24,
+    paddingBottom: 48,
+    backgroundColor: colors.cream,
+    gap: 20,
+    flexGrow: 1,
+  },
+  missing: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+    backgroundColor: colors.cream,
+    gap: 20,
+  },
+  progress: {
+    color: colors.moss,
+    fontSize: 12,
+    fontWeight: "700",
+    letterSpacing: 1.3,
+  },
+  track: {
+    height: 7,
+    borderRadius: radius.pill,
+    backgroundColor: colors.line,
+    overflow: "hidden",
+  },
+  fill: {
+    height: "100%",
+    backgroundColor: colors.moss,
+    borderRadius: radius.pill,
+  },
+  title: {
+    color: colors.ink,
+    fontFamily: fonts.headline,
+    fontSize: 40,
+    lineHeight: 44,
+  },
   body: { color: colors.ink, fontSize: 18, lineHeight: 28 },
-  takeaway: { backgroundColor: colors.mossSoft, borderRadius: radius.md, padding: 18, gap: 7 },
-  takeawayLabel: { color: colors.moss, fontSize: 11, fontWeight: "800", letterSpacing: 1.2 },
-  takeawayText: { color: colors.moss, fontSize: 17, lineHeight: 24, fontWeight: "600" },
+  takeaway: {
+    backgroundColor: colors.mossSoft,
+    borderRadius: radius.md,
+    padding: 18,
+    gap: 7,
+  },
+  takeawayLabel: {
+    color: colors.moss,
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 1.2,
+  },
+  takeawayText: {
+    color: colors.moss,
+    fontSize: 17,
+    lineHeight: 24,
+    fontWeight: "600",
+  },
   scenario: { gap: 12 },
-  scenarioPrompt: { color: colors.ink, fontWeight: "700", fontSize: 17, lineHeight: 24 },
-  option: { borderWidth: 1, borderColor: colors.line, backgroundColor: colors.paper, borderRadius: radius.md, padding: 16, gap: 9 },
-  optionSelected: { borderColor: colors.moss, backgroundColor: colors.mossSoft },
+  scenarioPrompt: {
+    color: colors.ink,
+    fontWeight: "700",
+    fontSize: 17,
+    lineHeight: 24,
+  },
+  option: {
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.paper,
+    borderRadius: radius.md,
+    padding: 16,
+    gap: 9,
+  },
+  optionSelected: {
+    borderColor: colors.moss,
+    backgroundColor: colors.mossSoft,
+  },
   optionLabel: { color: colors.ink, fontSize: 16, fontWeight: "600" },
   optionLabelSelected: { color: colors.moss },
   feedback: { color: colors.moss, fontSize: 14, lineHeight: 20 },
   actions: { flexDirection: "row", gap: 12, marginTop: "auto" },
-  primaryButton: { flex: 1, backgroundColor: colors.moss, borderRadius: radius.pill, paddingVertical: 16, alignItems: "center" },
+  primaryButton: {
+    flex: 1,
+    backgroundColor: colors.moss,
+    borderRadius: radius.pill,
+    paddingVertical: 16,
+    alignItems: "center",
+  },
   primaryButtonText: { color: colors.white, fontSize: 16, fontWeight: "700" },
-  secondaryButton: { borderWidth: 1, borderColor: colors.moss, borderRadius: radius.pill, paddingVertical: 16, paddingHorizontal: 22, alignItems: "center" },
+  secondaryButton: {
+    borderWidth: 1,
+    borderColor: colors.moss,
+    borderRadius: radius.pill,
+    paddingVertical: 16,
+    paddingHorizontal: 22,
+    alignItems: "center",
+  },
   secondaryButtonText: { color: colors.moss, fontSize: 16, fontWeight: "700" },
   disabled: { opacity: 0.45 },
 });

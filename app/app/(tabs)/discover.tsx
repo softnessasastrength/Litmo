@@ -16,10 +16,14 @@ import { colors, fonts, radius, shadow } from "../../theme";
 export default function DiscoverScreen() {
   const router = useRouter();
   const { selectProfile } = usePrototype();
-  const { user } = useAuth();
+  const { user, status } = useAuth();
   return (
     <Screen>
-      <Eyebrow>IMAGINARY NEIGHBORS</Eyebrow>
+      <Eyebrow>
+        {status === "demo"
+          ? "DEMO · IMAGINARY NEIGHBORS"
+          : "IMAGINARY NEIGHBORS"}
+      </Eyebrow>
       <Title>Who feels easy to be curious about?</Title>
       <Body muted>
         These synthetic profiles show vibe possibilities only. Vibe is not
