@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import { Body, Button, FadeIn, Screen } from "../components/ui";
 import { colors } from "../theme";
 
@@ -30,6 +30,16 @@ export default function HomeScreen() {
           A tap-through prototype using imaginary people and local data. No real
           account or connection is created.
         </Text>
+        <Pressable
+          accessibilityRole="link"
+          accessibilityHint="Opens softnessasastrength.com in your browser"
+          onPress={() =>
+            void Linking.openURL("https://softnessasastrength.com")
+          }
+          hitSlop={8}
+        >
+          <Text style={styles.link}>softnessasastrength.com</Text>
+        </Pressable>
       </View>
     </Screen>
   );
@@ -65,5 +75,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 18,
     textAlign: "center",
+  },
+  link: {
+    color: colors.muted,
+    fontSize: 12,
+    textAlign: "center",
+    textDecorationLine: "underline",
+    marginTop: 2,
   },
 });

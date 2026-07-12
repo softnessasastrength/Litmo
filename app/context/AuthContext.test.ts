@@ -59,10 +59,10 @@ test("signed-out visitors reach the welcome and entry screens without redirect",
     }),
     null,
   ));
-test("complete users leave auth for discovery", () =>
+test("complete users leave auth for the home tab", () =>
   assert.equal(
     protectedRouteFor("ready", { inAuthGroup: true, isPublicRoute: true }),
-    "/match/discover",
+    "/home",
   ));
 test("entering demo mode requires no backend session", () =>
   assert.deepEqual(

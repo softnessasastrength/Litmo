@@ -43,7 +43,7 @@ export default function TouchLanguageScreen() {
   const complete = groups.every((group) => touchChoices[group.key]);
   const save = async () => {
     if (!user) {
-      router.replace("/match/discover");
+      router.replace("/home");
       return;
     }
     setBusy(true);
@@ -95,7 +95,7 @@ export default function TouchLanguageScreen() {
         },
       );
       await refreshProfile();
-      router.replace("/match/discover");
+      router.replace("/home");
     } catch (caught) {
       setError(
         caught instanceof Error

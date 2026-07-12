@@ -35,7 +35,7 @@ export function authReducer(_state: AuthState, action: AuthAction): AuthState {
 export function protectedRouteFor(
   status: AuthState["status"],
   route: { inAuthGroup: boolean; isPublicRoute: boolean },
-): "/auth/sign-in" | "/entry" | "/" | "/match/discover" | null {
+): "/auth/sign-in" | "/entry" | "/" | "/home" | null {
   const { inAuthGroup, isPublicRoute } = route;
   if (status === "loading" || status === "error") return null;
   if (status === "demo") return inAuthGroup ? "/" : null;
@@ -46,5 +46,5 @@ export function protectedRouteFor(
   // to the sign-in form; sign-in itself remains one explicit tap away.
   if (status === "signed_out") return isPublicRoute ? null : "/entry";
   if (!inAuthGroup) return null;
-  return status === "ready" ? "/match/discover" : "/";
+  return status === "ready" ? "/home" : "/";
 }
