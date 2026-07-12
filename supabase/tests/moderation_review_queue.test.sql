@@ -1,5 +1,5 @@
 begin;
-select plan(11);
+select plan(13);
 
 -- Regular user cannot list the queue.
 set local role authenticated;
