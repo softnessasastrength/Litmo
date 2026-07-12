@@ -21,6 +21,7 @@ select public.submit_report(
 ) as rid \gset
 
 -- Case auto-created with urgent priority for underage_concern.
+-- Assert as postgres: table is not granted to authenticated (staff RPCs only).
 reset role;
 select is(
   (select count(*)::integer from public.moderation_cases where report_id = :'rid'::uuid),
@@ -50,9 +51,10 @@ select is(
   'moderator sees the open case'
 );
 
-select id as cid
-  from public.moderation_cases
- where report_id = :'rid'::uuid \gset
+-- Case id only via staff RPC — no direct table SELECT for authenticated.
+select case_id as cid
+  from public.list_moderation_queue('open')
+ limit 1 \gset
 
 select lives_ok(
   'select public.claim_moderation_case(''' || :'cid' || '''::uuid)',
@@ -60,16 +62,24 @@ select lives_ok(
 );
 
 select is(
-  (select queue_status from public.moderation_cases where id = :'cid'::uuid),
+  (
+    select queue_status
+    from public.list_moderation_queue(null)
+    where case_id = :'cid'::uuid
+  ),
   'in_progress',
   'claim moves open case to in_progress'
 );
 
+reset role;
 select is(
   (select status from public.user_reports where id = :'rid'::uuid),
   'under_review',
   'claim updates reporter-visible status to under_review'
 );
+
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000003', true);
 
 select lives_ok(
   'select public.add_moderation_note(''' || :'cid' || '''::uuid, ''Reviewed seed accounts; documenting for audit only.'')',
@@ -81,6 +91,7 @@ select lives_ok(
   'moderator can resolve with a coarse closed outcome'
 );
 
+reset role;
 select is(
   (select status from public.user_reports where id = :'rid'::uuid),
   'closed',
@@ -94,6 +105,7 @@ select is(
 );
 
 -- Reported party still cannot see queue.
+set local role authenticated;
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000002', true);
 select throws_ok(
   $$ select count(*) from public.list_moderation_queue(null) $$,
