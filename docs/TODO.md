@@ -2,7 +2,9 @@
 
 Well-specified future work that has not yet been promoted into an active chapter (`AGENTS.md`'s "Current chapter assignment"). Recorded here so intent survives even without the conversation that produced it, per `docs/CONTINUITY_AND_STEWARDSHIP.md`. Do not begin implementation until a chapter assignment or explicit human instruction authorizes it.
 
-## Passwordless authentication (Sign in with Apple + platform passkeys)
+## Passwordless authentication (implemented decision; remaining operations work)
+
+ADR 0010 and `docs/PASSKEY_AUTHENTICATION.md` supersede the open architecture questions below for the iOS client: Supabase remains the backend of record, email OTP is bootstrap-only, and Apple passkeys are the routine credential. The historical proposal is retained here for decision provenance. Remaining production work is human-reviewed recovery, trusted server session revocation, hosted AASA verification, and non-iOS credential design.
 
 Status: **not started — planning only**
 

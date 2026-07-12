@@ -2,6 +2,11 @@ export type PublicErrorCode =
   | "auth_invalid_credentials"
   | "auth_email_in_use"
   | "auth_session_expired"
+  | "auth_cancelled"
+  | "auth_request_in_progress"
+  | "auth_passkey_unavailable"
+  | "auth_revoked"
+  | "auth_recovery_required"
   | "network_unavailable"
   | "request_timeout"
   | "permission_denied"
@@ -27,10 +32,29 @@ export function mapExternalError(error: unknown): PublicAppError {
     code?: string;
   };
   const message = candidate?.message?.toLowerCase() ?? "";
+  if (candidate?.code === "ERR_PASSKEY_CANCELLED")
+    return new PublicAppError(
+      "auth_cancelled",
+      "Passkey sign-in was cancelled. Nothing was changed.",
+      true,
+    );
+  if (candidate?.code === "ERR_PASSKEY_REQUEST_IN_PROGRESS")
+    return new PublicAppError(
+      "auth_request_in_progress",
+      "An authentication request is already in progress.",
+    );
+  if (
+    candidate?.code === "ERR_PASSKEY_UNAVAILABLE" ||
+    (message.includes("passkey") && message.includes("unavailable"))
+  )
+    return new PublicAppError(
+      "auth_passkey_unavailable",
+      "Passkeys are unavailable. Check that iCloud Keychain and a device passcode are enabled.",
+    );
   if (message.includes("invalid login credentials"))
     return new PublicAppError(
       "auth_invalid_credentials",
-      "That email and password did not match. You can try again.",
+      "Apple could not verify that credential. You can try again.",
     );
   if (
     message.includes("already registered") ||

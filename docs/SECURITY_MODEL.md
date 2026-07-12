@@ -22,7 +22,7 @@ Service-role keys, JWT secrets, database passwords, and moderation credentials m
 
 ## Authentication
 
-Supabase Auth provides password hashing, token issuance, expiry, and refresh. The app restores sessions from AsyncStorage for Expo Go compatibility. AsyncStorage is persistent but not hardware-encrypted; a production distribution must adopt and review a secure-storage adapter, device compromise behavior, and logout token revocation.
+Supabase Auth issues, expires, and refreshes sessions and verifies WebAuthn challenges. Routine iOS authentication uses Apple passkeys with device-owner verification; email one-time codes are limited to initial account bootstrap and are never routine sign-in or recovery credentials. Supabase session material and the random installation identity use Expo SecureStore with `WHEN_PASSCODE_SET_THIS_DEVICE_ONLY`, so they require a device passcode and do not migrate through backups. `auth_devices` stores only a SHA-256 secret digest and owner-visible device metadata. A valid passkey ceremony can rotate or restore a revoked local registration; self-revocation clears the local secret and signs out immediately. See ADR 0010 and `docs/PASSKEY_AUTHENTICATION.md`.
 
 Face ID is a separate local-access gate, not account authentication or identity verification. ADR 0007 documents the biometric-only policy, 30-second lifecycle threshold, native app-switcher cover, step-up routes, fail-closed errors, threat model, and limitations. Litmo stores no biometric data and offers no device-passcode bypass.
 

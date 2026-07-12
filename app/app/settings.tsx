@@ -20,9 +20,14 @@ function SettingsContent() {
       <Eyebrow>SETTINGS</Eyebrow>
       <Title>Not much here yet.</Title>
       <Body muted>
-        This is a placeholder. Real settings (notifications, privacy, account
-        management) will live here as Litmo grows.
+        Manage access without passwords. Security changes require a fresh
+        device-owner check.
       </Body>
+      <Button
+        variant="secondary"
+        label="Passkeys and registered devices"
+        onPress={() => router.push("/security/devices" as never)}
+      />
       <Button
         variant="secondary"
         label="softnessasastrength.com"

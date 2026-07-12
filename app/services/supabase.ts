@@ -1,6 +1,6 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createClient } from "@supabase/supabase-js";
 import { AppState, Platform } from "react-native";
+import { secureSessionStorage } from "./secureSessionStorage";
 
 const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const anonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
@@ -14,10 +14,11 @@ export const supabase = createClient(
   anonKey ?? "missing-public-anon-key",
   {
     auth: {
-      storage: AsyncStorage,
+      storage: secureSessionStorage,
       autoRefreshToken: true,
       persistSession: true,
       detectSessionInUrl: false,
+      experimental: { passkey: true },
     },
   },
 );

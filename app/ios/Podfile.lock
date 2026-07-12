@@ -52,6 +52,8 @@ PODS:
     - Yoga
   - ExpoAsset (55.0.17):
     - ExpoModulesCore
+  - ExpoCrypto (55.0.16):
+    - ExpoModulesCore
   - ExpoDomWebView (55.0.6):
     - ExpoModulesCore
   - ExpoFileSystem (55.0.23):
@@ -109,6 +111,8 @@ PODS:
   - ExpoRouter (55.0.16):
     - ExpoModulesCore
     - RNScreens
+  - ExpoSecureStore (55.0.15):
+    - ExpoModulesCore
   - ExpoSymbols (55.0.9):
     - ExpoModulesCore
   - FBLazyVector (0.83.6)
@@ -132,6 +136,8 @@ PODS:
   - libwebp/sharpyuv (1.5.0)
   - libwebp/webp (1.5.0):
     - libwebp/sharpyuv
+  - LitmoPasskeys (1.0.0):
+    - ExpoModulesCore
   - RCTDeprecation (0.83.6)
   - RCTRequired (0.83.6)
   - RCTSwiftUI (0.83.6)
@@ -2045,6 +2051,7 @@ DEPENDENCIES:
   - EXConstants (from `../../node_modules/expo-constants/ios`)
   - Expo (from `../../node_modules/expo`)
   - ExpoAsset (from `../../node_modules/expo-asset/ios`)
+  - ExpoCrypto (from `../../node_modules/expo-crypto/ios`)
   - "ExpoDomWebView (from `../../node_modules/@expo/dom-webview/ios`)"
   - ExpoFileSystem (from `../../node_modules/expo-file-system/ios`)
   - ExpoFont (from `../../node_modules/expo-font/ios`)
@@ -2058,9 +2065,11 @@ DEPENDENCIES:
   - ExpoModulesJSI (from `../../node_modules/expo-modules-core`)
   - ExpoNotifications (from `../../node_modules/expo-notifications/ios`)
   - ExpoRouter (from `../node_modules/expo-router/ios`)
+  - ExpoSecureStore (from `../../node_modules/expo-secure-store/ios`)
   - ExpoSymbols (from `../node_modules/expo-symbols/ios`)
   - FBLazyVector (from `../../node_modules/react-native/Libraries/FBLazyVector`)
   - hermes-engine (from `../../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
+  - LitmoPasskeys (from `../modules/litmo-passkeys/ios`)
   - RCTDeprecation (from `../../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
   - RCTRequired (from `../../node_modules/react-native/Libraries/Required`)
   - RCTSwiftUI (from `../../node_modules/react-native/ReactApple/RCTSwiftUI`)
@@ -2157,6 +2166,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/expo"
   ExpoAsset:
     :path: "../../node_modules/expo-asset/ios"
+  ExpoCrypto:
+    :path: "../../node_modules/expo-crypto/ios"
   ExpoDomWebView:
     :path: "../../node_modules/@expo/dom-webview/ios"
   ExpoFileSystem:
@@ -2183,6 +2194,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/expo-notifications/ios"
   ExpoRouter:
     :path: "../node_modules/expo-router/ios"
+  ExpoSecureStore:
+    :path: "../../node_modules/expo-secure-store/ios"
   ExpoSymbols:
     :path: "../node_modules/expo-symbols/ios"
   FBLazyVector:
@@ -2190,6 +2203,8 @@ EXTERNAL SOURCES:
   hermes-engine:
     :podspec: "../../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-v0.14.1
+  LitmoPasskeys:
+    :path: "../modules/litmo-passkeys/ios"
   RCTDeprecation:
     :path: "../../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation"
   RCTRequired:
@@ -2343,6 +2358,7 @@ SPEC CHECKSUMS:
   EXConstants: dadbeba983acc30f855a919658a2b34fbd86615d
   Expo: b0f96de93d2e9ab7c6eabcf88597b13f6fe3f67e
   ExpoAsset: 7721c5c4ae2a7c3c8147a046727ac6c020b05648
+  ExpoCrypto: 1fe00d6b57bdc7bcf0c9eafedcae8fb5af6b8102
   ExpoDomWebView: b2e9d601f9cb77d3c97da73234e175b64be91928
   ExpoFileSystem: 49ab894dee0818cb8b83d489fc51eafade73efb9
   ExpoFont: a7e34a75bdfb703fa07a0e87807f836236608c76
@@ -2356,12 +2372,14 @@ SPEC CHECKSUMS:
   ExpoModulesJSI: 964334271fc77832736f66ee1785761cdc778dbe
   ExpoNotifications: f27e1d6e2852871419557397389385e91b9f5645
   ExpoRouter: e0e2aa4b03843e7abfa3e63e0cdd6c642d74780f
+  ExpoSecureStore: f495a3e0ab65683be8427a96f694726a88048f46
   ExpoSymbols: 896159288ad708e1a32dc12c92fe5f90bff01126
   FBLazyVector: 427fa1856a481856091061293ce865a75aa4f20f
-  hermes-engine: c256272bf0968be1668e2ef384a17ed89b0d34ca
+  hermes-engine: e5243368a36f566dc69299a6d51ba83c5d77d767
   libavif: 5f8e715bea24debec477006f21ef9e95432e254d
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
+  LitmoPasskeys: ed1eebbcec9599b516548784d3269e8f8306641f
   RCTDeprecation: 9502b5eb8e3c9eb75ff5a333b2c591bab9d91e28
   RCTRequired: 0268a5d86aef1defea2e04289d74fdf3570197c1
   RCTSwiftUI: cff211c5e4d94e491dda240d663b8effd25296d7
@@ -2370,7 +2388,7 @@ SPEC CHECKSUMS:
   React: 9b033c7a99e1c8eec40960b6b2e6844e011e8bd1
   React-callinvoker: f64c8d57f45173835b6b9891cda27f1625551972
   React-Core: 341863a2597c4a2320f916b4232d280cb8a28e4b
-  React-Core-prebuilt: 62805fb41938ae4bcbb07355464d02ac724f0b89
+  React-Core-prebuilt: a8cad447b2c1c9a966d69401516d77c7aea4627c
   React-CoreModules: 9370769c9b2b1732c58960687f4d50d9d3510efc
   React-cxxreact: 41ae74bd9eab80af9c5da6a9b4934eb97e2c7569
   React-debug: eb0f19ff879ad3870dc760b6c21ad56cbb3e4b98
@@ -2440,6 +2458,6 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
   Yoga: e41d64347f52d634dd8c2f6bac33f95081959fd3
 
-PODFILE CHECKSUM: 843c28fbb2a62e20a117a46e22942f6d531d121c
+PODFILE CHECKSUM: fb38c12d384afcfda30b7b0d143a578c080b6b10
 
 COCOAPODS: 1.17.0

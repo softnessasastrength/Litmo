@@ -42,7 +42,7 @@ function BiometricPrivacyCover() {
 }
 function AuthenticatedStack() {
   const auth = useAuth();
-  if (auth.status === "loading")
+  if (auth.status === "authenticating" || auth.status === "registering")
     return <LoadingState label="Restoring your private session…" />;
   if (auth.status === "error" && environmentError)
     return (

@@ -1,5 +1,17 @@
 # Known limitations
 
+## Passkey authentication
+
+- Passkeys require an iOS development/distribution build, the deployed AASA file,
+  iCloud Keychain, a device passcode, and enabled Supabase experimental passkeys;
+  they do not work inside stock Expo Go.
+- Human-reviewed account recovery and trusted backend session-revocation
+  operations are specified but not yet deployed. Recovery therefore fails
+  closed if no synced passkey remains.
+- Device revocation is checked by the Litmo client on session validation. It does
+  not delete an iCloud-synced passkey and cannot invalidate an independently
+  replayed Supabase JWT before its server expiry.
+
 ## Demo-only shortcuts
 
 - The mobile Consent Snapshot screen now runs the real canonical Chapter 3 engine (via `toConsentProfileVersion` and `computeCompatibility`), but both participants are still fixed mock fixtures in `app/data/mockConsentProfiles.ts`, not the signed-in user's actual saved profile versions. Impact: the visible demo proves live two-profile computation, but not live repository integration. Mitigation: all copy labels the flow as mock; the counterpart persona now varies by which mock match was tapped. Removal criterion: typed repository integration backed by RLS-tested profile versions. The Docker/RLS blocker that previously prevented even testing this locally is resolved (see below); the repository-integration work itself has not started.

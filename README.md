@@ -15,7 +15,7 @@ Welcome → Vibe Quiz → Vibe Profile → Touch Language → Discover
 → Match Detail → Consent Snapshot → Active Session → Wrap-Up → Trust Ledger
 ```
 
-Chapter 2 adds real local Supabase email/password authentication, session restoration, protected routes, persistent onboarding, editable general profiles, immutable touch/consent profile versions, owner-only RLS, typed data access, and repository-wide checks. Discovery people, matches, sessions, and trust history remain synthetic until their later roadmap chapters.
+Chapter 2 adds real local Supabase authentication, session restoration, protected routes, persistent onboarding, editable general profiles, immutable touch/consent profile versions, owner-only RLS, typed data access, and repository-wide checks. The current iOS account interface is passkey-first: email one-time codes bootstrap account creation only, while routine sign-in uses Apple passkeys and sessions stay in the passcode-required, non-migrating Keychain. Discovery people, matches, sessions, and trust history remain synthetic until their later roadmap chapters.
 
 Chapter 3 adds a canonical, framework-independent, directional consent-compatibility engine (`@litmo/domain`) with property-based safety tests, a practical-effect preview for profile edits, and a documented adapter that bridges it to Chapter 2's persisted profiles and a live backend route. The mock Consent Snapshot screen now runs this real engine end to end.
 
@@ -121,7 +121,7 @@ See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/SECURITY_MODEL.md`](d
 
 ## Roadmap
 
-See [`ROADMAP.md`](ROADMAP.md) for chapter status and [`docs/roadmap/README.md`](docs/roadmap/README.md) for the full chapter sequence. Chapter 3 (Consent Engine) is complete (`docs/CHAPTER_3_COMPLETION.md`); Chapter 4 (Session Lifecycle) is active. Well-specified future work not yet assigned to a chapter — including a passwordless Sign in with Apple + passkeys authentication redesign — is tracked in [`docs/TODO.md`](docs/TODO.md).
+See [`ROADMAP.md`](ROADMAP.md) for chapter status and [`docs/roadmap/README.md`](docs/roadmap/README.md) for the full chapter sequence. Chapter 3 (Consent Engine) is complete (`docs/CHAPTER_3_COMPLETION.md`); Chapter 4 (Session Lifecycle) is active. Passkey behavior and deployment requirements are documented in [`docs/PASSKEY_AUTHENTICATION.md`](docs/PASSKEY_AUTHENTICATION.md).
 
 ## Contributing
 

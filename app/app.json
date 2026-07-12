@@ -10,6 +10,13 @@
     "plugins": [
       "expo-router",
       [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": false,
+          "faceIDPermission": "Allow Litmo to protect credentials with Face ID."
+        }
+      ],
+      [
         "expo-local-authentication",
         {
           "faceIDPermission": "Allow Litmo to use Face ID to protect your private consent and session information."
@@ -24,7 +31,8 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.litmo.app",
-      "appleTeamId": "FHZSE6U4R5"
+      "appleTeamId": "FHZSE6U4R5",
+      "associatedDomains": ["webcredentials:softnessasastrength.com"]
     },
     "android": {
       "adaptiveIcon": {

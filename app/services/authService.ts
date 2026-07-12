@@ -1,3 +1,4 @@
 import { createAuthService } from "./authServiceCore";
 import { supabase } from "./supabase.ts";
-export const authService = createAuthService(supabase);
+import { litmoPasskeys } from "../modules/litmo-passkeys";
+export const authService = createAuthService(supabase, litmoPasskeys);

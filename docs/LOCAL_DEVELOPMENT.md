@@ -14,6 +14,8 @@ npx expo run:ios --device
 
 Unlock the installed development build with Face ID, then tap **"Continue without an account (demo mode)"**. This runs the full synthetic path locally. Expo Go fails closed because Apple does not expose Face ID evaluation to it; this is expected, not a reason to bypass the gate.
 
+Real account creation and sign-in additionally require the Associated Domains entitlement, the AASA file, and Supabase experimental passkeys described in `docs/PASSKEY_AUTHENTICATION.md`. Local builds can compile the native bridge, but a complete ceremony requires the configured HTTPS relying-party domain; demo mode remains the backend-free device-review path.
+
 ## Standalone iOS build (installs directly on a physical device, no Expo Go)
 
 This produces a real, installable `.ipa` for your own device using EAS Build's free cloud build service, signed with your Apple Developer Program membership. It requires:

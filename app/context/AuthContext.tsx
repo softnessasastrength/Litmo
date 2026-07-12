@@ -7,15 +7,18 @@ import {
   useEffect,
   useMemo,
   useReducer,
+  useRef,
 } from "react";
 import { mapExternalError, type PublicAppError } from "../services/errors";
 import { profileRepository } from "../services/profileRepository";
 import { environmentError, supabase } from "../services/supabase";
 import { authService } from "../services/authService";
+import { deviceRegistrationService } from "../services/deviceRegistrationService";
 import { authReducer, initialAuthState, protectedRouteFor } from "./authState";
 type AuthValue = ReturnType<typeof authReducer> & {
-  signUp(email: string, password: string, displayName: string): Promise<void>;
-  signIn(email: string, password: string): Promise<void>;
+  requestAccountCode(email: string, displayName: string): Promise<void>;
+  confirmAccountAndCreatePasskey(email: string, code: string): Promise<void>;
+  signInWithPasskey(): Promise<void>;
   signOut(): Promise<void>;
   refreshProfile(): Promise<void>;
   enterDemoMode(): void;
@@ -26,9 +29,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [state, dispatch] = useReducer(authReducer, initialAuthState);
   const router = useRouter();
   const segments = useSegments();
+  const ceremonyInProgress = useRef(false);
   const restore = async (session: Session | null) => {
     if (!session) return dispatch({ type: "RESTORED", session: null });
     try {
+      await deviceRegistrationService.verify();
       const profile = await profileRepository.getOwnProfile(session.user.id);
       dispatch({
         type: "RESTORED",
@@ -39,7 +44,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
       const mapped = mapExternalError(error);
       if (mapped.code === "auth_session_expired") {
         await supabase.auth.signOut();
-        dispatch({ type: "SIGNED_OUT" });
+        dispatch({ type: "EXPIRED" });
+      } else if (mapped.code === "auth_revoked") {
+        await supabase.auth.signOut();
+        dispatch({ type: "REVOKED" });
       } else dispatch({ type: "FAILED", error: mapped });
     }
   };
@@ -57,6 +65,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
           : restore(data.session),
       );
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (ceremonyInProgress.current) return;
       void restore(session);
     });
     return () => data.subscription.unsubscribe();
@@ -78,11 +87,40 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const value = useMemo<AuthValue>(
     () => ({
       ...state,
-      async signUp(email, password, displayName) {
-        await authService.signUp(email, password, displayName);
+      async requestAccountCode(email, displayName) {
+        await authService.requestAccountCode(email, displayName);
       },
-      async signIn(email, password) {
-        await authService.signIn(email, password);
+      async confirmAccountAndCreatePasskey(email, code) {
+        dispatch({ type: "AUTHENTICATING" });
+        ceremonyInProgress.current = true;
+        try {
+          await authService.confirmAccountCode(email, code);
+          dispatch({ type: "REGISTERING" });
+          await authService.registerPasskey();
+          await deviceRegistrationService.register();
+          await restore((await supabase.auth.getSession()).data.session);
+        } catch (error) {
+          await supabase.auth.signOut();
+          dispatch({ type: "FAILED", error: mapExternalError(error) });
+          throw error;
+        } finally {
+          ceremonyInProgress.current = false;
+        }
+      },
+      async signInWithPasskey() {
+        dispatch({ type: "AUTHENTICATING" });
+        ceremonyInProgress.current = true;
+        try {
+          const session = await authService.signInWithPasskey();
+          await deviceRegistrationService.register();
+          await restore(session);
+        } catch (error) {
+          await supabase.auth.signOut();
+          dispatch({ type: "FAILED", error: mapExternalError(error) });
+          throw error;
+        } finally {
+          ceremonyInProgress.current = false;
+        }
       },
       async signOut() {
         if (state.status === "demo") return dispatch({ type: "SIGNED_OUT" });

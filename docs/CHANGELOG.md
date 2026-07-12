@@ -70,6 +70,29 @@ No database migration. The backend process needs server-only `SUPABASE_URL` and 
 - `docs/adr/0006-snapshot-computation-and-persistence-boundary.md`
 - `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
 
+## 2026-07-12 — Passkey-first iOS authentication
+
+### Summary
+
+Replaced app-owned password creation/sign-in with bootstrap-only email OTP, mandatory Apple passkey registration, and discoverable passkey sign-in. Moved Supabase sessions from AsyncStorage to the passcode-required, this-device-only Keychain and added hashed installation registration, verification, rotation, and revocation.
+
+### User-visible impact
+
+People create no password. Apple performs device-owner verification for routine sign-in. Restored tokens without a local device secret and revoked installations fail closed; revoking the current installation signs out immediately. Demo mode remains account-free.
+
+### Developer impact
+
+Added the `LitmoPasskeys` Swift Expo module, Expo SecureStore/Crypto, explicit auth states, recovery and device-management screens, Associated Domains/AASA configuration, migration 010, 3 device-service tests, 5 passkey-service tests, and 12 pgTAP device assertions. Crash recovery repaired device-secret generation, corrupt-storage handling, revoked-device re-registration, and native/lockfile consistency.
+
+### Migration and setup impact
+
+Apply migration 010 and enable the Supabase passkey/WebAuthn configuration. Serve the AASA file at the documented HTTPS path and use a development/distribution build; Expo Go cannot host the native module. `npx pod-install` regenerated Pods after dependency changes.
+
+### Related decision and roadmap
+
+- `docs/adr/0010-passkey-first-authentication.md`
+- `docs/PASSKEY_AUTHENTICATION.md`
+
 ## 2026-07-12 — Mandatory Face ID security lock
 
 ### Summary
