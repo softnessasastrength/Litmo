@@ -25,7 +25,6 @@ import {
 import { fonts, radius, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
-
 export default function DiscoverScreen() {
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
@@ -206,39 +205,38 @@ export default function DiscoverScreen() {
 }
 function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
   return {
-  list: { gap: 14 },
-  card: {
-    flexDirection: "row",
-    gap: 15,
-    backgroundColor: colors.paper,
-    borderRadius: radius.md,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.line,
-    ...shadow,
-  },
-  pressed: { opacity: 0.75 },
-  avatar: {
-    width: 70,
-    height: 82,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  glyph: { color: colors.plum, fontFamily: "Georgia", fontSize: 34 },
-  main: { flex: 1, gap: 7 },
-  nameRow: { flexDirection: "row", justifyContent: "space-between" },
-  name: { color: colors.ink, fontFamily: fonts.headline, fontSize: 23 },
-  arrow: { color: colors.moss, fontSize: 26 },
-  pronouns: { color: colors.muted, fontSize: 12 },
-  vibe: { color: colors.ink, fontSize: 13, lineHeight: 19 },
-  signals: {
-    color: colors.moss,
-    fontSize: 12,
-    fontWeight: "700",
-    marginTop: 2,
-  },
-  signalsNote: { color: colors.muted, fontSize: 11, lineHeight: 15 },
-};
+    list: { gap: 14 },
+    card: {
+      flexDirection: "row",
+      gap: 15,
+      backgroundColor: colors.paper,
+      borderRadius: radius.md,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: colors.line,
+      ...shadow,
+    },
+    pressed: { opacity: 0.75 },
+    avatar: {
+      width: 70,
+      height: 82,
+      borderRadius: 20,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    glyph: { color: colors.plum, fontFamily: "Georgia", fontSize: 34 },
+    main: { flex: 1, gap: 7 },
+    nameRow: { flexDirection: "row", justifyContent: "space-between" },
+    name: { color: colors.ink, fontFamily: fonts.headline, fontSize: 23 },
+    arrow: { color: colors.moss, fontSize: 26 },
+    pronouns: { color: colors.muted, fontSize: 12 },
+    vibe: { color: colors.ink, fontSize: 13, lineHeight: 19 },
+    signals: {
+      color: colors.moss,
+      fontSize: 12,
+      fontWeight: "700",
+      marginTop: 2,
+    },
+    signalsNote: { color: colors.muted, fontSize: 11, lineHeight: 15 },
+  };
 }
-

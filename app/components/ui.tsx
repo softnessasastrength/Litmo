@@ -291,11 +291,7 @@ export function Choice({
   onPress: () => void;
 }) {
   const styles = useUiStyles();
-  const a11yLabel = [
-    label,
-    detail,
-    selected ? "Selected" : "Not selected",
-  ]
+  const a11yLabel = [label, detail, selected ? "Selected" : "Not selected"]
     .filter(Boolean)
     .join(". ");
   return (
@@ -317,11 +313,19 @@ export function Choice({
         </Text>
       ) : null}
       <View accessible={false} style={styles.flex}>
-        <Text allowFontScaling maxFontSizeMultiplier={2} style={styles.choiceLabel}>
+        <Text
+          allowFontScaling
+          maxFontSizeMultiplier={2}
+          style={styles.choiceLabel}
+        >
           {label}
         </Text>
         {detail ? (
-          <Text allowFontScaling maxFontSizeMultiplier={2} style={styles.choiceDetail}>
+          <Text
+            allowFontScaling
+            maxFontSizeMultiplier={2}
+            style={styles.choiceDetail}
+          >
             {detail}
           </Text>
         ) : null}

@@ -7,7 +7,6 @@ import { ageGateService } from "../../services/ageGateService";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
-
 /**
  * Adult eligibility gate after account auth / onboarding.
  * Uses Apple Declared Age Range when available; development self-attest
@@ -149,27 +148,26 @@ export default function AgeGateScreen() {
 
 function makeStyles(colors: AppColors) {
   return {
-  notice: {
-    gap: 6,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.moss,
-    backgroundColor: colors.mossSoft,
-    padding: 14,
-    marginVertical: 8,
-  },
-  noticeTitle: { color: colors.ink, fontWeight: "800", fontSize: 14 },
-  noticeBody: { color: colors.muted, fontSize: 14, lineHeight: 21 },
-  blocked: {
-    gap: 6,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.signal,
-    backgroundColor: colors.signalSoft,
-    padding: 14,
-    marginTop: 12,
-  },
-  blockedTitle: { color: colors.ink, fontWeight: "800", fontSize: 14 },
-  blockedBody: { color: colors.muted, fontSize: 14, lineHeight: 21 },
-  error: { color: colors.signal, lineHeight: 21, marginTop: 8 },
-};
+    notice: {
+      gap: 6,
+      borderLeftWidth: 4,
+      borderLeftColor: colors.moss,
+      backgroundColor: colors.mossSoft,
+      padding: 14,
+      marginVertical: 8,
+    },
+    noticeTitle: { color: colors.ink, fontWeight: "800", fontSize: 14 },
+    noticeBody: { color: colors.muted, fontSize: 14, lineHeight: 21 },
+    blocked: {
+      gap: 6,
+      borderLeftWidth: 4,
+      borderLeftColor: colors.signal,
+      backgroundColor: colors.signalSoft,
+      padding: 14,
+      marginTop: 12,
+    },
+    blockedTitle: { color: colors.ink, fontWeight: "800", fontSize: 14 },
+    blockedBody: { color: colors.muted, fontSize: 14, lineHeight: 21 },
+    error: { color: colors.signal, lineHeight: 21, marginTop: 8 },
+  };
 }
-

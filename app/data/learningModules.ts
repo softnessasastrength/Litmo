@@ -229,7 +229,8 @@ export const learningModules: LearningModule[] = [
                 "Yes. Private wrap-up is for River’s reflection. Sam owes nothing further.",
             },
             {
-              label: "Send another session request immediately to smooth it over",
+              label:
+                "Send another session request immediately to smooth it over",
               feedback:
                 "No. Immediate re-requests can feel like pressure. Wait and respect the stop.",
             },
@@ -240,7 +241,8 @@ export const learningModules: LearningModule[] = [
         id: "practice-wrap-up",
         title: "Private wrap-up, not a public review",
         body: "Each person can leave a private outcome and optional note for themselves. Wrap-ups are not ratings of the other person and never become a safety score. Serious concerns go through report and human review, not star ratings.",
-        takeaway: "Reflection stays private. Harm reports use structured intake.",
+        takeaway:
+          "Reflection stays private. Harm reports use structured intake.",
       },
       {
         id: "practice-close",

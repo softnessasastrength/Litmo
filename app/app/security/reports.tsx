@@ -23,7 +23,6 @@ import {
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
-
 function categoryLabel(id: string): string {
   return REPORT_CATEGORIES.find((c) => c.id === id)?.label ?? id;
 }
@@ -144,12 +143,11 @@ function MyReportsContent() {
 
 function makeStyles(colors: AppColors) {
   return {
-  category: {
-    color: colors.ink,
-    fontWeight: "800",
-    fontSize: 16,
-    marginBottom: 4,
-  },
-};
+    category: {
+      color: colors.ink,
+      fontWeight: "800",
+      fontSize: 16,
+      marginBottom: 4,
+    },
+  };
 }
-

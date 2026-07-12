@@ -20,7 +20,6 @@ import { supabase } from "../../services/supabase";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
-
 type BlockedRow = {
   blockedId: string;
   displayName: string;
@@ -148,9 +147,13 @@ function BlockedAccountsContent() {
 
 function makeStyles(colors: AppColors) {
   return {
-  center: { justifyContent: "center", gap: 18 },
-  list: { gap: 14 },
-  name: { color: colors.ink, fontWeight: "800", fontSize: 17, marginBottom: 6 },
-};
+    center: { justifyContent: "center", gap: 18 },
+    list: { gap: 14 },
+    name: {
+      color: colors.ink,
+      fontWeight: "800",
+      fontSize: 17,
+      marginBottom: 6,
+    },
+  };
 }
-

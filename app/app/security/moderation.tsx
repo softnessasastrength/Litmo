@@ -25,7 +25,6 @@ import { REPORT_CATEGORIES } from "../../services/reportService";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
-
 function categoryLabel(id: string): string {
   return REPORT_CATEGORIES.find((c) => c.id === id)?.label ?? id;
 }
@@ -190,21 +189,20 @@ function ModerationQueueContent() {
 
 function makeStyles(colors: AppColors) {
   return {
-  filters: { gap: 8 },
-  priority: {
-    color: colors.signal,
-    fontWeight: "800",
-    fontSize: 12,
-    textTransform: "uppercase",
-    letterSpacing: 0.6,
-    marginBottom: 4,
-  },
-  category: {
-    color: colors.ink,
-    fontWeight: "800",
-    fontSize: 17,
-    marginBottom: 4,
-  },
-};
+    filters: { gap: 8 },
+    priority: {
+      color: colors.signal,
+      fontWeight: "800",
+      fontSize: 12,
+      textTransform: "uppercase",
+      letterSpacing: 0.6,
+      marginBottom: 4,
+    },
+    category: {
+      color: colors.ink,
+      fontWeight: "800",
+      fontSize: 17,
+      marginBottom: 4,
+    },
+  };
 }
-

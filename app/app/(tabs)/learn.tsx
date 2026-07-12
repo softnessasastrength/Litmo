@@ -12,7 +12,6 @@ import { fonts, radius, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 
-
 export default function LearningHomeScreen() {
   const colors = useColors();
   const styles = useThemedStyles(makeStyles);
@@ -103,71 +102,70 @@ export default function LearningHomeScreen() {
 
 function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
   return {
-  container: {
-    padding: 22,
-    paddingBottom: 48,
-    backgroundColor: colors.cream,
-    gap: 16,
-  },
-  eyebrow: {
-    color: colors.moss,
-    fontWeight: "700",
-    letterSpacing: 1.4,
-    fontSize: 12,
-  },
-  title: {
-    color: colors.ink,
-    fontFamily: fonts.headline,
-    fontSize: 38,
-    lineHeight: 42,
-  },
-  intro: { color: colors.muted, fontSize: 16, lineHeight: 24 },
-  progressCard: {
-    backgroundColor: colors.mossSoft,
-    borderRadius: radius.md,
-    padding: 18,
-    flexDirection: "row",
-    alignItems: "baseline",
-    gap: 8,
-  },
-  progressNumber: { color: colors.moss, fontSize: 27, fontWeight: "700" },
-  progressLabel: { color: colors.moss, fontSize: 14 },
-  card: {
-    backgroundColor: colors.paper,
-    borderRadius: radius.md,
-    padding: 18,
-    gap: 16,
-    ...shadow,
-  },
-  pressed: { opacity: 0.78 },
-  cardTop: { flexDirection: "row", gap: 13 },
-  iconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.mossSoft,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cardCopy: { flex: 1, gap: 5 },
-  cardTitle: { color: colors.ink, fontSize: 20, fontWeight: "700" },
-  cardSummary: { color: colors.muted, fontSize: 14, lineHeight: 20 },
-  metaRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    flexWrap: "wrap",
-    gap: 9,
-  },
-  meta: { color: colors.muted, fontSize: 12 },
-  required: {
-    color: colors.plum,
-    backgroundColor: colors.plumSoft,
-    borderRadius: radius.pill,
-    paddingHorizontal: 9,
-    paddingVertical: 4,
-    fontSize: 11,
-  },
-  action: { color: colors.moss, fontWeight: "700", marginLeft: "auto" },
-};
+    container: {
+      padding: 22,
+      paddingBottom: 48,
+      backgroundColor: colors.cream,
+      gap: 16,
+    },
+    eyebrow: {
+      color: colors.moss,
+      fontWeight: "700",
+      letterSpacing: 1.4,
+      fontSize: 12,
+    },
+    title: {
+      color: colors.ink,
+      fontFamily: fonts.headline,
+      fontSize: 38,
+      lineHeight: 42,
+    },
+    intro: { color: colors.muted, fontSize: 16, lineHeight: 24 },
+    progressCard: {
+      backgroundColor: colors.mossSoft,
+      borderRadius: radius.md,
+      padding: 18,
+      flexDirection: "row",
+      alignItems: "baseline",
+      gap: 8,
+    },
+    progressNumber: { color: colors.moss, fontSize: 27, fontWeight: "700" },
+    progressLabel: { color: colors.moss, fontSize: 14 },
+    card: {
+      backgroundColor: colors.paper,
+      borderRadius: radius.md,
+      padding: 18,
+      gap: 16,
+      ...shadow,
+    },
+    pressed: { opacity: 0.78 },
+    cardTop: { flexDirection: "row", gap: 13 },
+    iconWrap: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.mossSoft,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    cardCopy: { flex: 1, gap: 5 },
+    cardTitle: { color: colors.ink, fontSize: 20, fontWeight: "700" },
+    cardSummary: { color: colors.muted, fontSize: 14, lineHeight: 20 },
+    metaRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      flexWrap: "wrap",
+      gap: 9,
+    },
+    meta: { color: colors.muted, fontSize: 12 },
+    required: {
+      color: colors.plum,
+      backgroundColor: colors.plumSoft,
+      borderRadius: radius.pill,
+      paddingHorizontal: 9,
+      paddingVertical: 4,
+      fontSize: 11,
+    },
+    action: { color: colors.moss, fontWeight: "700", marginLeft: "auto" },
+  };
 }
-

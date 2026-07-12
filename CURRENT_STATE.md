@@ -24,11 +24,11 @@
 
 ## Work in progress
 
-**Track A Pass** (founder). **Track C Pass** (engineering). **Track B** tooling ready (seed sign-in + setup script); needs Docker + operator execution. Do not claim external beta readiness until RELEASE_AND_TESTFLIGHT blockers clear.
+**Track A Pass** (founder). **Track C Pass** (engineering). **Track B automated backend Pass** (2026-07-12): Docker + setup + seed password grant for all four emails + integration 3/3 + pgTAP 240/240. Seed GoTrue token NULL bug fixed. **Track B physical UI (B1–B26)** still founder-owned. Do not claim external beta readiness until RELEASE_AND_TESTFLIGHT blockers clear.
 
 ## Priority next work
 
-1. **Track B execution** — Docker → `bash scripts/setup-track-b-local.sh` → two seed accounts → real Consent Snapshot (`docs/TRACK_B_LOCAL.md`).
+1. **Track B on device** — `bash scripts/setup-track-b-local.sh` → `npm run api` + `npm run mobile` → two seed accounts → B1–B26 (`docs/TRACK_B_LOCAL.md`).
 2. Optional founder VoiceOver smoke (`docs/ACCESSIBILITY_TRACK_C.md`).
 3. Reconcile any Fail findings into tests, ADRs, `KNOWN_LIMITATIONS.md`.
 4. Clear external TestFlight blockers only when intentionally starting private alpha distribution.
@@ -73,7 +73,7 @@ Do not claim the current integrated `main` has passed every command unless the e
 
 ## Exact next action
 
-Select one priority milestone, create a dedicated branch, record it in `TASKS.md` and `project-state.json`, inspect recent commits and CI, then implement and verify one coherent unit at a time.
+Founder: run Track B B1–B26 on physical device(s) after `bash scripts/setup-track-b-local.sh`. Agent: merge seed password fix if not already on `main`; open fix PRs only for Fail items from the walkthrough.
 
 ## Resume checklist
 

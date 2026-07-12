@@ -12,7 +12,7 @@
 | Device (Track A) | Founder device (Track A confirmed good) + prior iPhone 17 Simulator automation |
 | Build type | `com.litmo.app.dev` / Metro as used by founder |
 | Supabase / backend (Track A) | Not required for fictional demo |
-| Automated checks | `npm run typecheck` pass; app unit tests **74/74** pass (agent) |
+| Automated checks | `npm run typecheck` pass; unit tests pass; **pgTAP 240/240**; integration **3/3**; seed password grant verified after seed-token fix (agent, 2026-07-12) |
 
 ## Track A — Fictional demo
 
@@ -43,13 +43,14 @@
 
 ## Track B — Real accounts
 
-| Status | **Ready to run** (tooling landed; Docker required for execution) |
+| Status | **Automated backend Pass** (UI walkthrough still founder-owned) |
 |--------|-------------------------------------------------------------------|
 | Prep | `bash scripts/setup-track-b-local.sh` then `npm run api` + `npm run mobile` |
 | Sign-in | Development seed form: `maya.demo@litmo.local` / `LitmoDemo123!` (ADR 0041) |
 | Guide | `docs/TRACK_B_LOCAL.md` |
-| Automated | `npm run test:integration` when Docker is up |
-| Next | Founder/operator completes B1–B26 with two accounts |
+| Automated (2026-07-12 agent) | Docker up; setup script; **all four seed emails** password grant HTTP 200; `npm run test:integration` **3/3**; `env HOME=/tmp npx supabase test db` **240/240** |
+| Seed bug fixed | Seed rows left GoTrue token columns NULL → password login 500; fixed in `supabase/seed.sql` + setup verification (ADR 0041 addendum) |
+| Next | Founder/operator completes **B1–B26 on device(s)** with two accounts (Face ID + UI path) |
 
 ## Track C — Accessibility
 
@@ -71,13 +72,13 @@
 
 | Role | Demo track | Real track | Accessibility | Notes |
 |------|------------|------------|---------------|-------|
-| Founder | **Pass** | Pending | Optional VoiceOver smoke | Track A confirmed good |
-| Agent | Partial | — | **Pass** (engineering) | Track C hardening 2026-07-12 |
+| Founder | **Pass** | Pending UI walkthrough | Optional VoiceOver smoke | Track A confirmed good |
+| Agent | Partial Maestro | **Automated backend Pass** | **Pass** (engineering) | Seed login fix + pgTAP/integration 2026-07-12 |
 
-**Claim now:** Track A **Pass** (founder); Track C **Pass** (engineering a11y).  
-**Not yet:** Track B (real accounts), full BETA-001, TestFlight, production safe.
+**Claim now:** Track A **Pass** (founder); Track C **Pass** (engineering a11y); Track B **automated backend Pass** (seed sign-in + two-client lifecycle).  
+**Not yet:** Track B physical two-device UI (B1–B26), full BETA-001, TestFlight, production safe.
 
 ## Next to full green
 
-1. **Track B** — real two-account path with local Supabase + snapshot backend.  
+1. **Track B on device** — founder runs B1–B26 with two seed accounts after `bash scripts/setup-track-b-local.sh` (use `app/.env.lan.example` on physical phone).  
 2. Optional founder VoiceOver smoke on Soft Signal + Consent Snapshot.

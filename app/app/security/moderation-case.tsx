@@ -25,7 +25,6 @@ import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 
-
 function categoryLabel(id: string): string {
   return REPORT_CATEGORIES.find((c) => c.id === id)?.label ?? id;
 }
@@ -365,40 +364,39 @@ function ModerationCaseContent() {
 
 function makeStyles(colors: AppColors) {
   return {
-  section: {
-    color: colors.ink,
-    fontWeight: "800",
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  evidenceBlock: {
-    marginTop: 10,
-    gap: 4,
-  },
-  evidenceLabel: {
-    color: colors.ink,
-    fontWeight: "700",
-    fontSize: 14,
-  },
-  note: {
-    borderTopWidth: 1,
-    borderTopColor: colors.line,
-    paddingTop: 10,
-    marginTop: 10,
-    gap: 4,
-  },
-  input: {
-    minHeight: 100,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.line,
-    padding: 14,
-    color: colors.ink,
-    textAlignVertical: "top",
-    backgroundColor: colors.cream,
-    marginTop: 10,
-  },
-  error: { color: colors.signal, textAlign: "center" },
-};
+    section: {
+      color: colors.ink,
+      fontWeight: "800",
+      fontSize: 16,
+      marginBottom: 8,
+    },
+    evidenceBlock: {
+      marginTop: 10,
+      gap: 4,
+    },
+    evidenceLabel: {
+      color: colors.ink,
+      fontWeight: "700",
+      fontSize: 14,
+    },
+    note: {
+      borderTopWidth: 1,
+      borderTopColor: colors.line,
+      paddingTop: 10,
+      marginTop: 10,
+      gap: 4,
+    },
+    input: {
+      minHeight: 100,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.line,
+      padding: 14,
+      color: colors.ink,
+      textAlignVertical: "top",
+      backgroundColor: colors.cream,
+      marginTop: 10,
+    },
+    error: { color: colors.signal, textAlign: "center" },
+  };
 }
-

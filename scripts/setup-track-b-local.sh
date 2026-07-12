@@ -59,6 +59,47 @@ EOF
 echo "Resetting database (migrations + seed accounts)…"
 npx supabase db reset
 
+# Regression guard: GoTrue rejects password login when seed users leave
+# confirmation_token (and related token columns) NULL. Fail the setup script
+# early rather than leaving Track B looking "ready" with a 500 on sign-in.
+echo "Verifying seed password sign-in…"
+SUPABASE_URL="$API_HOST_LOCAL" SUPABASE_ANON_KEY="$ANON_KEY" node --input-type=module <<'NODE'
+const url = process.env.SUPABASE_URL;
+const anon = process.env.SUPABASE_ANON_KEY;
+const emails = [
+  'maya.demo@litmo.local',
+  'eli.demo@litmo.local',
+  'eli-persona.demo@litmo.local',
+  'jonah-persona.demo@litmo.local',
+];
+const password = 'LitmoDemo123!';
+for (const email of emails) {
+  const res = await fetch(`${url}/auth/v1/token?grant_type=password`, {
+    method: 'POST',
+    headers: {
+      apikey: anon,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, password }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok || !body.access_token) {
+    console.error(
+      'Seed sign-in failed for',
+      email,
+      'HTTP',
+      res.status,
+      body.msg || body.error_code || body.error || '',
+    );
+    console.error(
+      'Likely cause: auth.users token columns must be empty strings, not NULL (see supabase/seed.sql).',
+    );
+    process.exit(1);
+  }
+  console.log('  ok', email);
+}
+NODE
+
 echo ""
 echo "Track B local prep complete."
 echo "  app/.env          → simulator (127.0.0.1)"

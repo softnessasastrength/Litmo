@@ -20,7 +20,6 @@ import { sessionCompleteService } from "../../services/sessionCompleteService";
 import { sessionRepository } from "../../services/sessionRepository";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
-
 const terminalEndedReason: Record<string, string> = {
   soft_signaled: "soft-signal",
   safety_ended: "soft-signal",
@@ -48,9 +47,9 @@ function ActiveSessionContent() {
     "idle",
   );
   const [completing, setCompleting] = useState(false);
-  const [blockState, setBlockState] = useState<
-    "idle" | "blocking" | "error"
-  >("idle");
+  const [blockState, setBlockState] = useState<"idle" | "blocking" | "error">(
+    "idle",
+  );
   const [blockError, setBlockError] = useState("");
   /** Display-only: last server sync outcome. Never invents consent offline. */
   const [syncNote, setSyncNote] = useState<string | null>(null);
@@ -335,39 +334,38 @@ function ActiveSessionContent() {
 }
 function makeStyles(colors: AppColors) {
   return {
-  screen: { justifyContent: "space-between" },
-  timerWrap: { alignItems: "center", paddingHorizontal: 8 },
-  timer: {
-    color: colors.ink,
-    fontFamily: "Georgia",
-    fontSize: 66,
-    fontVariant: ["tabular-nums"],
-    // Timer is decorative; cap so Soft Signal controls keep room under Dynamic Type.
-    maxFontSizeMultiplier: 1.35,
-  },
-  timerLabel: {
-    color: colors.muted,
-    fontSize: 11,
-    letterSpacing: 1.5,
-    fontWeight: "800",
-  },
-  prompt: { color: colors.plum, fontWeight: "800", marginBottom: 7 },
-  controls: { gap: 12, width: "100%" },
-  explain: {
-    color: colors.muted,
-    fontSize: 13,
-    textAlign: "center",
-    lineHeight: 20,
-  },
-  syncNote: {
-    marginTop: 12,
-    backgroundColor: colors.apricotSoft,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.apricot,
-    padding: 12,
-    borderRadius: 12,
-  },
-  syncNoteText: { color: colors.ink, fontSize: 14, lineHeight: 20 },
-};
+    screen: { justifyContent: "space-between" },
+    timerWrap: { alignItems: "center", paddingHorizontal: 8 },
+    timer: {
+      color: colors.ink,
+      fontFamily: "Georgia",
+      fontSize: 66,
+      fontVariant: ["tabular-nums"],
+      // Timer is decorative; cap so Soft Signal controls keep room under Dynamic Type.
+      maxFontSizeMultiplier: 1.35,
+    },
+    timerLabel: {
+      color: colors.muted,
+      fontSize: 11,
+      letterSpacing: 1.5,
+      fontWeight: "800",
+    },
+    prompt: { color: colors.plum, fontWeight: "800", marginBottom: 7 },
+    controls: { gap: 12, width: "100%" },
+    explain: {
+      color: colors.muted,
+      fontSize: 13,
+      textAlign: "center",
+      lineHeight: 20,
+    },
+    syncNote: {
+      marginTop: 12,
+      backgroundColor: colors.apricotSoft,
+      borderLeftWidth: 4,
+      borderLeftColor: colors.apricot,
+      padding: 12,
+      borderRadius: 12,
+    },
+    syncNoteText: { color: colors.ink, fontSize: 14, lineHeight: 20 },
+  };
 }
-

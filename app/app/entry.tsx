@@ -15,7 +15,6 @@ import { runtimeConfig } from "../config/runtime";
 import { environmentError } from "../services/supabase";
 import { useThemedStyles } from "../hooks/useThemedStyles";
 
-
 export default function EntryScreen() {
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
@@ -94,30 +93,29 @@ export default function EntryScreen() {
 
 function makeStyles(colors: AppColors) {
   return {
-  screen: { paddingTop: 32 },
-  heading: { gap: 14, marginBottom: 6 },
-  card: { gap: 16 },
-  cardTitle: {
-    color: colors.ink,
-    fontFamily: fonts.headline,
-    fontSize: 28,
-  },
-  notice: {
-    gap: 6,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.apricot,
-    backgroundColor: colors.cream,
-    padding: 14,
-  },
-  noticeTitle: { color: colors.ink, fontWeight: "800", fontSize: 14 },
-  noticeBody: { color: colors.muted, fontSize: 14, lineHeight: 21 },
-  footer: {
-    color: colors.muted,
-    fontSize: 12,
-    lineHeight: 18,
-    textAlign: "center",
-    marginTop: 4,
-  },
-};
+    screen: { paddingTop: 32 },
+    heading: { gap: 14, marginBottom: 6 },
+    card: { gap: 16 },
+    cardTitle: {
+      color: colors.ink,
+      fontFamily: fonts.headline,
+      fontSize: 28,
+    },
+    notice: {
+      gap: 6,
+      borderLeftWidth: 4,
+      borderLeftColor: colors.apricot,
+      backgroundColor: colors.cream,
+      padding: 14,
+    },
+    noticeTitle: { color: colors.ink, fontWeight: "800", fontSize: 14 },
+    noticeBody: { color: colors.muted, fontSize: 14, lineHeight: 21 },
+    footer: {
+      color: colors.muted,
+      fontSize: 12,
+      lineHeight: 18,
+      textAlign: "center",
+      marginTop: 4,
+    },
+  };
 }
-

@@ -93,28 +93,27 @@ export default function QuizScreen() {
 }
 function makeStyles(colors: AppColors) {
   return {
-  count: {
-    color: colors.muted,
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 1.1,
-  },
-  header: { gap: 10, marginTop: 16, marginBottom: 28 },
-  kicker: { color: colors.plum, fontSize: 15, fontWeight: "700" },
-  prompt: {
-    color: colors.ink,
-    fontFamily: fonts.headline,
-    fontSize: 36,
-    lineHeight: 43,
-  },
-  options: { gap: 12 },
-  note: {
-    color: colors.muted,
-    fontSize: 12,
-    lineHeight: 18,
-    textAlign: "center",
-    marginTop: "auto",
-  },
-};
+    count: {
+      color: colors.muted,
+      fontSize: 11,
+      fontWeight: "700",
+      letterSpacing: 1.1,
+    },
+    header: { gap: 10, marginTop: 16, marginBottom: 28 },
+    kicker: { color: colors.plum, fontSize: 15, fontWeight: "700" },
+    prompt: {
+      color: colors.ink,
+      fontFamily: fonts.headline,
+      fontSize: 36,
+      lineHeight: 43,
+    },
+    options: { gap: 12 },
+    note: {
+      color: colors.muted,
+      fontSize: 12,
+      lineHeight: 18,
+      textAlign: "center",
+      marginTop: "auto",
+    },
+  };
 }
-

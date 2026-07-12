@@ -5,11 +5,7 @@
  */
 
 export type HapticEvent =
-  | "presence"
-  | "attention"
-  | "confirmation"
-  | "softSignal"
-  | "emergencyStop";
+  "presence" | "attention" | "confirmation" | "softSignal" | "emergencyStop";
 
 export type HapticPlatformCall =
   | { kind: "impact"; style: "light" | "medium" | "heavy" }

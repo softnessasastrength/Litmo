@@ -15,7 +15,6 @@ import { useAuth } from "../../context/AuthContext";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
-
 export default function TrustLedgerScreen() {
   return (
     <SensitiveAccessGate>
@@ -79,36 +78,35 @@ function TrustLedgerContent() {
 }
 function makeStyles(colors: AppColors) {
   return {
-  number: { color: colors.moss, fontFamily: fonts.headline, fontSize: 56 },
-  metric: { color: colors.muted, fontSize: 15 },
-  timeline: { gap: 0 },
-  entry: { flexDirection: "row", minHeight: 130 },
-  rail: { width: 28, alignItems: "center" },
-  dot: {
-    width: 13,
-    height: 13,
-    borderRadius: 7,
-    backgroundColor: colors.apricot,
-    borderWidth: 3,
-    borderColor: colors.cream,
-  },
-  line: { width: 2, flex: 1, backgroundColor: colors.line },
-  entryBody: { flex: 1, paddingBottom: 24, gap: 6 },
-  date: {
-    color: colors.muted,
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1,
-  },
-  person: { color: colors.ink, fontFamily: fonts.headline, fontSize: 22 },
-  detail: { color: colors.muted, fontSize: 13 },
-  notice: {
-    borderTopWidth: 1,
-    borderTopColor: colors.line,
-    paddingTop: 18,
-    gap: 5,
-  },
-  noticeTitle: { color: colors.ink, fontSize: 17, fontWeight: "800" },
-};
+    number: { color: colors.moss, fontFamily: fonts.headline, fontSize: 56 },
+    metric: { color: colors.muted, fontSize: 15 },
+    timeline: { gap: 0 },
+    entry: { flexDirection: "row", minHeight: 130 },
+    rail: { width: 28, alignItems: "center" },
+    dot: {
+      width: 13,
+      height: 13,
+      borderRadius: 7,
+      backgroundColor: colors.apricot,
+      borderWidth: 3,
+      borderColor: colors.cream,
+    },
+    line: { width: 2, flex: 1, backgroundColor: colors.line },
+    entryBody: { flex: 1, paddingBottom: 24, gap: 6 },
+    date: {
+      color: colors.muted,
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1,
+    },
+    person: { color: colors.ink, fontFamily: fonts.headline, fontSize: 22 },
+    detail: { color: colors.muted, fontSize: 13 },
+    notice: {
+      borderTopWidth: 1,
+      borderTopColor: colors.line,
+      paddingTop: 18,
+      gap: 5,
+    },
+    noticeTitle: { color: colors.ink, fontSize: 17, fontWeight: "800" },
+  };
 }
-
