@@ -1,0 +1,64 @@
+appId: com.litmo.app.dev
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    text: "Cancel"
+    optional: true
+- extendedWaitUntil:
+    visible: ".*Explore the prototype.*"
+    timeout: 20000
+- takeScreenshot: 01-welcome
+- tapOn: ".*Explore the prototype.*"
+- extendedWaitUntil:
+    visible: ".*Enter the fictional demo.*"
+    timeout: 15000
+- takeScreenshot: 02-entry
+- scroll
+- takeScreenshot: 03-entry-scrolled
+- tapOn: ".*Enter the fictional demo.*"
+- extendedWaitUntil:
+    visible: ".*About you.*|.*name.*|.*Continue.*|.*Next.*"
+    timeout: 15000
+- takeScreenshot: 04-onboarding-start
+- tapOn:
+    text: ".*Continue.*|.*Next.*|.*Save.*"
+    optional: true
+- takeScreenshot: 05-onboarding-2
+- tapOn:
+    text: ".*Continue.*|.*Next.*|.*Save.*"
+    optional: true
+- takeScreenshot: 06-onboarding-3
+- tapOn:
+    text: ".*Continue.*|.*Next.*|.*Save.*|.*Finish.*|.*Done.*"
+    optional: true
+- takeScreenshot: 07-after-onboarding
+- tapOn:
+    text: "Discover"
+    optional: true
+- takeScreenshot: 08-discover
+- tapOn:
+    text: ".*Maya.*"
+    optional: true
+- takeScreenshot: 09-match
+- scroll
+- takeScreenshot: 10-match-scrolled
+- tapOn:
+    text: ".*Consent Snapshot.*"
+    optional: true
+- takeScreenshot: 11-consent
+- tapOn:
+    text: "Back"
+    optional: true
+- tapOn:
+    text: "Learn"
+    optional: true
+- takeScreenshot: 12-learning
+- tapOn:
+    text: "Home"
+    optional: true
+- takeScreenshot: 13-home
+- tapOn:
+    text: ".*Settings.*"
+    optional: true
+- takeScreenshot: 14-settings
