@@ -21,7 +21,6 @@ import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 
-
 export default function ReportScreen() {
   return (
     <SensitiveAccessGate>
@@ -189,24 +188,23 @@ function ReportContent() {
 
 function makeStyles(colors: AppColors) {
   return {
-  options: { gap: 10 },
-  noteLabel: {
-    color: colors.ink,
-    fontWeight: "700",
-    fontSize: 15,
-    marginTop: 8,
-  },
-  note: {
-    minHeight: 110,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.line,
-    padding: 14,
-    color: colors.ink,
-    textAlignVertical: "top",
-    backgroundColor: colors.cream,
-  },
-  error: { color: colors.signal, textAlign: "center" },
-};
+    options: { gap: 10 },
+    noteLabel: {
+      color: colors.ink,
+      fontWeight: "700",
+      fontSize: 15,
+      marginTop: 8,
+    },
+    note: {
+      minHeight: 110,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.line,
+      padding: 14,
+      color: colors.ink,
+      textAlignVertical: "top",
+      backgroundColor: colors.cream,
+    },
+    error: { color: colors.signal, textAlign: "center" },
+  };
 }
-

@@ -24,7 +24,6 @@ import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 
-
 export default function AppealsScreen() {
   return (
     <SensitiveAccessGate>
@@ -203,31 +202,30 @@ function AppealsContent() {
 
 function makeStyles(colors: AppColors) {
   return {
-  section: {
-    color: colors.ink,
-    fontWeight: "800",
-    fontSize: 16,
-    marginTop: 8,
-  },
-  kind: {
-    color: colors.ink,
-    fontWeight: "800",
-    fontSize: 16,
-    marginBottom: 4,
-    textTransform: "capitalize",
-  },
-  input: {
-    minHeight: 100,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.line,
-    padding: 14,
-    color: colors.ink,
-    textAlignVertical: "top",
-    backgroundColor: colors.cream,
-    marginVertical: 10,
-  },
-  error: { color: colors.signal, textAlign: "center" },
-};
+    section: {
+      color: colors.ink,
+      fontWeight: "800",
+      fontSize: 16,
+      marginTop: 8,
+    },
+    kind: {
+      color: colors.ink,
+      fontWeight: "800",
+      fontSize: 16,
+      marginBottom: 4,
+      textTransform: "capitalize",
+    },
+    input: {
+      minHeight: 100,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.line,
+      padding: 14,
+      color: colors.ink,
+      textAlignVertical: "top",
+      backgroundColor: colors.cream,
+      marginVertical: 10,
+    },
+    error: { color: colors.signal, textAlign: "center" },
+  };
 }
-

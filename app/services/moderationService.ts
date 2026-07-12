@@ -206,7 +206,9 @@ export const moderationService = {
         staffSharedMessage: row.staff_shared_message,
         hasDevicePrivateNote: Boolean(row.has_device_private_note),
         reportedActiveRestrictionKind: row.reported_active_restriction_kind,
-        priorOpenCasesForReported: Number(row.prior_open_cases_for_reported ?? 0),
+        priorOpenCasesForReported: Number(
+          row.prior_open_cases_for_reported ?? 0,
+        ),
         priorOtherReportsForReported: Number(
           row.prior_other_reports_for_reported ?? 0,
         ),

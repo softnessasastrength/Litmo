@@ -16,7 +16,6 @@ import {
 import { fonts, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
-
 const statuses: Array<{
   value: BoundaryStatus;
   label: string;
@@ -92,23 +91,22 @@ export default function BoundariesScreen() {
 
 function makeStyles(colors: AppColors) {
   return {
-  group: { gap: 12, marginTop: 12 },
-  question: {
-    color: colors.ink,
-    fontFamily: fonts.headline,
-    fontSize: 25,
-    lineHeight: 31,
-  },
-  choices: { gap: 9 },
-  safety: {
-    backgroundColor: colors.plumSoft,
-    borderRadius: 18,
-    padding: 18,
-    gap: 5,
-    marginTop: 8,
-  },
-  safetyTitle: { color: colors.ink, fontSize: 16, fontWeight: "800" },
-  safetyBody: { color: colors.muted, lineHeight: 21 },
-};
+    group: { gap: 12, marginTop: 12 },
+    question: {
+      color: colors.ink,
+      fontFamily: fonts.headline,
+      fontSize: 25,
+      lineHeight: 31,
+    },
+    choices: { gap: 9 },
+    safety: {
+      backgroundColor: colors.plumSoft,
+      borderRadius: 18,
+      padding: 18,
+      gap: 5,
+      marginTop: 8,
+    },
+    safetyTitle: { color: colors.ink, fontSize: 16, fontWeight: "800" },
+    safetyBody: { color: colors.muted, lineHeight: 21 },
+  };
 }
-

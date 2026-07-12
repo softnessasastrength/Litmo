@@ -30,7 +30,6 @@ import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { FailureState, LoadingState } from "../../components/AsyncState";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
-
 export default function ConsentSnapshotScreen() {
   return (
     <SensitiveAccessGate>
@@ -254,9 +253,7 @@ function ConsentSnapshotContent() {
 
   return (
     <Screen>
-      <Eyebrow>
-        {isReal ? "CONSENT SNAPSHOT" : "MOCK CONSENT SNAPSHOT"}
-      </Eyebrow>
+      <Eyebrow>{isReal ? "CONSENT SNAPSHOT" : "MOCK CONSENT SNAPSHOT"}</Eyebrow>
       <Title>Read every boundary before you agree.</Title>
       <Body>
         {isReal
@@ -407,34 +404,37 @@ function ConsentSnapshotContent() {
 }
 function makeStyles(colors: AppColors) {
   return {
-  snapshot: { gap: 0 },
-  row: {
-    paddingVertical: 13,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.line,
-  },
-  label: {
-    color: colors.muted,
-    fontSize: 12,
-    fontWeight: "700",
-    textTransform: "uppercase",
-    letterSpacing: 0.7,
-  },
-  value: {
-    color: colors.ink,
-    fontSize: 16,
-    lineHeight: 23,
-    marginTop: 4,
-    fontWeight: "600",
-  },
-  decisions: { gap: 10 },
-  stop: { padding: 16, borderRadius: 16, backgroundColor: colors.signalSoft },
-  stopTitle: { color: colors.signal, fontWeight: "800" },
-  stopBody: { color: colors.ink, lineHeight: 21, marginTop: 4 },
-  waiting: { padding: 16, borderRadius: 16, backgroundColor: colors.mossSoft },
-  waitingTitle: { color: colors.moss, fontWeight: "800" },
-  waitingBody: { color: colors.ink, lineHeight: 21, marginTop: 4 },
-  error: { color: colors.signal, textAlign: "center" },
-};
+    snapshot: { gap: 0 },
+    row: {
+      paddingVertical: 13,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.line,
+    },
+    label: {
+      color: colors.muted,
+      fontSize: 12,
+      fontWeight: "700",
+      textTransform: "uppercase",
+      letterSpacing: 0.7,
+    },
+    value: {
+      color: colors.ink,
+      fontSize: 16,
+      lineHeight: 23,
+      marginTop: 4,
+      fontWeight: "600",
+    },
+    decisions: { gap: 10 },
+    stop: { padding: 16, borderRadius: 16, backgroundColor: colors.signalSoft },
+    stopTitle: { color: colors.signal, fontWeight: "800" },
+    stopBody: { color: colors.ink, lineHeight: 21, marginTop: 4 },
+    waiting: {
+      padding: 16,
+      borderRadius: 16,
+      backgroundColor: colors.mossSoft,
+    },
+    waitingTitle: { color: colors.moss, fontWeight: "800" },
+    waitingBody: { color: colors.ink, lineHeight: 21, marginTop: 4 },
+    error: { color: colors.signal, textAlign: "center" },
+  };
 }
-

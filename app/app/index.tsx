@@ -1,16 +1,9 @@
 import { useRouter } from "expo-router";
-import {
-  ImageBackground,
-  Linking,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
+import { ImageBackground, Linking, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Body, Button, FadeIn } from "../components/ui";
 import { fonts, type AppColors } from "../theme";
 import { useThemedStyles } from "../hooks/useThemedStyles";
-
 
 export default function HomeScreen() {
   const styles = useThemedStyles(makeStyles);
@@ -63,52 +56,51 @@ export default function HomeScreen() {
 }
 function makeStyles(colors: AppColors) {
   return {
-  wallpaper: { flex: 1 },
-  safe: { flex: 1 },
-  screen: {
-    flex: 1,
-    padding: 24,
-    paddingBottom: 40,
-    paddingTop: 40,
-    justifyContent: "space-between",
-  },
-  mark: {
-    width: 62,
-    height: 62,
-    borderRadius: 31,
-    backgroundColor: colors.plumSoft,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  markText: { fontFamily: fonts.wordmark, fontSize: 40, color: colors.plum },
-  hero: { gap: 16, marginTop: 56 },
-  kicker: {
-    color: colors.moss,
-    fontSize: 12,
-    fontWeight: "800",
-    letterSpacing: 1.7,
-  },
-  title: {
-    color: colors.ink,
-    fontFamily: fonts.headline,
-    fontSize: 52,
-    lineHeight: 57,
-    maxWidth: 330,
-  },
-  bottom: { gap: 16 },
-  caption: {
-    color: colors.muted,
-    fontSize: 12,
-    lineHeight: 18,
-    textAlign: "center",
-  },
-  link: {
-    color: colors.muted,
-    fontSize: 12,
-    textAlign: "center",
-    textDecorationLine: "underline",
-    marginTop: 2,
-  },
-};
+    wallpaper: { flex: 1 },
+    safe: { flex: 1 },
+    screen: {
+      flex: 1,
+      padding: 24,
+      paddingBottom: 40,
+      paddingTop: 40,
+      justifyContent: "space-between",
+    },
+    mark: {
+      width: 62,
+      height: 62,
+      borderRadius: 31,
+      backgroundColor: colors.plumSoft,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    markText: { fontFamily: fonts.wordmark, fontSize: 40, color: colors.plum },
+    hero: { gap: 16, marginTop: 56 },
+    kicker: {
+      color: colors.moss,
+      fontSize: 12,
+      fontWeight: "800",
+      letterSpacing: 1.7,
+    },
+    title: {
+      color: colors.ink,
+      fontFamily: fonts.headline,
+      fontSize: 52,
+      lineHeight: 57,
+      maxWidth: 330,
+    },
+    bottom: { gap: 16 },
+    caption: {
+      color: colors.muted,
+      fontSize: 12,
+      lineHeight: 18,
+      textAlign: "center",
+    },
+    link: {
+      color: colors.muted,
+      fontSize: 12,
+      textAlign: "center",
+      textDecorationLine: "underline",
+      marginTop: 2,
+    },
+  };
 }
-

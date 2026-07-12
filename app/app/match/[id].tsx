@@ -28,7 +28,6 @@ import { LoadingState, FailureState } from "../../components/AsyncState";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
-
 const uuidRe =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -408,29 +407,28 @@ export default function MatchDetailScreen() {
 }
 function makeStyles(colors: AppColors) {
   return {
-  hero: {
-    height: 190,
-    borderRadius: 30,
-    padding: 22,
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-  },
-  glyph: { color: colors.plum, fontFamily: "Georgia", fontSize: 72 },
-  affirmed: {
-    color: colors.moss,
-    fontSize: 17,
-    fontWeight: "800",
-    marginVertical: 8,
-  },
-  separation: {
-    borderLeftWidth: 4,
-    borderLeftColor: colors.apricot,
-    paddingLeft: 16,
-    gap: 5,
-  },
-  separationTitle: { color: colors.ink, fontWeight: "800", fontSize: 16 },
-  separationBody: { color: colors.muted, lineHeight: 21 },
-  error: { color: colors.signal, textAlign: "center" },
-};
+    hero: {
+      height: 190,
+      borderRadius: 30,
+      padding: 22,
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+    },
+    glyph: { color: colors.plum, fontFamily: "Georgia", fontSize: 72 },
+    affirmed: {
+      color: colors.moss,
+      fontSize: 17,
+      fontWeight: "800",
+      marginVertical: 8,
+    },
+    separation: {
+      borderLeftWidth: 4,
+      borderLeftColor: colors.apricot,
+      paddingLeft: 16,
+      gap: 5,
+    },
+    separationTitle: { color: colors.ink, fontWeight: "800", fontSize: 16 },
+    separationBody: { color: colors.muted, lineHeight: 21 },
+    error: { color: colors.signal, textAlign: "center" },
+  };
 }
-

@@ -1,9 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import {
-  nextAppearancePreference,
-  resolveScheme,
-} from "../theme.ts";
+import { nextAppearancePreference, resolveScheme } from "../theme.ts";
 import { parseThemeScheme } from "./themePreferenceCore.ts";
 
 test("theme preference defaults to light", () => {

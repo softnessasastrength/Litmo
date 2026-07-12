@@ -7,7 +7,6 @@ import { learningProgressService } from "../../services/learningProgress";
 import { fonts, radius, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
-
 export default function LearningModuleScreen() {
   const styles = useThemedStyles(makeStyles);
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -102,7 +101,7 @@ export default function LearningModuleScreen() {
   }
 
   async function goBackStep() {
-  const styles = useThemedStyles(makeStyles);
+    const styles = useThemedStyles(makeStyles);
     if (stepIndex === 0) {
       router.back();
       return;
@@ -212,104 +211,107 @@ export default function LearningModuleScreen() {
 
 function makeStyles(colors: AppColors) {
   return {
-  container: {
-    padding: 24,
-    paddingBottom: 48,
-    backgroundColor: colors.cream,
-    gap: 20,
-    flexGrow: 1,
-  },
-  missing: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 24,
-    backgroundColor: colors.cream,
-    gap: 20,
-  },
-  progress: {
-    color: colors.moss,
-    fontSize: 12,
-    fontWeight: "700",
-    letterSpacing: 1.3,
-  },
-  track: {
-    height: 7,
-    borderRadius: radius.pill,
-    backgroundColor: colors.line,
-    overflow: "hidden",
-  },
-  fill: {
-    height: "100%",
-    backgroundColor: colors.moss,
-    borderRadius: radius.pill,
-  },
-  title: {
-    color: colors.ink,
-    fontFamily: fonts.headline,
-    fontSize: 40,
-    lineHeight: 44,
-  },
-  body: { color: colors.ink, fontSize: 18, lineHeight: 28 },
-  takeaway: {
-    backgroundColor: colors.mossSoft,
-    borderRadius: radius.md,
-    padding: 18,
-    gap: 7,
-  },
-  takeawayLabel: {
-    color: colors.moss,
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1.2,
-  },
-  takeawayText: {
-    color: colors.moss,
-    fontSize: 17,
-    lineHeight: 24,
-    fontWeight: "600",
-  },
-  scenario: { gap: 12 },
-  scenarioPrompt: {
-    color: colors.ink,
-    fontWeight: "700",
-    fontSize: 17,
-    lineHeight: 24,
-  },
-  option: {
-    borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.paper,
-    borderRadius: radius.md,
-    padding: 16,
-    gap: 9,
-  },
-  optionSelected: {
-    borderColor: colors.moss,
-    backgroundColor: colors.mossSoft,
-  },
-  optionLabel: { color: colors.ink, fontSize: 16, fontWeight: "600" },
-  optionLabelSelected: { color: colors.moss },
-  feedback: { color: colors.moss, fontSize: 14, lineHeight: 20 },
-  actions: { flexDirection: "row", gap: 12, marginTop: "auto" },
-  primaryButton: {
-    flex: 1,
-    backgroundColor: colors.moss,
-    borderRadius: radius.pill,
-    paddingVertical: 16,
-    alignItems: "center",
-  },
-  primaryButtonText: { color: colors.white, fontSize: 16, fontWeight: "700" },
-  secondaryButton: {
-    borderWidth: 1,
-    borderColor: colors.moss,
-    borderRadius: radius.pill,
-    paddingVertical: 16,
-    paddingHorizontal: 22,
-    alignItems: "center",
-  },
-  secondaryButtonText: { color: colors.moss, fontSize: 16, fontWeight: "700" },
-  disabled: { opacity: 0.45 },
-};
+    container: {
+      padding: 24,
+      paddingBottom: 48,
+      backgroundColor: colors.cream,
+      gap: 20,
+      flexGrow: 1,
+    },
+    missing: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 24,
+      backgroundColor: colors.cream,
+      gap: 20,
+    },
+    progress: {
+      color: colors.moss,
+      fontSize: 12,
+      fontWeight: "700",
+      letterSpacing: 1.3,
+    },
+    track: {
+      height: 7,
+      borderRadius: radius.pill,
+      backgroundColor: colors.line,
+      overflow: "hidden",
+    },
+    fill: {
+      height: "100%",
+      backgroundColor: colors.moss,
+      borderRadius: radius.pill,
+    },
+    title: {
+      color: colors.ink,
+      fontFamily: fonts.headline,
+      fontSize: 40,
+      lineHeight: 44,
+    },
+    body: { color: colors.ink, fontSize: 18, lineHeight: 28 },
+    takeaway: {
+      backgroundColor: colors.mossSoft,
+      borderRadius: radius.md,
+      padding: 18,
+      gap: 7,
+    },
+    takeawayLabel: {
+      color: colors.moss,
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1.2,
+    },
+    takeawayText: {
+      color: colors.moss,
+      fontSize: 17,
+      lineHeight: 24,
+      fontWeight: "600",
+    },
+    scenario: { gap: 12 },
+    scenarioPrompt: {
+      color: colors.ink,
+      fontWeight: "700",
+      fontSize: 17,
+      lineHeight: 24,
+    },
+    option: {
+      borderWidth: 1,
+      borderColor: colors.line,
+      backgroundColor: colors.paper,
+      borderRadius: radius.md,
+      padding: 16,
+      gap: 9,
+    },
+    optionSelected: {
+      borderColor: colors.moss,
+      backgroundColor: colors.mossSoft,
+    },
+    optionLabel: { color: colors.ink, fontSize: 16, fontWeight: "600" },
+    optionLabelSelected: { color: colors.moss },
+    feedback: { color: colors.moss, fontSize: 14, lineHeight: 20 },
+    actions: { flexDirection: "row", gap: 12, marginTop: "auto" },
+    primaryButton: {
+      flex: 1,
+      backgroundColor: colors.moss,
+      borderRadius: radius.pill,
+      paddingVertical: 16,
+      alignItems: "center",
+    },
+    primaryButtonText: { color: colors.white, fontSize: 16, fontWeight: "700" },
+    secondaryButton: {
+      borderWidth: 1,
+      borderColor: colors.moss,
+      borderRadius: radius.pill,
+      paddingVertical: 16,
+      paddingHorizontal: 22,
+      alignItems: "center",
+    },
+    secondaryButtonText: {
+      color: colors.moss,
+      fontSize: 16,
+      fontWeight: "700",
+    },
+    disabled: { opacity: 0.45 },
+  };
 }
-

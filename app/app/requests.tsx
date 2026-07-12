@@ -281,10 +281,9 @@ export default function IncomingRequestsScreen() {
 }
 function makeStyles(colors: AppColors) {
   return {
-  center: { justifyContent: "center", gap: 18 },
-  list: { gap: 14, marginBottom: 18 },
-  name: { color: colors.ink, fontWeight: "800", fontSize: 17 },
-  actions: { flexDirection: "row", gap: 10, marginTop: 10 },
-};
+    center: { justifyContent: "center", gap: 18 },
+    list: { gap: 14, marginBottom: 18 },
+    name: { color: colors.ink, fontWeight: "800", fontSize: 17 },
+    actions: { flexDirection: "row", gap: 10, marginTop: 10 },
+  };
 }
-

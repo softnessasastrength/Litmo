@@ -26,7 +26,6 @@ import {
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
-
 export default function TrustSignalsScreen() {
   return (
     <SensitiveAccessGate>
@@ -166,19 +165,18 @@ function TrustSignalsContent() {
 
 function makeStyles(colors: AppColors) {
   return {
-  rowLabel: {
-    color: colors.muted,
-    fontSize: 13,
-    fontWeight: "700",
-    textTransform: "uppercase",
-    letterSpacing: 0.6,
-    marginBottom: 4,
-  },
-  rowValue: {
-    color: colors.ink,
-    fontSize: 20,
-    fontWeight: "800",
-  },
-};
+    rowLabel: {
+      color: colors.muted,
+      fontSize: 13,
+      fontWeight: "700",
+      textTransform: "uppercase",
+      letterSpacing: 0.6,
+      marginBottom: 4,
+    },
+    rowValue: {
+      color: colors.ink,
+      fontSize: 20,
+      fontWeight: "800",
+    },
+  };
 }
-

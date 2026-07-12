@@ -17,7 +17,6 @@ import { profileRepository } from "../../services/profileRepository";
 import { archetypes } from "../../data/quiz";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
-
 export default function TouchLanguageScreen() {
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
@@ -156,23 +155,22 @@ export default function TouchLanguageScreen() {
 }
 function makeStyles(colors: AppColors) {
   return {
-  group: { gap: 12, marginTop: 12 },
-  question: {
-    color: colors.ink,
-    fontFamily: fonts.headline,
-    fontSize: 25,
-    lineHeight: 31,
-  },
-  choices: { gap: 9 },
-  safety: {
-    backgroundColor: colors.plumSoft,
-    borderRadius: 18,
-    padding: 18,
-    gap: 5,
-  },
-  safetyTitle: { color: colors.ink, fontSize: 16, fontWeight: "800" },
-  safetyBody: { color: colors.muted, lineHeight: 21 },
-  error: { color: colors.signal, lineHeight: 21 },
-};
+    group: { gap: 12, marginTop: 12 },
+    question: {
+      color: colors.ink,
+      fontFamily: fonts.headline,
+      fontSize: 25,
+      lineHeight: 31,
+    },
+    choices: { gap: 9 },
+    safety: {
+      backgroundColor: colors.plumSoft,
+      borderRadius: 18,
+      padding: 18,
+      gap: 5,
+    },
+    safetyTitle: { color: colors.ink, fontSize: 16, fontWeight: "800" },
+    safetyBody: { color: colors.muted, lineHeight: 21 },
+    error: { color: colors.signal, lineHeight: 21 },
+  };
 }
-

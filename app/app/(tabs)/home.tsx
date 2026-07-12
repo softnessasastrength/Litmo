@@ -16,7 +16,6 @@ import { sessionRepository } from "../../services/sessionRepository";
 import { fonts, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
-
 type OpenSession = {
   id: string;
   counterpartId: string;
@@ -224,13 +223,12 @@ export default function HomeTabScreen() {
 }
 function makeStyles(colors: AppColors) {
   return {
-  cardTitle: {
-    color: colors.ink,
-    fontFamily: fonts.headline,
-    fontSize: 22,
-    marginBottom: 6,
-  },
-  cardAction: { marginTop: 12 },
-};
+    cardTitle: {
+      color: colors.ink,
+      fontFamily: fonts.headline,
+      fontSize: 22,
+      marginBottom: 6,
+    },
+    cardAction: { marginTop: 12 },
+  };
 }
-

@@ -15,7 +15,6 @@ import { fonts, radius, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 
-
 type Step = "name" | "age" | "gender" | "orientation";
 const steps: Step[] = ["name", "age", "gender", "orientation"];
 
@@ -185,34 +184,33 @@ export default function AboutYouScreen() {
 }
 function makeStyles(colors: AppColors) {
   return {
-  count: {
-    color: colors.muted,
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 1.1,
-  },
-  block: { gap: 10, marginTop: 16, marginBottom: 20 },
-  kicker: {
-    color: colors.ink,
-    fontFamily: fonts.headline,
-    fontSize: 30,
-    lineHeight: 36,
-  },
-  prompt: { color: colors.muted, fontSize: 15, lineHeight: 21 },
-  options: { gap: 9, marginTop: 6 },
-  input: {
-    minHeight: 52,
-    borderRadius: radius.sm,
-    borderWidth: 1.5,
-    borderColor: colors.line,
-    backgroundColor: colors.paper,
-    color: colors.ink,
-    paddingHorizontal: 16,
-    fontSize: 17,
-    marginTop: 8,
-  },
-  buttons: { flexDirection: "row", gap: 12, marginTop: "auto" },
-  buttonFlex: { flex: 1 },
-};
+    count: {
+      color: colors.muted,
+      fontSize: 11,
+      fontWeight: "700",
+      letterSpacing: 1.1,
+    },
+    block: { gap: 10, marginTop: 16, marginBottom: 20 },
+    kicker: {
+      color: colors.ink,
+      fontFamily: fonts.headline,
+      fontSize: 30,
+      lineHeight: 36,
+    },
+    prompt: { color: colors.muted, fontSize: 15, lineHeight: 21 },
+    options: { gap: 9, marginTop: 6 },
+    input: {
+      minHeight: 52,
+      borderRadius: radius.sm,
+      borderWidth: 1.5,
+      borderColor: colors.line,
+      backgroundColor: colors.paper,
+      color: colors.ink,
+      paddingHorizontal: 16,
+      fontSize: 17,
+      marginTop: 8,
+    },
+    buttons: { flexDirection: "row", gap: 12, marginTop: "auto" },
+    buttonFlex: { flex: 1 },
+  };
 }
-

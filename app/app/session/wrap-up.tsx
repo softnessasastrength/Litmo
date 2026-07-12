@@ -17,7 +17,6 @@ import { sessionRepository } from "../../services/sessionRepository";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 
-
 const outcomeChoices: Array<{
   value: WrapupOutcome;
   label: string;
@@ -239,36 +238,35 @@ export default function SessionWrapUpScreen() {
 }
 function makeStyles(colors: AppColors) {
   return {
-  question: { gap: 14, marginTop: 18 },
-  questionText: {
-    color: colors.ink,
-    fontFamily: fonts.headline,
-    fontSize: 28,
-    lineHeight: 34,
-  },
-  options: { gap: 10 },
-  support: {
-    backgroundColor: colors.signalSoft,
-    padding: 18,
-    borderRadius: 18,
-  },
-  supportTitle: { color: colors.signal, fontWeight: "800", fontSize: 16 },
-  supportBody: { color: colors.ink, lineHeight: 21, marginTop: 5 },
-  noteBlock: { gap: 8 },
-  noteLabel: { color: colors.muted, fontSize: 13, fontWeight: "700" },
-  noteInput: {
-    minHeight: 90,
-    borderRadius: radius.sm,
-    borderWidth: 1.5,
-    borderColor: colors.line,
-    backgroundColor: colors.paper,
-    color: colors.ink,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 15,
-    textAlignVertical: "top",
-  },
-  error: { color: colors.signal, textAlign: "center" },
-};
+    question: { gap: 14, marginTop: 18 },
+    questionText: {
+      color: colors.ink,
+      fontFamily: fonts.headline,
+      fontSize: 28,
+      lineHeight: 34,
+    },
+    options: { gap: 10 },
+    support: {
+      backgroundColor: colors.signalSoft,
+      padding: 18,
+      borderRadius: 18,
+    },
+    supportTitle: { color: colors.signal, fontWeight: "800", fontSize: 16 },
+    supportBody: { color: colors.ink, lineHeight: 21, marginTop: 5 },
+    noteBlock: { gap: 8 },
+    noteLabel: { color: colors.muted, fontSize: 13, fontWeight: "700" },
+    noteInput: {
+      minHeight: 90,
+      borderRadius: radius.sm,
+      borderWidth: 1.5,
+      borderColor: colors.line,
+      backgroundColor: colors.paper,
+      color: colors.ink,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      fontSize: 15,
+      textAlignVertical: "top",
+    },
+    error: { color: colors.signal, textAlign: "center" },
+  };
 }
-

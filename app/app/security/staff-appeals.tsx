@@ -20,7 +20,6 @@ import { moderationService } from "../../services/moderationService";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
-
 export default function StaffAppealsScreen() {
   return (
     <SensitiveAccessGate>
@@ -187,15 +186,14 @@ function StaffAppealsContent() {
 
 function makeStyles(colors: AppColors) {
   return {
-  kind: {
-    color: colors.ink,
-    fontWeight: "800",
-    fontSize: 16,
-    marginBottom: 4,
-    textTransform: "capitalize",
-  },
-  actions: { gap: 8, marginTop: 10 },
-  error: { color: colors.signal, textAlign: "center" },
-};
+    kind: {
+      color: colors.ink,
+      fontWeight: "800",
+      fontSize: 16,
+      marginBottom: 4,
+      textTransform: "capitalize",
+    },
+    actions: { gap: 8, marginTop: 10 },
+    error: { color: colors.signal, textAlign: "center" },
+  };
 }
-
