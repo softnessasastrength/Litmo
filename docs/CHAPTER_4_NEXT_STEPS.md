@@ -43,6 +43,8 @@ The `ready -> active` precondition is now enforced by a database trigger for eve
 - Wire the Soft Signal / "End together" buttons to call `transition_session(..., 'soft_signaled' | 'completed')`.
 - Wrap-up: persist each participant's private outcome independently (never visible to the other participant — this is a hard product requirement, not just a nice-to-have).
 
+The database half of wrap-up is complete in migration 012 and ADR 0008: owner-only immutable rows, terminal-state validation, and retry-safe submission. The remaining work is the typed mobile repository and screen state/recovery wiring.
+
 This is bigger and should probably be its own follow-up plan once 1–2 land; listed here so it's not forgotten.
 
 ## Not yet scoped (fine to leave for later)

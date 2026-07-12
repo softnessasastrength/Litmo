@@ -29,6 +29,8 @@ Migration `009_consent_snapshot_persistence.sql` and ADR 0006 split snapshot res
 
 Migration 011 extends the canonical graph with the single conservative rewind `ready -> consent_pending`. `save_profile_versions(...)` invalidates unwithdrawn pre-activation snapshots that reference the editor's older exact version, deletes their confirmations, and appends a safe audit event in the same transaction as the new immutable profile versions. Active and terminal sessions are excluded. Mobile request wiring remains pending.
 
+Migration 012 and ADR 0008 add participant-private wrap-up persistence. Each participant owns one immutable response, readable only by that participant, submitted through an idempotent security-definer function after a completed, soft-signaled, or safety-ended session. Private outcomes and notes never enter the counterpart-readable session audit trail. Mobile wrap-up wiring remains pending.
+
 ## Authentication and routing
 
 `AuthContext` is the sole mobile authority for session state. It restores the Supabase session from device storage, fetches the owner's profile, distinguishes incomplete onboarding from a ready account, subscribes to auth changes, and redirects protected routes conservatively. Expired sessions return to sign-in.

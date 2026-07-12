@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-12 — Participant-private immutable session wrap-ups
+
+### Summary
+
+Added owner-only post-session check-ins with enumerated outcomes, bounded private notes, terminal-session validation, and immutable idempotent submission through migration 012 and ADR 0008.
+
+### User-visible impact
+
+Each participant can eventually record a private outcome without exposing it to the counterpart or creating a public rating. Mobile wiring is still pending.
+
+### Developer impact
+
+`submit_session_wrapup(...)` is the only authenticated write path. Direct writes are denied, a counterpart reads zero rows, retries return the first result without mutation, and non-participants receive an opaque denial. Ten pgTAP assertions cover privacy, authorization, lifecycle gating, and idempotency.
+
+### Migration and setup impact
+
+Run `npm run db:reset` to apply migration 012. Verified with a clean local reset, 59/59 pgTAP assertions, and database lint with no schema errors.
+
+### Related decision and roadmap
+
+- `docs/adr/0008-private-session-wrapups.md`
+- `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
+
 ## 2026-07-12 — Transactional snapshot invalidation after profile edits
 
 ### Summary
