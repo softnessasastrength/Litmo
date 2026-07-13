@@ -2,7 +2,7 @@
 
 ## Private-alpha safety operations
 
-- Migration 035 adds hashed, single-use, seven-day staff invitations and
+- Migration 036 adds hashed, single-use, seven-day staff invitations and
   membership gates for discovery/new session requests. Invitation admission is
   not identity verification, proof of safety, consent, or a legal eligibility
   determination. Existing accounts at migration time are grandfathered as the
