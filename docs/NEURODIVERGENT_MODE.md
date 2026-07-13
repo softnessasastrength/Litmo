@@ -26,7 +26,7 @@ When enabled, the optimized bundle turns on:
 | Reduced stimulation | No quiz fade motion; skip decorative glyphs; quiet haptics by default; honor system Reduce Motion |
 | Clear language | Shorter chrome copy for quiz, partner, and learning (consent meaning unchanged) |
 | Easy navigation | Jump lists, numbered options, explicit progress labels, larger targets |
-| Save / resume | Mid-quiz progress on device (`quizPlayProgress`); learning already resumes |
+| Save / resume | Mid-quiz save is **always** on for Quizzes; ND Mode surfaces it more clearly. Learning already resumes. |
 | Read aloud | `expo-speech` when available; else `AccessibilityInfo.announceForAccessibility` |
 | Voice input aids | Option-number field for keyboard dictation; partner package paste still works |
 
