@@ -19,11 +19,13 @@ import {
   moderationService,
   type CaseEvidence,
   type ModerationNote,
+  type PermanentBanPolicySnapshot,
 } from "../../services/moderationService";
 import { REPORT_CATEGORIES } from "../../services/reportService";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
+import { SAFETY_OPS_CONSTITUTION_MAP } from "../../lib/safetyOpsCore";
 
 function categoryLabel(id: string): string {
   return REPORT_CATEGORIES.find((c) => c.id === id)?.label ?? id;
@@ -68,6 +70,9 @@ function ModerationCaseContent() {
 
   const [notes, setNotes] = useState<ModerationNote[]>([]);
   const [evidence, setEvidence] = useState<CaseEvidence | null>(null);
+  const [banPolicy, setBanPolicy] = useState<PermanentBanPolicySnapshot | null>(
+    null,
+  );
   const [noteDraft, setNoteDraft] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -85,12 +90,14 @@ function ModerationCaseContent() {
         setLoadState("denied");
         return;
       }
-      const [rows, pack] = await Promise.all([
+      const [rows, pack, policy] = await Promise.all([
         moderationService.listNotes(caseId),
         moderationService.getCaseEvidence(caseId),
+        moderationService.getPermanentBanPolicy(),
       ]);
       setNotes(rows);
       setEvidence(pack);
+      setBanPolicy(policy);
       setLoadState("ready");
     } catch (caught) {
       setLoadState("error");
@@ -304,6 +311,40 @@ function ModerationCaseContent() {
               })
             }
             accessibilityHint="Staff-only temporary matching hold. Cancels pending requests. Not automatic."
+          />
+        ) : null}
+        <Body muted>
+          Permanent ban is human-in-the-loop only (Constitution{" "}
+          {SAFETY_OPS_CONSTITUTION_MAP.permanentBanHitl.join(", ")}). It never
+          auto-applies from reports, rate limits, or trust events.
+        </Body>
+        {banPolicy && !banPolicy.completionAllowed ? (
+          <Body muted>
+            Permanent ban is blocked until a named second reviewer is configured
+            and two distinct staff accounts exist. Matching holds remain
+            available. This is fail-closed engineering, not legal approval.
+          </Body>
+        ) : null}
+        {displayReported && banPolicy?.completionAllowed ? (
+          <Button
+            variant="signal"
+            label={
+              busy === "ban-request"
+                ? "Requesting…"
+                : "Request permanent ban (needs second staff)"
+            }
+            disabled={Boolean(busy)}
+            onPress={() =>
+              void run("ban-request", async () => {
+                await moderationService.requestPermanentBan(
+                  displayReported,
+                  "safety_review",
+                  "Requested from moderator console case " + caseId,
+                  caseId,
+                );
+              })
+            }
+            accessibilityHint="Creates a pending permanent ban. A different staff account must confirm. Not automatic."
           />
         ) : null}
       </Card>

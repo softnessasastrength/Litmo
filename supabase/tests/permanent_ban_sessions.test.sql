@@ -25,6 +25,11 @@ values (
   'ready'
 );
 
+-- ADR 0061: permanent ban is dual-HITL by default. This test isolates the
+-- session-ending side effect, so disable two-person for a synthetic apply.
+reset role;
+select public.set_platform_safety_setting('two_person_permanent_ban_required', false);
+
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000003', true);
 
@@ -36,7 +41,7 @@ select lives_ok(
        null,
        'ban ends open work'
      ) $$,
-  'staff can apply permanent ban'
+  'staff can apply permanent ban when two-person policy is off (synthetic)'
 );
 
 reset role;

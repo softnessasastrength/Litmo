@@ -117,8 +117,13 @@
   access.
 - Complete account deletion, server-session revocation, scoped legal/safety
   holds, destructive retention, jurisdiction policy, external-referral policy,
-  backup reviewer staffing, and two-person permanent-ban approval remain
-  blocked.
+  and backup reviewer staffing remain blocked.
+- **Two-person permanent-ban machinery is implemented** (migration 042 /
+  ADR 0061: request + distinct confirmer, staff audit, fail-closed defaults).
+  Completion remains **blocked in practice** until a real named second reviewer
+  is documented and `named_second_owner_configured` is flipped by service-role
+  ops. Matching holds stay single-staff. Direct permanent ban RPC fails closed
+  while two-person policy is on.
 
 ## GDPR / privacy tooling
 

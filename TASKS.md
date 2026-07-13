@@ -33,7 +33,8 @@ Only one implementation task should normally be `active`. Every status change mu
 - **Decision preparation 2026-07-13:** `docs/SAFETY_OPS_FOUNDER_DECISIONS.md` converts the draft's open questions into ten explicit choices with recommended private-alpha defaults, alternatives, required reviewers, and a completion gate. This is decision preparation only: SAFETY-OPS-001 remains `pending`, and Chapter 6 implementation is not authorized.
 - **Implementation progress 2026-07-13:** founder selected the recommended defaults. ADR 0042 and migration 036 implement hashed single-use seven-day staff invitations, membership gates, a scoped matching pause, 90-day minimal unblock tombstones, non-destructive cleanup, and self export, with pgTAP coverage. External-review and named-reviewer items remain blockers, not inferred approvals.
 - **Verification:** The foundation and mobile controls are merged through PR #72; Project State, lint, typecheck, unit tests, build, database reset/lint, pgTAP (including private-alpha 17/17), and integration 5/5 passed on the reviewed implementation PRs.
-- **Next action:** complete only operational/external-review items that have real named owners. Destructive retention, deletion, jurisdiction policy, external referral, backup staffing, and two-person permanent bans remain blocked.
+- **Progress 2026-07-13 (agent, deep HITL):** `safetyOpsCore` pure law + tests; migration 042 dual-confirm permanent ban, staff_action_audit, trust/rate ledger expansion, appeal rate limit; ADR 0061 + `docs/SAFETY_OPS_RUNTIME.md`; console request path fail-closed until named second owner. External gates unchanged.
+- **Next action:** name real second reviewer / backup staffing; flip service-role `named_second_owner_configured` only with evidence in-repo. Destructive retention, deletion, jurisdiction policy, and external referral remain blocked.
 
 ## Pending
 

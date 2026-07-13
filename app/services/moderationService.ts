@@ -1,8 +1,40 @@
+/**
+ * Staff moderation console service — queue, evidence, holds, HITL bans.
+ *
+ * WHAT: Thin RPC client over Chapter 5 + ADR 0061 safety-ops RPCs.
+ * WHY: UI must not invent permanent bans or auto-punish from case counts.
+ * CONSENT: Staff actions never grant participant consent; Soft Signal stays
+ *          free for remaining participants.
+ * NEVER: Client-side staff check is hide/show only; server is_staff_moderator
+ *        is authoritative. Do not treat prior report counts as a safety score.
+ * SEE: app/lib/safetyOpsCore.ts · docs/SAFETY_OPS_RUNTIME.md · ADR 0061
+ */
 import { mapExternalError } from "./errors.ts";
 import { supabase } from "./supabase.ts";
+import {
+  validateRestrictionShape,
+  type RestrictionReasonCode,
+} from "../lib/safetyOpsCore.ts";
 
 export type QueueStatus = "open" | "in_progress" | "escalated" | "resolved";
 export type ClosedOutcome = "no_action" | "action_taken" | "info_needed";
+
+export type PermanentBanPolicySnapshot = {
+  twoPersonRequired: boolean;
+  namedSecondOwnerConfigured: boolean;
+  completionAllowed: boolean;
+  distinctStaffCount: number;
+};
+
+export type PendingPermanentBanRequest = {
+  id: string;
+  targetUserId: string;
+  reasonCode: string;
+  caseId: string | null;
+  requestedBy: string;
+  requestedAt: string;
+  expiresAt: string;
+};
 
 export type ModerationQueueRow = {
   caseId: string;
@@ -248,18 +280,18 @@ export const moderationService = {
 
   async applyMatchingHold(
     userId: string,
-    reasonCode:
-      | "policy_violation"
-      | "safety_review"
-      | "underage_concern"
-      | "harassment"
-      | "impersonation"
-      | "spam_abuse"
-      | "legal_request"
-      | "other",
+    reasonCode: RestrictionReasonCode,
     endsAtIso: string | null,
     internalNote: string | null,
   ): Promise<void> {
+    const shape = validateRestrictionShape({
+      kind: "matching_hold",
+      reasonCode,
+      endsAtIso,
+    });
+    if (!shape.ok) {
+      throw new Error(shape.message);
+    }
     try {
       const { error } = await supabase.rpc("apply_account_restriction", {
         p_user_id: userId,
@@ -267,6 +299,120 @@ export const moderationService = {
         p_reason_code: reasonCode,
         p_ends_at: endsAtIso,
         p_internal_note: internalNote,
+      });
+      if (error) throw error;
+    } catch (error) {
+      throw mapExternalError(error);
+    }
+  },
+
+  /**
+   * WHAT: Load fail-closed permanent-ban HITL policy for the console.
+   * WHY: UI must show blocked dual-confirm until named second owner exists.
+   * NEVER: Treat completionAllowed as legal approval — only engineering gate.
+   */
+  async getPermanentBanPolicy(): Promise<PermanentBanPolicySnapshot> {
+    try {
+      const { data, error } = await supabase.rpc("my_permanent_ban_policy");
+      if (error) throw error;
+      const row = (
+        Array.isArray(data) ? data[0] : data
+      ) as {
+        two_person_required?: boolean;
+        named_second_owner_configured?: boolean;
+        completion_allowed?: boolean;
+        distinct_staff_count?: number;
+      } | null;
+      return {
+        twoPersonRequired: Boolean(row?.two_person_required ?? true),
+        namedSecondOwnerConfigured: Boolean(
+          row?.named_second_owner_configured ?? false,
+        ),
+        completionAllowed: Boolean(row?.completion_allowed ?? false),
+        distinctStaffCount: Number(row?.distinct_staff_count ?? 0),
+      };
+    } catch (error) {
+      throw mapExternalError(error);
+    }
+  },
+
+  /**
+   * WHAT: First-staff request for permanent ban (does not apply yet).
+   * WHY: Article VII irreversible actions require dual human confirmation.
+   * NEVER: Self-confirm; auto-apply from report volume.
+   */
+  async requestPermanentBan(
+    userId: string,
+    reasonCode: RestrictionReasonCode,
+    internalNote: string | null,
+    caseId: string | null,
+  ): Promise<string> {
+    try {
+      const { data, error } = await supabase.rpc("request_permanent_ban", {
+        p_user_id: userId,
+        p_reason_code: reasonCode,
+        p_internal_note: internalNote,
+        p_case_id: caseId,
+      });
+      if (error) throw error;
+      if (typeof data !== "string" || data.length < 1) {
+        throw new Error("Permanent ban request was not accepted.");
+      }
+      return data;
+    } catch (error) {
+      throw mapExternalError(error);
+    }
+  },
+
+  async listPendingPermanentBans(): Promise<PendingPermanentBanRequest[]> {
+    try {
+      const { data, error } = await supabase.rpc(
+        "list_pending_permanent_ban_requests",
+      );
+      if (error) throw error;
+      return (
+        (data as Array<{
+          id: string;
+          target_user_id: string;
+          reason_code: string;
+          case_id: string | null;
+          requested_by: string;
+          requested_at: string;
+          expires_at: string;
+        }> | null) ?? []
+      ).map((row) => ({
+        id: row.id,
+        targetUserId: row.target_user_id,
+        reasonCode: row.reason_code,
+        caseId: row.case_id,
+        requestedBy: row.requested_by,
+        requestedAt: row.requested_at,
+        expiresAt: row.expires_at,
+      }));
+    } catch (error) {
+      throw mapExternalError(error);
+    }
+  },
+
+  /**
+   * WHAT: Second distinct staff confirms a pending permanent ban.
+   * WHY: Two-person HITL (founder S10). Requester cannot confirm own request.
+   */
+  async confirmPermanentBan(requestId: string): Promise<void> {
+    try {
+      const { error } = await supabase.rpc("confirm_permanent_ban", {
+        p_request_id: requestId,
+      });
+      if (error) throw error;
+    } catch (error) {
+      throw mapExternalError(error);
+    }
+  },
+
+  async cancelPermanentBanRequest(requestId: string): Promise<void> {
+    try {
+      const { error } = await supabase.rpc("cancel_permanent_ban_request", {
+        p_request_id: requestId,
       });
       if (error) throw error;
     } catch (error) {

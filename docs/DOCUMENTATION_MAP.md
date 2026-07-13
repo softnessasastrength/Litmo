@@ -93,6 +93,7 @@ Completion reports are evidence, not current task assignments. Do not use their 
 - [`AI_COMPANION_ROADMAP.md`](AI_COMPANION_ROADMAP.md) — future AI-companion intent and safeguards.
 - [`SAFETY_OPS_DESIGN.md`](SAFETY_OPS_DESIGN.md) — draft proposal for SAFETY-OPS-001 (moderation/beta-ops design); explicitly not approved policy or implementation authorization until founder/safety review.
 - [`SAFETY_OPS_FOUNDER_DECISIONS.md`](SAFETY_OPS_FOUNDER_DECISIONS.md) — founder decision worksheet for SAFETY-OPS-001; records options and review gates but does not authorize Chapter 6 implementation.
+- [`SAFETY_OPS_RUNTIME.md`](SAFETY_OPS_RUNTIME.md) — runtime ground truth for queue, reports, appeals, restrictions, rate limits, trust ledger, HITL permanent ban, Constitution map (ADR 0061).
 
 A roadmap item is not implementation authorization. It becomes active only when recorded as `active` in `TASKS.md` and reflected in `CURRENT_STATE.md` and `project-state.json`.
 

@@ -25,14 +25,18 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Work in progress / residuals
 
-- SAFETY-OPS-001 external/legal/staffing blockers (not inventable).
+- SAFETY-OPS-001 engineering foundation deepened (ADR 0061 / migration 042 /
+  `safetyOpsCore` / `docs/SAFETY_OPS_RUNTIME.md`). External/legal/staffing
+  blockers remain (not inventable): named second reviewer, destructive
+  retention, jurisdiction, external referral, complete deletion.
 - ACCESS-001 residual: optional founder VoiceOver physical smoke.
 - Swarm residuals: dual-agreed session duration; TL soft_limit/speed server mapping; physical Multipeer/NFC/Soft Signal chaos; independent crypto review.
 - Litmo Ops remains locked without staff auth.
 
 ## Priority next work
 
-1. Keep SAFETY-OPS-001 external reviews moving with named owners only.
+1. Name second safety reviewer and document before flipping
+   `named_second_owner_configured` (service-role only).
 2. Physical device smokes (Soft Signal offline, proximity two-device, NFC, VO).
 3. Optional: TL → server shape fidelity (`speed`, `soft_limit`).
 4. Optional: dual-agreed timeout on Consent Snapshot.
@@ -69,7 +73,10 @@ npm run build
 
 ## Exact next action
 
-Execute residual physical smokes or TL server mapping when prioritized; otherwise continue SAFETY-OPS-001 only with named external owners. Do not invent legal/clinical approval.
+SAFETY-OPS engineering deep-dive (queue/appeals/restrictions/HITL/ledger) is
+in-repo. Continue only with **named human owners** for remaining external gates,
+or switch to physical smokes / TL mapping when prioritized. Do not invent
+legal/clinical approval or named staff.
 
 ## Resume checklist
 

@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-07-13 — Safety-ops HITL domain core + dual permanent ban + ledger
+
+### Summary
+
+Deep private-alpha safety operations build-out: pure `safetyOpsCore` (queue,
+reports, appeals, restrictions, rate limits, trust ledger, HITL gates) tied to
+the Living Constitution; migration 042 for two-person permanent-ban workflow,
+staff action audit, expanded trust event types, and appeal rate limits; staff
+console surfaces fail-closed permanent ban until named second reviewer exists.
+
+### Material changes
+
+- `app/lib/safetyOpsCore.ts` + unit tests
+- `supabase/migrations/042_safety_ops_hitl_ledger.sql`
+- `supabase/tests/safety_ops_hitl_ledger.test.sql`
+- `moderationService` permanent-ban policy + request/confirm/cancel RPCs
+- Case console: hold + blocked/request permanent ban copy
+- `docs/SAFETY_OPS_RUNTIME.md`, ADR 0061, Constitution enforcement map
+
+### Explicit non-claims
+
+- Does **not** name a backup reviewer or set `named_second_owner_configured`
+- Does **not** claim legal/privacy/clinical approval
+- Destructive retention and full account deletion remain blocked
+
 ## 2026-07-14 — Continuous Consent System (maximum granularity)
 
 ### Summary
