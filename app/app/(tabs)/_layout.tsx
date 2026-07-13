@@ -95,6 +95,18 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="quizzes"
+        options={{
+          title: "Quizzes",
+          tabBarLabel: "Quizzes",
+          tabBarAccessibilityLabel:
+            "Quizzes. Short and deep Vibe plus self-understanding quizzes.",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="sparkles-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="discover"
         options={{
           title: "People",
@@ -109,15 +121,6 @@ export default function TabsLayout() {
           title: "Learn",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="book-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="quizzes"
-        options={{
-          title: "Quizzes",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="sparkles-outline" size={size} color={color} />
           ),
         }}
       />

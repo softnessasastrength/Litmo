@@ -178,8 +178,9 @@ export default function LearningHomeScreen() {
         <View style={styles.cardCopy}>
           <Text style={styles.cardTitle}>Vibe & self quizzes</Text>
           <Text style={styles.cardSummary}>
-            Soft weather for conversation. Several lived-lesson modules link to
-            a matching private quiz — optional, never a grade.
+            Short (~10) and Deep (100) Vibe, plus Soft Capacity, Boundary Voice,
+            Comfort & Care, and Connection Pace. Soft weather only — never a
+            grade or consent.
           </Text>
         </View>
         <Ionicons name="chevron-forward" size={22} color={colors.muted} />

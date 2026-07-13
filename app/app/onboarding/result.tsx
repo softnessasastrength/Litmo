@@ -128,6 +128,23 @@ export default function ResultScreen() {
         onPress={() => router.push("/profile/vibe")}
       />
       <Button
+        label="Browse Short & Deep Quizzes"
+        variant="secondary"
+        onPress={() => router.push("/(tabs)/quizzes" as never)}
+        accessibilityHint="Opens the Quizzes hub with Short Vibe, Deep Vibe (100), and four self quizzes"
+      />
+      <Button
+        label="Try Deep Vibe (100 scenes)"
+        variant="secondary"
+        onPress={() =>
+          router.push({
+            pathname: "/quizzes/play",
+            params: { quizId: "vibe-deep" },
+          } as never)
+        }
+        accessibilityHint="Starts the full 100-scene Vibe on the Quizzes path. Progress saves on this device."
+      />
+      <Button
         label="Change answers"
         variant="secondary"
         onPress={() => router.replace("/onboarding/quiz")}

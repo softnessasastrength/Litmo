@@ -102,6 +102,21 @@ export default function QuizzesHubScreen() {
         — never a diagnosis, safety score, or consent to touch.
       </Text>
 
+      <View
+        style={styles.inventoryCard}
+        accessible
+        accessibilityRole="text"
+        accessibilityLabel={`${vibe.length} Vibe quizzes: Short about ten scenes and Deep one hundred scenes. ${self.length} self-understanding quizzes. Partner invite available below.`}
+      >
+        <Text style={styles.inventoryTitle}>On this tab</Text>
+        <Text style={styles.inventoryBody}>
+          · Vibe Short (~10 scenes){"\n"}
+          · Vibe Deep (100 scenes){"\n"}
+          · Soft Capacity · Boundary Voice · Comfort & Care · Connection Pace
+          {"\n"}· Partner invite & comparison (mutual consent, E2E)
+        </Text>
+      </View>
+
       {prefs.enabled ? (
         <View style={styles.ndBanner} accessible>
           <Text style={styles.ndBannerText}>{clearLanguage.ndModeOn}</Text>
@@ -316,6 +331,26 @@ function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
       lineHeight: 42,
     },
     intro: { color: colors.muted, fontSize: 16, lineHeight: 24 },
+    inventoryCard: {
+      backgroundColor: colors.paper,
+      borderRadius: radius.md,
+      borderWidth: 1,
+      borderColor: colors.line,
+      padding: 14,
+      gap: 6,
+    },
+    inventoryTitle: {
+      color: colors.moss,
+      fontSize: 12,
+      fontWeight: "700" as const,
+      letterSpacing: 0.8,
+      textTransform: "uppercase" as const,
+    },
+    inventoryBody: {
+      color: colors.ink,
+      fontSize: 14,
+      lineHeight: 22,
+    },
     ndBanner: {
       backgroundColor: colors.mossSoft,
       borderRadius: radius.md,
