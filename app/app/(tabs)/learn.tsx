@@ -60,6 +60,30 @@ export default function LearningHomeScreen() {
         <Text style={styles.progressLabel}>modules completed privately</Text>
       </View>
 
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Open Campfire Mode. Three local practices for group presence, quiet co-regulation, and calm focus."
+        onPress={() => router.push("/campfire" as never)}
+        style={({ pressed }) => [
+          styles.campfireCard,
+          pressed && styles.pressed,
+        ]}
+      >
+        <View style={styles.campfireIcon}>
+          <Text accessible={false} style={styles.campfireGlyph}>
+            🔥
+          </Text>
+        </View>
+        <View style={styles.cardCopy}>
+          <Text style={styles.cardTitle}>Campfire Mode</Text>
+          <Text style={styles.cardSummary}>
+            Circle gathering, quiet co-regulation, and a digital focus fire.
+            Local, private, and never scored.
+          </Text>
+        </View>
+        <Ionicons name="chevron-forward" size={22} color={colors.muted} />
+      </Pressable>
+
       {learningModules.map((module) => {
         const state = progress[module.id];
         const status = state?.completed
@@ -140,6 +164,27 @@ function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
     },
     progressNumber: { color: colors.moss, fontSize: 27, fontWeight: "700" },
     progressLabel: { color: colors.moss, fontSize: 14 },
+    campfireCard: {
+      minHeight: 112,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 14,
+      padding: 18,
+      backgroundColor: colors.apricotSoft,
+      borderRadius: radius.md,
+      borderWidth: 1,
+      borderColor: colors.apricot,
+      ...shadow,
+    },
+    campfireIcon: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.paper,
+    },
+    campfireGlyph: { fontSize: 28 },
     card: {
       backgroundColor: colors.paper,
       borderRadius: radius.md,
