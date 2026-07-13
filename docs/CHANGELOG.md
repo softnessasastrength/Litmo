@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-07-13 — Quizzes section (short/deep vibe + partner consent)
+
+### Summary
+
+Added a full **Quizzes** tab: Vibe short/deep paths, four self-understanding
+quizzes, private results behind Face ID step-up, and partner invites that require
+explicit mutual consent before any comparison.
+
+### User-visible impact
+
+- New tab: calm catalog of self quizzes.
+- Vibe Quiz short (~9) and deep (100) from the social-weather bank.
+- Soft Capacity, Boundary Voice, Comfort & Care, Connection Pace.
+- Partner invites seal results; compare stays closed until both share and both
+  consent to compare.
+- Hard safety copy: quiz weather is never consent to touch.
+
+### Developer impact
+
+- `quizCatalog`, `quizPaths`, `selfQuizzes`, `quizShareCore`, invite/results stores.
+- Comparison and seal logic covered by unit tests.
+
+### Related work
+
+- Builds on vibe-mix model / 100-scene bank patterns.
+
 ## 2026-07-13 — macOS session-requests read (read-only)
 
 ### Summary
