@@ -1,7 +1,7 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T14:16:00-04:00",
+  "updatedAt": "2026-07-13T14:40:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
@@ -9,21 +9,20 @@
   },
   "git": {
     "branch": "agent/macos-trust-history-read",
-    "latestCoherentCommit": "8d9d0a0ecbd3a0ab3d4a2f271df8291fab9b4745",
-    "workingTreeExpectedClean": false
+    "latestCoherentCommit": "622058a",
+    "workingTreeExpectedClean": true
   },
   "verification": {
     "status": "passed",
     "commands": [
-      "xcodegen generate \u2014 success in macos/",
-      "xcodebuild -scheme Litmo test (arm64, CODE_SIGNING_ALLOWED=NO) \u2014 13/13 tests pass (4 Campfire + 9 TrustSignals)",
-      "xcodebuild -scheme LitmoOps build (arm64, unsigned) \u2014 BUILD SUCCEEDED",
-      "npm run state:check \u2014 pass after project-state update",
-      "Hosted macOS Native Build \u2014 pending on implementation PR"
+      "Local xcodegen + Litmo tests 13/13 and LitmoOps unsigned build \u2014 passed on MACOS-002 implementation",
+      "Prior hosted macOS Native Build on PR #79 \u2014 passed before rebase onto #78",
+      "npm run state:check \u2014 pass after rebase continuity",
+      "Hosted recheck pending after force-push rebase onto PR #78"
     ],
     "failures": []
   },
-  "nextAction": "Review and merge MACOS-002 self-only trust history PR after hosted macOS CI is green. Litmo Ops stays locked. ACCESS-001 residual remains optional founder VoiceOver smoke (PR #78 if open).",
+  "nextAction": "Force-push rebased PR #79 onto main (includes #78), wait for green checks, merge. Then implement MACOS-003 own-profile read.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
@@ -32,22 +31,14 @@
   ],
   "risks": [
     "Invitation membership is admission control, not identity verification, proof of safety, or consent.",
-    "The routine kill-switch pauses discovery and new requests but intentionally preserves participant safety controls and does not force-end active sessions.",
-    "Self export is an engineering portability primitive, not a claim of legally complete data access.",
-    "External TestFlight remains blocked by deletion, hosted staging, AASA, disclosures, independent review, and signed-release evidence.",
-    "Campfire circle readiness is ephemeral local facilitation, not a real group session or multi-person consent record.",
-    "The hosted Xcode lane is unsigned simulator compilation, not device, entitlement, archive, or TestFlight validation.",
-    "The native macOS participant app is local Campfire plus a read-only shell; it is not an active-session controller.",
-    "Litmo Ops is separately bundled but intentionally non-operational until real staff authentication, authorization, audit logging, and API contracts exist.",
-    "ACCESS-001 still requires a physical founder VoiceOver smoke before it can be closed."
+    "macOS trust history uses developer env tokens for inspection only; it is not production passkey sign-in.",
+    "Litmo Ops remains non-operational until real staff authentication and authorization exist.",
+    "ACCESS-001 still requires a physical founder VoiceOver smoke before it can be closed.",
+    "Unsigned hosted artifacts are inspection builds, not releases."
   ],
   "notes": [
-    "PRs #72\u2013#77 are merged on main.",
-    "PR #76 added native SwiftUI participant/Campfire and locked Ops under ADR 0045.",
-    "MACOS-002 adds fail-closed self-only trust history via my_trust_signals (ADR 0046).",
-    "Unsigned hosted artifacts are inspection builds, not signed or notarized releases.",
-    "Destructive report/case/trust retention and account deletion remain deliberately unimplemented pending review.",
-    "ACCESS-001 2026-07-13: residual work is the optional founder VoiceOver smoke; selector semantics fixes were standardized in app/app/security/moderation.tsx and app/app/settings.tsx.",
-    "PR #78 merged ACCESS-001 semantics cleanup; optional founder VoiceOver smoke remains."
+    "PRs #72\u2013#78 are merged on main.",
+    "PR #79 rebased onto #78 adds fail-closed self-only trust history (ADR 0046).",
+    "Destructive retention and account deletion remain blocked pending review."
   ]
 }
