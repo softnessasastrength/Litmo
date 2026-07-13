@@ -62,6 +62,8 @@ PODS:
     - ExpoModulesCore
   - ExpoGlassEffect (55.0.11):
     - ExpoModulesCore
+  - ExpoHaptics (55.0.15):
+    - ExpoModulesCore
   - ExpoImage (55.0.11):
     - ExpoModulesCore
     - libavif/libdav1d
@@ -136,6 +138,8 @@ PODS:
   - libwebp/sharpyuv (1.5.0)
   - libwebp/webp (1.5.0):
     - libwebp/sharpyuv
+  - LitmoAgeRange (1.0.0):
+    - ExpoModulesCore
   - LitmoPasskeys (1.0.0):
     - ExpoModulesCore
   - RCTDeprecation (0.83.6)
@@ -2056,6 +2060,7 @@ DEPENDENCIES:
   - ExpoFileSystem (from `../../node_modules/expo-file-system/ios`)
   - ExpoFont (from `../../node_modules/expo-font/ios`)
   - ExpoGlassEffect (from `../node_modules/expo-glass-effect/ios`)
+  - ExpoHaptics (from `../../node_modules/expo-haptics/ios`)
   - ExpoImage (from `../node_modules/expo-image/ios`)
   - ExpoKeepAwake (from `../../node_modules/expo-keep-awake/ios`)
   - ExpoLinking (from `../node_modules/expo-linking/ios`)
@@ -2069,6 +2074,7 @@ DEPENDENCIES:
   - ExpoSymbols (from `../node_modules/expo-symbols/ios`)
   - FBLazyVector (from `../../node_modules/react-native/Libraries/FBLazyVector`)
   - hermes-engine (from `../../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
+  - LitmoAgeRange (from `../modules/litmo-age-range/ios`)
   - LitmoPasskeys (from `../modules/litmo-passkeys/ios`)
   - RCTDeprecation (from `../../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
   - RCTRequired (from `../../node_modules/react-native/Libraries/Required`)
@@ -2176,6 +2182,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/expo-font/ios"
   ExpoGlassEffect:
     :path: "../node_modules/expo-glass-effect/ios"
+  ExpoHaptics:
+    :path: "../../node_modules/expo-haptics/ios"
   ExpoImage:
     :path: "../node_modules/expo-image/ios"
   ExpoKeepAwake:
@@ -2203,6 +2211,8 @@ EXTERNAL SOURCES:
   hermes-engine:
     :podspec: "../../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-v0.14.1
+  LitmoAgeRange:
+    :path: "../modules/litmo-age-range/ios"
   LitmoPasskeys:
     :path: "../modules/litmo-passkeys/ios"
   RCTDeprecation:
@@ -2363,6 +2373,7 @@ SPEC CHECKSUMS:
   ExpoFileSystem: 49ab894dee0818cb8b83d489fc51eafade73efb9
   ExpoFont: a7e34a75bdfb703fa07a0e87807f836236608c76
   ExpoGlassEffect: 2dedac2fe817f9b02d0dad29ce0aef7afebc5cd4
+  ExpoHaptics: d3b286bdd3e3d87403f7c225981457b1e5e757c1
   ExpoImage: 5854bd51edd7c0a775755473598f9daeb3fde4e3
   ExpoKeepAwake: d0eb7a0719500d2a43fbf29b6f79e84d70c75ebf
   ExpoLinking: 221ab136d976b632e04ff4023660cc9c24233d07
@@ -2375,10 +2386,11 @@ SPEC CHECKSUMS:
   ExpoSecureStore: f495a3e0ab65683be8427a96f694726a88048f46
   ExpoSymbols: 896159288ad708e1a32dc12c92fe5f90bff01126
   FBLazyVector: 427fa1856a481856091061293ce865a75aa4f20f
-  hermes-engine: c256272bf0968be1668e2ef384a17ed89b0d34ca
+  hermes-engine: f2cfbe9e95dd5ab5803a5716aa9e2aed3b3d7ed4
   libavif: 5f8e715bea24debec477006f21ef9e95432e254d
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
+  LitmoAgeRange: 5c4e1e508a9dacf6463d874f1a2d564c6388a5fe
   LitmoPasskeys: 7c85cfcb73ae27f23dd437ccb1d675bda7830036
   RCTDeprecation: 9502b5eb8e3c9eb75ff5a333b2c591bab9d91e28
   RCTRequired: 0268a5d86aef1defea2e04289d74fdf3570197c1
@@ -2388,7 +2400,7 @@ SPEC CHECKSUMS:
   React: 9b033c7a99e1c8eec40960b6b2e6844e011e8bd1
   React-callinvoker: f64c8d57f45173835b6b9891cda27f1625551972
   React-Core: 341863a2597c4a2320f916b4232d280cb8a28e4b
-  React-Core-prebuilt: 62805fb41938ae4bcbb07355464d02ac724f0b89
+  React-Core-prebuilt: 108c124a5538c3807105baa0c268cc9e14d29ade
   React-CoreModules: 9370769c9b2b1732c58960687f4d50d9d3510efc
   React-cxxreact: 41ae74bd9eab80af9c5da6a9b4934eb97e2c7569
   React-debug: eb0f19ff879ad3870dc760b6c21ad56cbb3e4b98
@@ -2450,7 +2462,7 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: 3ec8fc5d32ad422f5b805523a5a5ea5556d8b3a2
   ReactCodegen: 321a62969a5eff6db868a4d4601cc8a6f62fba36
   ReactCommon: ba28cd4e7d9e24014d2772a80e32da020c732b00
-  ReactNativeDependencies: 1507da53289542f3675aa0c60b3ecc2e58d6efa6
+  ReactNativeDependencies: 5d283b3d0d51db07978723edab68fe9596f7db83
   RNScreens: 02e62f995ceb94ea465864b3bf4d4767b87f0362
   SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
   SDWebImageAVIFCoder: afe194a084e851f70228e4be35ef651df0fc5c57
@@ -2460,4 +2472,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: a285726063b07774c788250a4fd3afc82137ee24
 
-COCOAPODS: 1.17.0
+COCOAPODS: 1.16.2

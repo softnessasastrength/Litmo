@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-07-13 — Hosted native iOS compile gate
+
+### Summary
+
+Added a credential-free GitHub Actions lane that installs locked JavaScript and
+CocoaPods dependencies and compiles the checked-in Xcode workspace on
+`macos-26` with Xcode 26.5. The first run exposed a stale `Podfile.lock` and
+an incompatible Xcode 16.4 runner selection; both were corrected before the
+successful native build.
+
+### User-visible impact
+
+None. This is build verification only.
+
+### Developer and release impact
+
+- Pull requests changing app/native/shared dependency inputs now receive a real
+  unsigned iOS Simulator compile.
+- Manual workflow dispatch is available from GitHub Actions.
+- Successful runs upload the compiled simulator `.app` and full Xcode log for
+  seven days.
+- Code signing, device installation, entitlements, staging services, IPA
+  creation, and TestFlight upload remain explicitly out of scope.
+
+### Verification
+
+- iOS Native Build run #5 passed with Xcode 26.5 and strict CocoaPods
+  deployment mode; the final lane targets native arm64 to reduce hosted Mac
+  time.
+- The run produced a 39.8 MB simulator `.app` and the full Xcode build log.
+
+### Related work
+
+- IOS-CI-001
+- `docs/RELEASE_AND_TESTFLIGHT.md`
+
 ## 2026-07-13 — MPL-2.0 project license
 
 ### Summary
