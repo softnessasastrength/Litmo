@@ -11,7 +11,9 @@ import {
 } from "../../components/ui";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { useAuth } from "../../context/AuthContext";
+import { useNeurodivergent } from "../../context/NeurodivergentContext";
 import { getQuizEntry, type QuizCatalogId } from "../../data/quizCatalog";
+import { clearLanguage } from "../../lib/clearLanguage";
 import { quizInviteStore } from "../../services/quizInviteStore";
 import { quizResultsRepository } from "../../services/quizResultsRepository";
 import { quizE2eRelay } from "../../services/quizE2eRelay";
@@ -20,6 +22,7 @@ import {
   compareInvite,
   type QuizInvite,
 } from "../../services/quizShareCore";
+import { speechService } from "../../services/speechService";
 import { fonts, radius, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
@@ -29,7 +32,9 @@ function ShareBody() {
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { status } = useAuth();
+  const { prefs } = useNeurodivergent();
   const isDemo = status === "demo";
+  const plain = prefs.clearLanguage;
   const { quizId: quizIdParam } = useLocalSearchParams<{ quizId?: string }>();
   const [invites, setInvites] = useState<QuizInvite[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -320,20 +325,49 @@ function ShareBody() {
       <Eyebrow>
         {isDemo ? "DEMO · PARTNER INVITES" : "PARTNER INVITES"}
       </Eyebrow>
-      <Title>Invite softly. Compare only together.</Title>
+      <Title>
+        {plain
+          ? clearLanguage.partnerTitle
+          : "Invite softly. Compare only together."}
+      </Title>
       <Body muted>
-        Share encrypted social weather with one person you choose. Comparison
-        never opens without both of you saying yes — twice: once to share, once
-        to compare. This is never consent to touch.
+        {plain
+          ? clearLanguage.partnerBody
+          : "Share encrypted social weather with one person you choose. Comparison never opens without both of you saying yes — twice: once to share, once to compare. This is never consent to touch."}
       </Body>
+
+      {prefs.enabled ? (
+        <Card>
+          <Text style={styles.cardTitle}>Neurodivergent Mode</Text>
+          <Body muted>
+            {clearLanguage.ndModeOn} Large steps, plain words, and optional
+            read-aloud of status messages.
+          </Body>
+          {prefs.readAloud ? (
+            <Button
+              label="Read these instructions aloud"
+              variant="secondary"
+              onPress={() =>
+                void speechService.speak(
+                  plain
+                    ? `${clearLanguage.partnerTitle}. ${clearLanguage.partnerBody}`
+                    : "Invite softly. Compare only together. Share encrypted weather with one person. Comparison needs two yeses: share, then compare. Never consent to touch.",
+                )
+              }
+            />
+          ) : null}
+        </Card>
+      ) : null}
 
       {isDemo ? (
         <Card>
-          <Text style={styles.cardTitle}>Demo walkthrough</Text>
+          <Text style={styles.cardTitle}>
+            {plain ? "Demo practice" : "Demo walkthrough"}
+          </Text>
           <Body muted>
-            Fictional mode uses the real encryption path on this device. A
-            practice partner is not a real person. Face ID is skipped so Expo Go
-            can walk the flow. Your consents still matter — nothing auto-opens.
+            {plain
+              ? "Practice uses real encryption on this phone. The partner is fictional. You still must say yes to share and compare. Nothing opens by itself."
+              : "Fictional mode uses the real encryption path on this device. A practice partner is not a real person. Face ID is skipped so Expo Go can walk the flow. Your consents still matter — nothing auto-opens."}
           </Body>
         </Card>
       ) : null}
@@ -342,13 +376,17 @@ function ShareBody() {
         <Text style={styles.cardTitle}>
           {entry ? entry.title : "Shareable quiz"}
         </Text>
-        <Text style={styles.stepsTitle}>A calm path</Text>
+        <Text style={styles.stepsTitle}>
+          {plain ? "Three steps" : "A calm path"}
+        </Text>
         <View style={styles.stepRow}>
           <View style={styles.stepBadge}>
             <Text style={styles.stepBadgeText}>1</Text>
           </View>
           <Text style={styles.stepCopy}>
-            Create an encrypted invite (or join one you were given).
+            {plain
+              ? "Start an invite, or paste one you received."
+              : "Create an encrypted invite (or join one you were given)."}
           </Text>
         </View>
         <View style={styles.stepRow}>
@@ -357,7 +395,9 @@ function ShareBody() {
           </View>
           <Text style={styles.stepCopy}>
             <Text style={styles.stepStrong}>Share</Text>
-            {" — encrypt your private result for this invite only."}
+            {plain
+              ? " — encrypt your result for this invite only."
+              : " — encrypt your private result for this invite only."}
           </Text>
         </View>
         <View style={styles.stepRow}>
@@ -366,22 +406,28 @@ function ShareBody() {
           </View>
           <Text style={styles.stepCopy}>
             <Text style={styles.stepStrong}>Compare</Text>
-            {" — open a joint view only if both people opt in."}
+            {plain
+              ? " — open a joint view only if both people say yes."
+              : " — open a joint view only if both people opt in."}
           </Text>
         </View>
         <Body muted>
-          Encryption uses Signal-style X3DH + Double Ratchet. Keys stay on this
-          device (Secure Store and device-bound vault / Secure Enclave path on
-          real iOS). Servers may only relay ciphertext.
+          {plain
+            ? "Keys stay on this phone. Servers only see locked ciphertext, never your weather."
+            : "Encryption uses Signal-style X3DH + Double Ratchet. Keys stay on this device (Secure Store and device-bound vault / Secure Enclave path on real iOS). Servers may only relay ciphertext."}
         </Body>
         <Button
-          label="Create encrypted invite"
+          label={plain ? clearLanguage.partnerCreate : "Create encrypted invite"}
           onPress={() => void create()}
           disabled={busy}
         />
         {isDemo && selected?.role === "host" ? (
           <Button
-            label="Practice with fictional partner (demo)"
+            label={
+              plain
+                ? "Practice with a fictional partner"
+                : "Practice with fictional partner (demo)"
+            }
             variant="secondary"
             disabled={busy || Boolean(selected.peerResult)}
             accessibilityHint="Imports a fictional partner package encrypted with real E2E crypto. Still requires your share and compare consents."
@@ -498,8 +544,12 @@ function ShareBody() {
           <Button
             label={
               selected.hostConsentToShare
-                ? "Withdraw share consent"
-                : "I consent to share my encrypted result"
+                ? plain
+                  ? clearLanguage.partnerShareNo
+                  : "Withdraw share consent"
+                : plain
+                  ? clearLanguage.partnerShareYes
+                  : "I consent to share my encrypted result"
             }
             variant={selected.hostConsentToShare ? "secondary" : "primary"}
             disabled={busy}
@@ -509,15 +559,19 @@ function ShareBody() {
           <Button
             label={
               selected.hostConsentToCompare
-                ? "Withdraw compare consent"
-                : "I consent to compare (if they do too)"
+                ? plain
+                  ? clearLanguage.partnerCompareNo
+                  : "Withdraw compare consent"
+                : plain
+                  ? clearLanguage.partnerCompareYes
+                  : "I consent to compare (if they do too)"
             }
             variant="secondary"
             accessibilityHint="Allows comparison only if your partner also consents"
             onPress={() => void consentCompare(!selected.hostConsentToCompare)}
           />
           <Button
-            label="Show package to copy"
+            label={plain ? "Show package to copy" : "Show package to copy"}
             variant="secondary"
             accessibilityHint="Shows the encrypted package to share out of band"
             onPress={() => void showPackage()}
@@ -596,15 +650,19 @@ function ShareBody() {
           accessibilityLabel="Partner package JSON"
         />
         <Button
-          label="Import package"
+          label={plain ? clearLanguage.partnerImport : "Import package"}
           disabled={busy}
           onPress={() => void importPackage()}
         />
         <Button
           label={
             compareOpen
-              ? "Open shared comparison"
-              : "Open comparison (still closed)"
+              ? plain
+                ? clearLanguage.partnerCompareOpen
+                : "Open shared comparison"
+              : plain
+                ? clearLanguage.partnerCompareClosed
+                : "Open comparison (still closed)"
           }
           variant={compareOpen ? "primary" : "secondary"}
           accessibilityHint={

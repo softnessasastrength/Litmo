@@ -4,6 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import { PrototypeProvider } from "../context/PrototypeContext";
 import { AuthProvider, useAuth } from "../context/AuthContext";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
+import { NeurodivergentProvider } from "../context/NeurodivergentContext";
 import { AppErrorBoundary } from "../components/AppErrorBoundary";
 import { FailureState, LoadingState } from "../components/AsyncState";
 import { environmentError } from "../services/supabase";
@@ -24,15 +25,17 @@ export default function RootLayout() {
         <LoadingState label="Preparing Litmo…" />
       ) : (
         <AppErrorBoundary>
-          <PrototypeProvider>
-            <AuthProvider>
-              <BiometricLockProvider>
-                <ThemedChrome />
-                <AuthenticatedStack />
-                <BiometricPrivacyCover />
-              </BiometricLockProvider>
-            </AuthProvider>
-          </PrototypeProvider>
+          <NeurodivergentProvider>
+            <PrototypeProvider>
+              <AuthProvider>
+                <BiometricLockProvider>
+                  <ThemedChrome />
+                  <AuthenticatedStack />
+                  <BiometricPrivacyCover />
+                </BiometricLockProvider>
+              </AuthProvider>
+            </PrototypeProvider>
+          </NeurodivergentProvider>
         </AppErrorBoundary>
       )}
     </ThemeProvider>

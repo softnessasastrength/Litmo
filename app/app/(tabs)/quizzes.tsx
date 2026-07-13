@@ -3,6 +3,8 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { quizCatalog, type QuizCatalogEntry } from "../../data/quizCatalog";
+import { useNeurodivergent } from "../../context/NeurodivergentContext";
+import { clearLanguage } from "../../lib/clearLanguage";
 import {
   quizResultsRepository,
   type QuizResultsMap,
@@ -49,6 +51,7 @@ export default function QuizzesHubScreen() {
   const colors = useColors();
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
+  const { prefs } = useNeurodivergent();
   const [results, setResults] = useState<QuizResultsMap>({});
 
   useFocusEffect(
@@ -86,6 +89,20 @@ export default function QuizzesHubScreen() {
         Explore your social weather privately. Results are conversation starters
         — never a diagnosis, safety score, or consent to touch.
       </Text>
+
+      {prefs.enabled ? (
+        <View style={styles.ndBanner} accessible>
+          <Text style={styles.ndBannerText}>{clearLanguage.ndModeOn}</Text>
+        </View>
+      ) : (
+        <Pressable
+          onPress={() => router.push("/settings" as never)}
+          accessibilityRole="button"
+          style={styles.ndSoftLink}
+        >
+          <Text style={styles.ndSoftLinkText}>{clearLanguage.ndModeOffHint}</Text>
+        </Pressable>
+      )}
 
       <View
         style={styles.safetyCard}
@@ -287,6 +304,24 @@ function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
       lineHeight: 42,
     },
     intro: { color: colors.muted, fontSize: 16, lineHeight: 24 },
+    ndBanner: {
+      backgroundColor: colors.mossSoft,
+      borderRadius: radius.md,
+      padding: 14,
+    },
+    ndBannerText: {
+      color: colors.moss,
+      fontSize: 14,
+      lineHeight: 20,
+      fontWeight: "600" as const,
+    },
+    ndSoftLink: { paddingVertical: 6 },
+    ndSoftLinkText: {
+      color: colors.muted,
+      fontSize: 13,
+      lineHeight: 19,
+      textDecorationLine: "underline" as const,
+    },
     safetyCard: {
       backgroundColor: colors.mossSoft,
       borderRadius: radius.md,

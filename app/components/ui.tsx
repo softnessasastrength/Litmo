@@ -167,23 +167,33 @@ export function Screen({
   );
 }
 export function FadeIn({ children }: PropsWithChildren) {
+  // System Reduce Motion; Neurodivergent Mode also forces reducedStimulation
+  // at call sites by skipping FadeIn when needed.
   const reduced = useReducedMotion();
   const opacity = useRef(new Animated.Value(reduced ? 1 : 0)).current;
   const offset = useRef(new Animated.Value(reduced ? 0 : 12)).current;
   useEffect(() => {
+    if (reduced) {
+      opacity.setValue(1);
+      offset.setValue(0);
+      return;
+    }
     Animated.parallel([
       Animated.timing(opacity, {
         toValue: 1,
-        duration: reduced ? 0 : 360,
+        duration: 360,
         useNativeDriver: true,
       }),
       Animated.timing(offset, {
         toValue: 0,
-        duration: reduced ? 0 : 360,
+        duration: 360,
         useNativeDriver: true,
       }),
     ]).start();
   }, [offset, opacity, reduced]);
+  if (reduced) {
+    return <View>{children}</View>;
+  }
   return (
     <Animated.View style={{ opacity, transform: [{ translateY: offset }] }}>
       {children}

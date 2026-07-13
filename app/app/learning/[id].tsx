@@ -3,8 +3,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { findLearningModule } from "../../data/learningModules";
 import { getQuizEntry } from "../../data/quizCatalog";
+import { useNeurodivergent } from "../../context/NeurodivergentContext";
+import { clearLanguage } from "../../lib/clearLanguage";
 import { hapticService } from "../../services/hapticService";
 import { learningProgressService } from "../../services/learningProgress";
+import { speechService } from "../../services/speechService";
 import { fonts, radius, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
@@ -12,10 +15,12 @@ export default function LearningModuleScreen() {
   const styles = useThemedStyles(makeStyles);
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { prefs, reducedStimulation } = useNeurodivergent();
   const module = useMemo(() => findLearningModule(id), [id]);
   const [stepIndex, setStepIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [jumpOpen, setJumpOpen] = useState(false);
   const presencePlayedRef = useRef(false);
   const attentionStepRef = useRef<number | null>(null);
 
@@ -32,7 +37,7 @@ export default function LearningModuleScreen() {
       // presence once per module entry — not on resume of progress alone after rerender.
       if (!presencePlayedRef.current) {
         presencePlayedRef.current = true;
-        void hapticService.play("presence");
+        // Presence haptic skipped under reduced stimulation / ND mode.
       }
     });
     return () => {
@@ -47,11 +52,11 @@ export default function LearningModuleScreen() {
 
   // attention once when landing on a consent-critical scenario step.
   useEffect(() => {
-    if (!loaded || !module || !hasScenario) return;
+    if (!loaded || !module || !hasScenario || reducedStimulation) return;
     if (attentionStepRef.current === stepIndex) return;
     attentionStepRef.current = stepIndex;
     void hapticService.play("attention");
-  }, [loaded, module, stepIndex, hasScenario]);
+  }, [loaded, module, stepIndex, hasScenario, reducedStimulation]);
 
   if (!module) {
     return (
@@ -213,6 +218,25 @@ export default function LearningModuleScreen() {
 
   const isLast = stepIndex === current.steps.length - 1;
   const canContinue = !step.scenario || selectedOption !== null;
+  const plain = prefs.clearLanguage;
+
+  const readStep = () => {
+    const opts =
+      step.scenario?.options
+        .map((o, i) => `Option ${i + 1}: ${o.label}.`)
+        .join(" ") ?? "";
+    void speechService.speak(
+      [
+        clearLanguage.learningProgress(stepIndex + 1, current.steps.length),
+        step.title,
+        step.body,
+        `Remember: ${step.takeaway}`,
+        step.scenario ? `Question: ${step.scenario.prompt}. ${opts}` : "",
+      ]
+        .filter(Boolean)
+        .join(" "),
+    );
+  };
 
   return (
     <>
@@ -220,15 +244,30 @@ export default function LearningModuleScreen() {
         options={{ title: current.title, headerBackTitle: "Learn" }}
       />
       <ScrollView contentContainerStyle={styles.container}>
+        {prefs.enabled ? (
+          <Text style={styles.ndHint}>
+            {plain
+              ? clearLanguage.ndModeOn
+              : "Neurodivergent Mode: quieter, clearer steps. Progress still saves privately."}
+          </Text>
+        ) : null}
         <Text style={styles.progress}>
-          STEP {stepIndex + 1} OF {current.steps.length}
-          {current.track === "lived-lessons" ? " · LIVED LESSON" : ""}
+          {plain
+            ? clearLanguage.learningProgress(
+                stepIndex + 1,
+                current.steps.length,
+              ).toUpperCase()
+            : `STEP ${stepIndex + 1} OF ${current.steps.length}`}
+          {!plain && current.track === "lived-lessons" ? " · LIVED LESSON" : ""}
         </Text>
         <View
           style={styles.track}
           accessible
           accessibilityRole="progressbar"
-          accessibilityLabel={`Step ${stepIndex + 1} of ${current.steps.length}`}
+          accessibilityLabel={clearLanguage.learningProgress(
+            stepIndex + 1,
+            current.steps.length,
+          )}
           accessibilityValue={{
             min: 1,
             max: current.steps.length,
@@ -245,13 +284,81 @@ export default function LearningModuleScreen() {
           />
         </View>
 
-        <Text style={styles.title} accessibilityRole="header">
+        {prefs.easyNavigation ? (
+          <View style={styles.jumpRow}>
+            <Pressable
+              onPress={() => setJumpOpen((v) => !v)}
+              style={styles.jumpToggle}
+              accessibilityRole="button"
+              accessibilityLabel={
+                jumpOpen ? "Hide step list" : "Show step list"
+              }
+            >
+              <Text style={styles.jumpToggleText}>
+                {jumpOpen ? "Hide jump list" : "Jump to step"}
+              </Text>
+            </Pressable>
+            {prefs.readAloud ? (
+              <Pressable
+                onPress={readStep}
+                style={styles.jumpToggle}
+                accessibilityRole="button"
+                accessibilityLabel={clearLanguage.learningReadAloud}
+              >
+                <Text style={styles.jumpToggleText}>
+                  {plain ? clearLanguage.learningReadAloud : "Read aloud"}
+                </Text>
+              </Pressable>
+            ) : null}
+          </View>
+        ) : prefs.readAloud ? (
+          <Pressable
+            onPress={readStep}
+            style={styles.jumpToggle}
+            accessibilityRole="button"
+            accessibilityLabel={clearLanguage.learningReadAloud}
+          >
+            <Text style={styles.jumpToggleText}>
+              {plain ? clearLanguage.learningReadAloud : "Read aloud"}
+            </Text>
+          </Pressable>
+        ) : null}
+
+        {jumpOpen && prefs.easyNavigation ? (
+          <View style={styles.jumpList}>
+            {current.steps.map((s, i) => (
+              <Pressable
+                key={s.id}
+                onPress={() => {
+                  setStepIndex(i);
+                  setSelectedOption(null);
+                  setJumpOpen(false);
+                }}
+                style={[
+                  styles.jumpChip,
+                  i === stepIndex && styles.jumpChipActive,
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={`Step ${i + 1}: ${s.title}`}
+              >
+                <Text style={styles.jumpChipText}>{i + 1}</Text>
+              </Pressable>
+            ))}
+          </View>
+        ) : null}
+
+        <Text
+          style={[styles.title, plain && styles.titlePlain]}
+          accessibilityRole="header"
+        >
           {step.title}
         </Text>
-        <Text style={styles.body}>{step.body}</Text>
+        <Text style={[styles.body, plain && styles.bodyPlain]}>{step.body}</Text>
 
         <View style={styles.takeaway}>
-          <Text style={styles.takeawayLabel}>REMEMBER</Text>
+          <Text style={styles.takeawayLabel}>
+            {plain ? "REMEMBER" : "REMEMBER"}
+          </Text>
           <Text style={styles.takeawayText}>{step.takeaway}</Text>
         </View>
 
@@ -266,7 +373,11 @@ export default function LearningModuleScreen() {
                   accessibilityRole="button"
                   accessibilityState={{ selected }}
                   onPress={() => setSelectedOption(index)}
-                  style={[styles.option, selected && styles.optionSelected]}
+                  style={[
+                    styles.option,
+                    selected && styles.optionSelected,
+                    plain && styles.optionPlain,
+                  ]}
                 >
                   <Text
                     style={[
@@ -274,7 +385,9 @@ export default function LearningModuleScreen() {
                       selected && styles.optionLabelSelected,
                     ]}
                   >
-                    {option.label}
+                    {prefs.easyNavigation
+                      ? `${index + 1}. ${option.label}`
+                      : option.label}
                   </Text>
                   {selected ? (
                     <Text style={styles.feedback}>{option.feedback}</Text>
@@ -292,7 +405,7 @@ export default function LearningModuleScreen() {
             accessibilityRole="button"
           >
             <Text style={styles.secondaryButtonText}>
-              {stepIndex === 0 ? "Exit" : "Back"}
+              {stepIndex === 0 ? "Exit" : plain ? "Previous" : "Back"}
             </Text>
           </Pressable>
           <Pressable
@@ -306,7 +419,13 @@ export default function LearningModuleScreen() {
             accessibilityState={{ disabled: !canContinue || !loaded }}
           >
             <Text style={styles.primaryButtonText}>
-              {isLast ? "Complete module" : "Continue"}
+              {isLast
+                ? plain
+                  ? "Finish module"
+                  : "Complete module"
+                : plain
+                  ? "Next"
+                  : "Continue"}
             </Text>
           </Pressable>
         </View>
@@ -338,8 +457,14 @@ function makeStyles(colors: AppColors) {
       fontWeight: "700",
       letterSpacing: 1.3,
     },
+    ndHint: {
+      color: colors.moss,
+      fontSize: 13,
+      lineHeight: 19,
+      fontWeight: "600",
+    },
     track: {
-      height: 7,
+      height: 10,
       borderRadius: radius.pill,
       backgroundColor: colors.line,
       overflow: "hidden",
@@ -349,13 +474,46 @@ function makeStyles(colors: AppColors) {
       backgroundColor: colors.moss,
       borderRadius: radius.pill,
     },
+    jumpRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+    jumpToggle: {
+      minHeight: 44,
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      borderRadius: 22,
+      borderWidth: 1,
+      borderColor: colors.line,
+      backgroundColor: colors.paper,
+    },
+    jumpToggleText: {
+      color: colors.moss,
+      fontWeight: "700",
+      fontSize: 14,
+    },
+    jumpList: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+    jumpChip: {
+      minWidth: 44,
+      minHeight: 44,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.line,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.paper,
+    },
+    jumpChipActive: {
+      borderColor: colors.moss,
+      backgroundColor: colors.mossSoft,
+    },
+    jumpChipText: { color: colors.ink, fontWeight: "700", fontSize: 14 },
     title: {
       color: colors.ink,
       fontFamily: fonts.headline,
       fontSize: 40,
       lineHeight: 44,
     },
+    titlePlain: { fontSize: 32, lineHeight: 38 },
     body: { color: colors.ink, fontSize: 18, lineHeight: 28 },
+    bodyPlain: { fontSize: 18, lineHeight: 30 },
     takeaway: {
       backgroundColor: colors.mossSoft,
       borderRadius: radius.md,
@@ -388,7 +546,9 @@ function makeStyles(colors: AppColors) {
       borderRadius: radius.md,
       padding: 16,
       gap: 9,
+      minHeight: 56,
     },
+    optionPlain: { minHeight: 64, padding: 18 },
     optionSelected: {
       borderColor: colors.moss,
       backgroundColor: colors.mossSoft,

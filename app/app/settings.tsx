@@ -4,6 +4,7 @@ import { Linking, Switch, View } from "react-native";
 import { Body, Button, Eyebrow, Screen, Title } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import { useNeurodivergent } from "../context/NeurodivergentContext";
 import { SensitiveAccessGate } from "../components/SensitiveAccessGate";
 import { runtimeConfig } from "../config/runtime";
 import { hapticService } from "../services/hapticService";
@@ -21,6 +22,7 @@ function SettingsContent() {
   const router = useRouter();
   const { status, signOut } = useAuth();
   const { scheme, resolvedScheme, cycleScheme, colors } = useTheme();
+  const { prefs: neuroPrefs, setEnabled: setNeuroEnabled } = useNeurodivergent();
   const [isStaff, setIsStaff] = useState(false);
   const [hapticsOn, setHapticsOn] = useState(true);
 
@@ -75,6 +77,35 @@ function SettingsContent() {
             ? "Dark mode softens the surface for low light. Safety colors stay distinct; meaning is never color-only."
             : "Light mode is the default cream journal surface. Switch anytime on this device only."}
       </Body>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
+        <View style={{ flex: 1, gap: 6 }}>
+          <Body>
+            {neuroPrefs.enabled
+              ? "Neurodivergent Mode on"
+              : "Neurodivergent Mode off"}
+          </Body>
+          <Body muted>
+            Quieter screens, clear language, easy step navigation, mid-quiz
+            save/resume, read-aloud, and keyboard-dictation aids for Quizzes,
+            partner invites, and Guided Learning. Stays on this device only.
+            Never a score or consent gate. Turning on also quiets haptics by
+            default — you can turn haptics back on below.
+          </Body>
+        </View>
+        <Switch
+          accessibilityLabel="Neurodivergent Mode"
+          accessibilityHint="Optimizes quizzes, partner flow, and learning for reduced stimulation, clear language, save and resume, read aloud, and voice dictation aids"
+          trackColor={{ false: colors.line, true: colors.mossSoft }}
+          thumbColor={neuroPrefs.enabled ? colors.moss : colors.white}
+          ios_backgroundColor={colors.line}
+          onValueChange={(next) => {
+            void setNeuroEnabled(next).then(() => {
+              if (next) setHapticsOn(false);
+            });
+          }}
+          value={neuroPrefs.enabled}
+        />
+      </View>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
         <View style={{ flex: 1, gap: 6 }}>
           <Body>{hapticsOn ? "Haptics on" : "Haptics off"}</Body>

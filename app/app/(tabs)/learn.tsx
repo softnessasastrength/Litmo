@@ -7,6 +7,8 @@ import {
   learningModulesForTrack,
   type LearningModule,
 } from "../../data/learningModules";
+import { useNeurodivergent } from "../../context/NeurodivergentContext";
+import { clearLanguage } from "../../lib/clearLanguage";
 import { learningProgressService } from "../../services/learningProgress";
 import {
   completionCount,
@@ -69,6 +71,7 @@ export default function LearningHomeScreen() {
   const colors = useColors();
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
+  const { prefs } = useNeurodivergent();
   const [progress, setProgress] = useState<LearningProgress>({});
 
   useFocusEffect(
@@ -105,6 +108,21 @@ export default function LearningHomeScreen() {
         lessons. Trauma-informed, interactive, never scored. Completing a module
         never proves anyone is safe.
       </Text>
+
+      {prefs.enabled ? (
+        <View style={styles.ndBanner} accessible>
+          <Text style={styles.ndBannerText}>{clearLanguage.ndModeOn}</Text>
+        </View>
+      ) : (
+        <Pressable
+          onPress={() => router.push("/settings" as never)}
+          accessibilityRole="button"
+          accessibilityHint="Opens Settings to enable Neurodivergent Mode"
+          style={styles.ndSoftLink}
+        >
+          <Text style={styles.ndSoftLinkText}>{clearLanguage.ndModeOffHint}</Text>
+        </Pressable>
+      )}
 
       <View
         style={styles.progressCard}
@@ -234,6 +252,26 @@ function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
       lineHeight: 42,
     },
     intro: { color: colors.muted, fontSize: 16, lineHeight: 24 },
+    ndBanner: {
+      backgroundColor: colors.mossSoft,
+      borderRadius: radius.md,
+      padding: 14,
+    },
+    ndBannerText: {
+      color: colors.moss,
+      fontSize: 14,
+      lineHeight: 20,
+      fontWeight: "600" as const,
+    },
+    ndSoftLink: {
+      paddingVertical: 8,
+    },
+    ndSoftLinkText: {
+      color: colors.muted,
+      fontSize: 13,
+      lineHeight: 19,
+      textDecorationLine: "underline" as const,
+    },
     progressCard: {
       backgroundColor: colors.mossSoft,
       borderRadius: radius.md,

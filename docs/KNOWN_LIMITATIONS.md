@@ -62,6 +62,23 @@
   backup reviewer staffing, and two-person permanent-ban approval remain
   blocked.
 
+## Neurodivergent Mode
+
+- Preference is **device-local** only (AsyncStorage). It is not synced, not
+  exported as a profile trait, and not a matching or consent input.
+- Master toggle enables a fixed optimization bundle; fine-grained sub-toggles
+  are not yet in Settings UI (prefs model supports them for later).
+- Read-aloud uses `expo-speech` when the native module is available; otherwise
+  system accessibility announce. Quality varies by device language and VoiceOver
+  state. Spoken content is not sent to Litmo servers.
+- “Voice input” aids use **keyboard dictation** (option number field) — not a
+  custom cloud speech-to-text model. Accuracy depends on the OS keyboard.
+- Mid-quiz save/resume is local; reinstall or clearing app data drops it.
+  Learning progress already had local resume; ND mode adds jump lists and
+  read-aloud on top.
+- Enabling ND mode turns haptics off by default; users can re-enable haptics
+  without leaving ND mode.
+
 ## Guided learning lived lessons
 
 - Six **lived-lesson** modules (consent language, nervous system safety,

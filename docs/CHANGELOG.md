@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-07-13 — Neurodivergent Mode (quiz, partner, learning)
+
+### Summary
+
+Device-local **Neurodivergent Mode** optimizes Vibe Quiz, partner invite flow,
+and Guided Learning: reduced stimulation, clear language, jump navigation,
+mid-quiz save/resume, read-aloud, and keyboard-dictation aids. Not a score or
+consent gate.
+
+### User-visible impact
+
+- Settings toggle enables the full optimized bundle; quiets haptics by default.
+- Quiz: resume card, jump list, read aloud, option-number dictation field.
+- Partner + Learn: plain-language chrome, optional read-aloud, larger steps.
+- Hubs show ND status or link to Settings.
+
+### Developer impact
+
+- `NeurodivergentContext`, preference core/tests, `quizPlayProgress`,
+  `speechService` (+ optional `expo-speech`), `docs/NEURODIVERGENT_MODE.md`.
+
 ## 2026-07-13 — Lived-lesson Guided Learning modules
 
 ### Summary
