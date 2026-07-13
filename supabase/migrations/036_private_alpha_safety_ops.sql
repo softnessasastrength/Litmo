@@ -82,10 +82,10 @@ begin
     raise exception using errcode = '42501', message = 'staff access required';
   end if;
 
-  v_code := encode(gen_random_bytes(24), 'hex');
+  v_code := encode(extensions.gen_random_bytes(24), 'hex');
 
   insert into public.private_alpha_invites (code_hash, issued_by)
-  values (digest(v_code, 'sha256'), v_actor);
+  values (extensions.digest(v_code, 'sha256'), v_actor);
 
   return v_code;
 end;
@@ -132,7 +132,7 @@ begin
   update public.private_alpha_invites as i
      set redeemed_at = now(),
          redeemed_by = v_actor
-   where i.code_hash = digest(lower(trim(p_code)), 'sha256')
+   where i.code_hash = extensions.digest(lower(trim(p_code)), 'sha256')
      and i.revoked_at is null
      and i.redeemed_at is null
      and i.expires_at > now()
