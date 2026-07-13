@@ -46,6 +46,7 @@ Use these documents when modifying or reviewing implemented behavior:
 - [`CONSENT_WITHDRAWAL_AND_EMERGENCY_STOP.md`](CONSENT_WITHDRAWAL_AND_EMERGENCY_STOP.md)
 - [`LEARNING_SYSTEM.md`](LEARNING_SYSTEM.md)
 - [`TOUCH_LANGUAGE.md`](TOUCH_LANGUAGE.md) — full Touch Language map (local save + encrypted partner share)
+- [`CONSENT_SNAPSHOT_SYSTEM.md`](CONSENT_SNAPSHOT_SYSTEM.md) — pre-session declaration + mutual seal (Soft Signal, safewords, aftercare)
 - [`HARDWARE/HAPTICS.md`](HARDWARE/HAPTICS.md) — **canonical** dedicated-device haptics (VCM primary, Gentle Mode, Soft Signal warm descent, ND/sensory)
 - [`HAPTIC_SYSTEM_DEVICE.md`](HAPTIC_SYSTEM_DEVICE.md) — pointer to `HARDWARE/HAPTICS.md`
 

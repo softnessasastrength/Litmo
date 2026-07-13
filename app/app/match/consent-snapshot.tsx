@@ -259,6 +259,24 @@ function ConsentSnapshotContent() {
     <Screen>
       <Eyebrow>{isReal ? "CONSENT SNAPSHOT" : "MOCK CONSENT SNAPSHOT"}</Eyebrow>
       <Title>Read every boundary before you agree.</Title>
+      <View style={styles.protectiveBanner}>
+        <Text style={styles.protectiveBannerTitle}>Protective process</Text>
+        <Text style={styles.protectiveBannerBody}>
+          Soft Signal ends anything immediately — no explanation. A match or
+          vibe is never consent. For the full pre-session ritual (mood,
+          safewords, aftercare, dual seal), use Consent Snapshot prepare.
+        </Text>
+        {!isReal ? (
+          <Button
+            variant="secondary"
+            label="Open full Consent Snapshot prepare → seal"
+            onPress={() =>
+              router.push("/consent-snapshot/prepare" as never)
+            }
+            accessibilityHint="Boundaries, mood, safewords, aftercare, Soft Signal acknowledgment, then mutual seal"
+          />
+        ) : null}
+      </View>
       <Body>
         {isReal
           ? "This is the live, directional overlap of both participants' saved touch and consent profiles, computed by the trusted backend. A match and a Vibe Profile do not grant consent."
@@ -477,6 +495,27 @@ function ConsentSnapshotContent() {
 }
 function makeStyles(colors: AppColors) {
   return {
+    protectiveBanner: {
+      backgroundColor: colors.signalSoft,
+      borderWidth: 1,
+      borderColor: colors.signal,
+      borderRadius: 16,
+      padding: 16,
+      gap: 8,
+      marginBottom: 8,
+    },
+    protectiveBannerTitle: {
+      color: colors.signal,
+      fontWeight: "800" as const,
+      fontSize: 12,
+      letterSpacing: 0.5,
+      textTransform: "uppercase" as const,
+    },
+    protectiveBannerBody: {
+      color: colors.ink,
+      lineHeight: 21,
+      fontSize: 15,
+    },
     snapshot: { gap: 0 },
     row: {
       paddingVertical: 13,
@@ -486,8 +525,8 @@ function makeStyles(colors: AppColors) {
     label: {
       color: colors.muted,
       fontSize: 12,
-      fontWeight: "700",
-      textTransform: "uppercase",
+      fontWeight: "700" as const,
+      textTransform: "uppercase" as const,
       letterSpacing: 0.7,
     },
     value: {
@@ -495,19 +534,19 @@ function makeStyles(colors: AppColors) {
       fontSize: 16,
       lineHeight: 23,
       marginTop: 4,
-      fontWeight: "600",
+      fontWeight: "600" as const,
     },
     decisions: { gap: 10 },
     stop: { padding: 16, borderRadius: 16, backgroundColor: colors.signalSoft },
-    stopTitle: { color: colors.signal, fontWeight: "800" },
+    stopTitle: { color: colors.signal, fontWeight: "800" as const },
     stopBody: { color: colors.ink, lineHeight: 21, marginTop: 4 },
     waiting: {
       padding: 16,
       borderRadius: 16,
       backgroundColor: colors.mossSoft,
     },
-    waitingTitle: { color: colors.moss, fontWeight: "800" },
+    waitingTitle: { color: colors.moss, fontWeight: "800" as const },
     waitingBody: { color: colors.ink, lineHeight: 21, marginTop: 4 },
-    error: { color: colors.signal, textAlign: "center" },
+    error: { color: colors.signal, textAlign: "center" as const },
   };
 }

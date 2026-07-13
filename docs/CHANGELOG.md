@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-07-13 — Consent Snapshot prepare + mutual seal system
+
+### Summary
+
+Added a serious pre-session **Consent Snapshot** path: personal declaration
+(mood, energy, boundaries from Touch Language, safewords, aftercare, Soft
+Signal acknowledgment) and **mutual seal** with dual protective checklists,
+fail-closed intersection, fingerprint, and free withdrawal. Demo uses a
+labeled practice partner for dual affirmation on one device.
+
+### User-visible impact
+
+- Home → **Consent Snapshot (prepare & mutual seal)**
+- `/consent-snapshot/prepare` · `/consent-snapshot/mutual`
+- Match consent screen links to full prepare flow (mock)
+
+### Developer impact
+
+- `app/lib/sessionConsentSnapshotCore.ts` (+ tests)
+- `app/services/sessionConsentSnapshotStore.ts`
+- `docs/CONSENT_SNAPSHOT_SYSTEM.md`
+
 ## 2026-07-13 — Full Touch Language system (local + secure share)
 
 ### Summary

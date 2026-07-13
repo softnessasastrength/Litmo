@@ -247,6 +247,11 @@ export default function HomeTabScreen() {
         accessibilityHint="Opens your full Touch Language map: pressure, speed, duration, zones, hard and soft limits. Local save and secure partner share. Never consent to touch."
       />
       <Button
+        label="Consent Snapshot (prepare & mutual seal)"
+        onPress={() => router.push("/consent-snapshot/prepare" as never)}
+        accessibilityHint="Serious pre-session process: boundaries, mood, safewords, aftercare, Soft Signal. Both people must affirm. Never automatic consent."
+      />
+      <Button
         variant="secondary"
         label="Proximity (anonymous nearby radar)"
         onPress={() => router.push("/proximity/radar" as never)}
