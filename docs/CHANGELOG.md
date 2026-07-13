@@ -26,8 +26,9 @@ None. This is build verification only.
 
 ### Verification
 
-- iOS Native Build run #5 passed on the final implementation head with Xcode
-  26.5 and strict CocoaPods deployment mode.
+- iOS Native Build run #5 passed with Xcode 26.5 and strict CocoaPods
+  deployment mode; the final lane targets native arm64 to reduce hosted Mac
+  time.
 - The run produced a 39.8 MB simulator `.app` and the full Xcode build log.
 
 ### Related work
