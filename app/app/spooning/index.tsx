@@ -1,6 +1,6 @@
 /**
- * Spooning Protocol v0.1 — runnable containment cuddle planner.
- * Soft Signal free mid-spoon. Local only. Funny on purpose.
+ * Spooning Protocol v0.1 — runnable containment cuddle ritual.
+ * Soft Signal = God Mode. Little Spoon = strength. Funny on purpose.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -26,32 +26,44 @@ import {
   SPOON_DURATIONS,
   SPOON_ENERGIES,
   SPOON_POSITIONS,
+  SPOON_PRESSURES,
   SPOON_ROLES,
+  SPOON_ZONES,
   canSealSpoon,
   completeSpoon,
   defaultDebrief,
   defaultSpoonDraft,
+  durationLabel,
   durationTargetSeconds,
   findEnergy,
   findPosition,
+  findPressure,
   findRole,
   formatSpoonClock,
   isDurationComplete,
+  markFiveMinWarning,
+  recordCheckIn,
+  remainingSeconds,
   sealSpoon,
+  shouldFireFiveMinWarning,
   startSpoonSession,
   summarizeHistory,
   tickSpoonSession,
+  toggleZone,
   type SpoonActiveSession,
   type SpoonDebrief,
   type SpoonDurationMinutes,
   type SpoonEnergyId,
   type SpoonHistoryEntry,
   type SpoonPositionId,
+  type SpoonPressureId,
   type SpoonRoleId,
   type SpoonSealDraft,
+  type SpoonZoneId,
 } from "../../lib/spooningCore";
 import { softSignalService } from "../../services/softSignalService";
 import { spooningStore } from "../../services/spooningStore";
+import { hapticService } from "../../services/hapticService";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
@@ -67,13 +79,15 @@ export default function SpooningProtocolScreen() {
   const [session, setSession] = useState<SpoonActiveSession | null>(null);
   const [debrief, setDebrief] = useState<SpoonDebrief>(defaultDebrief());
   const [pendingEnd, setPendingEnd] = useState<
-    "completed" | "soft_signal" | null
+    "completed" | "soft_signal" | "hot_or_pee" | null
   >(null);
   const [softState, setSoftState] = useState<"idle" | "stopping" | "stopped">(
     "idle",
   );
   const [history, setHistory] = useState<SpoonHistoryEntry[]>([]);
   const [sealError, setSealError] = useState("");
+  const [fiveMinBanner, setFiveMinBanner] = useState(false);
+  const [checkInFlash, setCheckInFlash] = useState(false);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const reloadHistory = useCallback(async () => {
@@ -95,7 +109,12 @@ export default function SpooningProtocolScreen() {
     tickRef.current = setInterval(() => {
       setSession((prev) => {
         if (!prev) return prev;
-        const next = tickSpoonSession(prev, 1);
+        let next = tickSpoonSession(prev, 1);
+        if (shouldFireFiveMinWarning(next)) {
+          next = markFiveMinWarning(next);
+          setFiveMinBanner(true);
+          void hapticService.play("presence");
+        }
         if (isDurationComplete(next)) {
           setPendingEnd("completed");
           setPhase("debrief");
@@ -130,11 +149,13 @@ export default function SpooningProtocolScreen() {
     setSoftState("idle");
     setDebrief(defaultDebrief());
     setPendingEnd(null);
+    setFiveMinBanner(false);
+    setCheckInFlash(false);
     setPhase("active");
   };
 
   const finishToHistory = async (
-    reason: "completed" | "soft_signal" | "abandoned",
+    reason: "completed" | "soft_signal" | "hot_or_pee" | "abandoned",
     includeDebrief: boolean,
   ) => {
     if (!session) return;
@@ -149,6 +170,7 @@ export default function SpooningProtocolScreen() {
     setPendingEnd(null);
     setSoftState("idle");
     setDraft(defaultSpoonDraft());
+    setFiveMinBanner(false);
     setPhase("hub");
   };
 
@@ -160,34 +182,75 @@ export default function SpooningProtocolScreen() {
     setPhase("debrief");
   };
 
+  const onCheckIn = async () => {
+    if (!session) return;
+    setSession(recordCheckIn(session));
+    setCheckInFlash(true);
+    void hapticService.play("presence");
+    setTimeout(() => setCheckInFlash(false), 2500);
+  };
+
   if (phase === "active" && session) {
     const target = durationTargetSeconds(session.snapshot.durationMinutes);
+    const remain = remainingSeconds(session);
     const role = findRole(session.snapshot.roleId);
     const pos = findPosition(session.snapshot.positionId);
     return (
       <Screen>
         <ScrollView contentContainerStyle={styles.scroll}>
-          <Eyebrow>SPOON · ACTIVE</Eyebrow>
+          <Eyebrow>SPOON · ACTIVE · GOD MODE ARMED</Eyebrow>
           <Title>You are in the spoon.</Title>
           <Card>
-            <Text style={styles.banner}>{SPOONING_COPY.softSignalHint}</Text>
+            <Text style={styles.banner}>{SPOONING_COPY.softSignalGod}</Text>
             <Body>
               {role.label} · {pos.label}
             </Body>
             <Body muted>
-              Energy: {findEnergy(session.snapshot.energyId).label}
+              {findPressure(session.snapshot.pressureId).label} ·{" "}
+              {findEnergy(session.snapshot.energyId).label}
+            </Body>
+            <Body muted>
+              Zones:{" "}
+              {session.snapshot.allowedZones
+                .map(
+                  (z) => SPOON_ZONES.find((x) => x.id === z)?.label ?? z,
+                )
+                .join(" · ")}
             </Body>
             <Text style={styles.clock} accessibilityRole="timer">
               {formatSpoonClock(session.elapsedSeconds)}
-              {target != null
-                ? ` / ${formatSpoonClock(target)}`
-                : " · open (Soft Signal free)"}
+              {target != null && remain != null
+                ? ` · ${formatSpoonClock(remain)} left`
+                : ` · ${durationLabel(session.snapshot.durationMinutes)}`}
             </Text>
+            {fiveMinBanner ? (
+              <Text style={styles.warning}>{SPOONING_COPY.fiveMinWarning}</Text>
+            ) : null}
+            {checkInFlash ? (
+              <Text style={styles.checkInFlash}>{SPOONING_COPY.checkIn}</Text>
+            ) : null}
           </Card>
+
           <SoftSignalButton
             state={softState}
             onPress={() => void fireSoftSignal()}
-            accessibilityHint="Ends spoon immediately. No reason required."
+            accessibilityHint="God Mode. Instant release. No questions."
+          />
+
+          <Button
+            variant="secondary"
+            label='Check-in · "you good?"'
+            onPress={() => void onCheckIn()}
+            accessibilityHint="Gentle haptic + private check-in flash. Does not end the spoon."
+          />
+
+          <Button
+            variant="secondary"
+            label="Hot / pee exit → debrief"
+            onPress={() => {
+              setPendingEnd("hot_or_pee");
+              setPhase("debrief");
+            }}
           />
           <Button
             variant="secondary"
@@ -197,6 +260,10 @@ export default function SpooningProtocolScreen() {
               setPhase("debrief");
             }}
           />
+          <Body muted>
+            Check-ins this spoon: {session.checkInCount}. Soft Signal needs zero
+            of them.
+          </Body>
           <Body muted>{SPOONING_COPY.banner}</Body>
         </ScrollView>
       </Screen>
@@ -204,49 +271,94 @@ export default function SpooningProtocolScreen() {
   }
 
   if (phase === "debrief" && session) {
+    const endLabel =
+      pendingEnd === "soft_signal"
+        ? "Soft Signal (God Mode success)"
+        : pendingEnd === "hot_or_pee"
+          ? "Hot or pee (sacred clause)"
+          : "completed / natural";
     return (
       <Screen>
         <ScrollView contentContainerStyle={styles.scroll}>
           <Eyebrow>POST-SPOON DEBRIEF</Eyebrow>
-          <Title>Private. Optional. Not a grade.</Title>
+          <Title>Data collection (lol).</Title>
           <Body muted>
-            Ended via:{" "}
-            {pendingEnd === "soft_signal"
-              ? "Soft Signal (success)"
-              : "completed / natural"}
+            {SPOONING_COPY.debriefLol}
+            {"\n"}Ended via: {endLabel}
           </Body>
+
           <Card>
-            <Body>Comfort (1–5)</Body>
+            <Text style={styles.section}>How did that feel in your body?</Text>
             <View style={styles.chipRow}>
               {([1, 2, 3, 4, 5] as const).map((n) => (
                 <Chip
                   key={n}
                   label={String(n)}
-                  selected={debrief.comfort === n}
-                  onPress={() => setDebrief({ ...debrief, comfort: n })}
+                  selected={debrief.bodyFeel === n}
+                  onPress={() => setDebrief({ ...debrief, bodyFeel: n })}
                   styles={styles}
                   colors={colors}
                 />
               ))}
             </View>
-            <Body>Want this shape again?</Body>
-            <View style={styles.chipRow}>
-              {(
-                [
-                  ["yes", "Yes"],
-                  ["maybe", "Maybe"],
-                  ["no", "No"],
-                ] as const
-              ).map(([id, label]) => (
-                <Chip
-                  key={id}
-                  label={label}
-                  selected={debrief.again === id}
-                  onPress={() => setDebrief({ ...debrief, again: id })}
-                  styles={styles}
-                  colors={colors}
-                />
-              ))}
+            <TextInput
+              accessibilityLabel="Body notes"
+              value={debrief.bodyNotes}
+              onChangeText={(t) => setDebrief({ ...debrief, bodyNotes: t })}
+              placeholder="Body notes (optional)…"
+              placeholderTextColor={colors.muted}
+              style={styles.input}
+              multiline
+              maxLength={500}
+            />
+          </Card>
+
+          <Card>
+            <Text style={styles.section}>What worked?</Text>
+            <TextInput
+              accessibilityLabel="What worked"
+              value={debrief.worked}
+              onChangeText={(t) => setDebrief({ ...debrief, worked: t })}
+              placeholder="e.g. Safety Spoon wrist escape…"
+              placeholderTextColor={colors.muted}
+              style={styles.input}
+              multiline
+              maxLength={500}
+            />
+            <Text style={styles.section}>What didn’t work?</Text>
+            <TextInput
+              accessibilityLabel="What did not work"
+              value={debrief.didntWork}
+              onChangeText={(t) => setDebrief({ ...debrief, didntWork: t })}
+              placeholder="Honest. Private. Not a performance review."
+              placeholderTextColor={colors.muted}
+              style={styles.input}
+              multiline
+              maxLength={500}
+            />
+          </Card>
+
+          <Card>
+            <View style={styles.row}>
+              <View style={{ flex: 1 }}>
+                <Body>{SPOONING_COPY.ledgerJoke}</Body>
+              </View>
+              <Switch
+                accessibilityLabel="Plus one successful non-traumatic closeness"
+                value={debrief.nonTraumaticClosenessPlusOne}
+                onValueChange={(v) =>
+                  setDebrief({
+                    ...debrief,
+                    nonTraumaticClosenessPlusOne: v,
+                  })
+                }
+                trackColor={{ false: colors.line, true: colors.mossSoft }}
+                thumbColor={
+                  debrief.nonTraumaticClosenessPlusOne
+                    ? colors.moss
+                    : colors.white
+                }
+              />
             </View>
             <View style={styles.row}>
               <View style={{ flex: 1 }}>
@@ -264,17 +376,8 @@ export default function SpooningProtocolScreen() {
                 }
               />
             </View>
-            <TextInput
-              accessibilityLabel="Private debrief note"
-              value={debrief.note}
-              onChangeText={(t) => setDebrief({ ...debrief, note: t })}
-              placeholder="Optional private note…"
-              placeholderTextColor={colors.muted}
-              style={styles.input}
-              multiline
-              maxLength={500}
-            />
           </Card>
+
           <Button
             label="Save private debrief"
             onPress={() =>
@@ -283,14 +386,11 @@ export default function SpooningProtocolScreen() {
           />
           <Button
             variant="secondary"
-            label="Skip debrief"
+            label="Skip paperwork (still allowed)"
             onPress={() =>
               void finishToHistory(pendingEnd ?? "completed", false)
             }
           />
-          <Body muted>
-            Soft Signal exits are success. History stays on this device.
-          </Body>
         </ScrollView>
       </Screen>
     );
@@ -303,8 +403,9 @@ export default function SpooningProtocolScreen() {
           <Eyebrow>SPOON HISTORY</Eyebrow>
           <Title>Local only. Not a skill score.</Title>
           <Body muted>
-            {summary.total} spoons · {summary.soft_signal_exits} Soft Signal
-            exits · {summary.solo_practice} solo practice
+            {summary.total} spoons · {summary.soft_signal_exits} Soft Signal ·{" "}
+            {summary.check_ins} check-ins · {summary.non_traumatic_plus_ones}{" "}
+            non-traumatic +1s
           </Body>
           {history.length === 0 ? (
             <Body muted>No spoons logged yet. Pillows await.</Body>
@@ -317,8 +418,9 @@ export default function SpooningProtocolScreen() {
                 </Body>
                 <Body muted>
                   {h.endReason}
-                  {h.debrief?.owedNoPerformance
-                    ? " · no performance owed"
+                  {h.checkInCount > 0 ? ` · ${h.checkInCount} check-ins` : ""}
+                  {h.debrief?.nonTraumaticClosenessPlusOne
+                    ? " · +1 closeness"
                     : ""}
                 </Body>
               </Card>
@@ -338,33 +440,37 @@ export default function SpooningProtocolScreen() {
     return (
       <Screen>
         <ScrollView contentContainerStyle={styles.scroll}>
-          <Eyebrow>NEGOTIATE · SEAL</Eyebrow>
-          <Title>Build the spoon snapshot.</Title>
+          <Eyebrow>CONSENT SNAPSHOT · SPOON</Eyebrow>
+          <Title>Negotiate like a nerd. Cuddle like a mammal.</Title>
           <Body muted>{SPOONING_COPY.sealHint}</Body>
 
           <Card>
-            <Text style={styles.section}>Role</Text>
-            <View style={styles.chipRow}>
-              {SPOON_ROLES.filter((r) => r.id !== "undecided").map((r) => (
-                <Chip
-                  key={r.id}
-                  label={r.label}
-                  selected={draft.roleId === r.id}
-                  onPress={() =>
-                    setDraft({ ...draft, roleId: r.id as SpoonRoleId })
-                  }
-                  styles={styles}
-                  colors={colors}
-                />
-              ))}
-            </View>
-            {draft.roleId !== "undecided" ? (
-              <Body muted>{findRole(draft.roleId).blurb}</Body>
+            <Text style={styles.section}>Role (funny cards)</Text>
+            {SPOON_ROLES.filter((r) => r.id !== "undecided").map((r) => (
+              <Pressable
+                key={r.id}
+                accessibilityRole="button"
+                accessibilityState={{ selected: draft.roleId === r.id }}
+                onPress={() =>
+                  setDraft({ ...draft, roleId: r.id as SpoonRoleId })
+                }
+                style={[
+                  styles.roleCard,
+                  draft.roleId === r.id && styles.roleCardSelected,
+                ]}
+              >
+                <Text style={styles.roleTitle}>{r.label}</Text>
+                <Body muted>{r.blurb}</Body>
+                <Body muted>{r.strengthNote}</Body>
+              </Pressable>
+            ))}
+            {draft.roleId === "little" ? (
+              <Text style={styles.banner}>{SPOONING_COPY.littleStrength}</Text>
             ) : null}
           </Card>
 
           <Card>
-            <Text style={styles.section}>Position</Text>
+            <Text style={styles.section}>Position (stupid names)</Text>
             <View style={styles.chipRow}>
               {SPOON_POSITIONS.map((p) => (
                 <Chip
@@ -390,7 +496,7 @@ export default function SpooningProtocolScreen() {
                 onChangeText={(t) =>
                   setDraft({ ...draft, customPositionNote: t })
                 }
-                placeholder="Name the shape…"
+                placeholder="Name the chaos…"
                 placeholderTextColor={colors.muted}
                 style={styles.input}
                 maxLength={200}
@@ -404,7 +510,7 @@ export default function SpooningProtocolScreen() {
               {SPOON_DURATIONS.map((d) => (
                 <Chip
                   key={String(d)}
-                  label={d === "open" ? "Open" : `${d}m`}
+                  label={durationLabel(d)}
                   selected={draft.durationMinutes === d}
                   onPress={() =>
                     setDraft({
@@ -420,9 +526,57 @@ export default function SpooningProtocolScreen() {
           </Card>
 
           <Card>
-            <Text style={styles.section}>Energy</Text>
+            <Text style={styles.section}>Pressure</Text>
             <View style={styles.chipRow}>
-              {SPOON_ENERGIES.filter((e) => e.id !== "unknown").map((e) => (
+              {SPOON_PRESSURES.filter((p) => p.id !== "undecided").map((p) => (
+                <Chip
+                  key={p.id}
+                  label={p.label}
+                  selected={draft.pressureId === p.id}
+                  onPress={() =>
+                    setDraft({
+                      ...draft,
+                      pressureId: p.id as SpoonPressureId,
+                    })
+                  }
+                  styles={styles}
+                  colors={colors}
+                />
+              ))}
+            </View>
+            {draft.pressureId !== "undecided" ? (
+              <Body muted>{findPressure(draft.pressureId).blurb}</Body>
+            ) : null}
+          </Card>
+
+          <Card>
+            <Text style={styles.section}>Allowed zones</Text>
+            <View style={styles.chipRow}>
+              {SPOON_ZONES.map((z) => (
+                <Chip
+                  key={z.id}
+                  label={z.avoid ? `🚫 ${z.label}` : z.label}
+                  selected={draft.allowedZones.includes(z.id)}
+                  onPress={() =>
+                    setDraft({
+                      ...draft,
+                      allowedZones: toggleZone(
+                        draft.allowedZones,
+                        z.id as SpoonZoneId,
+                      ),
+                    })
+                  }
+                  styles={styles}
+                  colors={colors}
+                />
+              ))}
+            </View>
+          </Card>
+
+          <Card>
+            <Text style={styles.section}>Energy expectation</Text>
+            <View style={styles.chipRow}>
+              {SPOON_ENERGIES.filter((e) => e.id !== "undecided").map((e) => (
                 <Chip
                   key={e.id}
                   label={e.label}
@@ -435,21 +589,18 @@ export default function SpooningProtocolScreen() {
                 />
               ))}
             </View>
-            {draft.energyId !== "unknown" ? (
+            {draft.energyId !== "undecided" ? (
               <Body muted>{findEnergy(draft.energyId).blurb}</Body>
             ) : null}
           </Card>
 
           <Card>
-            <Text style={styles.section}>Private anxiety note (optional)</Text>
-            <Body muted>
-              Device-local. This is me trying not to be anxious while cuddling.
-            </Body>
+            <Text style={styles.section}>Private anxiety note</Text>
             <TextInput
               accessibilityLabel="Anxiety note"
               value={draft.anxietyNote}
               onChangeText={(t) => setDraft({ ...draft, anxietyNote: t })}
-              placeholder="If this stays ambiguous, I am afraid that…"
+              placeholder="If I just lie next to someone, I am afraid that…"
               placeholderTextColor={colors.muted}
               style={styles.input}
               multiline
@@ -475,7 +626,6 @@ export default function SpooningProtocolScreen() {
     );
   }
 
-  // hub
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -483,20 +633,20 @@ export default function SpooningProtocolScreen() {
         <Title>{SPOONING_COPY.title}</Title>
         <Card>
           <Text style={styles.banner}>{SPOONING_COPY.banner}</Text>
-          <Body muted>{SPOONING_COPY.subtitle}</Body>
+          <Text style={styles.tagline}>{SPOONING_COPY.tagline}</Text>
+          <Body muted>{SPOONING_COPY.purpose}</Body>
           <Body muted>{SPOONING_COPY.comedy}</Body>
         </Card>
         <Card>
-          <Body>
-            Roles · positions · duration · energy · Soft Signal · private
-            debrief. Fail closed until sealed. History is not consent.
-          </Body>
-          <Body muted>
-            Containment job: hold “what if I mess up closeness” in a runnable
-            joke-spec so it doesn’t have to live only in my chest.
-          </Body>
+          <Body>• Opt-in, revocable, snapshot-based</Body>
+          <Body>• Soft Signal = God Mode</Body>
+          <Body>• Little Spoon = strength</Body>
+          <Body>• Debrief “mandatory” for data (lol) — skip still free</Body>
         </Card>
-        <Button label="Negotiate a spoon" onPress={() => setPhase("negotiate")} />
+        <Button
+          label="Negotiate a spoon"
+          onPress={() => setPhase("negotiate")}
+        />
         <Button
           variant="secondary"
           label={`Local history (${summary.total})`}
@@ -540,7 +690,10 @@ function Chip({
       onPress={onPress}
       style={[
         styles.chip,
-        selected && { backgroundColor: colors.mossSoft, borderColor: colors.moss },
+        selected && {
+          backgroundColor: colors.mossSoft,
+          borderColor: colors.moss,
+        },
       ]}
     >
       <Text
@@ -564,6 +717,13 @@ function makeStyles(colors: AppColors) {
       fontSize: 13,
       marginBottom: 8,
     },
+    tagline: {
+      color: colors.ink,
+      fontWeight: "700" as const,
+      fontSize: 16,
+      marginBottom: 10,
+      fontStyle: "italic" as const,
+    },
     section: {
       color: colors.ink,
       fontWeight: "800" as const,
@@ -575,6 +735,36 @@ function makeStyles(colors: AppColors) {
       fontSize: 36,
       fontWeight: "800" as const,
       marginTop: 12,
+    },
+    warning: {
+      color: colors.signal,
+      fontWeight: "700" as const,
+      marginTop: 10,
+      fontSize: 14,
+    },
+    checkInFlash: {
+      color: colors.moss,
+      fontWeight: "800" as const,
+      fontSize: 22,
+      marginTop: 12,
+    },
+    roleCard: {
+      borderWidth: 1,
+      borderColor: colors.line,
+      borderRadius: 16,
+      padding: 12,
+      marginTop: 8,
+      gap: 4,
+      backgroundColor: colors.cream,
+    },
+    roleCardSelected: {
+      borderColor: colors.moss,
+      backgroundColor: colors.mossSoft,
+    },
+    roleTitle: {
+      color: colors.ink,
+      fontWeight: "800" as const,
+      fontSize: 16,
     },
     chipRow: {
       flexDirection: "row" as const,

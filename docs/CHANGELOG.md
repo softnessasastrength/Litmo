@@ -1,11 +1,13 @@
 # Changelog
 
-## 2026-07-13 — Spooning Protocol v0.1
+## 2026-07-13 — Spooning Protocol v0.1 (full spec)
 
-Legendary over-engineered cuddle planner: roles, positions, duration/energy
-local seal, mid-spoon Soft Signal, private debrief, device-local history.
-`docs/SPOONING_PROTOCOL.md` · `/spooning` · `spooningCore` + tests. Containment
-comedy with fail-closed invariants.
+Tagline + purpose (Renn / intimacy anxiety). Role cards (Little = strength,
+Burrito Mode). Consent snapshot: duration (incl. hot-or-pee), pressure
+(held-together), zones, energy. Positions: Safety Spoon, Half-Nelson of Love,
+Cthulhu, Distance Spoon. Mid-session check-in haptic + 5min warning. Debrief:
+body feel, worked/didn’t, +1 non-traumatic closeness joke ledger. Soft Signal =
+God Mode.
 
 ## 2026-07-13 — Radical honesty: personal containment system
 
