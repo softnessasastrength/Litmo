@@ -98,6 +98,18 @@ function SettingsContent() {
         <>
           <Button
             variant="secondary"
+            label="Private-alpha access"
+            onPress={() => router.push("/security/private-alpha" as never)}
+            accessibilityHint="Check admission or redeem a private-alpha invitation"
+          />
+          <Button
+            variant="secondary"
+            label="Export my data"
+            onPress={() => router.push("/security/data-export" as never)}
+            accessibilityHint="Generate and share a private structured copy of your Litmo data"
+          />
+          <Button
+            variant="secondary"
             label="Blocked accounts"
             onPress={() => router.push("/security/blocked" as never)}
             accessibilityHint="View and unblock accounts you have privately blocked"
@@ -122,6 +134,12 @@ function SettingsContent() {
           />
           {isStaff ? (
             <>
+              <Button
+                variant="secondary"
+                label="Safety operations (staff)"
+                onPress={() => router.push("/security/staff-operations" as never)}
+                accessibilityHint="Staff-only private-alpha invitations and global matching pause"
+              />
               <Button
                 variant="secondary"
                 label="Moderation queue (staff)"
