@@ -25,6 +25,27 @@ The workflow is defined in `.github/workflows/xcode-source-release.yml`:
 - packaging is performed by `scripts/package-xcode-source-kit.sh`;
 - generated dependency directories, local environment files, build output, and secrets are excluded.
 
+## Hosted native compile
+
+`.github/workflows/ios-native-build.yml` performs a real credential-free native
+compile on GitHub's `macos-26` runner:
+
+1. installs the locked npm dependencies;
+2. installs CocoaPods in strict deployment mode;
+3. builds `app/ios/Litmodevelopment.xcworkspace` with Xcode for a generic iOS
+   Simulator and code signing disabled;
+4. uploads the compiled simulator `.app` and full Xcode log for seven days.
+
+The workflow runs manually and on pull requests that change app, shared,
+dependency-lock, or workflow inputs. It intentionally receives no Apple,
+Expo, Supabase, or signing secrets.
+
+A green hosted native compile proves that the checked-in workspace and native
+dependencies compile together. It does **not** prove physical-device behavior,
+Face ID or passkeys, signing/provisioning, production entitlements, staging
+connectivity, archive contents, IPA installation, or TestFlight readiness.
+Those remain manual release gates below.
+
 ## Environment separation
 
 | Profile                      | App environment | Bundle ID               | Associated domain                 | Data policy                                                      |
