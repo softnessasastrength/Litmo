@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-07-13 — ACCESS-001 a11y semantics cleanup
+
+### Summary
+
+Standardized the remaining deferred accessibility semantics in the private-beta
+review surface: moderation queue filter buttons now expose selected state, and
+Settings haptics now uses a real `Switch` instead of a plain button. The
+appearance control remains a cycle button because it is three-state, not a
+binary toggle.
+
+### User-visible impact
+
+- VoiceOver now has clearer state for moderation filter choices.
+- Haptics settings now announce and behave like an actual binary control.
+
+### Developer impact
+
+- `app/components/ui.tsx` now accepts explicit accessibility role/state props
+  for shared pressable controls.
+- `docs/ACCESSIBILITY_TRACK_C.md` records the refined surfaces.
+
+### Related decision and roadmap
+
+- `TASKS.md` ACCESS-001 (still pending physical founder VoiceOver smoke)
+
 ## 2026-07-13 — Native macOS participant and Ops foundations
 
 ### Summary
