@@ -85,23 +85,18 @@ npm run build
 
 ## Architectural decisions
 
-- Repository artifacts are the source of truth.
-- Consent is explicit, current, revocable, session-specific.
+- Repository artifacts are the source of truth (including dojo framing).
+- Sacred purpose: Trauma-to-Code Exorcism Dojo — not a consumer product.
 - Soft Signal is unilateral; never a penalty; not emergency services.
+- Control systems must be nameable as defenses (`TRAUMA_ARCHITECTURE.md`).
 - Personal data is local-first (ADR 0058).
-- Device is a room for presence; phone is the studio.
-
-## Exact next action
-
-Dojo framing is primary. Continue via `docs/DOJO_CONTINUE.md`. Product-era
-milestones are optional residue only when the human asks.
 
 ## Resume checklist
 
-1. Read `CURRENT_STATE.md`, `TASKS.md`, `docs/FEATURE_SWARM_TRACKER.md`, `project-state.json`.
-2. Read `docs/KNOWN_LIMITATIONS.md` and recent ADRs (0058–0059, 0050–0057).
+1. Read `docs/EXORCISM_MANIFESTO.md`, `docs/DOJO_GUIDELINES.md`, `docs/DOJO_CONTINUE.md`.
+2. Read `CURRENT_STATE.md`, `docs/TRAUMA_ARCHITECTURE.md`.
 3. Run `git status` and inspect recent commits.
-4. Verify last recorded checks before changing code.
+4. Prefer see/name/simplify over product residue unless asked.
 
 ## Stop checklist
 
