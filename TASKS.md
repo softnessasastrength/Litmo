@@ -45,6 +45,18 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 ## Completed
 
+### ISO27701-001 — PIMS compliance roadmap (documentation)
+
+- **Status:** completed (roadmap only; not certification)
+- **Result:** `docs/ISO27701.md` — research-based ISO/IEC 27701 PIMS roadmap for
+  a small team: scope, controller/processor stance, control themes, gap analysis,
+  risk register, phased plan (0–4), SoA lite, safety-feature integration, and a
+  five-item “PIMS week.” Focus: privacy by design, consent management, DSR,
+  safety ops coupling. Linked from GDPR.md and DOCUMENTATION_MAP.
+- **Boundary:** not ISO 27701 certification; 27001 base ISMS not established;
+  legal DPAs and hard-delete remain external blockers.
+- **Related:** GDPR-001, DATA_CLASSIFICATION, SAFETY-OPS.
+
 ### GDPR-001 — Privacy by design, export/erase, notices
 
 - **Status:** completed (engineering); legal public-launch claim still blocked
@@ -55,7 +67,8 @@ None recorded. External credentials, signing, App Store configuration, or policy
 - **Verification:** typecheck; unit suite green.
 - **Boundary:** no automatic `auth.users` hard-delete; controller/DPO contacts
   placeholders until legal review; not a claim of certified GDPR readiness.
-- **Related:** DATA_CLASSIFICATION, PRIVACY_POLICY_DRAFT, SAFETY-OPS blockers.
+- **Related:** DATA_CLASSIFICATION, PRIVACY_POLICY_DRAFT, SAFETY-OPS blockers,
+  ISO27701-001.
 
 ### QUIZ-004 — Vibe Quiz review (short/deep, partner, E2E stub, ND/demo)
 

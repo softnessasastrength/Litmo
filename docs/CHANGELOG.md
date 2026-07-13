@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-13 — ISO 27701 PIMS roadmap
+
+### Summary
+
+Added `docs/ISO27701.md`: practical ISO/IEC 27701 Privacy Information Management
+System roadmap for Litmo as a small team. Maps privacy by design, consent
+management, data subject rights, and safety-feature integration to current repo
+assets; phased plan 0–4; lightweight risk register and SoA; explicitly not
+certification.
+
+### Related
+
+- Complements `docs/GDPR.md` (legal alignment) with management-system roadmap.
+
 ## 2026-07-13 — GDPR alignment (privacy by design)
 
 ### Summary

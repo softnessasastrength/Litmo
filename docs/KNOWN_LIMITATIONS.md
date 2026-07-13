@@ -67,6 +67,9 @@
 - In-app Privacy Policy, Data Protection, export, and erase/wipe screens exist
   (`docs/GDPR.md`). They are **engineering alignment**, not certified legal
   compliance or a finalized public notice.
+- `docs/ISO27701.md` is a **PIMS roadmap**, not ISO/IEC 27701 certification.
+  A formal ISMS (ISO 27001 base), DPAs, DPIA sign-off, and hard-delete fulfillment
+  remain open.
 - `request_account_erasure` records a **pending queue** only. Complete
   automated destruction of `auth.users` and all related rows is **not**
   implemented — blocked until legal/ops name owners (see Agents.md).

@@ -164,6 +164,7 @@ Those remain **external blockers** (see `TASKS.md` SAFETY-OPS / KNOWN_LIMITATION
 
 - `docs/DATA_CLASSIFICATION.md`  
 - `docs/PRIVACY_POLICY_DRAFT.md`  
+- `docs/ISO27701.md` — PIMS / ISO 27701 small-team compliance roadmap  
 - `docs/SENSITIVE_DATA_ENCRYPTION.md` (if present)  
 - ADR 0011 device-bound encryption  
 - ADR 0050/0051/0052 quizzes  
