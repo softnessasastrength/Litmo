@@ -1,55 +1,62 @@
-# Neurodivergent Mode (global)
+# Neurodivergent Mode — inclusive design
 
 ## Purpose
 
-A **device-local global toggle** that optimizes the entire Litmo app experience:
+A **device-local global toggle** applying neurodiversity-inclusive patterns
+across Litmo — especially **Vibe Quiz** and **Guided Learning**:
 
-- **Larger text** and tap targets (style scale via `useThemedStyles`)
-- **Reduced motion** (no FadeIn motion; quieter haptics by default)
-- **One question / step at a time** (quiz + learning)
-- **Voice aids** (read-aloud + keyboard-dictation option numbers)
-- **Easy saves** (mid-quiz resume; learning progress)
+| Pattern | Behavior |
+| ------- | -------- |
+| **Progressive disclosure** | Extra scene detail and long lesson text expand on request |
+| **Customizable pace** | Confirm to continue (default), slow auto-advance, or brief auto |
+| **Reduced motion** | Instant transitions; quieter haptics by default |
+| **Voice input / output** | Read aloud + keyboard-dictation option numbers |
+| **Clear progress** | “Question 3 of 10 · 30% · 7 left” style labels |
+| **Easy breaks** | Save-and-leave anytime; mid-quiz resume |
+| **Larger text** | ~18% scale on themed styles app-wide |
 
-It is **not** a diagnosis, competence score, trust signal, or consent gate.
+Calm, empowering, respectful. **Not** a diagnosis, score, trust signal, or
+consent gate.
 
 ## How to enable
 
-**Settings → Neurodivergent Mode** (master switch).
+**Settings → Neurodivergent Mode**
 
-- Key: `litmo.neurodivergent.prefs.v1` (AsyncStorage only)
-- **Demo mode** turns it on by default from the entry screen
+- Storage: `litmo.neurodivergent.prefs.v2` (loads v1 if present)
+- **Demo** turns it on by default
+- When on, **Pace** cycles: confirm → slow → auto
 
-## What “global” means
+## Quiz (Vibe + self)
 
-| Area | Behavior when on |
-| ---- | ---------------- |
-| App-wide styles | ~18% scale on font sizes, line heights, and min tap heights through `useThemedStyles` |
-| Motion | `FadeIn` becomes instant; system Reduce Motion still honored |
-| Haptics | Off by default; user may re-enable in Settings |
-| Quizzes | One question UI, numbered options, resume card, read aloud, dictate option # |
-| Guided Learning | One step, jump optional, read aloud, dictate scenario option #, save hint |
-| Partner invite | Clear language chrome (existing) |
-| Language | Shorter chrome copy where wired (`clearLanguage`) |
+- One question at a time; numbered options
+- **Continue when ready** when pace = confirm
+- **Take a break (saved)** returns to Quizzes with progress kept
+- Progressive: optional “Show more detail” for kickers/details
+- Resume card if mid-quiz progress exists
+- Read aloud + dictate option number
 
-Consent gates, Soft Signal, and matching authority are **unchanged**.
+## Guided Learning
+
+- One step at a time; clear % progress
+- Progressive body truncation + show more
+- Takeaway may wait until expand or scenario choice
+- Take a break → Learn hub (progress already saved)
+- Read aloud + dictate scenario options
 
 ## Architecture
 
-- `neurodivergentPreferenceCore.ts` / `neurodivergentPreference.ts`
-- `NeurodivergentContext` — `enabled`, `textScale`, `reducedStimulation`, `oneAtATime`, `voiceAids`, `easySaves`
-- `lib/neuroStyleScale.ts` — pure scale helpers
-- `hooks/useThemedStyles.ts` — applies scale when enabled
-- `speechService.ts` — TTS / accessibility announce
-- `quizPlayProgress.ts` — mid-quiz save
+- `neurodivergentPreferenceCore.ts` — prefs, pace, parse
+- `NeurodivergentContext` — enabled, textScale, pace, progressiveDisclosure, easyBreaks, autoAdvanceDelayMs
+- `useThemedStyles` + `neuroStyleScale` — larger text
+- `clearLanguage` — plain chrome strings
 
 ## Constitution
 
-- Preference never appears in discovery, trust history, or export as “neuro type”
-- Fail-closed consent still requires explicit mutual gates
-- Dictation uses the **device keyboard**, not Litmo cloud STT
-- Spoken content is not uploaded
+- Never export as a profile “type”
+- Never changes Consent Snapshot, Soft Signal, or matching
+- Dictation is device keyboard; speech stays on-device
 
-## Future work
+## Future
 
-- Optional fine-grained sub-toggles in Settings UI
-- Physical VoiceOver + Switch Control smoke on ND paths
+- Physical VoiceOver / Switch Control smoke
+- Optional more granular Settings sub-toggles

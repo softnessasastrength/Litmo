@@ -15,14 +15,22 @@ export default function LearningModuleScreen() {
   const styles = useThemedStyles(makeStyles);
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { prefs, reducedStimulation, voiceAids, easySaves, oneAtATime } =
-    useNeurodivergent();
+  const {
+    prefs,
+    reducedStimulation,
+    voiceAids,
+    easySaves,
+    oneAtATime,
+    progressiveDisclosure,
+    easyBreaks,
+  } = useNeurodivergent();
   const module = useMemo(() => findLearningModule(id), [id]);
   const [stepIndex, setStepIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [jumpOpen, setJumpOpen] = useState(false);
   const [voiceDraft, setVoiceDraft] = useState("");
+  const [showBodyMore, setShowBodyMore] = useState(false);
   const presencePlayedRef = useRef(false);
   const attentionStepRef = useRef<number | null>(null);
 
@@ -104,6 +112,8 @@ export default function LearningModuleScreen() {
       current.steps.length,
     );
     setSelectedOption(null);
+    setShowBodyMore(false);
+    setVoiceDraft("");
     setStepIndex(next);
   }
 
@@ -221,6 +231,20 @@ export default function LearningModuleScreen() {
   const isLast = stepIndex === current.steps.length - 1;
   const canContinue = !step.scenario || selectedOption !== null;
   const plain = prefs.clearLanguage;
+  const stepTotal = current.steps.length;
+  const progressLabel = plain
+    ? clearLanguage.progressLearn(stepIndex + 1, stepTotal)
+    : `Step ${stepIndex + 1} of ${stepTotal} · ${Math.round(((stepIndex + 1) / stepTotal) * 100)}% · ${Math.max(0, stepTotal - stepIndex - 1)} left`;
+
+  // Progressive disclosure: shorter body until expanded
+  const bodyText =
+    progressiveDisclosure && !showBodyMore && step.body.length > 220
+      ? `${step.body.slice(0, 200).trim()}…`
+      : step.body;
+
+  const takeBreak = () => {
+    router.replace("/(tabs)/learn" as never);
+  };
 
   const readStep = () => {
     const opts =
@@ -250,26 +274,18 @@ export default function LearningModuleScreen() {
           <Text style={styles.ndHint}>
             {plain
               ? clearLanguage.ndModeOn
-              : "Neurodivergent Mode: quieter, clearer steps. Progress still saves privately."}
+              : "Neurodivergent Mode: larger text, your pace, clear progress, easy breaks, progressive detail, voice aids."}
           </Text>
         ) : null}
-        <Text style={styles.progress}>
-          {plain
-            ? clearLanguage.learningProgress(
-                stepIndex + 1,
-                current.steps.length,
-              ).toUpperCase()
-            : `STEP ${stepIndex + 1} OF ${current.steps.length}`}
-          {!plain && current.track === "lived-lessons" ? " · LIVED LESSON" : ""}
+        <Text style={styles.progress} accessibilityLabel={progressLabel}>
+          {progressLabel.toUpperCase()}
+          {!plain && current.track === "lived-lessons" ? " · LIVED" : ""}
         </Text>
         <View
           style={styles.track}
           accessible
           accessibilityRole="progressbar"
-          accessibilityLabel={clearLanguage.learningProgress(
-            stepIndex + 1,
-            current.steps.length,
-          )}
+          accessibilityLabel={progressLabel}
           accessibilityValue={{
             min: 1,
             max: current.steps.length,
@@ -286,7 +302,21 @@ export default function LearningModuleScreen() {
           />
         </View>
 
-        {prefs.easyNavigation ? (
+        {easyBreaks ? (
+          <Pressable
+            onPress={takeBreak}
+            style={styles.breakBtn}
+            accessibilityRole="button"
+            accessibilityLabel={clearLanguage.takeBreak}
+            accessibilityHint={clearLanguage.breakSaved}
+          >
+            <Text style={styles.breakBtnText}>
+              {plain ? clearLanguage.takeBreak : "☕ Take a break (saved)"}
+            </Text>
+          </Pressable>
+        ) : null}
+
+        {prefs.easyNavigation || oneAtATime ? (
           <View style={styles.jumpRow}>
             <Pressable
               onPress={() => setJumpOpen((v) => !v)}
@@ -334,6 +364,7 @@ export default function LearningModuleScreen() {
                 onPress={() => {
                   setStepIndex(i);
                   setSelectedOption(null);
+                  setShowBodyMore(false);
                   setJumpOpen(false);
                 }}
                 style={[
@@ -355,14 +386,30 @@ export default function LearningModuleScreen() {
         >
           {step.title}
         </Text>
-        <Text style={[styles.body, plain && styles.bodyPlain]}>{step.body}</Text>
+        <Text style={[styles.body, plain && styles.bodyPlain]}>{bodyText}</Text>
+        {progressiveDisclosure && step.body.length > 220 ? (
+          <Pressable
+            onPress={() => setShowBodyMore((v) => !v)}
+            accessibilityRole="button"
+            accessibilityLabel={
+              showBodyMore ? clearLanguage.hideDetail : clearLanguage.showDetail
+            }
+          >
+            <Text style={styles.discloseText}>
+              {showBodyMore ? clearLanguage.hideDetail : clearLanguage.showDetail}
+            </Text>
+          </Pressable>
+        ) : null}
 
-        <View style={styles.takeaway}>
-          <Text style={styles.takeawayLabel}>
-            {plain ? "REMEMBER" : "REMEMBER"}
-          </Text>
-          <Text style={styles.takeawayText}>{step.takeaway}</Text>
-        </View>
+        {(!progressiveDisclosure ||
+          showBodyMore ||
+          selectedOption !== null ||
+          !step.scenario) && (
+          <View style={styles.takeaway}>
+            <Text style={styles.takeawayLabel}>REMEMBER</Text>
+            <Text style={styles.takeawayText}>{step.takeaway}</Text>
+          </View>
+        )}
 
         {step.scenario ? (
           <View style={styles.scenario}>
@@ -572,6 +619,29 @@ function makeStyles(colors: AppColors) {
       backgroundColor: colors.mossSoft,
     },
     jumpChipText: { color: colors.ink, fontWeight: "700", fontSize: 14 },
+    breakBtn: {
+      alignSelf: "flex-start",
+      minHeight: 44,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.line,
+      backgroundColor: colors.paper,
+      marginBottom: 4,
+    },
+    breakBtnText: {
+      color: colors.moss,
+      fontWeight: "700",
+      fontSize: 14,
+    },
+    discloseText: {
+      color: colors.moss,
+      fontWeight: "700",
+      fontSize: 14,
+      textDecorationLine: "underline",
+      marginBottom: 8,
+    },
     title: {
       color: colors.ink,
       fontFamily: fonts.headline,

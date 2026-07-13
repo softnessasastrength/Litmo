@@ -2,14 +2,17 @@
  * Device-local Neurodivergent Mode preferences.
  * Pure logic for unit tests. Never sends data to servers.
  *
- * Constitution: accessibility is not a competence score. These settings never
- * gate consent, matching, or session authority.
+ * Inclusive design patterns (not a diagnosis or competence score):
+ * progressive disclosure, customizable pace, reduced motion, voice aids,
+ * clear progress, easy breaks. Never gates consent or matching.
  */
 
+export type PaceMode = "auto" | "confirm" | "slow";
+
 export type NeurodivergentPrefs = {
-  /** Master switch — optimizes quiz, partner, and learning surfaces. */
+  /** Master switch — optimizes app-wide + quiz + learning. */
   enabled: boolean;
-  /** No motion flourishes, denser calm layout, quieter chrome. */
+  /** No motion flourishes, quieter chrome, honor system Reduce Motion. */
   reducedStimulation: boolean;
   /** Prefer plain, short sentences in chrome and helpers. */
   clearLanguage: boolean;
@@ -21,9 +24,20 @@ export type NeurodivergentPrefs = {
   readAloud: boolean;
   /** Offer keyboard-dictation friendly number entry for answers. */
   voiceInputAids: boolean;
+  /**
+   * Pace control:
+   * - auto: brief pause then advance
+   * - confirm: wait for Continue (default when ND on — customizable pace)
+   * - slow: longer pause then advance
+   */
+  paceMode: PaceMode;
+  /** Collapse extra detail until the person opens it. */
+  progressiveDisclosure: boolean;
+  /** Surface easy break / save-and-leave actions. */
+  easyBreaks: boolean;
 };
 
-export const NEURO_PREF_KEY = "litmo.neurodivergent.prefs.v1";
+export const NEURO_PREF_KEY = "litmo.neurodivergent.prefs.v2";
 
 export const defaultNeurodivergentPrefs: NeurodivergentPrefs = {
   enabled: false,
@@ -33,9 +47,12 @@ export const defaultNeurodivergentPrefs: NeurodivergentPrefs = {
   saveResume: false,
   readAloud: false,
   voiceInputAids: false,
+  paceMode: "auto",
+  progressiveDisclosure: false,
+  easyBreaks: false,
 };
 
-/** When master mode turns on, enable the full optimized bundle. */
+/** When master mode turns on, enable the full inclusive bundle. */
 export function optimizedNeurodivergentPrefs(): NeurodivergentPrefs {
   return {
     enabled: true,
@@ -45,7 +62,15 @@ export function optimizedNeurodivergentPrefs(): NeurodivergentPrefs {
     saveResume: true,
     readAloud: true,
     voiceInputAids: true,
+    paceMode: "confirm",
+    progressiveDisclosure: true,
+    easyBreaks: true,
   };
+}
+
+function parsePaceMode(raw: unknown): PaceMode | null {
+  if (raw === "auto" || raw === "confirm" || raw === "slow") return raw;
+  return null;
 }
 
 export function parseNeurodivergentPrefs(raw: string | null): NeurodivergentPrefs {
@@ -58,6 +83,7 @@ export function parseNeurodivergentPrefs(raw: string | null): NeurodivergentPref
     const base = parsed.enabled
       ? optimizedNeurodivergentPrefs()
       : { ...defaultNeurodivergentPrefs };
+    const pace = parsePaceMode(parsed.paceMode) ?? base.paceMode;
     return {
       enabled: Boolean(parsed.enabled),
       reducedStimulation:
@@ -84,6 +110,15 @@ export function parseNeurodivergentPrefs(raw: string | null): NeurodivergentPref
         typeof parsed.voiceInputAids === "boolean"
           ? parsed.voiceInputAids
           : base.voiceInputAids,
+      paceMode: pace,
+      progressiveDisclosure:
+        typeof parsed.progressiveDisclosure === "boolean"
+          ? parsed.progressiveDisclosure
+          : base.progressiveDisclosure,
+      easyBreaks:
+        typeof parsed.easyBreaks === "boolean"
+          ? parsed.easyBreaks
+          : base.easyBreaks,
     };
   } catch {
     return { ...defaultNeurodivergentPrefs };
@@ -91,11 +126,18 @@ export function parseNeurodivergentPrefs(raw: string | null): NeurodivergentPref
 }
 
 export function setNeurodivergentEnabled(
-  current: NeurodivergentPrefs,
+  _current: NeurodivergentPrefs,
   enabled: boolean,
 ): NeurodivergentPrefs {
   if (enabled) return optimizedNeurodivergentPrefs();
   return { ...defaultNeurodivergentPrefs };
+}
+
+export function setPaceMode(
+  current: NeurodivergentPrefs,
+  paceMode: PaceMode,
+): NeurodivergentPrefs {
+  return { ...current, paceMode };
 }
 
 /** Effective reduced-stimulation: ND mode or system Reduce Motion. */
@@ -104,4 +146,13 @@ export function effectiveReducedStimulation(
   systemReduceMotion: boolean,
 ): boolean {
   return prefs.reducedStimulation || systemReduceMotion || prefs.enabled;
+}
+
+/** Delay before auto-advance (ms). confirm → null (wait for user). */
+export function autoAdvanceDelayMs(prefs: NeurodivergentPrefs): number | null {
+  if (prefs.paceMode === "confirm") return null;
+  if (prefs.paceMode === "slow") return 600;
+  // auto: reduced stimulation skips artificial pause
+  if (prefs.reducedStimulation || prefs.enabled) return 0;
+  return 140;
 }

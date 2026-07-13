@@ -18,8 +18,17 @@ import { hapticService } from "../../services/hapticService";
 export default function QuizPlayScreen() {
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
-  const { prefs, reducedStimulation, voiceAids, oneAtATime, easySaves } =
-    useNeurodivergent();
+  const {
+    prefs,
+    reducedStimulation,
+    voiceAids,
+    oneAtATime,
+    easySaves,
+    progressiveDisclosure,
+    easyBreaks,
+    autoAdvanceDelayMs: paceDelay,
+    paceMode,
+  } = useNeurodivergent();
   const { quizId } = useLocalSearchParams<{ quizId: string }>();
   const entry = getQuizEntry(String(quizId ?? ""));
   const questions = useMemo(() => entry?.questions() ?? [], [entry]);
@@ -28,6 +37,8 @@ export default function QuizPlayScreen() {
   const [resumeOffer, setResumeOffer] = useState(false);
   const [voiceDraft, setVoiceDraft] = useState("");
   const [navOpen, setNavOpen] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [awaitingContinue, setAwaitingContinue] = useState(false);
   const [loadedProgress, setLoadedProgress] = useState(false);
   const advancing = useRef(false);
 
@@ -110,6 +121,8 @@ export default function QuizPlayScreen() {
 
   const goBack = () => {
     if (advancing.current) return;
+    setAwaitingContinue(false);
+    setDetailOpen(false);
     if (index > 0) {
       setIndex((v) => Math.max(0, v - 1));
       return;
@@ -117,8 +130,19 @@ export default function QuizPlayScreen() {
     router.back();
   };
 
+  const takeBreak = () => {
+    // Progress already auto-saves; leave calmly.
+    advancing.current = false;
+    setAwaitingContinue(false);
+    router.replace("/(tabs)/quizzes" as never);
+  };
+
   const goNextUnanswered = () => {
-    if (index < total - 1) setIndex((v) => v + 1);
+    if (index < total - 1) {
+      setAwaitingContinue(false);
+      setDetailOpen(false);
+      setIndex((v) => v + 1);
+    }
   };
 
   const finishWith = (updated: AnswerScores[]) => {
@@ -143,12 +167,32 @@ export default function QuizPlayScreen() {
       })
       .finally(() => {
         advancing.current = false;
+        setAwaitingContinue(false);
       });
   };
 
-  const choose = (answer: QuizAnswer) => {
-    if (advancing.current) return;
+  const advanceFrom = (updated: AnswerScores[]) => {
+    const isLast = index === total - 1;
+    if (!isLast) {
+      setIndex((v) => v + 1);
+      setAwaitingContinue(false);
+      setDetailOpen(false);
+      advancing.current = false;
+      return;
+    }
+    finishWith(updated);
+  };
+
+  const continueWhenReady = () => {
+    if (advancing.current && !awaitingContinue) return;
+    const updated = answers;
+    if (!selected) return;
     advancing.current = true;
+    advanceFrom(updated);
+  };
+
+  const choose = (answer: QuizAnswer) => {
+    if (advancing.current && !awaitingContinue) return;
 
     const selectedAnswer: AnswerScores = {
       questionId: question.id,
@@ -165,23 +209,19 @@ export default function QuizPlayScreen() {
       void hapticService.play("presence");
     }
 
-    const isLast = index === total - 1;
-    // Reduced stimulation / ND mode: advance immediately.
-    const delay = reducedStimulation ? 0 : 140;
+    // Customizable pace: wait for Continue (default in Neurodivergent Mode).
+    if (paceDelay === null) {
+      advancing.current = false;
+      setAwaitingContinue(true);
+      return;
+    }
 
-    const advance = () => {
-      if (!isLast) {
-        setIndex((v) => v + 1);
-        advancing.current = false;
-        return;
-      }
-      finishWith(updated);
-    };
-
+    advancing.current = true;
+    const delay = paceDelay;
     if (delay === 0) {
-      advance();
+      advanceFrom(updated);
     } else {
-      setTimeout(advance, delay);
+      setTimeout(() => advanceFrom(updated), delay);
     }
   };
 
@@ -192,12 +232,16 @@ export default function QuizPlayScreen() {
     if (answer) choose(answer);
   };
 
+  const progressLabel = plain
+    ? clearLanguage.progressQuiz(index + 1, total)
+    : `Question ${index + 1} of ${total} · ${Math.round(((index + 1) / total) * 100)}% · ${Math.max(0, total - index - 1)} left`;
+
   const readQuestion = () => {
     const labels = question.answers
       .map((a, i) => `Option ${i + 1}: ${a.label}.`)
       .join(" ");
     const text = [
-      plain ? clearLanguage.quizProgress(index + 1, total) : null,
+      progressLabel,
       question.kicker,
       question.prompt,
       labels,
@@ -208,9 +252,18 @@ export default function QuizPlayScreen() {
     void speechService.speak(text);
   };
 
-const questionBlock = (
+  const selectedAnswer = question.answers.find((a) => a.id === selected);
+
+  const questionBlock = (
     <>
       <Text style={styles.kicker}>{entry.title}</Text>
+      <Text
+        style={styles.clearProgress}
+        accessibilityRole="text"
+        accessibilityLabel={progressLabel}
+      >
+        {progressLabel}
+      </Text>
 
       {voiceAids || prefs.readAloud ? (
         <Pressable
@@ -225,9 +278,24 @@ const questionBlock = (
         </Pressable>
       ) : null}
 
-      {question.kicker ? (
+      {question.kicker && (!progressiveDisclosure || detailOpen) ? (
         <Text style={styles.scene}>{question.kicker}</Text>
       ) : null}
+      {progressiveDisclosure && question.kicker ? (
+        <Pressable
+          onPress={() => setDetailOpen((v) => !v)}
+          accessibilityRole="button"
+          accessibilityLabel={
+            detailOpen ? clearLanguage.hideDetail : clearLanguage.showDetail
+          }
+          style={styles.discloseBtn}
+        >
+          <Text style={styles.discloseBtnText}>
+            {detailOpen ? clearLanguage.hideDetail : clearLanguage.showDetail}
+          </Text>
+        </Pressable>
+      ) : null}
+
       <Text style={styles.prompt} accessibilityRole="header">
         {question.prompt}
       </Text>
@@ -240,13 +308,48 @@ const questionBlock = (
                 ? `${i + 1}. ${answer.label}`
                 : answer.label
             }
-            detail={answer.detail}
+            detail={
+              progressiveDisclosure
+                ? selected === answer.id && detailOpen
+                  ? answer.detail
+                  : undefined
+                : answer.detail
+            }
             glyph={reducedStimulation ? undefined : answer.glyph}
             selected={selected === answer.id}
             onPress={() => choose(answer)}
           />
         ))}
       </View>
+
+      {awaitingContinue && selected ? (
+        <View style={styles.paceCard} accessible>
+          <Text style={styles.paceText}>
+            {plain
+              ? clearLanguage.paceConfirm
+              : "Answer saved. Continue when you are ready — no rush."}
+          </Text>
+          {progressiveDisclosure && selectedAnswer?.detail ? (
+            <Text style={styles.paceDetail}>{selectedAnswer.detail}</Text>
+          ) : null}
+          <Pressable
+            onPress={continueWhenReady}
+            accessibilityRole="button"
+            accessibilityLabel={clearLanguage.continueWhenReady}
+            style={styles.continueBtn}
+          >
+            <Text style={styles.continueBtnText}>
+              {index === total - 1
+                ? plain
+                  ? "Finish when ready"
+                  : "Finish quiz when ready"
+                : plain
+                  ? clearLanguage.continueWhenReady
+                  : "Continue when ready →"}
+            </Text>
+          </Pressable>
+        </View>
+      ) : null}
     </>
   );
 
@@ -257,7 +360,20 @@ const questionBlock = (
           <Text style={styles.ndBannerText}>
             {plain
               ? clearLanguage.ndModeOn
-              : "Neurodivergent Mode: larger text, reduced motion, one question at a time, easy saves, voice aids."}
+              : "Neurodivergent Mode: larger text, reduced motion, your pace, clear progress, easy breaks, voice aids, saves."}
+          </Text>
+          <Text style={styles.ndPaceHint}>
+            {paceMode === "confirm"
+              ? plain
+                ? clearLanguage.paceConfirm
+                : "Pace: you tap Continue when ready."
+              : paceMode === "slow"
+                ? plain
+                  ? clearLanguage.paceSlow
+                  : "Pace: slower auto-advance."
+                : plain
+                  ? clearLanguage.paceAuto
+                  : "Pace: brief auto-advance."}
           </Text>
         </View>
       ) : null}
@@ -319,15 +435,26 @@ const questionBlock = (
                 : "← Leave"}
           </Text>
         </Pressable>
-        <Text
-          style={styles.count}
-          accessibilityLabel={clearLanguage.quizProgress(index + 1, total)}
-        >
+        <Text style={styles.count} accessibilityLabel={progressLabel}>
           {index + 1} / {total}
         </Text>
       </View>
 
       <Progress current={index + 1} total={total} />
+
+      {easyBreaks ? (
+        <Pressable
+          onPress={takeBreak}
+          accessibilityRole="button"
+          accessibilityLabel={clearLanguage.takeBreak}
+          accessibilityHint={clearLanguage.breakSaved}
+          style={styles.breakBtn}
+        >
+          <Text style={styles.breakBtnText}>
+            {plain ? clearLanguage.takeBreak : "☕ Take a break (saved)"}
+          </Text>
+        </Pressable>
+      ) : null}
 
       {oneAtATime || prefs.easyNavigation ? (
         <View style={styles.navTools}>
@@ -482,6 +609,13 @@ function makeStyles(colors: AppColors) {
       textTransform: "uppercase" as const,
       letterSpacing: 0.6,
     },
+    clearProgress: {
+      color: colors.moss,
+      fontSize: 14,
+      fontWeight: "700" as const,
+      marginTop: 6,
+      lineHeight: 20,
+    },
     scene: { color: colors.muted, fontSize: 15, marginTop: 10, lineHeight: 22 },
     prompt: {
       color: colors.ink,
@@ -492,6 +626,69 @@ function makeStyles(colors: AppColors) {
       marginBottom: 18,
     },
     options: { gap: 12 },
+    discloseBtn: {
+      alignSelf: "flex-start" as const,
+      minHeight: 40,
+      paddingVertical: 8,
+      marginTop: 4,
+    },
+    discloseBtnText: {
+      color: colors.moss,
+      fontWeight: "700" as const,
+      fontSize: 14,
+      textDecorationLine: "underline" as const,
+    },
+    paceCard: {
+      marginTop: 14,
+      padding: 14,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: colors.moss,
+      backgroundColor: colors.mossSoft,
+      gap: 10,
+    },
+    paceText: {
+      color: colors.ink,
+      fontSize: 15,
+      lineHeight: 22,
+      fontWeight: "600" as const,
+    },
+    paceDetail: { color: colors.muted, fontSize: 14, lineHeight: 20 },
+    continueBtn: {
+      minHeight: 52,
+      borderRadius: 26,
+      backgroundColor: colors.moss,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      paddingHorizontal: 16,
+    },
+    continueBtnText: {
+      color: colors.white,
+      fontWeight: "800" as const,
+      fontSize: 16,
+    },
+    breakBtn: {
+      minHeight: 44,
+      marginTop: 8,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      borderRadius: 12,
+      backgroundColor: colors.paper,
+      borderWidth: 1,
+      borderColor: colors.line,
+      alignSelf: "flex-start" as const,
+    },
+    breakBtnText: {
+      color: colors.moss,
+      fontWeight: "700" as const,
+      fontSize: 14,
+    },
+    ndPaceHint: {
+      color: colors.moss,
+      fontSize: 12,
+      lineHeight: 18,
+      marginTop: 4,
+    },
     disclaimerBlock: {
       marginTop: "auto" as const,
       paddingTop: 16,

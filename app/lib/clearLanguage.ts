@@ -32,7 +32,26 @@ export const clearLanguage = {
   partnerCompareOpen: "Show comparison",
   partnerCompareClosed: "Comparison is still closed",
   ndModeOn:
-    "Neurodivergent Mode is on: quieter screens, save/resume, clearer words, read-aloud, and dictation aids.",
+    "Neurodivergent Mode is on: larger text, reduced motion, your pace, clear progress, easy breaks, voice aids, and saves on this device.",
   ndModeOffHint:
-    "Turn on Neurodivergent Mode in Settings for quieter screens, save/resume, and clearer steps.",
+    "Turn on Neurodivergent Mode in Settings for larger text, your own pace, easy breaks, and quieter screens.",
+  takeBreak: "Take a break — progress is saved",
+  continueWhenReady: "Continue when you are ready",
+  showDetail: "Show more detail",
+  hideDetail: "Hide detail",
+  progressQuiz: (current: number, total: number) => {
+    const left = Math.max(0, total - current);
+    const pct = total > 0 ? Math.round((current / total) * 100) : 0;
+    return `Question ${current} of ${total} · ${pct}% · ${left} left`;
+  },
+  progressLearn: (current: number, total: number) => {
+    const left = Math.max(0, total - current);
+    const pct = total > 0 ? Math.round((current / total) * 100) : 0;
+    return `Step ${current} of ${total} · ${pct}% · ${left} left`;
+  },
+  breakSaved:
+    "Your place is saved on this device. Come back whenever you like. No rush.",
+  paceConfirm: "You choose when to go on — no auto-skip.",
+  paceSlow: "Slower auto-advance is on.",
+  paceAuto: "Brief pause, then next question.",
 };

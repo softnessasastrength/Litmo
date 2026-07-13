@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-13 — Inclusive Neurodivergent Mode patterns
+
+### Summary
+
+Neurodivergent Mode now covers progressive disclosure, customizable pace
+(confirm / slow / auto), easy breaks, and clearer progress labels on Vibe Quiz
+and Guided Learning, plus global larger text and reduced motion.
+
+### User-visible impact
+
+- Settings: global ND toggle + pace control when on.
+- Quiz: Continue when ready, take a break (saved), show more detail.
+- Learning: progress %, breaks, progressive body text.
+
 ## 2026-07-13 — Partner invite guided flow (consent + E2E)
 
 ### Summary

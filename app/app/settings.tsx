@@ -22,7 +22,12 @@ function SettingsContent() {
   const router = useRouter();
   const { status, signOut } = useAuth();
   const { scheme, resolvedScheme, cycleScheme, colors } = useTheme();
-  const { prefs: neuroPrefs, setEnabled: setNeuroEnabled } = useNeurodivergent();
+  const {
+    prefs: neuroPrefs,
+    setEnabled: setNeuroEnabled,
+    setPaceMode,
+    paceMode,
+  } = useNeurodivergent();
   const [isStaff, setIsStaff] = useState(false);
   const [hapticsOn, setHapticsOn] = useState(true);
 
@@ -67,17 +72,17 @@ function SettingsContent() {
               : "Neurodivergent Mode off"}
           </Body>
           <Body muted>
-            Global for the whole app: larger text and tap targets, reduced
-            motion, one question or learning step at a time, clear language,
-            easy on-device saves, read-aloud, and keyboard-dictation voice aids
-            on Quizzes and Guided Learning. Device-local only. Never matching,
-            trust, or consent authority. Turning on quiets haptics by default —
-            re-enable below if you want them.
+            Inclusive design for the whole app: larger text, reduced motion,
+            progressive disclosure, customizable pace, clear progress, easy
+            breaks, one step at a time, voice read-aloud and dictation aids, and
+            easy on-device saves — especially on Vibe Quiz and Guided Learning.
+            Device-local only. Calm and respectful — never matching, trust, or
+            consent authority. Turning on quiets haptics by default.
           </Body>
         </View>
         <Switch
           accessibilityLabel="Neurodivergent Mode"
-          accessibilityHint="Turns on larger text, reduced motion, one step at a time, easy saves, read aloud, and voice dictation aids across the app"
+          accessibilityHint="Turns on larger text, reduced motion, your own pace, progressive detail, easy breaks, clear progress, and voice aids"
           trackColor={{ false: colors.line, true: colors.mossSoft }}
           thumbColor={neuroPrefs.enabled ? colors.moss : colors.white}
           ios_backgroundColor={colors.line}
@@ -89,6 +94,35 @@ function SettingsContent() {
           value={neuroPrefs.enabled}
         />
       </View>
+
+      {neuroPrefs.enabled ? (
+        <>
+          <Button
+            variant="secondary"
+            label={
+              paceMode === "confirm"
+                ? "Pace: you confirm (recommended)"
+                : paceMode === "slow"
+                  ? "Pace: slower auto-advance"
+                  : "Pace: brief auto-advance"
+            }
+            onPress={() => {
+              const next =
+                paceMode === "confirm"
+                  ? "slow"
+                  : paceMode === "slow"
+                    ? "auto"
+                    : "confirm";
+              void setPaceMode(next);
+            }}
+            accessibilityHint="Cycles quiz pace: confirm to continue, slow auto-advance, or brief auto-advance"
+          />
+          <Body muted>
+            Customize how fast questions move on. Confirm mode waits for you —
+            best for sensory and attention needs.
+          </Body>
+        </>
+      ) : null}
 
       <Button
         variant="secondary"
