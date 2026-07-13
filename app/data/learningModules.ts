@@ -584,6 +584,75 @@ export const learningModules: LearningModule[] = [
     ],
   },
   {
+    id: "haptic-language",
+    title: "Haptic language — meaning, not noise",
+    summary:
+      "How Litmo’s touch feedback speaks: Soft Signal freedom, local confirmation, never peer consent. Optional, interruptible, yours to silence.",
+    minutes: 4,
+    track: "foundations",
+    themes: ["product-safety", "communication", "nervous-system"],
+    relatedPractice: [
+      {
+        id: "hl-soft",
+        label: "Practice Soft Signal",
+        hint: "Feel the stop phrase after freedom — commit first, haptic second.",
+        href: "/soft-signal/practice",
+      },
+      {
+        id: "hl-tl",
+        label: "Touch Language map",
+        hint: "Selecting a zone may offer a local pressure preview — never a seal.",
+        href: "/onboarding/touch-language",
+      },
+    ],
+    steps: [
+      {
+        id: "hl-frame",
+        title: "A language, not a buzz",
+        body: "Litmo haptics are a small vocabulary: presence, attention, confirmation, Soft Signal, and more. Each pattern has one meaning. They never say another person agreed, is near, or is safe. You can turn them off; the product must still make sense.",
+        takeaway: "Meaning before sensation. Silence is valid.",
+      },
+      {
+        id: "hl-grammar",
+        title: "Grammar under the hood",
+        body: "Beyond five events, the language has pressure curves (including Soft Signal’s warm descent), rhythm, logical locations, emotional modifiers (calm, solemn — never FOMO), and safety interrupts that cut any decorative phrase when you stop.",
+        takeaway: "Programmable and composable — still fail-closed and optional.",
+        scenario: {
+          prompt: "What must haptics never communicate?",
+          options: [
+            {
+              label: "That the other person consented or is present",
+              feedback:
+                "Correct. Haptics are local UX only — never peer consent or remote presence.",
+            },
+            {
+              label: "That your Soft Signal registered on this device",
+              feedback:
+                "That is allowed as local acknowledgment — after stop already committed.",
+            },
+            {
+              label: "Secret codes only your match understands",
+              feedback:
+                "Forbidden. No secret inter-user haptic codes.",
+            },
+          ],
+        },
+      },
+      {
+        id: "hl-soft",
+        title: "Soft Signal is freedom",
+        body: "Soft Signal’s haptic is a long warm descent — release, not a siren. The session ends first; the motor is optional decoration of freedom. Emergency-stop patterns are clearer, still not 911 dispatch.",
+        takeaway: "Stop is free. Motors do not delay freedom.",
+      },
+      {
+        id: "hl-nd",
+        title: "Sensory ownership",
+        body: "Neurodivergent Mode can set haptics off or stop-only. Intensity is yours. Visual Soft Signal always remains. Completing this module does not certify safety or readiness for touch.",
+        takeaway: "Accommodations never become public traits.",
+      },
+    ],
+  },
+  {
     id: "neurodivergent-mode",
     title: "Neurodivergent Mode & calm defaults",
     summary:

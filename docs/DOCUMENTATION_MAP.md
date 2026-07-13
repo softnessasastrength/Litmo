@@ -99,6 +99,7 @@ Completion reports are evidence, not current task assignments. Do not use their 
 - [`SAFETY_OPS_RUNTIME.md`](SAFETY_OPS_RUNTIME.md) — runtime ground truth for queue, reports, appeals, restrictions, rate limits, trust ledger, HITL permanent ban, Constitution map (ADR 0061).
 - ADR 0062 — nuclear session lifecycle + Consent Snapshot machine (`sessionConsentNuclear`, migration 043).
 - [`NEURODIVERGENT_MODE.md`](NEURODIVERGENT_MODE.md) — v3 second-level accommodations (sensory, motion, haptics, language, overload exits); demo-strength defaults.
+- [`HAPTIC_LANGUAGE.md`](HAPTIC_LANGUAGE.md) — composable semantic haptic grammar (curves, rhythm, interrupts); ADR 0063.
 
 A roadmap item is not implementation authorization. It becomes active only when recorded as `active` in `TASKS.md` and reflected in `CURRENT_STATE.md` and `project-state.json`.
 

@@ -47,3 +47,10 @@ export const hapticService = createHapticService({
 });
 
 export type { HapticEvent } from "./hapticServiceCore.ts";
+export {
+  defaultPhraseForLexeme,
+  phrase,
+  zonePreviewPhrase,
+  type HapticPhrase,
+  type HapticLexeme,
+} from "../lib/hapticLanguageCore.ts";

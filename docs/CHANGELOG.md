@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-07-13 — Semantic haptic language grammar (ADR 0063)
+
+### Summary
+
+Composable haptic language: pressure curves, rhythm, locations, emotional
+modifiers, safety interrupts; IR compile; Soft Signal descend_warm; TL zone
+preview; learning module. Device-agnostic core, iOS-excellent Expo mapping.
+
+### Material
+
+- `app/lib/hapticLanguageCore.ts` + tests
+- `hapticServiceCore` playPhrase + interrupt generation
+- `docs/HAPTIC_LANGUAGE.md` · ADR 0063 · roadmap plan update
+- Learning module `haptic-language`
+
 ## 2026-07-13 — Constitution v2: living consent language + Vision 2030
 
 ### Summary

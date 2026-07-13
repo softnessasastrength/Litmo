@@ -1,10 +1,12 @@
 # Haptic Language Implementation Plan
 
-Status: implementation-authorizing specification
-Owner: current coding agent
-Task: `HAPTIC-001`
+Status: Phase A grammar **shipped**; Phases B–E planned  
+Owner: current coding agent  
+Tasks: `HAPTIC-001` (done) · **HAPTIC-002** composable language (ADR 0063)
 
-> **Dedicated-device haptics** (wideband VCM primary, LRA secondary, Soft Signal warm descent, Gentle / Sensory-Friendly Mode for every pattern) are specified in [`docs/HARDWARE/HAPTICS.md`](../HARDWARE/HAPTICS.md) and [ADR 0057](../adr/0057-device-haptic-vca-lra-architecture.md). This document remains the **phone / Expo** implementation plan. Semantic event names must stay aligned across both.
+> **Canonical grammar:** [`docs/HAPTIC_LANGUAGE.md`](../HAPTIC_LANGUAGE.md)  
+> **Dedicated-device haptics** (VCM/LRA) remain in [`docs/HARDWARE/HAPTICS.md`](../HARDWARE/HAPTICS.md) and [ADR 0057](../adr/0057-device-haptic-vca-lra-architecture.md).  
+> Phone path: Expo + grammar IR; iOS Core Haptics continuous path planned.
 
 ## Intent
 
@@ -27,9 +29,21 @@ Haptics must reinforce visible and spoken meaning. They must never become the on
 7. **Local only.** Haptic preferences and playback do not create analytics or sensitive event logs.
 8. **Consistent vocabulary.** Product surfaces call semantic events, not platform-specific vibration APIs directly.
 
-## Initial vocabulary
+## Phase A status (2026-07-13)
 
-Keep the first release to five semantic events.
+| Deliverable | State |
+| ----------- | ----- |
+| `hapticLanguageCore` | shipped |
+| `playPhrase` + interrupt generation | shipped |
+| Soft Signal via `descend_warm` grammar | shipped |
+| TL zone pressure preview | shipped |
+| Learning module `haptic-language` | shipped |
+| Core Haptics continuous | Phase C |
+| Device firmware compiler | Phase D |
+
+## Initial vocabulary (HAPTIC-001 — still public)
+
+Keep the first release five semantic events as the **stable API**; richer lexemes exist under the grammar.
 
 | Event           | Meaning                            | Suggested platform expression                                                | Initial use                                       |
 | --------------- | ---------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------- |

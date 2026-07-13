@@ -1,3 +1,14 @@
+/**
+ * Touch Language body-zone map component.
+ *
+ * WHAT: Render grouped zone chips with status letter + color swatches from a TL document.
+ * WHY: Visual map for onboarding/review without re-implementing effective status per screen.
+ * CONSENT: Map is prepare/display only — never seals Consent Snapshot or grants contact.
+ * EDGE CASES: Unset zones use effectiveZoneStatus (off limits); unknown status → off_limits swatch.
+ * NEVER: Color-only status; treat map selection as session consent; auto-expand limits.
+ * SEE: touchLanguageCore.effectiveZoneStatus · CODE_COMMENT_STANDARD (a11y non-color-only)
+ */
+
 import { Pressable, Text, View } from "react-native";
 import { BODY_ZONES, type ZoneId } from "../data/touchLanguageCatalog";
 import {
@@ -7,7 +18,18 @@ import {
 import { fonts, radius, type AppColors } from "../theme";
 import { useThemedStyles } from "../hooks/useThemedStyles";
 import { useColors } from "../context/ThemeContext";
+import {
+  hapticService,
+  zonePreviewPhrase,
+} from "../services/hapticService";
 
+/**
+ * WHAT: Map zone status → soft background token + short letter mark.
+ * WHY: Color is never the only cue — letter + accessibilityLabel always present.
+ * CONSENT: Display tokens only — not consent grants.
+ * EDGE CASES: Callers fall back to off_limits swatch when status unknown.
+ * NEVER: Use intensity of color as a safety score.
+ */
 const STATUS_SWATCH: Record<
   string,
   { bg: keyof AppColors; label: string }
@@ -18,6 +40,13 @@ const STATUS_SWATCH: Record<
   off_limits: { bg: "line", label: "✕" },
 };
 
+/**
+ * WHAT: Props for optional selection + compact legend mode.
+ * WHY: Same map serves read-only review and interactive zone pickers.
+ * CONSENT: onSelectZone edits preferences only when parent wires save — not session yes.
+ * EDGE CASES: without onSelectZone chips are text role (non-interactive).
+ * NEVER: Parent treat selection as dual-confirm.
+ */
 type Props = {
   document: TouchLanguageDocument;
   selectedZoneId?: ZoneId | null;
@@ -26,8 +55,12 @@ type Props = {
 };
 
 /**
- * Visual body-zone map: labeled chips with status swatches.
- * Color is never the only cue — letter + accessibility label always present.
+ * WHAT: Visual body-zone map: labeled chips with status swatches.
+ * WHY: Shared accessibility-safe presentation of Touch Language boundaries.
+ * CONSENT: Footnote states map is never consent; unset = off limits (fail closed).
+ * EDGE CASES: compact hides title; disabled press when no onSelectZone.
+ * NEVER: Imply welcomed zones authorize contact without snapshot.
+ * SEE: effectiveZoneStatus
  */
 export function TouchLanguageMap({
   document,
@@ -73,6 +106,7 @@ export function TouchLanguageMap({
           <Text style={styles.groupTitle}>{group.title}</Text>
           <View style={styles.chipRow}>
             {BODY_ZONES.filter((z) => z.group === group.id).map((zone) => {
+              // Unset / missing → effective off_limits (fail closed for contact).
               const status = effectiveZoneStatus(document, zone.id);
               const swatch = STATUS_SWATCH[status] ?? STATUS_SWATCH.off_limits!;
               const selected = selectedZoneId === zone.id;
@@ -80,8 +114,17 @@ export function TouchLanguageMap({
                 <Pressable
                   key={zone.id}
                   disabled={!onSelectZone}
-                  onPress={() => onSelectZone?.(zone.id)}
+                  onPress={() => {
+                    // Local pressure preview only — never peer consent or seal (ADR 0063).
+                    const pressure =
+                      document.zones?.[zone.id]?.pressure ??
+                      document.pressure ??
+                      null;
+                    void hapticService.playPhrase(zonePreviewPhrase(pressure));
+                    onSelectZone?.(zone.id);
+                  }}
                   accessibilityRole={onSelectZone ? "button" : "text"}
+                  // Text status always accompanies color (non-color-only meaning).
                   accessibilityLabel={`${zone.label}: ${status.replace("_", " ")}`}
                   style={[
                     styles.chip,
@@ -109,6 +152,13 @@ export function TouchLanguageMap({
   );
 }
 
+/**
+ * WHAT: Theme styles for map legend, chips, and footnote.
+ * WHY: Consistent density with onboarding screens.
+ * CONSENT: Presentation only.
+ * EDGE CASES: none — pure style object.
+ * NEVER: Encode safety scores via size alone without labels.
+ */
 function makeStyles(colors: AppColors) {
   return {
     wrap: { gap: 10 },

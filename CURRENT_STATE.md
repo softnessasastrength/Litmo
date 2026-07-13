@@ -19,6 +19,7 @@
 | **Nuclear session + seal machine** | shipped (domain+SQL) | ADR 0062 · `@litmo/domain` `sessionConsentNuclear` |
 | Soft Signal + trauma safety (panic/timeout/reflect) | shipped | `docs/SOFT_SIGNAL.md`, `docs/TRAUMA_INFORMED_SAFETY.md` |
 | **Neurodivergent Mode v3** (sensory/pace/language/exits) | shipped | `docs/NEURODIVERGENT_MODE.md` · `neuroAccommodationCore` |
+| **Semantic haptic language** (composable grammar) | shipped (phone) | `docs/HAPTIC_LANGUAGE.md` · ADR 0063 · hardware design |
 | Proximity · NFC · QR · Multipeer | shipped | `docs/PROXIMITY_LAYER.md`, `docs/NFC_FEATURES.md` |
 | Guided Learning (lived + foundations + paths) | shipped | `docs/LEARNING_SYSTEM.md` |
 | Local-first vault + encrypted backup | shipped | `docs/LOCAL_FIRST.md` (ADR 0058) |
