@@ -131,20 +131,17 @@ Catalog, hub, and result surfaces repeat that quizzes are not diagnosis, safety
 ratings, or consent. Similarity of primary weather is a conversation starter
 only.
 
-### 6. Seal crypto posture (explicit limits)
+### 6. Seal crypto posture (superseded for partner packages by ADR 0052)
 
-Sealing uses a lightweight, pure, unit-tested XOR stream + derived MAC in
-`quizShareCore` (`deriveStream` / `sealResult` / `openSealed`). Purpose:
+The first Quizzes slice used a lightweight XOR stream + derived MAC in
+`quizShareCore` (`deriveStream` / `sealResult` / `openSealed`) with `sealKey`
+inside portable packages. That path is retained only as a deprecated helper /
+test vector.
 
-- Keep results unreadable without the invite seal key during casual package
-  exchange.
-- Fail closed on wrong key or MAC mismatch.
-
-This is **not** production-grade E2E encryption (not AES-GCM, not CryptoKit,
-not WebCrypto AEAD, not forward secrecy, not server-mediated key agreement).
-Portable packages currently include the `sealKey` so the peer can open the
-payload after out-of-band transfer — confidentiality therefore depends on
-treating the package like a password and using a private channel. See
+**Partner packages now use ADR 0052:** X3DH + Double Ratchet, device-local
+keys (Secure Store / optional Secure Enclave vault wrap), public keys +
+ciphertext only in packages, optional Supabase ciphertext-only relay. See
+`docs/adr/0052-quiz-partner-e2e-double-ratchet.md` and
 `docs/KNOWN_LIMITATIONS.md`.
 
 ## Alternatives considered
@@ -158,11 +155,11 @@ treating the package like a password and using a private channel. See
 - **Public or peer-visible quiz badges / weather on discovery:** rejected for
   this milestone; results stay private unless both parties consent to compare.
 - **Full application-encryption vault (ADR 0011 CryptoKit path) for quiz
-  results:** deferred; Quizzes are softer than private session notes, and the
-  lightweight seal is enough for the first mutual-consent slice. May revisit
-  before external beta if threat model requires AEAD + non-exported keys.
-- **In-app transport of invite packages (messages table / push):** deferred;
-  out-of-band JSON keeps the first slice free of messaging product scope.
+  results at rest:** still deferred for AsyncStorage self results; partner
+  package crypto upgraded in ADR 0052 (identity keys may use vault wrap).
+- **In-app transport of invite packages (messages table / push):** optional
+  opaque claim-code relay added in ADR 0052; primary path remains out-of-band
+  paste so demo works without Docker.
 
 ## Consequences
 

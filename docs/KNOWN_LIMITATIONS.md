@@ -62,60 +62,62 @@
   backup reviewer staffing, and two-person permanent-ban approval remain
   blocked.
 
-## Quizzes section, partner seal, and optional own-summary backup
+## Quizzes section, partner E2E, and optional own-summary backup
 
-- The Quizzes tab (ADR 0050) is **local-first self-understanding**. Results live
-  in AsyncStorage (`quizResultsStore`); callers use `quizResultsRepository`.
-  Invites and seal keys live in Secure Store (`quizInviteStore`) only.
+- The Quizzes tab (ADR 0050 / **0052**) is **local-first self-understanding**.
+  Results live in AsyncStorage (`quizResultsStore`); callers use
+  `quizResultsRepository`. Invites, identity keys, and Double Ratchet state live
+  in Secure Store (`quizInviteStore` / `quizE2eIdentity` / `quizE2eSession`).
+- Partner packages use **X3DH + Double Ratchet** (AES-256-GCM message keys).
+  Portable packages carry **public keys and ciphertext only** — no `sealKey`,
+  no private keys. Supabase optional relay (`quiz_e2e_relay`, migration 038)
+  stores **opaque ciphertext** with refuse-list checks; it never decrypts.
 - Optional **owner-only** server backup of own result summaries
   (`quiz_result_summaries`, ADR 0051) runs when Supabase is configured and the
   user is authenticated. Demo/unauthenticated use stays local-only. Backup
-  failure never blocks local save and never invents results. Partner
-  comparison, seal keys, and invite packages are **not** stored on the server.
-- Without authentication/config, reinstall or storage clear drops local results
-  and all invites. With authentication, own summaries may restore; invites and
-  peer packages do not. Multi-device partner-compare sync remains absent.
+  failure never blocks local save and never invents results. Partner comparison
+  plaintext never lives on the server.
+- Without authentication/config, reinstall or storage clear drops local results,
+  invites, and ratchet sessions. With authentication, own summaries may restore;
+  invites/partner packages do not. Multi-device partner-compare sync remains
+  absent beyond one-shot opaque relay claim codes.
 - Short (~10) and deep (100) Vibe paths plus Soft Capacity, Boundary Voice,
   Comfort & Care, and Connection Pace are playful weather/self quizzes only.
   They are never diagnosis, a safety rating, matching eligibility, trust
   signals, or consent to touch. Impact: users may still over-read similarity.
   Mitigation: catalog, hub, result, and comparison copy always remind that
   weather is conversation-only and never replaces a Consent Snapshot.
-- Partner comparison requires **four consents** (host share, host compare, peer
-  share, peer compare) plus both sealed payloads. Host share consent is
-  effective only with a non-null sealed payload. Missing any gate fails closed.
-  Packages are exchanged out-of-band (copy/paste JSON), not via Litmo messaging.
+- Partner comparison requires **four consents** (local share, local compare,
+  partner share, partner compare) plus both decrypted results. Host share
+  consent is effective only with ciphertext + local plaintext. Missing any gate
+  fails closed. Primary exchange is out-of-band paste; optional claim codes when
+  signed in.
 - Peer share/compare flags in portable packages are **self-asserted**, not
-  server-attested dual opt-in. Impact: a forged or forwarded package can claim
-  peer consents the peer never gave in-app. Mitigation: out-of-band trust and
-  fail-closed open on wrong seal; product frames packages as password-like.
-  Removal criterion: bind consents into a sealed envelope or move to
-  server-mediated mutual opt-in before multi-device external beta.
-- Results persist in **AsyncStorage** (unencrypted at rest); invites/seal keys
-  use Secure Store. Impact: device backup or local forensic access may expose
-  saved weather even when result screens are Face ID gated. Mitigation: step-up
-  gate for on-screen private result/share; hub shows only “saved privately,”
-  not archetype. Removal criterion: Secure Store or device-bound encryption for
-  real-account results if privacy review requires it.
-- Seal crypto in `quizShareCore` is a **lightweight** XOR stream + derived MAC
-  for casual out-of-band packages. It is not AES-GCM, not CryptoKit, not
-  audited production E2E, and not forward-secret. Portable packages currently
-  include the invite `sealKey`, so confidentiality depends on treating the
-  package like a password and using a private channel. Wrong keys / MAC
-  mismatch fail closed. Impact: package leakage or insecure paste channels can
-  expose sealed quiz weather. Mitigation: product copy (“treat the package like
-  a password”); unit tests for wrong-key and dual-consent gates. Removal
-  criterion: qualified security review and, if required, AEAD with non-exported
-  keys and a reviewed key-exchange channel before external beta.
+  server-attested dual opt-in. Impact: a forged package can claim consents the
+  peer never gave in-app. Mitigation: OOB trust + fail-closed decrypt; ciphertext
+  without device private keys is useless. Removal criterion: server-mediated
+  mutual opt-in before multi-device external beta if review requires it.
+- Results persist in **AsyncStorage** (unencrypted at rest); E2E keys/ratchets
+  use Secure Store and optionally CryptoKit vault wrap (Secure Enclave path on
+  real iOS builds). Impact: device backup/forensics may still expose local
+  weather. Mitigation: Face ID step-up on private result/share; hub shows only
+  “saved privately.” Removal criterion: encrypt real-account results at rest if
+  privacy review requires it.
+- E2E crypto is **Signal-inspired, not a full audited Signal client** (no OPKs,
+  sequential quiz messages only, no multi-device identity). Expo Go / simulator
+  may fall back to Secure Store–only private keys when the Enclave vault is
+  unavailable. Impact: residual protocol and platform limits. Mitigation: unit
+  tests for X3DH agreement, ratchet round-trip, AAD/tamper fail-closed, dual
+  consent; ADR 0052 documents scope. Removal criterion: independent crypto
+  review before external beta.
 - Face ID step-up (`SensitiveAccessGate`) protects private **result** and
   **partner share** screens on real account sessions only. The catalog hub and
   play flow are not gated; demo mode skips biometrics so Expo Go can walk the
   path. Hub/list screens never show archetype labels outside that gate.
 - Server-backed own summaries appear in `export_my_data()` under
-  `quiz_result_summaries`. Local-only invites/comparisons and a dedicated
-  account-deletion wipe UX remain incomplete. Production retention beyond
-  cascade-on-user-delete is undecided. Server insight notes are soft model
-  lines under owner RLS, not application-encrypted diary text.
+  `quiz_result_summaries`. Local invites/ratchets wipe and relay purge on
+  account deletion remain incomplete. Production retention beyond cascade is
+  undecided.
 
 ## Appearance
 

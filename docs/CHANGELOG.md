@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-07-13 — Partner quiz E2E (X3DH + Double Ratchet)
+
+### Summary
+
+Partner quiz sharing upgrades from XOR seal-key packages to Signal-inspired
+X3DH + Double Ratchet. Private keys stay device-local (Secure Store + optional
+Secure Enclave vault wrap). Supabase optional relay stores opaque ciphertext
+only. Four mutual consent gates and non-authority copy are preserved.
+
+### User-visible impact
+
+- Create **encrypted invite** (public keys only) → partner joins → share
+  encrypted weather → compare only with dual consent.
+- Packages no longer include a seal key; wrong/tampered ciphertext fails closed.
+- Optional claim-code relay when signed in (ciphertext only).
+- Copy emphasizes end-to-end encryption and “never consent to touch.”
+
+### Developer impact
+
+- `doubleRatchetCore`, `quizE2eIdentity`, `quizE2eSession`, `quizE2eRelay`.
+- Migration `038_quiz_e2e_ciphertext_relay.sql`.
+- Invite store v2 (`litmo.quizzes.invites.v2`); legacy sealKey invites dropped.
+- ADR 0052; deps `@noble/ciphers`, `@noble/curves`, `@noble/hashes`.
+
+### Related work
+
+- Builds on ADR 0050 / 0051 Quizzes section.
+
 ## 2026-07-13 — Optional owner-only quiz result backup
 
 ### Summary

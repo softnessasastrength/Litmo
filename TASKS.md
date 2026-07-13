@@ -44,22 +44,36 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 ## Completed
 
+### QUIZ-002 — Partner quiz E2E (X3DH + Double Ratchet)
+
+- **Status:** completed
+- **Result:** Partner packages use Signal-inspired X3DH + Double Ratchet
+  (AES-GCM). Identity/SPK private keys in Secure Store with optional CryptoKit
+  vault wrap (Secure Enclave path). Packages carry public keys + ciphertext
+  only (no sealKey). Optional Supabase `quiz_e2e_relay` stores opaque
+  ciphertext with refuse-list checks. Four consent gates preserved. ADR 0052.
+- **Verification:** `doubleRatchetCore` tests (X3DH agree, bidirectional
+  ratchet, AAD/tamper fail-closed, host-after-session-open); `quizShareCore`
+  dual-consent tests; app `typecheck` green.
+- **Boundary:** not a full multi-device Signal audit; peer consents still
+  package-asserted; sequential quiz messages only; Expo Go may skip Enclave
+  wrap; never consent/safety/matching authority.
+- **Related decision:** ADR 0052 (builds on 0050/0051).
+
 ### QUIZ-001 — Quizzes section (short/deep + partner consent)
 
 - **Status:** completed
 - **Result:** Quizzes tab with Vibe short (~10 scenes, all themes) and deep
   (100); four self quizzes; private results behind Face ID with retry/back on
-  deny; partner invites with join-from-package, four consent gates, sealed
-  payloads; comparison uses friendly names and hard non-authority copy.
-  Results prefer Secure Store. Optional owner-only summary backup (ADR 0051).
-  Demo entry + Home link to Quizzes. ADR 0050 constitution review pass.
-- **Verification:** unit tests for `quizShareCore` (seal fail-closed, dual
-  share+compare, adopt join, export omission), path/scoring, repository core;
-  `npm run typecheck` / lint / app test suite on implementation PR.
-- **Boundary:** never consent/safety/matching authority; seal is lightweight
-  device package crypto (not production E2E audit); partner path has no server
-  API; peer consent flags remain package-asserted; macOS has no Quizzes surface.
-- **Related decision:** ADR 0050, ADR 0051.
+  deny; partner invites with four consent gates; comparison uses friendly names
+  and hard non-authority copy. Results prefer Secure Store. Optional owner-only
+  summary backup (ADR 0051). Demo entry + Home link to Quizzes. Partner crypto
+  upgraded in QUIZ-002 / ADR 0052.
+- **Verification:** unit tests for `quizShareCore` (dual share+compare, fail
+  closed), path/scoring, repository core; typecheck on implementation PR.
+- **Boundary:** never consent/safety/matching authority; peer consent flags
+  remain package-asserted; macOS has no Quizzes surface.
+- **Related decision:** ADR 0050, ADR 0051, ADR 0052.
 - **Constitution review 2026-07-13:** fixed SensitiveAccessGate fail UI; hub
   non-disclosure; share-without-seal fail-closed; join invite; Secure Store
   results; demo path mentions quizzes.

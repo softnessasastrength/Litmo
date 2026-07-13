@@ -15,7 +15,7 @@ UI/API adapters
 
 `shared/` owns framework-independent types, enum values, runtime schemas, and validated serialization. UI components do not call Supabase directly. `profileRepository` owns profile persistence, timeouts, boundary parsing, and safe error translation.
 
-Quizzes are local-first: `quizResultsStore` holds AsyncStorage summaries and partner invites stay in SecureStore. `quizResultsRepository` optionally backs up **own** result summaries through owner-only `quiz_result_summaries` / `upsert_own_quiz_result_summary` when authenticated (ADR 0051). Partner comparison is never server-mediated in this slice. Failures fall back to local data and never invent results.
+Quizzes are local-first: `quizResultsStore` holds AsyncStorage summaries and partner invites/E2E keys stay in SecureStore. `quizResultsRepository` optionally backs up **own** result summaries through owner-only `quiz_result_summaries` / `upsert_own_quiz_result_summary` when authenticated (ADR 0051). Partner comparison uses X3DH + Double Ratchet (ADR 0052); optional Supabase relay is ciphertext-only. Failures fall back to local data and never invent results.
 
 Chapter 3 adds the canonical pure consent engine to `shared/`. It models receive/offer direction, produces deterministic conservative overlap and explanations, and creates exact-version snapshot records. Compatibility and consent remain different states: engine output cannot activate consent. `previewProfileChange` reuses the same engine to diff a not-yet-saved profile version against the saved one, both against the same counterpart, so a user can see the practical effect of an edit before it becomes a new immutable version. The preview never persists a version and never grants consent.
 
@@ -57,9 +57,9 @@ Material touch/consent changes call `save_profile_versions` transactionally. An 
 
 The Express consent-overlap service and early session/trust migrations remain intact. Chapter 2 does not expand the consent engine or session lifecycle; those are Chapter 3 and Chapter 4.
 
-## Quizzes tab (local-first)
+## Quizzes tab (local-first + partner E2E)
 
-The **Quizzes** tab is a phone-first self-understanding surface (ADR 0050), separate from onboarding’s profile vibe write and from Consent Snapshot / session authority. Partner comparison stays device-local; own summaries may optionally back up when authenticated (ADR 0051).
+The **Quizzes** tab is a phone-first self-understanding surface (ADR 0050), separate from onboarding’s profile vibe write and from Consent Snapshot / session authority. Partner comparison uses device-local X3DH + Double Ratchet (ADR 0052). Own summaries may optionally back up when authenticated (ADR 0051).
 
 ```text
 Quizzes tab catalog (quizCatalog)
@@ -69,19 +69,22 @@ Quizzes tab catalog (quizCatalog)
   → optional owner-only summary backup (quiz_result_summaries + upsert RPC; ADR 0051)
   → optional private result view (SensitiveAccessGate on real accounts)
   → optional partner invite (quizInviteStore / Secure Store)
-       → seal result (quizShareCore) only after host share consent
-       → out-of-band JSON package exchange
-       → compare only after four consents (host/peer × share/compare)
+       → identity + SPK in Secure Store / optional CryptoKit vault wrap
+       → X3DH + Double Ratchet (doubleRatchetCore / quizE2eSession)
+       → encrypt result only after local share consent
+       → out-of-band JSON package (public keys + ciphertext only)
+       → optional opaque relay (quiz_e2e_relay claim codes; ciphertext only)
+       → compare only after four consents + both decrypted results
 ```
 
 Boundaries:
 
-- Partner invites, seal keys, sealed packages, and comparisons never go to the server.
+- Partner plaintext weather never goes to the server. Optional relay stores opaque ciphertext only.
 - Own result summaries may leave the device only as owner-RLS backup rows (never peer-readable, never discovery/trust inputs).
 - Hub shows only non-sensitive “saved privately” status; private archetype/mix stay behind Face ID step-up on real accounts.
 - Quiz weather is never an input to discovery ranking, trust signals, matching eligibility, or session activation.
 - Comparison always carries the non-authority reminder that shared weather is not consent to touch and does not replace a Consent Snapshot.
-- Seal crypto is a lightweight package seal, not the ADR 0011 CryptoKit vault.
+- Partner E2E is Signal-inspired 1:1 (ADR 0052), not a full multi-device Signal client.
 
 macOS has no Quizzes surface in this milestone; Campfire and participant reads remain the desktop scope.
 

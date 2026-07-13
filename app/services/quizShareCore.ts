@@ -1,10 +1,12 @@
 /**
- * Partner quiz-share core: mutual consent before comparison, sealed payloads.
+ * Partner quiz-share core: mutual consent before comparison.
  *
  * Safety:
  * - Quiz comparison is never consent to touch.
  * - Both parties must explicitly consent before any comparison is allowed.
- * - Seal key stays with the invite; results are not readable without it.
+ * - Ciphertext is produced by X3DH + Double Ratchet (`quizE2eSession`);
+ *   this module holds consent gates and comparison copy only.
+ * - Plaintext weather stays device-local after decrypt; never re-exported in clear.
  */
 
 import type { ArchetypeId } from "../data/quiz.ts";
@@ -23,27 +25,32 @@ export type ShareableQuizResult = {
 export type QuizInvite = {
   id: string;
   quizId: QuizCatalogId;
-  /** High-entropy seal material; required to open sealed results. */
-  sealKey: string;
+  protocol: "e2e-v3";
+  /** Local role on this device. */
+  role: "host" | "peer";
   createdAt: string;
   /** Local participant consented to share their sealed result into this invite. */
   hostConsentToShare: boolean;
   /** Local participant consented to compare once both sides are present. */
   hostConsentToCompare: boolean;
-  /** Peer mirrored consents when package imported. */
+  /** Partner mirrored consents when package imported / decrypted. */
   peerConsentToShare: boolean;
   peerConsentToCompare: boolean;
-  hostSealed: SealedQuizResult | null;
-  peerSealed: SealedQuizResult | null;
-};
-
-export type SealedQuizResult = {
-  v: 1;
-  quizId: QuizCatalogId;
-  /** Base64 ciphertext */
-  ciphertext: string;
-  /** Base64 HMAC */
-  mac: string;
+  /** Device-local plaintext after local share or successful decrypt. Never upload. */
+  hostResult: ShareableQuizResult | null;
+  peerResult: ShareableQuizResult | null;
+  /**
+   * Opaque outbound ciphertext packages (JSON of E2eResultPackage) for re-export
+   * or optional Supabase relay. Contains no private keys.
+   */
+  hostCipherPackage: string | null;
+  peerCipherPackage: string | null;
+  /** Host public invite JSON (public keys only) for peer join. */
+  publicInvitePackage: string | null;
+  /** Peer handshake stored until first result package is exported. */
+  peerHandshakePackage: string | null;
+  /** True after local ratchet session is established. */
+  sessionReady: boolean;
 };
 
 export type ComparisonNote = {
@@ -63,151 +70,98 @@ export type QuizComparison = {
 const CONSENT_REMINDER =
   "Shared quiz weather is for conversation only. It is never consent to touch, proof of safety, or a substitute for a current Consent Snapshot.";
 
-function bytesToB64(bytes: Uint8Array): string {
-  let s = "";
-  for (const b of bytes) s += String.fromCharCode(b);
-  return btoa(s);
-}
-
-function b64ToBytes(b64: string): Uint8Array {
-  const s = atob(b64);
-  const out = new Uint8Array(s.length);
-  for (let i = 0; i < s.length; i++) out[i] = s.charCodeAt(i);
-  return out;
-}
-
-/** Deterministic stream from seal key + nonce label (pure, testable). */
-export function deriveStream(sealKey: string, length: number): Uint8Array {
-  const out = new Uint8Array(length);
-  let state = 0;
-  for (let i = 0; i < sealKey.length; i++) {
-    state = (state * 33 + sealKey.charCodeAt(i)) >>> 0;
-  }
-  for (let i = 0; i < length; i++) {
-    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
-    out[i] = state & 0xff;
-  }
-  return out;
-}
-
-export function sealResult(
-  result: ShareableQuizResult,
-  sealKey: string,
-): SealedQuizResult {
-  const plain = new TextEncoder().encode(JSON.stringify(result));
-  const stream = deriveStream(sealKey + ":seal", plain.length);
-  const cipher = new Uint8Array(plain.length);
-  for (let i = 0; i < plain.length; i++) cipher[i] = plain[i]! ^ stream[i]!;
-  const macStream = deriveStream(sealKey + ":mac", 32);
-  const mac = new Uint8Array(32);
-  for (let i = 0; i < 32; i++) {
-    mac[i] = macStream[i]! ^ cipher[i % cipher.length]!;
-  }
-  return {
-    v: 1,
-    quizId: result.quizId,
-    ciphertext: bytesToB64(cipher),
-    mac: bytesToB64(mac),
-  };
-}
-
-export function openSealed(
-  sealed: SealedQuizResult,
-  sealKey: string,
-): ShareableQuizResult | null {
-  try {
-    const cipher = b64ToBytes(sealed.ciphertext);
-    const mac = b64ToBytes(sealed.mac);
-    const macStream = deriveStream(sealKey + ":mac", 32);
-    const expect = new Uint8Array(32);
-    for (let i = 0; i < 32; i++) {
-      expect[i] = macStream[i]! ^ cipher[i % cipher.length]!;
-    }
-    if (mac.length !== 32) return null;
-    let ok = 0;
-    for (let i = 0; i < 32; i++) ok |= mac[i]! ^ expect[i]!;
-    if (ok !== 0) return null;
-    const stream = deriveStream(sealKey + ":seal", cipher.length);
-    const plain = new Uint8Array(cipher.length);
-    for (let i = 0; i < cipher.length; i++) plain[i] = cipher[i]! ^ stream[i]!;
-    const parsed = JSON.parse(
-      new TextDecoder().decode(plain),
-    ) as ShareableQuizResult;
-    if (parsed.quizId !== sealed.quizId) return null;
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-
 export function createInvite(
   quizId: QuizCatalogId,
   inviteId: string,
-  sealKey: string,
+  role: "host" | "peer",
   nowIso: string,
+  publicInvitePackage: string | null = null,
 ): QuizInvite {
   return {
     id: inviteId,
     quizId,
-    sealKey,
+    protocol: "e2e-v3",
+    role,
     createdAt: nowIso,
     hostConsentToShare: false,
     hostConsentToCompare: false,
     peerConsentToShare: false,
     peerConsentToCompare: false,
-    hostSealed: null,
-    peerSealed: null,
+    hostResult: null,
+    peerResult: null,
+    hostCipherPackage: null,
+    peerCipherPackage: null,
+    publicInvitePackage,
+    peerHandshakePackage: null,
+    sessionReady: role === "host" ? false : false,
   };
 }
 
-export function withHostShareConsent(
+/**
+ * Local share consent for the person on this device.
+ * Host role writes hostResult; peer role writes peerResult.
+ * Fail closed: consent cannot stick without a plaintext result present.
+ */
+export function withLocalShareConsent(
   invite: QuizInvite,
   consent: boolean,
-  sealed: SealedQuizResult | null,
+  result: ShareableQuizResult | null,
+  cipherPackage: string | null,
 ): QuizInvite {
-  // Fail closed: share consent cannot stick without a sealed payload.
-  const effectiveConsent = consent && sealed !== null;
+  const effective = consent && result !== null && cipherPackage !== null;
+  if (invite.role === "host") {
+    return {
+      ...invite,
+      hostConsentToShare: effective,
+      hostResult: effective ? result : null,
+      hostCipherPackage: effective ? cipherPackage : null,
+    };
+  }
   return {
     ...invite,
-    hostConsentToShare: effectiveConsent,
-    hostSealed: effectiveConsent ? sealed : null,
+    // On peer device, "hostConsent*" fields mean *this local user's* consents
+    // for UI consistency: local share/compare always use hostConsent* as "mine".
+    hostConsentToShare: effective,
+    hostResult: effective ? result : null,
+    hostCipherPackage: effective ? cipherPackage : null,
   };
 }
 
-export function withHostCompareConsent(
+/**
+ * Record partner share after successful decrypt.
+ * Partner lands in peer* fields on this device.
+ */
+export function withPartnerShare(
   invite: QuizInvite,
-  consent: boolean,
-): QuizInvite {
-  return { ...invite, hostConsentToCompare: consent };
-}
-
-export function importPeerPackage(
-  invite: QuizInvite,
-  peer: {
-    sealed: SealedQuizResult;
+  partner: {
+    result: ShareableQuizResult;
     consentToShare: boolean;
     consentToCompare: boolean;
+    cipherPackage: string | null;
   },
 ): QuizInvite | { error: string } {
-  if (!peer.consentToShare) {
+  if (!partner.consentToShare) {
     return {
-      error: "Peer has not consented to share a result for this invite.",
+      error: "Partner has not consented to share a result for this invite.",
     };
   }
-  if (peer.sealed.quizId !== invite.quizId) {
-    return { error: "Peer result is for a different quiz." };
-  }
-  if (!openSealed(peer.sealed, invite.sealKey)) {
-    return {
-      error: "Could not open peer result with this invite seal. Fail closed.",
-    };
+  if (partner.result.quizId !== invite.quizId) {
+    return { error: "Partner result is for a different quiz." };
   }
   return {
     ...invite,
     peerConsentToShare: true,
-    peerConsentToCompare: peer.consentToCompare,
-    peerSealed: peer.sealed,
+    peerConsentToCompare: partner.consentToCompare,
+    peerResult: partner.result,
+    peerCipherPackage: partner.cipherPackage,
   };
+}
+
+export function withLocalCompareConsent(
+  invite: QuizInvite,
+  consent: boolean,
+): QuizInvite {
+  return { ...invite, hostConsentToCompare: consent };
 }
 
 export function canCompare(invite: QuizInvite): boolean {
@@ -216,8 +170,8 @@ export function canCompare(invite: QuizInvite): boolean {
     invite.hostConsentToCompare &&
     invite.peerConsentToShare &&
     invite.peerConsentToCompare &&
-    invite.hostSealed !== null &&
-    invite.peerSealed !== null
+    invite.hostResult !== null &&
+    invite.peerResult !== null
   );
 }
 
@@ -230,12 +184,12 @@ export function compareInvite(
         "Comparison stays closed until both people consent to share and to compare.",
     };
   }
-  const host = openSealed(invite.hostSealed!, invite.sealKey);
-  const peer = openSealed(invite.peerSealed!, invite.sealKey);
-  if (!host || !peer) {
-    return { error: "Sealed results could not be opened. Fail closed." };
+  if (!invite.hostResult || !invite.peerResult) {
+    return { error: "Results could not be opened. Fail closed." };
   }
-  return buildComparison(host, peer);
+  // On peer device, hostResult is local weather and peerResult is partner —
+  // comparison is symmetric for notes.
+  return buildComparison(invite.hostResult, invite.peerResult);
 }
 
 function friendlyArchetype(id: ArchetypeId): string {
@@ -282,87 +236,89 @@ export function buildComparison(
   };
 }
 
-export type PortableInvitePackage = {
+/** @deprecated Legacy XOR seal — retained only for historical test vectors. Prefer E2E. */
+export type SealedQuizResult = {
   v: 1;
-  inviteId: string;
   quizId: QuizCatalogId;
-  sealKey: string;
-  sealed: SealedQuizResult | null;
-  consentToShare: boolean;
-  consentToCompare: boolean;
+  ciphertext: string;
+  mac: string;
 };
 
-export function exportHostPackage(invite: QuizInvite): PortableInvitePackage {
+/** @deprecated Prefer Double Ratchet packages. */
+export function deriveStream(sealKey: string, length: number): Uint8Array {
+  const out = new Uint8Array(length);
+  let state = 0;
+  for (let i = 0; i < sealKey.length; i++) {
+    state = (state * 33 + sealKey.charCodeAt(i)) >>> 0;
+  }
+  for (let i = 0; i < length; i++) {
+    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+    out[i] = state & 0xff;
+  }
+  return out;
+}
+
+function bytesToB64(bytes: Uint8Array): string {
+  let s = "";
+  for (const b of bytes) s += String.fromCharCode(b);
+  return btoa(s);
+}
+
+function b64ToBytes(b64: string): Uint8Array {
+  const s = atob(b64);
+  const out = new Uint8Array(s.length);
+  for (let i = 0; i < s.length; i++) out[i] = s.charCodeAt(i);
+  return out;
+}
+
+/** @deprecated Prefer quizE2eSession.encryptResult. */
+export function sealResult(
+  result: ShareableQuizResult,
+  sealKey: string,
+): SealedQuizResult {
+  const plain = new TextEncoder().encode(JSON.stringify(result));
+  const stream = deriveStream(sealKey + ":seal", plain.length);
+  const cipher = new Uint8Array(plain.length);
+  for (let i = 0; i < plain.length; i++) cipher[i] = plain[i]! ^ stream[i]!;
+  const macStream = deriveStream(sealKey + ":mac", 32);
+  const mac = new Uint8Array(32);
+  for (let i = 0; i < 32; i++) {
+    mac[i] = macStream[i]! ^ cipher[i % cipher.length]!;
+  }
   return {
     v: 1,
-    inviteId: invite.id,
-    quizId: invite.quizId,
-    sealKey: invite.sealKey,
-    sealed: invite.hostConsentToShare ? invite.hostSealed : null,
-    consentToShare: invite.hostConsentToShare,
-    consentToCompare: invite.hostConsentToCompare,
+    quizId: result.quizId,
+    ciphertext: bytesToB64(cipher),
+    mac: bytesToB64(mac),
   };
 }
 
-export function parsePortablePackage(
-  raw: string,
-): PortableInvitePackage | { error: string } {
+/** @deprecated Prefer quizE2eSession.decryptResult. */
+export function openSealed(
+  sealed: SealedQuizResult,
+  sealKey: string,
+): ShareableQuizResult | null {
   try {
-    const parsed = JSON.parse(raw) as PortableInvitePackage;
-    if (
-      parsed.v !== 1 ||
-      !parsed.inviteId ||
-      !parsed.sealKey ||
-      !parsed.quizId
-    ) {
-      return { error: "Invite package is incomplete." };
+    const cipher = b64ToBytes(sealed.ciphertext);
+    const mac = b64ToBytes(sealed.mac);
+    const macStream = deriveStream(sealKey + ":mac", 32);
+    const expect = new Uint8Array(32);
+    for (let i = 0; i < 32; i++) {
+      expect[i] = macStream[i]! ^ cipher[i % cipher.length]!;
     }
-    if (typeof parsed.sealKey !== "string" || parsed.sealKey.length < 16) {
-      return { error: "Invite seal is too short. Fail closed." };
-    }
+    if (mac.length !== 32) return null;
+    let ok = 0;
+    for (let i = 0; i < 32; i++) ok |= mac[i]! ^ expect[i]!;
+    if (ok !== 0) return null;
+    const stream = deriveStream(sealKey + ":seal", cipher.length);
+    const plain = new Uint8Array(cipher.length);
+    for (let i = 0; i < cipher.length; i++) plain[i] = cipher[i]! ^ stream[i]!;
+    const parsed = JSON.parse(
+      new TextDecoder().decode(plain),
+    ) as ShareableQuizResult;
+    if (parsed.quizId !== sealed.quizId) return null;
     return parsed;
   } catch {
-    return { error: "Invite package is not valid JSON." };
+    return null;
   }
-}
-
-/**
- * Adopt a partner's invite shell (same seal key + quiz) so dual-device compare
- * is possible. Does not grant host share/compare consent.
- */
-export function adoptInviteFromPackage(
-  pack: PortableInvitePackage,
-  nowIso: string,
-): QuizInvite | { error: string } {
-  if (pack.sealKey.length < 16) {
-    return { error: "Invite seal is too short. Fail closed." };
-  }
-  let peerSealed: SealedQuizResult | null = null;
-  let peerConsentToShare = false;
-  let peerConsentToCompare = false;
-  if (pack.sealed && pack.consentToShare) {
-    if (!openSealed(pack.sealed, pack.sealKey)) {
-      return {
-        error: "Could not open the package with its own seal. Fail closed.",
-      };
-    }
-    if (pack.sealed.quizId !== pack.quizId) {
-      return { error: "Package quiz id does not match sealed result." };
-    }
-    peerSealed = pack.sealed;
-    peerConsentToShare = true;
-    peerConsentToCompare = Boolean(pack.consentToCompare);
-  }
-  return {
-    id: pack.inviteId,
-    quizId: pack.quizId,
-    sealKey: pack.sealKey,
-    createdAt: nowIso,
-    hostConsentToShare: false,
-    hostConsentToCompare: false,
-    peerConsentToShare,
-    peerConsentToCompare,
-    hostSealed: null,
-    peerSealed,
-  };
 }

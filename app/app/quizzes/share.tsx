@@ -13,12 +13,10 @@ import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { getQuizEntry, type QuizCatalogId } from "../../data/quizCatalog";
 import { quizInviteStore } from "../../services/quizInviteStore";
 import { quizResultsRepository } from "../../services/quizResultsRepository";
+import { quizE2eRelay } from "../../services/quizE2eRelay";
 import {
   canCompare,
   compareInvite,
-  exportHostPackage,
-  parsePortablePackage,
-  sealResult,
   type QuizInvite,
 } from "../../services/quizShareCore";
 import { fonts, radius, type AppColors } from "../../theme";
@@ -33,10 +31,12 @@ function ShareBody() {
   const [invites, setInvites] = useState<QuizInvite[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [peerJson, setPeerJson] = useState("");
+  const [claimCode, setClaimCode] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [messageTone, setMessageTone] = useState<MessageTone>("info");
   const [comparisonText, setComparisonText] = useState<string | null>(null);
   const [copiedPackage, setCopiedPackage] = useState<string | null>(null);
+  const [relayCode, setRelayCode] = useState<string | null>(null);
 
   const preferredQuiz =
     (quizIdParam as QuizCatalogId | undefined) ?? "vibe-short";
@@ -58,13 +58,12 @@ function ShareBody() {
 
   const selected = invites.find((i) => i.id === selectedId) ?? null;
 
-  // Fail closed: if mutual share+compare consent is incomplete, never keep a
-  // prior comparison payload on screen (e.g. after revoke or peer re-import).
   useEffect(() => {
     if (!selected || !canCompare(selected)) {
       setComparisonText(null);
     }
   }, [selected]);
+
   const entry = selected
     ? getQuizEntry(selected.quizId)
     : getQuizEntry(preferredQuiz);
@@ -79,9 +78,15 @@ function ShareBody() {
       return;
     }
     const invite = await quizInviteStore.create(quizId);
+    if ("error" in invite) {
+      setStatus(`Closed: ${invite.error}`, "closed");
+      return;
+    }
     setSelectedId(invite.id);
+    setCopiedPackage(null);
+    setRelayCode(null);
     setStatus(
-      "Invite created on this device. Treat the package like a password.",
+      "Encrypted invite ready. Share the package with your partner — it holds public keys only, never your weather.",
       "ok",
     );
     await refresh();
@@ -89,45 +94,49 @@ function ShareBody() {
 
   const consentShare = async (value: boolean) => {
     if (!selected) return;
+    if (!value) {
+      await quizInviteStore.setLocalShare(selected.id, false, null);
+      setComparisonText(null);
+      setStatus(
+        "Share consent withdrawn. Encrypted result removed. Comparison closed.",
+        "info",
+      );
+      await refresh();
+      return;
+    }
     const results = await quizResultsRepository.load();
     const mine = results[selected.quizId];
-    if (value && !mine) {
+    if (!mine) {
       setStatus(
-        "Closed for now: take this quiz first, then you can consent to share a sealed result.",
+        "Closed for now: take this quiz first, then you can consent to share an encrypted result.",
         "closed",
       );
       return;
     }
-    const sealed =
-      value && mine
-        ? sealResult(
-            {
-              quizId: selected.quizId,
-              primary: mine.primary,
-              secondary: mine.secondary,
-              mixPercent: mine.mixPercent,
-              completedAt: mine.completedAt,
-              notes: mine.notes.slice(0, 5),
-            },
-            selected.sealKey,
-          )
-        : null;
-    await quizInviteStore.setHostShare(selected.id, value, sealed);
-    // Fail closed: never leave a comparison view open after share revoke.
-    if (!value) setComparisonText(null);
+    const next = await quizInviteStore.setLocalShare(selected.id, true, {
+      quizId: selected.quizId,
+      primary: mine.primary,
+      secondary: mine.secondary,
+      mixPercent: mine.mixPercent,
+      completedAt: mine.completedAt,
+      notes: mine.notes.slice(0, 5),
+    });
+    if ("error" in next) {
+      setStatus(`Closed: ${next.error}`, "closed");
+      return;
+    }
     setStatus(
-      value
-        ? "Step 1 done: you consented to share a sealed result for this invite."
-        : "Share consent withdrawn. Sealed result removed. Comparison closed.",
-      value ? "ok" : "info",
+      selected.role === "host"
+        ? "Step 1 done: your weather is encrypted for this partner only."
+        : "Step 1 done: encrypted package ready for your partner.",
+      "ok",
     );
     await refresh();
   };
 
   const consentCompare = async (value: boolean) => {
     if (!selected) return;
-    await quizInviteStore.setHostCompare(selected.id, value);
-    // Fail closed: never leave a comparison view open after compare revoke.
+    await quizInviteStore.setLocalCompare(selected.id, value);
     if (!value) setComparisonText(null);
     setStatus(
       value
@@ -138,77 +147,90 @@ function ShareBody() {
     await refresh();
   };
 
-  const showPackage = () => {
+  const showPackage = async () => {
     if (!selected) return;
-    if (!selected.hostConsentToShare || !selected.hostSealed) {
-      setStatus(
-        "Closed: consent to share (step 1) before showing your invite package.",
-        "closed",
-      );
+    const exported = await quizInviteStore.exportPackage(selected.id);
+    if ("error" in exported) {
+      setStatus(`Closed: ${exported.error}`, "closed");
       return;
     }
-    const pack = JSON.stringify(exportHostPackage(selected));
-    setCopiedPackage(pack);
+    setCopiedPackage(exported.packageJson);
+    setRelayCode(null);
+    const kindHint = selected.hostConsentToShare
+      ? "encrypted result (ciphertext only)"
+      : selected.role === "peer"
+        ? "handshake (opens their encryption)"
+        : "public invite (keys only — not your weather)";
     setStatus(
-      "Package ready below. Copy it manually to share out-of-band. It includes the seal key — treat it like a password.",
+      `Package ready (${kindHint}). Copy it privately. Supabase never sees your weather plaintext.`,
       "ok",
     );
   };
 
-  const joinInvite = async () => {
+  const publishRelay = async () => {
+    if (!selected) return;
+    const exported = await quizInviteStore.exportPackage(selected.id);
+    if ("error" in exported) {
+      setStatus(`Closed: ${exported.error}`, "closed");
+      return;
+    }
+    const published = await quizE2eRelay.publish(
+      selected.id,
+      exported.packageJson,
+    );
+    if ("error" in published) {
+      setStatus(`Closed: ${published.error}`, "closed");
+      return;
+    }
+    setRelayCode(published.claimCode);
+    setStatus(
+      "Claim code ready. Your partner enters it on their device. Server holds ciphertext only.",
+      "ok",
+    );
+  };
+
+  const importPackage = async () => {
     const raw = peerJson.trim();
     if (!raw) {
       setStatus("Closed: paste a partner package first.", "closed");
       return;
     }
-    const next = await quizInviteStore.joinFromPackage(raw);
+    const next = await quizInviteStore.importPackage(raw);
     if ("error" in next) {
       setStatus(`Closed: ${next.error}`, "closed");
       return;
     }
     setSelectedId(next.id);
     setComparisonText(null);
+    setPeerJson("");
     setStatus(
-      "Joined their invite seal on this device. Take the same quiz, then consent to share and compare — comparison stays closed until both of you opt in.",
+      next.role === "peer"
+        ? "Joined their encrypted invite. Take the same quiz, then consent to share and compare."
+        : next.peerConsentToShare
+          ? "Partner package imported and decrypted on this device. Complete your share and compare consents."
+          : "Handshake accepted. Encryption is ready — you can now share your sealed weather.",
       "ok",
     );
     await refresh();
   };
 
-  const importPeer = async () => {
-    if (!selected) {
-      setStatus(
-        "Closed: create or join an invite first, then import their sealed result.",
-        "closed",
-      );
+  const claimRelay = async () => {
+    const code = claimCode.trim();
+    if (!code) {
+      setStatus("Closed: enter a claim code first.", "closed");
       return;
     }
-    const parsed = parsePortablePackage(peerJson.trim());
-    if ("error" in parsed) {
-      setStatus(`Closed: ${parsed.error}`, "closed");
+    const claimed = await quizE2eRelay.claim(code);
+    if ("error" in claimed) {
+      setStatus(`Closed: ${claimed.error}`, "closed");
       return;
     }
-    if (!parsed.sealed || !parsed.consentToShare) {
-      setStatus(
-        "Closed: peer package has no sealed result or share consent. Nothing was imported.",
-        "closed",
-      );
-      return;
-    }
-    const next = await quizInviteStore.importPeer(selected.id, {
-      sealed: parsed.sealed,
-      consentToShare: parsed.consentToShare,
-      consentToCompare: parsed.consentToCompare,
-    });
-    if ("error" in next) {
-      setStatus(`Closed: ${next.error}`, "closed");
-      return;
-    }
+    setPeerJson(claimed.packageJson);
+    setClaimCode("");
     setStatus(
-      "Peer package imported. Comparison still needs mutual compare consent (step 2).",
+      "Ciphertext package loaded from relay. Tap Import to decrypt on this device.",
       "ok",
     );
-    await refresh();
   };
 
   const runCompare = () => {
@@ -241,19 +263,21 @@ function ShareBody() {
   };
 
   const step1Done = Boolean(
-    selected?.hostConsentToShare && selected.hostSealed,
+    selected?.hostConsentToShare && selected.hostResult,
   );
   const step2Done = Boolean(selected?.hostConsentToCompare);
-  const peerPresent = Boolean(selected?.peerSealed);
+  const peerPresent = Boolean(selected?.peerResult);
   const compareOpen = selected ? canCompare(selected) : false;
+  const sessionReady = Boolean(selected?.sessionReady);
 
   return (
     <Screen>
       <Eyebrow>PARTNER INVITES</Eyebrow>
-      <Title>Share softly, compare only with consent.</Title>
+      <Title>Share softly, encrypted end to end.</Title>
       <Body muted>
-        Invites live in Secure Store on this device. Sealed results need the
-        invite key. Comparison never implies consent to touch.
+        Weather is sealed with Signal-style Double Ratchet on this device.
+        Private keys stay in Secure Store (and Secure Enclave vault when
+        available). Comparison never implies consent to touch.
       </Body>
 
       <Card>
@@ -267,7 +291,7 @@ function ShareBody() {
           </View>
           <Text style={styles.stepCopy}>
             <Text style={styles.stepStrong}>Share</Text>
-            {" — seal your private result for this invite only."}
+            {" — encrypt your private result for this invite only."}
           </Text>
         </View>
         <View style={styles.stepRow}>
@@ -280,16 +304,10 @@ function ShareBody() {
           </Text>
         </View>
         <Body muted>
-          Create an invite, exchange packages out-of-band, then complete both
-          steps. Missing consent fails closed.
+          Simple path: create invite → partner joins → they share → you share →
+          both consent to compare. Missing consent fails closed.
         </Body>
-        <Button label="Create invite" onPress={() => void create()} />
-        <Button
-          label="Join invite from package below"
-          variant="secondary"
-          onPress={() => void joinInvite()}
-          accessibilityHint="Adopts a partner seal key so you can share into the same invite without granting compare consent yet"
-        />
+        <Button label="Create encrypted invite" onPress={() => void create()} />
       </Card>
 
       {invites.length > 0 ? (
@@ -304,27 +322,29 @@ function ShareBody() {
             const compareLabel = invite.hostConsentToCompare
               ? "compare yes"
               : "compare no";
-            const peerLabel = invite.peerSealed
-              ? "peer present"
-              : "no peer yet";
+            const peerLabel = invite.peerResult ? "peer present" : "no peer yet";
             return (
               <Pressable
                 key={invite.id}
                 onPress={() => {
                   setSelectedId(invite.id);
                   setCopiedPackage(null);
+                  setRelayCode(null);
                   setComparisonText(null);
                 }}
                 style={[styles.inviteRow, active && styles.inviteActive]}
                 accessibilityRole="button"
                 accessibilityState={{ selected: active }}
-                accessibilityLabel={`${label}. Step 1 ${shareLabel}. Step 2 ${compareLabel}. ${peerLabel}.`}
+                accessibilityLabel={`${label}. Role ${invite.role}. Step 1 ${shareLabel}. Step 2 ${compareLabel}. ${peerLabel}.`}
               >
-                <Text style={styles.inviteTitle}>{label}</Text>
+                <Text style={styles.inviteTitle}>
+                  {label} · {invite.role}
+                </Text>
                 <Text style={styles.inviteMeta}>
                   1 share: {invite.hostConsentToShare ? "yes" : "no"} · 2
                   compare: {invite.hostConsentToCompare ? "yes" : "no"} · peer:{" "}
-                  {invite.peerSealed ? "present" : "none"}
+                  {invite.peerResult ? "present" : "none"} · e2e:{" "}
+                  {invite.sessionReady ? "ready" : "waiting"}
                 </Text>
               </Pressable>
             );
@@ -366,19 +386,35 @@ function ShareBody() {
                 2 Compare · {step2Done ? "yes" : "closed"}
               </Text>
             </View>
+            <View
+              style={[
+                styles.statusChip,
+                sessionReady ? styles.statusChipOk : styles.statusChipClosed,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.statusChipText,
+                  sessionReady ? styles.statusOkText : styles.statusClosedText,
+                ]}
+              >
+                E2E · {sessionReady ? "ready" : "waiting"}
+              </Text>
+            </View>
           </View>
           <Body muted>
-            Two separate choices. Share seals your result. Compare opens a joint
-            view only when both opt in.
+            {selected.role === "host"
+              ? "As host: show your public invite first. After they join and send a package, encryption opens and you can share."
+              : "As partner: after joining, take the quiz, consent to share, then send your package back."}
           </Body>
           <Button
             label={
               selected.hostConsentToShare
                 ? "Withdraw share consent"
-                : "1 · I consent to share my sealed result"
+                : "1 · I consent to share my encrypted result"
             }
             variant={selected.hostConsentToShare ? "secondary" : "primary"}
-            accessibilityHint="Step one: seal or unseal your private result for this invite"
+            accessibilityHint="Step one: encrypt or remove your private result for this invite"
             onPress={() => void consentShare(!selected.hostConsentToShare)}
           />
           <Button
@@ -392,90 +428,109 @@ function ShareBody() {
             onPress={() => void consentCompare(!selected.hostConsentToCompare)}
           />
           <Button
-            label="Show my invite package"
+            label="Show package to copy"
             variant="secondary"
-            disabled={!step1Done}
-            accessibilityHint={
-              step1Done
-                ? "Shows the sealed package to copy out of band"
-                : "Complete share consent first"
-            }
-            onPress={showPackage}
+            accessibilityHint="Shows the encrypted package to copy out of band"
+            onPress={() => void showPackage()}
+          />
+          <Button
+            label="Optional: publish claim code (ciphertext only)"
+            variant="secondary"
+            accessibilityHint="Uploads opaque ciphertext to Supabase relay and returns a short claim code"
+            onPress={() => void publishRelay()}
           />
           {copiedPackage ? (
             <Text selectable style={styles.packageBox}>
               {copiedPackage}
             </Text>
           ) : null}
+          {relayCode ? (
+            <Text selectable style={styles.relayCode}>
+              Claim code: {relayCode}
+            </Text>
+          ) : null}
         </Card>
       ) : null}
 
-      {selected ? (
-        <Card>
-          <Text style={styles.cardTitle}>Import partner package</Text>
-          <Body muted>
-            Paste their JSON package. Wrong seals, missing share consent, or
-            broken packages fail closed — nothing opens by accident.
-          </Body>
-          <View style={styles.statusRow}>
-            <View
+      <Card>
+        <Text style={styles.cardTitle}>Import partner package</Text>
+        <Body muted>
+          Paste their JSON package, or enter a claim code. Wrong packages and
+          missing share consent fail closed — nothing opens by accident.
+        </Body>
+        <View style={styles.statusRow}>
+          <View
+            style={[
+              styles.statusChip,
+              peerPresent ? styles.statusChipOk : styles.statusChipClosed,
+            ]}
+          >
+            <Text
               style={[
-                styles.statusChip,
-                peerPresent ? styles.statusChipOk : styles.statusChipClosed,
+                styles.statusChipText,
+                peerPresent ? styles.statusOkText : styles.statusClosedText,
               ]}
             >
-              <Text
-                style={[
-                  styles.statusChipText,
-                  peerPresent ? styles.statusOkText : styles.statusClosedText,
-                ]}
-              >
-                Peer · {peerPresent ? "present" : "none"}
-              </Text>
-            </View>
-            <View
-              style={[
-                styles.statusChip,
-                compareOpen ? styles.statusChipOk : styles.statusChipClosed,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.statusChipText,
-                  compareOpen ? styles.statusOkText : styles.statusClosedText,
-                ]}
-              >
-                Compare · {compareOpen ? "ready" : "closed"}
-              </Text>
-            </View>
+              Peer · {peerPresent ? "present" : "none"}
+            </Text>
           </View>
-          <TextInput
-            value={peerJson}
-            onChangeText={setPeerJson}
-            placeholder="Paste partner package JSON"
-            placeholderTextColor={styles.placeholder.color}
-            multiline
-            style={styles.input}
-            accessibilityLabel="Partner package JSON"
-          />
-          <Button
-            label="Import peer package"
-            onPress={() => void importPeer()}
-          />
-          <Button
-            label={
-              compareOpen ? "Open comparison" : "Open comparison (still closed)"
-            }
-            variant={compareOpen ? "primary" : "secondary"}
-            accessibilityHint={
-              compareOpen
-                ? "Opens the mutual-consent comparison notes"
-                : "Stays closed until both people share and both consent to compare"
-            }
-            onPress={runCompare}
-          />
-        </Card>
-      ) : null}
+          <View
+            style={[
+              styles.statusChip,
+              compareOpen ? styles.statusChipOk : styles.statusChipClosed,
+            ]}
+          >
+            <Text
+              style={[
+                styles.statusChipText,
+                compareOpen ? styles.statusOkText : styles.statusClosedText,
+              ]}
+            >
+              Compare · {compareOpen ? "ready" : "closed"}
+            </Text>
+          </View>
+        </View>
+        <TextInput
+          value={claimCode}
+          onChangeText={setClaimCode}
+          placeholder="Optional claim code"
+          placeholderTextColor={styles.placeholder.color}
+          autoCapitalize="none"
+          autoCorrect={false}
+          style={styles.claimInput}
+          accessibilityLabel="Relay claim code"
+        />
+        <Button
+          label="Load from claim code"
+          variant="secondary"
+          onPress={() => void claimRelay()}
+        />
+        <TextInput
+          value={peerJson}
+          onChangeText={setPeerJson}
+          placeholder="Paste partner package JSON"
+          placeholderTextColor={styles.placeholder.color}
+          multiline
+          style={styles.input}
+          accessibilityLabel="Partner package JSON"
+        />
+        <Button
+          label="Import package"
+          onPress={() => void importPackage()}
+        />
+        <Button
+          label={
+            compareOpen ? "Open comparison" : "Open comparison (still closed)"
+          }
+          variant={compareOpen ? "primary" : "secondary"}
+          accessibilityHint={
+            compareOpen
+              ? "Opens the mutual-consent comparison notes"
+              : "Stays closed until both people share and both consent to compare"
+          }
+          onPress={runCompare}
+        />
+      </Card>
 
       {message ? (
         <View
@@ -629,12 +684,29 @@ function makeStyles(colors: AppColors) {
       color: colors.ink,
       textAlignVertical: "top" as const,
     },
+    claimInput: {
+      minHeight: 48,
+      borderWidth: 1,
+      borderColor: colors.line,
+      borderRadius: 12,
+      padding: 12,
+      marginTop: 10,
+      backgroundColor: colors.paper,
+      color: colors.ink,
+    },
     placeholder: { color: colors.muted },
     packageBox: {
       marginTop: 10,
       color: colors.muted,
       fontSize: 11,
       lineHeight: 16,
+    },
+    relayCode: {
+      marginTop: 10,
+      color: colors.moss,
+      fontSize: 16,
+      fontWeight: "700" as const,
+      letterSpacing: 1,
     },
     compareReminder: {
       color: colors.plum,
