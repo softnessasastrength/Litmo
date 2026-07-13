@@ -275,9 +275,11 @@ function ShareBody() {
       <Eyebrow>PARTNER INVITES</Eyebrow>
       <Title>Share softly, encrypted end to end.</Title>
       <Body muted>
-        Weather is sealed with Signal-style Double Ratchet on this device.
-        Private keys stay in Secure Store (and Secure Enclave vault when
-        available). Comparison never implies consent to touch.
+        Weather is sealed with Signal-style encryption (X3DH + Double Ratchet).
+        Only the invited partner who joined this invite can decrypt — not Litmo
+        servers, not a random package forward. Keys stay on-device (Secure Store
+        + device-bound vault / Secure Enclave path on real iOS). Comparison
+        never implies consent to touch.
       </Body>
 
       <Card>
@@ -304,8 +306,9 @@ function ShareBody() {
           </Text>
         </View>
         <Body muted>
-          Simple path: create invite → partner joins → they share → you share →
-          both consent to compare. Missing consent fails closed.
+          Simple path: create invite → send only to your partner → they join →
+          share → you share → both consent to compare. Treat the invite like a
+          private invitation. Missing consent fails closed.
         </Body>
         <Button label="Create encrypted invite" onPress={() => void create()} />
       </Card>

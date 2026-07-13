@@ -104,12 +104,14 @@
   “saved privately.” Removal criterion: encrypt real-account results at rest if
   privacy review requires it.
 - E2E crypto is **Signal-inspired, not a full audited Signal client** (no OPKs,
-  sequential quiz messages only, no multi-device identity). Expo Go / simulator
-  may fall back to Secure Store–only private keys when the Enclave vault is
-  unavailable. Impact: residual protocol and platform limits. Mitigation: unit
-  tests for X3DH agreement, ratchet round-trip, AAD/tamper fail-closed, dual
-  consent; ADR 0052 documents scope. Removal criterion: independent crypto
-  review before external beta.
+  sequential quiz messages only, no multi-device identity). X25519 keys cannot
+  live *inside* Secure Enclave (P-256 only); real builds wrap them with the
+  CryptoKit vault (biometry ACL / SE-evaluated access). Expo Go / simulator may
+  fall back to Secure Store–only private keys. Public-invite packages are bearer
+  invitations — only share with the intended partner. Impact: residual protocol
+  and platform limits. Mitigation: host-device binding, AAD host binding, unit
+  tests for outsider decrypt fail-closed and dual consent; ADR 0052. Removal
+  criterion: independent crypto review before external beta.
 - Face ID step-up (`SensitiveAccessGate`) protects private **result** and
   **partner share** screens on real account sessions only. The catalog hub and
   play flow are not gated; demo mode skips biometrics so Expo Go can walk the

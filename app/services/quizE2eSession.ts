@@ -25,11 +25,28 @@ import {
   type DoubleRatchetState,
   type RatchetMessage,
 } from "./doubleRatchetCore.ts";
-import { quizE2eIdentity, type PublicBundle } from "./quizE2eIdentity.ts";
+import {
+  quizE2eIdentity,
+  unwrapSecretBlob,
+  wrapSecretBlob,
+  type PublicBundle,
+} from "./quizE2eIdentity.ts";
 import * as SecureStore from "expo-secure-store";
 
 const RATCHET_PREFIX = "litmo.quiz.e2e.ratchet.";
+const RATCHET_META_PREFIX = "litmo.quiz.e2e.ratchet.meta.";
 const SESSION_OPEN_PLAIN = JSON.stringify({ t: "session-open", v: 1 });
+
+type RatchetStored = {
+  vaultWrapped: boolean;
+  blob: string;
+};
+
+type RatchetMeta = {
+  /** Host identity public — binds AAD so only this invite session decrypts. */
+  hostIdentityPublic: string;
+  hostSignedPrekeyPublic: string;
+};
 
 export type E2eInvitePublic = {
   v: 3;
@@ -91,18 +108,62 @@ function bytesToB64url(bytes: Uint8Array): string {
   return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
 
-function aadFor(quizId: string, invitePublicId: string): string {
-  return `quiz:${quizId}|${invitePublicId}`;
+/**
+ * AAD binds ciphertext to this invite + host public keys.
+ * A third party without the matching ratchet state cannot decrypt;
+ * wrong invite or host identity fails closed.
+ */
+function aadFor(
+  quizId: string,
+  invitePublicId: string,
+  hostIdentityPublic: string,
+): string {
+  return `quiz:${quizId}|${invitePublicId}|host:${hostIdentityPublic}`;
+}
+
+const SECURE_OPTS = {
+  keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+} as never;
+
+async function saveRatchetMeta(
+  invitePublicId: string,
+  meta: RatchetMeta,
+): Promise<void> {
+  await SecureStore.setItemAsync(
+    RATCHET_META_PREFIX + invitePublicId,
+    JSON.stringify(meta),
+    SECURE_OPTS,
+  );
+}
+
+async function loadRatchetMeta(
+  invitePublicId: string,
+): Promise<RatchetMeta | null> {
+  const raw = await SecureStore.getItemAsync(
+    RATCHET_META_PREFIX + invitePublicId,
+  );
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as RatchetMeta;
+  } catch {
+    return null;
+  }
 }
 
 async function saveRatchet(
   invitePublicId: string,
   state: DoubleRatchetState,
 ): Promise<void> {
+  const plain = serializeState(state);
+  const wrapped = await wrapSecretBlob(plain, "quiz-e2e-ratchet");
+  const stored: RatchetStored = {
+    vaultWrapped: wrapped.vaultWrapped,
+    blob: wrapped.blob,
+  };
   await SecureStore.setItemAsync(
     RATCHET_PREFIX + invitePublicId,
-    serializeState(state),
-    { keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY } as never,
+    JSON.stringify(stored),
+    SECURE_OPTS,
   );
 }
 
@@ -111,7 +172,32 @@ async function loadRatchet(
 ): Promise<DoubleRatchetState | null> {
   const raw = await SecureStore.getItemAsync(RATCHET_PREFIX + invitePublicId);
   if (!raw) return null;
-  return parseState(raw);
+  try {
+    // v3 envelope (vault-wrapped or plain blob)
+    const stored = JSON.parse(raw) as RatchetStored | DoubleRatchetState;
+    if ("blob" in stored && typeof stored.blob === "string") {
+      const plain = await unwrapSecretBlob(
+        stored.blob,
+        Boolean(stored.vaultWrapped),
+        "quiz-e2e-ratchet",
+      );
+      if (!plain) return null;
+      return parseState(plain);
+    }
+    // Legacy unwrapped DoubleRatchetState JSON
+    return parseState(raw);
+  } catch {
+    return parseState(raw);
+  }
+}
+
+async function aadForInvite(
+  quizId: string,
+  invitePublicId: string,
+): Promise<string | null> {
+  const meta = await loadRatchetMeta(invitePublicId);
+  if (!meta?.hostIdentityPublic) return null;
+  return aadFor(quizId, invitePublicId, meta.hostIdentityPublic);
 }
 
 export const quizE2eSession = {
@@ -123,6 +209,11 @@ export const quizE2eSession = {
     invitePublicId: string,
   ): Promise<E2eInvitePublic> {
     const hostBundle = await quizE2eIdentity.getPublicBundle();
+    // Bind this invite id to the host's current public keys for later accept.
+    await saveRatchetMeta(invitePublicId, {
+      hostIdentityPublic: hostBundle.identityPublic,
+      hostSignedPrekeyPublic: hostBundle.signedPrekeyPublic,
+    });
     return {
       v: 3,
       kind: "public-invite",
@@ -136,16 +227,22 @@ export const quizE2eSession = {
 
   /**
    * Peer: join host invite, run X3DH as initiator, open Alice ratchet, emit session-open.
+   * Only this peer device holds Alice's ratchet — outsiders cannot decrypt later results.
    */
-  async joinAsPeer(invite: E2eInvitePublic): Promise<
-    | { handshake: E2ePeerHandshakePackage }
-    | { error: string }
-  > {
+  async joinAsPeer(
+    invite: E2eInvitePublic,
+  ): Promise<{ handshake: E2ePeerHandshakePackage } | { error: string }> {
     if (invite.v !== 3 || invite.kind !== "public-invite") {
       return { error: "Unsupported invite package." };
     }
     if (invite.protocol !== "x3dh+double-ratchet") {
       return { error: "Unsupported invite protocol." };
+    }
+    if (
+      !invite.hostBundle.identityPublic ||
+      !invite.hostBundle.signedPrekeyPublic
+    ) {
+      return { error: "Invite is missing host public keys. Fail closed." };
     }
     try {
       const peerIk = await quizE2eIdentity.getIdentityPair();
@@ -154,17 +251,24 @@ export const quizE2eSession = {
         identityPrivateA: peerIk.privateKey,
         ephemeralPrivateA: peerEk.privateKey,
         identityPublicB: b64urlToBytes(invite.hostBundle.identityPublic),
-        signedPrekeyPublicB: b64urlToBytes(invite.hostBundle.signedPrekeyPublic),
+        signedPrekeyPublicB: b64urlToBytes(
+          invite.hostBundle.signedPrekeyPublic,
+        ),
       });
       let alice = initRatchetAsAlice(
         shared,
         b64urlToBytes(invite.hostBundle.signedPrekeyPublic),
       );
-      const open = ratchetEncrypt(
-        alice,
-        SESSION_OPEN_PLAIN,
-        aadFor(invite.quizId, invite.invitePublicId),
+      await saveRatchetMeta(invite.invitePublicId, {
+        hostIdentityPublic: invite.hostBundle.identityPublic,
+        hostSignedPrekeyPublic: invite.hostBundle.signedPrekeyPublic,
+      });
+      const aad = aadFor(
+        invite.quizId,
+        invite.invitePublicId,
+        invite.hostBundle.identityPublic,
       );
+      const open = ratchetEncrypt(alice, SESSION_OPEN_PLAIN, aad);
       alice = open.state;
       await saveRatchet(invite.invitePublicId, alice);
       return {
@@ -186,6 +290,7 @@ export const quizE2eSession = {
 
   /**
    * Host: accept peer handshake (X3DH responder + decrypt session-open → send chain ready).
+   * Requires this device to hold the host private keys matching the invite public bundle.
    */
   async hostAcceptHandshake(
     invite: E2eInvitePublic,
@@ -206,6 +311,18 @@ export const quizE2eSession = {
     try {
       const hostIk = await quizE2eIdentity.getIdentityPair();
       const hostSpk = await quizE2eIdentity.getSignedPrekeyPair();
+      // Fail closed if this device is not the invite host (wrong private keys).
+      const localIkPub = bytesToB64url(hostIk.publicKey);
+      const localSpkPub = bytesToB64url(hostSpk.publicKey);
+      if (
+        localIkPub !== invite.hostBundle.identityPublic ||
+        localSpkPub !== invite.hostBundle.signedPrekeyPublic
+      ) {
+        return {
+          error:
+            "This device is not the invite host. Only the device that created the invite can open partner packages.",
+        };
+      }
       const shared = x3dhAsResponder({
         identityPrivateB: hostIk.privateKey,
         signedPrekeyPrivateB: hostSpk.privateKey,
@@ -213,20 +330,23 @@ export const quizE2eSession = {
         ephemeralPublicA: b64urlToBytes(handshake.peerEphemeralPublic),
       });
       let bob = initRatchetAsBob(shared, hostSpk);
-      const openMsg =
-        "sessionOpen" in handshake ? handshake.sessionOpen : null;
+      const openMsg = handshake.sessionOpen;
       if (!openMsg) {
-        await saveRatchet(invite.invitePublicId, bob);
         return {
           error:
             "Peer handshake missing session-open. Ask them to re-join and resend.",
         };
       }
-      const dec = ratchetDecrypt(
-        bob,
-        openMsg,
-        aadFor(invite.quizId, invite.invitePublicId),
+      await saveRatchetMeta(invite.invitePublicId, {
+        hostIdentityPublic: invite.hostBundle.identityPublic,
+        hostSignedPrekeyPublic: invite.hostBundle.signedPrekeyPublic,
+      });
+      const aad = aadFor(
+        invite.quizId,
+        invite.invitePublicId,
+        invite.hostBundle.identityPublic,
       );
+      const dec = ratchetDecrypt(bob, openMsg, aad);
       if (!dec || dec.plaintext !== SESSION_OPEN_PLAIN) {
         return {
           error: "Session-open decrypt failed. Wrong keys or tampered package.",
@@ -276,11 +396,17 @@ export const quizE2eSession = {
           "Sending chain not ready. Hosts need the partner handshake first; peers need to re-join the invite.",
       };
     }
+    const aad = await aadForInvite(params.quizId, params.invitePublicId);
+    if (!aad) {
+      return {
+        error: "Missing invite binding. Re-join or recreate the invite.",
+      };
+    }
     try {
       const { state: next, message } = ratchetEncrypt(
         state,
         JSON.stringify(params.result),
-        aadFor(params.quizId, params.invitePublicId),
+        aad,
       );
       await saveRatchet(params.invitePublicId, next);
       const pack: E2eResultPackage = {
@@ -334,15 +460,21 @@ export const quizE2eSession = {
     }
     const state = await loadRatchet(params.invitePublicId);
     if (!state) {
-      return { error: "No local ratchet session. Join or accept first." };
+      return {
+        error:
+          "No local ratchet session. Only the invited partner device that joined this invite can decrypt.",
+      };
     }
-    const dec = ratchetDecrypt(
-      state,
-      params.envelope.message,
-      aadFor(params.quizId, params.invitePublicId),
-    );
+    const aad = await aadForInvite(params.quizId, params.invitePublicId);
+    if (!aad) {
+      return { error: "Missing invite binding. Fail closed." };
+    }
+    const dec = ratchetDecrypt(state, params.envelope.message, aad);
     if (!dec) {
-      return { error: "Decrypt failed. Wrong session or tampered package." };
+      return {
+        error:
+          "Decrypt failed. Wrong partner, wrong invite, or tampered package.",
+      };
     }
     // Reject control messages used as results
     if (dec.plaintext === SESSION_OPEN_PLAIN) {
@@ -370,6 +502,7 @@ export const quizE2eSession = {
 
   async clearSession(invitePublicId: string): Promise<void> {
     await SecureStore.deleteItemAsync(RATCHET_PREFIX + invitePublicId);
+    await SecureStore.deleteItemAsync(RATCHET_META_PREFIX + invitePublicId);
   },
 };
 

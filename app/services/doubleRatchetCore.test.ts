@@ -138,6 +138,58 @@ test("peer session-open then host can send (host-first share path)", () => {
   assert.equal(JSON.parse(peerDec.plaintext).primary, "lantern");
 });
 
+test("outsider without matching X3DH session cannot decrypt partner result", () => {
+  const hostIk = generateX25519KeyPair();
+  const hostSpk = generateX25519KeyPair();
+  const peerIk = generateX25519KeyPair();
+  const peerEk = generateX25519KeyPair();
+  const outsiderIk = generateX25519KeyPair();
+  const outsiderEk = generateX25519KeyPair();
+
+  const sharedPeer = x3dhAsInitiator({
+    identityPrivateA: peerIk.privateKey,
+    ephemeralPrivateA: peerEk.privateKey,
+    identityPublicB: hostIk.publicKey,
+    signedPrekeyPublicB: hostSpk.publicKey,
+  });
+  let alice = initRatchetAsAlice(sharedPeer, hostSpk.publicKey);
+  let bob = initRatchetAsBob(sharedPeer, hostSpk);
+
+  const open = ratchetEncrypt(alice, SESSION_OPEN, "aad|host:H");
+  alice = open.state;
+  const openDec = ratchetDecrypt(bob, open.message, "aad|host:H");
+  assert.ok(openDec);
+  bob = openDec.state;
+
+  const result = ratchetEncrypt(
+    alice,
+    JSON.stringify({ primary: "tidepool", quizId: "vibe-short" }),
+    "aad|host:H",
+  );
+
+  // Wrong AAD (different host binding) fails closed before any consume
+  assert.equal(ratchetDecrypt(bob, result.message, "aad|host:OTHER"), null);
+
+  // Outsider who ran X3DH against same host public keys but different ephemeral
+  // still cannot open Alice's ciphertext (different session keys).
+  const outsiderShared = x3dhAsInitiator({
+    identityPrivateA: outsiderIk.privateKey,
+    ephemeralPrivateA: outsiderEk.privateKey,
+    identityPublicB: hostIk.publicKey,
+    signedPrekeyPublicB: hostSpk.publicKey,
+  });
+  const outsiderAlice = initRatchetAsAlice(outsiderShared, hostSpk.publicKey);
+  assert.equal(
+    ratchetDecrypt(outsiderAlice, result.message, "aad|host:H"),
+    null,
+  );
+
+  // Legitimate host decrypts
+  const hostRead = ratchetDecrypt(bob, result.message, "aad|host:H");
+  assert.ok(hostRead);
+  assert.equal(JSON.parse(hostRead.plaintext).primary, "tidepool");
+});
+
 test("tampered ciphertext fails closed", () => {
   const hostSpk = generateX25519KeyPair();
   const peerIk = generateX25519KeyPair();

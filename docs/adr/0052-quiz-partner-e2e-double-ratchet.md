@@ -36,16 +36,33 @@ This is **not** a full multi-device Signal client (no OPKs, no skipped-key store
 beyond sequential quiz messages, no sealed sender). It is a focused 1:1 ratchet
 for partner quiz packages.
 
-### 2. Device-local private keys (Secure Store + optional Secure Enclave vault)
+### 2. Device-local private keys (Secure Store + Secure Enclave vault wrap)
 
-- Identity and signed-prekey private keys live in `expo-secure-store` with
-  `WHEN_UNLOCKED_THIS_DEVICE_ONLY`.
-- When the Litmo Passkeys CryptoKit vault is available, private material is
-  **wrapped** with AES-GCM via `litmoPasskeys.encryptSensitive` (ADR 0011 path /
-  Secure Enclave-backed Keychain access control on real iOS builds).
-- Ratchet session state is also Secure Store–only, per invite id.
+Apple Secure Enclave supports P-256, **not** Curve25519/X25519 used by Signal
+X3DH. Therefore:
+
+- X25519 identity / signed-prekey / ratchet secrets are generated in software.
+- On real iOS builds with LitmoPasskeys, those bytes are **AES-GCM wrapped** via
+  `litmoPasskeys.encryptSensitive` (ADR 0011 CryptoKit vault). Vault master keys
+  sit in Keychain with passcode + biometry ACL (Secure Enclave evaluates
+  biometry on capable devices).
+- Envelopes live in `expo-secure-store` (`WHEN_UNLOCKED_THIS_DEVICE_ONLY`).
+- Ratchet state is vault-wrapped the same way when the vault is available.
+- Demo / Expo Go may fall back to Secure Store–only storage (documented limit).
 - Private keys, root keys, and chain keys **never** appear in portable packages
   or Supabase rows.
+
+### 2b. Only the invited partner can decrypt
+
+- Ciphertext is bound by Double Ratchet message keys from an X3DH session that
+  requires the host’s private keys and the peer’s ephemeral contribution.
+- AAD includes `quizId`, `invitePublicId`, and **host identity public key**.
+- Host accept fails closed if this device’s public keys do not match the invite
+  bundle (wrong device cannot open partner packages).
+- An outsider who only has ciphertext (or who starts a different X3DH session)
+  cannot decrypt — unit-tested.
+- The public-invite package is a **bearer invitation**: only share it with the
+  intended partner. Product copy states this; it is not a multi-party ACL.
 
 ### 3. Package kinds (v3) — no sealKey
 

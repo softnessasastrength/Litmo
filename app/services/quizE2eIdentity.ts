@@ -1,9 +1,15 @@
 /**
- * Device-local identity + signed prekey material for quiz E2E.
+ * Device-local identity + signed prekey material for quiz E2E (Signal-style X25519).
  *
- * Private keys never leave the device. Prefer Secure Store (Keychain /
- * WhenPasscodeSetThisDeviceOnly). When Litmo Passkeys vault is available,
- * wrap private key material with AES-GCM via Secure Enclave-backed vault.
+ * Architecture:
+ * - X25519 private keys (Signal/X3DH) cannot live *inside* Apple Secure Enclave
+ *   (SE supports P-256, not Curve25519). Industry pattern: encrypt private key
+ *   bytes with AES-GCM under a device-bound vault key (ADR 0011 / LitmoPasskeys
+ *   CryptoKit), then store the envelope in Secure Store.
+ * - Vault keys use Keychain with passcode + biometry ACL (Secure Enclave evaluates
+ *   biometry on capable devices). Private key bytes never go to Supabase.
+ * - Demo / Expo Go without the native module falls back to Secure Store only and
+ *   is documented as weaker (KNOWN_LIMITATIONS).
  */
 
 import * as SecureStore from "expo-secure-store";
@@ -14,20 +20,26 @@ import {
   type X25519KeyPair,
 } from "./doubleRatchetCore.ts";
 
-const IDENTITY_KEY = "litmo.quiz.e2e.identity.v2";
-const SPK_KEY = "litmo.quiz.e2e.spk.v2";
+const IDENTITY_KEY = "litmo.quiz.e2e.identity.v3";
+const SPK_KEY = "litmo.quiz.e2e.spk.v3";
 
 export type PublicBundle = {
   identityPublic: string; // base64url
   signedPrekeyPublic: string;
 };
 
+export type IdentityStorageMode = "vault-wrapped" | "secure-store-fallback";
+
 type StoredKeyPair = {
   publicKey: string;
-  /** base64url private OR vault envelope JSON */
+  /** vault envelope JSON when vaultWrapped; else base64url private (fallback only) */
   privateKey: string;
   vaultWrapped: boolean;
 };
+
+const SECURE_STORE_OPTS = {
+  keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+} as never;
 
 function b64url(bytes: Uint8Array): string {
   let s = "";
@@ -44,74 +56,121 @@ function fromB64url(s: string): Uint8Array {
   return out;
 }
 
-async function wrapPrivate(privateKey: Uint8Array): Promise<StoredKeyPair> {
-  const publicKey = b64url(x25519.getPublicKey(privateKey));
+async function tryVaultEncrypt(
+  plaintextB64: string,
+  purpose: string,
+): Promise<{ envelopeJson: string } | null> {
   try {
-    const envelope = await litmoPasskeys.encryptSensitive(
-      b64url(privateKey),
-      "quiz-e2e-identity",
-    );
-    return {
-      publicKey,
-      privateKey: JSON.stringify(envelope),
-      vaultWrapped: true,
-    };
+    const envelope = await litmoPasskeys.encryptSensitive(plaintextB64, purpose);
+    if (
+      typeof envelope?.ciphertext !== "string" ||
+      envelope.ciphertext.length < 8
+    ) {
+      return null;
+    }
+    return { envelopeJson: JSON.stringify(envelope) };
   } catch {
-    return {
-      publicKey,
-      privateKey: b64url(privateKey),
-      vaultWrapped: false,
-    };
+    return null;
   }
 }
 
-async function unwrapPrivate(stored: StoredKeyPair): Promise<Uint8Array> {
-  if (!stored.vaultWrapped) return fromB64url(stored.privateKey);
+async function tryVaultDecrypt(
+  envelopeJson: string,
+  purpose: string,
+): Promise<string | null> {
   try {
-    const envelope = JSON.parse(stored.privateKey) as {
+    const envelope = JSON.parse(envelopeJson) as {
       format: number;
       keyVersion: number;
       ciphertext: string;
     };
-    const plain = await litmoPasskeys.decryptSensitive(
-      envelope,
-      "quiz-e2e-identity",
-    );
-    return fromB64url(plain);
+    if (envelope.format !== 1 || !envelope.ciphertext) return null;
+    return await litmoPasskeys.decryptSensitive(envelope, purpose);
   } catch {
-    throw new Error("identity_key_locked");
+    return null;
   }
+}
+
+async function wrapPrivate(privateKey: Uint8Array): Promise<StoredKeyPair> {
+  const publicKey = b64url(x25519.getPublicKey(privateKey));
+  const plainB64 = b64url(privateKey);
+  const vault = await tryVaultEncrypt(plainB64, "quiz-e2e-identity");
+  if (vault) {
+    return {
+      publicKey,
+      privateKey: vault.envelopeJson,
+      vaultWrapped: true,
+    };
+  }
+  // Fallback: Secure Store only (demo / Expo Go without native vault).
+  return {
+    publicKey,
+    privateKey: plainB64,
+    vaultWrapped: false,
+  };
+}
+
+async function unwrapPrivate(stored: StoredKeyPair): Promise<Uint8Array> {
+  if (!stored.vaultWrapped) return fromB64url(stored.privateKey);
+  const plain = await tryVaultDecrypt(stored.privateKey, "quiz-e2e-identity");
+  if (!plain) throw new Error("identity_key_locked");
+  return fromB64url(plain);
 }
 
 async function loadOrCreatePair(account: string): Promise<{
   pair: X25519KeyPair;
   publicB64: string;
+  vaultWrapped: boolean;
 }> {
   const raw = await SecureStore.getItemAsync(account);
   if (raw) {
     try {
       const stored = JSON.parse(raw) as StoredKeyPair;
       const privateKey = await unwrapPrivate(stored);
-      const publicKey = fromB64url(stored.publicKey);
       return {
-        pair: { privateKey, publicKey },
+        pair: { privateKey, publicKey: fromB64url(stored.publicKey) },
         publicB64: stored.publicKey,
+        vaultWrapped: stored.vaultWrapped,
       };
     } catch {
-      // regenerate if unreadable
+      // regenerate if unreadable / biometry cancelled mid-load
     }
   }
   const generated = generateX25519KeyPair();
   const stored = await wrapPrivate(generated.privateKey);
-  // ensure public matches
   stored.publicKey = b64url(generated.publicKey);
-  await SecureStore.setItemAsync(account, JSON.stringify(stored), {
-    keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
-  } as never);
+  await SecureStore.setItemAsync(
+    account,
+    JSON.stringify(stored),
+    SECURE_STORE_OPTS,
+  );
   return {
     pair: generated,
     publicB64: stored.publicKey,
+    vaultWrapped: stored.vaultWrapped,
   };
+}
+
+/**
+ * Wrap arbitrary secret strings (e.g. serialized ratchet state) with the vault
+ * when available. Returns envelope JSON or plaintext for fallback.
+ */
+export async function wrapSecretBlob(
+  plaintext: string,
+  purpose: string,
+): Promise<{ blob: string; vaultWrapped: boolean }> {
+  const vault = await tryVaultEncrypt(plaintext, purpose);
+  if (vault) return { blob: vault.envelopeJson, vaultWrapped: true };
+  return { blob: plaintext, vaultWrapped: false };
+}
+
+export async function unwrapSecretBlob(
+  blob: string,
+  vaultWrapped: boolean,
+  purpose: string,
+): Promise<string | null> {
+  if (!vaultWrapped) return blob;
+  return tryVaultDecrypt(blob, purpose);
 }
 
 export const quizE2eIdentity = {
@@ -130,5 +189,11 @@ export const quizE2eIdentity = {
 
   async getSignedPrekeyPair(): Promise<X25519KeyPair> {
     return (await loadOrCreatePair(SPK_KEY)).pair;
+  },
+
+  /** How private keys are stored on this device (for honest UX / diagnostics). */
+  async getStorageMode(): Promise<IdentityStorageMode> {
+    const ik = await loadOrCreatePair(IDENTITY_KEY);
+    return ik.vaultWrapped ? "vault-wrapped" : "secure-store-fallback";
   },
 };
