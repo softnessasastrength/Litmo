@@ -179,3 +179,4 @@ function SettingsContent() {
     </Screen>
   );
 }
+
