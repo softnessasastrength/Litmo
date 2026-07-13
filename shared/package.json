@@ -2,16 +2,28 @@
   "name": "@litmo/domain",
   "version": "0.1.0",
   "private": true,
+  "license": "MPL-2.0",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": { ".": { "types": "./src/index.ts", "import": "./src/index.ts" } },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    }
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "lint": "prettier --check \"src/**/*.{ts,json}\"",
     "test": "node --experimental-strip-types --test src/*.test.ts"
   },
-  "dependencies": { "zod": "^4.2.1" },
-  "devDependencies": { "@types/node": "^22.10.0", "prettier": "^3.8.1", "typescript": "~5.9.2" }
+  "dependencies": {
+    "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "prettier": "^3.8.1",
+    "typescript": "~5.9.2"
+  }
 }
