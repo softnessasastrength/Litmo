@@ -62,6 +62,18 @@ async function signUp(label, nonce) {
   assert.equal(result.error, null, `${label} signup: ${result.error?.message}`);
   assert.ok(result.data.session, `${label} must receive a session`);
   assert.ok(result.data.user?.id, `${label} must receive a user id`);
+
+  // Private-alpha admission is a production gate. Integration accounts are
+  // synthetic and are admitted explicitly through the trusted test boundary.
+  const admin = createClient(url, serviceRoleKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  const admission = await admin.from("private_alpha_memberships").insert({
+    user_id: result.data.user.id,
+    enrolled_by: null,
+  });
+  assert.equal(admission.error, null, `${label} private-alpha admission: ${admission.error?.message}`);
+
   return { supabase, userId: result.data.user.id, accessToken: result.data.session.access_token };
 }
 
