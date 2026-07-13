@@ -80,3 +80,13 @@ insert into public.consent_preference_versions (user_id, version, preferences) v
   ('10000000-0000-4000-8000-000000000003', 1000, '{"bodyZones":[{"zone":"hands","status":"welcomed","pressure":"light"}],"hardStops":["shoulders"]}'),
   ('10000000-0000-4000-8000-000000000004', 1000, '{"bodyZones":[{"zone":"hands","status":"welcomed","pressure":"firm"},{"zone":"upper_back","status":"welcomed","pressure":"firm"}],"hardStops":[]}')
 on conflict (user_id, version) do nothing;
+
+-- Migration 036 gates real matching on private-alpha admission. Seed accounts
+-- are the local named cohort; production accounts are not created by this file.
+insert into public.private_alpha_memberships (user_id, enrolled_by)
+values
+  ('10000000-0000-4000-8000-000000000001', null),
+  ('10000000-0000-4000-8000-000000000002', null),
+  ('10000000-0000-4000-8000-000000000003', null),
+  ('10000000-0000-4000-8000-000000000004', null)
+on conflict (user_id) do update set revoked_at = null;
