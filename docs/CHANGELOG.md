@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026-07-13 — Continuity reconciliation and SAFETY-OPS decision packet
+
+### Summary
+
+Reconciled stale execution metadata after BETA-001 completion and added
+`docs/SAFETY_OPS_FOUNDER_DECISIONS.md`, a ten-decision founder worksheet for
+private-alpha safety operations. The worksheet records options, conservative
+recommended defaults, external-review dependencies, and an explicit completion
+gate without promoting Chapter 6.
+
+### User-visible impact
+
+- None. Documentation and governance preparation only; runtime behavior is
+  unchanged.
+
+### Developer impact
+
+- `AGENTS.md`, `CURRENT_STATE.md`, `TASKS.md`, and `project-state.json`
+  now agree that no implementation milestone is active and SAFETY-OPS-001 is
+  pending decisions.
+- The decision packet is registered in `docs/DOCUMENTATION_MAP.md` and linked
+  from `docs/SAFETY_OPS_DESIGN.md`.
+- The integrated baseline is recorded as
+  `42a1eed65b182c9880238eca26f3a53032ad5c43`.
+
+### Verification
+
+- Documentation-only change; no runtime tests claimed.
+- `project-state.json` remains valid JSON and conforms to the repository's
+  allowed status values.
+- GitHub PR checks are the branch-level validation authority.
+
+### Related decision and roadmap
+
+- SAFETY-OPS-001 remains `pending`.
+- Chapter 6 remains unauthorized until a separate human promotion decision.
+
 ## 2026-07-13 — Draft SAFETY-OPS-001 moderation/beta-ops design proposal
 
 ### Summary
