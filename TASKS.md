@@ -47,7 +47,7 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 - **Status:** completed
 - **Result:** PR #75 adds a credential-free `macos-26` workflow that installs locked npm and CocoaPods dependencies, compiles the checked-in Xcode workspace for a generic iOS Simulator with signing disabled, and uploads the compiled `.app` plus complete build log.
-- **Verification:** GitHub Actions iOS Native Build run #5 passed on the final implementation head with Xcode 26.5 and strict `pod install --deployment`; artifacts: 39.8 MB simulator `.app` and full Xcode log.
+- **Verification:** GitHub Actions iOS Native Build run #5 passed with Xcode 26.5 and strict `pod install --deployment`; artifacts: 39.8 MB universal simulator `.app` and full Xcode log. The final lane targets the hosted Apple-silicon runner's native arm64 architecture to reduce CI time.
 - **Boundary:** This proves native compilation only. It does not produce a signed device IPA, validate entitlements on hardware, upload to TestFlight, or remove any release blocker.
 
 ### CAMPFIRE-001 — Local Campfire practice hub
