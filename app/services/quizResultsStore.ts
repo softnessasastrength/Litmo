@@ -1,67 +1,27 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from "expo-secure-store";
 import {
   parseQuizResultsMap,
   parseStoredQuizResult,
   type QuizResultsMap,
   type StoredQuizResult,
 } from "./quizResultsRepositoryCore.ts";
-
-const STORAGE_KEY = "litmo.quizzes.results.v1";
-const SECURE_KEY = "litmo.quizzes.results.secure.v1";
+import { localVault } from "./localVault.ts";
+import { localFirstCoordinator } from "./localFirstCoordinator.ts";
 
 export type { QuizResultsMap, StoredQuizResult };
 
-/**
- * Prefer Secure Store for quiz summaries (real-device private).
- * Fall back to AsyncStorage when Secure Store is unavailable (web/tests).
- */
-async function readRaw(): Promise<string | null> {
-  try {
-    const secure = await SecureStore.getItemAsync(SECURE_KEY);
-    if (secure != null) return secure;
-  } catch {
-    // Secure Store may be unavailable in some environments.
-  }
-  return AsyncStorage.getItem(STORAGE_KEY);
-}
-
-async function writeRaw(value: string): Promise<void> {
-  let secured = false;
-  try {
-    await SecureStore.setItemAsync(SECURE_KEY, value);
-    secured = true;
-  } catch {
-    secured = false;
-  }
-  if (secured) {
-    // Drop legacy plaintext once secured.
-    await AsyncStorage.removeItem(STORAGE_KEY);
-    return;
-  }
-  await AsyncStorage.setItem(STORAGE_KEY, value);
-}
-
-async function clearRaw(): Promise<void> {
-  try {
-    await SecureStore.deleteItemAsync(SECURE_KEY);
-  } catch {
-    // ignore
-  }
-  await AsyncStorage.removeItem(STORAGE_KEY);
-}
-
-/** Device-local layer. Prefer quizResultsRepository for callers. */
+/** Device-local quiz summaries via local vault (offline first). */
 export const quizResultsStore = {
   async load(): Promise<QuizResultsMap> {
-    return parseQuizResultsMap(await readRaw());
+    const raw = await localVault.getRaw("quiz_results");
+    return parseQuizResultsMap(raw);
   },
   async saveResult(result: StoredQuizResult): Promise<QuizResultsMap> {
     const parsed = parseStoredQuizResult(result);
     if (!parsed) return this.load();
     const current = await this.load();
     const next = { ...current, [parsed.quizId]: parsed };
-    await writeRaw(JSON.stringify(next));
+    await localVault.setJson("quiz_results", next);
+    void localFirstCoordinator.afterLocalWrite("quiz_results");
     return next;
   },
   /** Atomic full-map replace after fail-closed parse of every entry. */
@@ -72,13 +32,14 @@ export const quizResultsStore = {
       if (parsed) next[parsed.quizId] = parsed;
     }
     if (Object.keys(next).length === 0) {
-      await clearRaw();
+      await localVault.remove("quiz_results");
       return {};
     }
-    await writeRaw(JSON.stringify(next));
+    await localVault.setJson("quiz_results", next);
+    void localFirstCoordinator.afterLocalWrite("quiz_results");
     return next;
   },
   async clear(): Promise<void> {
-    await clearRaw();
+    await localVault.remove("quiz_results");
   },
 };

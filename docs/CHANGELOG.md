@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-13 — Local-first architecture + optional encrypted backup
+
+### Summary
+
+Personal data is now explicitly **local-first**: unified vault (Secure Store
+preferred), offline-complete stores for Touch Language, Consent Snapshots, Soft
+Signal log, private history, learning progress, and quiz summaries. Optional
+**encrypted cloud backup** (opt-in, opaque ciphertext, recovery code) via
+migration `041_personal_encrypted_backups.sql`.
+
+### User-visible impact
+
+- Settings → **Local-first vault & encrypted backup**
+- Private history list on that screen
+- App personal features work fully offline; backup is never required
+
+### Developer impact
+
+- `localVault`, `localFirstCore`, `encryptedBackupCore`,
+  `encryptedCloudBackupService`, `localFirstCoordinator`, `privateHistoryStore`
+- ADR 0058, `docs/LOCAL_FIRST.md`
+- Wipe/inventory cover the vault registry
+
 ## 2026-07-13 — Litmo Device OS design (power-on → shutdown)
 
 ### Summary

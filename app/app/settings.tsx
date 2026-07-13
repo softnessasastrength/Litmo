@@ -239,6 +239,17 @@ function SettingsContent() {
         onPress={() => router.push("/soft-signal/practice" as never)}
         accessibilityHint="Practice Soft Signal and view private exit records on this device."
       />
+      <Button
+        variant="secondary"
+        label="Local-first vault & encrypted backup"
+        onPress={() => router.push("/security/local-first" as never)}
+        accessibilityHint="Personal data stays on this device first. Optional opaque encrypted cloud backup is off by default."
+      />
+      <Body muted>
+        Touch Language, Consent Snapshots, Soft Signal history, learning, and
+        private history work fully offline. Cloud backup is optional ciphertext
+        only — never required for the app to work.
+      </Body>
 
       <Body>Privacy & data protection</Body>
       <Body muted>

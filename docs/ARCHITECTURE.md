@@ -6,12 +6,21 @@
 Expo Router UI
   → authoritative AuthContext
   → typed repositories and public error mapping
-  → Supabase client using anon credentials + user JWT
+  → local vault first (personal data; offline complete)
+  → optional encrypted cloud backup (opaque ciphertext, owner RLS)
+  → Supabase client using anon credentials + user JWT (sessions / shared state)
   → PostgreSQL functions, constraints, and RLS
 
 UI/API adapters
   → @litmo/domain runtime schemas
 ```
+
+**Local-first personal data** (`docs/LOCAL_FIRST.md`, ADR 0058): Touch Language,
+Consent Snapshot local packages, Soft Signal log, private history, learning
+progress, and quiz summaries write to `localVault` (Secure Store preferred).
+Optional cloud backup seals with a device-held master key; the server never
+sees plaintext. Multi-party live sessions still use the network when online;
+personal maps work fully offline (including demo mode).
 
 `shared/` owns framework-independent types, enum values, runtime schemas, and validated serialization. UI components do not call Supabase directly. `profileRepository` owns profile persistence, timeouts, boundary parsing, and safe error translation.
 

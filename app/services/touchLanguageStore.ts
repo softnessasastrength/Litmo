@@ -1,58 +1,17 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from "expo-secure-store";
 import {
   createDefaultTouchLanguage,
   parseTouchLanguageDocument,
   type TouchLanguageDocument,
 } from "../lib/touchLanguageCore.ts";
+import { localVault } from "./localVault.ts";
+import { localFirstCoordinator } from "./localFirstCoordinator.ts";
 
-const STORAGE_KEY = "litmo.touch_language.doc.v1";
-const SECURE_KEY = "litmo.touch_language.doc.secure.v1";
-
-async function readRaw(): Promise<string | null> {
-  try {
-    const secure = await SecureStore.getItemAsync(SECURE_KEY);
-    if (secure != null) return secure;
-  } catch {
-    // Secure Store may be unavailable (web/tests).
-  }
-  return AsyncStorage.getItem(STORAGE_KEY);
-}
-
-async function writeRaw(value: string): Promise<void> {
-  let secured = false;
-  try {
-    await SecureStore.setItemAsync(SECURE_KEY, value);
-    secured = true;
-  } catch {
-    secured = false;
-  }
-  if (secured) {
-    await AsyncStorage.removeItem(STORAGE_KEY);
-    return;
-  }
-  await AsyncStorage.setItem(STORAGE_KEY, value);
-}
-
-async function clearRaw(): Promise<void> {
-  try {
-    await SecureStore.deleteItemAsync(SECURE_KEY);
-  } catch {
-    // ignore
-  }
-  await AsyncStorage.removeItem(STORAGE_KEY);
-}
-
-/** Device-local Touch Language persistence (Secure Store preferred). */
+/** Device-local Touch Language persistence (local vault — offline first). */
 export const touchLanguageStore = {
   async load(): Promise<TouchLanguageDocument | null> {
-    const raw = await readRaw();
+    const raw = await localVault.getJson<unknown>("touch_language");
     if (!raw) return null;
-    try {
-      return parseTouchLanguageDocument(JSON.parse(raw));
-    } catch {
-      return null;
-    }
+    return parseTouchLanguageDocument(raw);
   },
 
   async save(doc: TouchLanguageDocument): Promise<TouchLanguageDocument> {
@@ -66,7 +25,8 @@ export const touchLanguageStore = {
     if (!parsed) {
       throw new Error("Touch Language document failed validation.");
     }
-    await writeRaw(JSON.stringify(parsed));
+    await localVault.setJson("touch_language", parsed);
+    void localFirstCoordinator.afterLocalWrite("touch_language");
     return parsed;
   },
 
@@ -75,6 +35,6 @@ export const touchLanguageStore = {
   },
 
   async clear(): Promise<void> {
-    await clearRaw();
+    await localVault.remove("touch_language");
   },
 };

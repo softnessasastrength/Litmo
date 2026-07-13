@@ -154,6 +154,19 @@
 - Enabling ND mode turns haptics off by default; users can re-enable haptics
   without leaving ND mode.
 
+## Local-first vault & encrypted backup
+
+- Personal domains (Touch Language, local Consent Snapshot packages, Soft Signal
+  log, private history, learning progress, quiz summaries) are authoritative on
+  the device and work offline. Live multi-party sessions and discovery still
+  need network when using real accounts.
+- Optional cloud backup is **off by default**. When enabled, the server stores
+  only opaque ciphertext. Losing the recovery code and the device makes backup
+  unrecoverable by design (no staff decryption path).
+- Secure Store size limits may constrain very large Soft Signal / history logs
+  (capped in app). Migration `041` must be applied for backup RPCs to succeed.
+- Backup is not multi-device key sync and not a substitute for account security.
+
 ## Guided Learning (full curriculum)
 
 - Twelve modules (six **lived lessons** + six **foundations**) plus curated

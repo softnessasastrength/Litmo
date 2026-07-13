@@ -5,17 +5,27 @@
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
+import { localVault } from "./localVault.ts";
+import { encryptedCloudBackupService } from "./encryptedCloudBackupService.ts";
 
 export type LocalInventory = {
   collected_at: string;
+  offline_ready: true;
+  local_first: true;
+  vault_domains_present: string[];
   quiz_results_present: boolean;
   quiz_result_count: number;
   learning_modules_with_progress: number;
   learning_modules_completed: number;
   mid_quiz_progress_keys: number;
   partner_invites_present: boolean;
+  touch_language_present: boolean;
+  consent_declaration_present: boolean;
+  consent_mutual_present: boolean;
+  soft_signal_log_present: boolean;
+  private_history_present: boolean;
+  encrypted_backup_enabled: boolean;
   neurodivergent_mode_enabled: boolean | null;
-  /** Master opt-in for Multipeer nearby share (default off). */
   nearby_share_enabled: boolean | null;
   privacy_notice_local: { version: string; acceptedAt: string } | null;
   notes: string[];
@@ -23,18 +33,22 @@ export type LocalInventory = {
 
 export async function collectLocalInventory(): Promise<LocalInventory> {
   const notes: string[] = [
-    "Device-local only. Private encryption keys are never exported.",
+    "Local-first: personal data is authoritative on this device.",
+    "Device-local only in this inventory. Private encryption keys are never exported.",
     "Partner E2E ratchet secrets are not included.",
+    "Optional cloud backup stores opaque ciphertext only when you enable it.",
   ];
 
-  let quiz_results_present = false;
+  const vaultInv = await localVault.inventory();
+  const vault_domains_present = vaultInv
+    .filter((v) => v.present)
+    .map((v) => v.domain);
+
   let quiz_result_count = 0;
   try {
-    const raw = await AsyncStorage.getItem("litmo.quizzes.results.v1");
-    if (raw) {
-      const map = JSON.parse(raw) as Record<string, unknown>;
-      quiz_result_count = Object.keys(map).length;
-      quiz_results_present = quiz_result_count > 0;
+    const raw = await localVault.getJson<Record<string, unknown>>("quiz_results");
+    if (raw && typeof raw === "object") {
+      quiz_result_count = Object.keys(raw).length;
     }
   } catch {
     notes.push("quiz_results_unreadable");
@@ -43,15 +57,13 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
   let learning_modules_with_progress = 0;
   let learning_modules_completed = 0;
   try {
-    const raw = await AsyncStorage.getItem("litmo.learning.progress.v1");
+    const raw = await localVault.getJson<
+      Record<string, { completed?: boolean }>
+    >("learning_progress");
     if (raw) {
-      const map = JSON.parse(raw) as Record<
-        string,
-        { completed?: boolean }
-      >;
-      const keys = Object.keys(map);
+      const keys = Object.keys(raw);
       learning_modules_with_progress = keys.length;
-      learning_modules_completed = keys.filter((k) => map[k]?.completed).length;
+      learning_modules_completed = keys.filter((k) => raw[k]?.completed).length;
     }
   } catch {
     notes.push("learning_progress_unreadable");
@@ -117,18 +129,37 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     notes.push("privacy_notice_unreadable");
   }
 
+  let encrypted_backup_enabled = false;
+  try {
+    const status = await encryptedCloudBackupService.status();
+    encrypted_backup_enabled = status.enabled;
+  } catch {
+    notes.push("backup_status_unreadable");
+  }
+
   notes.push(
     "Nearby share payloads are ephemeral and never stored in this inventory.",
   );
 
   return {
     collected_at: new Date().toISOString(),
-    quiz_results_present,
+    offline_ready: true,
+    local_first: true,
+    vault_domains_present,
+    quiz_results_present: quiz_result_count > 0,
     quiz_result_count,
     learning_modules_with_progress,
     learning_modules_completed,
     mid_quiz_progress_keys,
     partner_invites_present,
+    touch_language_present: vault_domains_present.includes("touch_language"),
+    consent_declaration_present: vault_domains_present.includes(
+      "consent_declaration",
+    ),
+    consent_mutual_present: vault_domains_present.includes("consent_mutual"),
+    soft_signal_log_present: vault_domains_present.includes("soft_signal_log"),
+    private_history_present: vault_domains_present.includes("private_history"),
+    encrypted_backup_enabled,
     neurodivergent_mode_enabled,
     nearby_share_enabled,
     privacy_notice_local,

@@ -1,47 +1,21 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from "expo-secure-store";
 import {
   parseLog,
   parseLogEntry,
   type SoftSignalLogEntry,
 } from "../lib/softSignalCore.ts";
+import { localVault } from "./localVault.ts";
+import { localFirstCoordinator } from "./localFirstCoordinator.ts";
+import { privateHistoryStore } from "./privateHistoryStore.ts";
 
-const SECURE_KEY = "litmo.soft_signal.log.secure.v1";
-const ASYNC_KEY = "litmo.soft_signal.log.v1";
 const MAX_ENTRIES = 200;
 
-async function readRaw(): Promise<string | null> {
-  try {
-    const s = await SecureStore.getItemAsync(SECURE_KEY);
-    if (s != null) return s;
-  } catch {
-    // fallback
-  }
-  return AsyncStorage.getItem(ASYNC_KEY);
-}
-
-async function writeRaw(value: string): Promise<void> {
-  let ok = false;
-  try {
-    await SecureStore.setItemAsync(SECURE_KEY, value);
-    ok = true;
-  } catch {
-    ok = false;
-  }
-  if (ok) {
-    await AsyncStorage.removeItem(ASYNC_KEY);
-    return;
-  }
-  await AsyncStorage.setItem(ASYNC_KEY, value);
-}
-
-/** Private personal Soft Signal history — device only, never a score. */
+/** Private personal Soft Signal history — local vault, never a score. */
 export const softSignalLogStore = {
   async load(): Promise<SoftSignalLogEntry[]> {
-    const raw = await readRaw();
+    const raw = await localVault.getJson<unknown>("soft_signal_log");
     if (!raw) return [];
     try {
-      return parseLog(JSON.parse(raw));
+      return parseLog(raw);
     } catch {
       return [];
     }
@@ -55,7 +29,19 @@ export const softSignalLogStore = {
       0,
       MAX_ENTRIES,
     );
-    await writeRaw(JSON.stringify(next));
+    await localVault.setJson("soft_signal_log", next);
+    void localFirstCoordinator.afterLocalWrite("soft_signal_log");
+    void privateHistoryStore.append({
+      id: `ss-${parsed.id}`,
+      kind: parsed.source === "practice" ? "practice" : "soft_signal",
+      occurredAt: parsed.firedAt,
+      summary:
+        parsed.source === "practice"
+          ? "Soft Signal practice (local)"
+          : "Soft Signal — session ended (local)",
+      privateNote: null,
+      sessionId: parsed.sessionId ?? null,
+    });
     return next;
   },
 
@@ -72,16 +58,12 @@ export const softSignalLogStore = {
           }
         : e,
     );
-    await writeRaw(JSON.stringify(next));
+    await localVault.setJson("soft_signal_log", next);
+    void localFirstCoordinator.afterLocalWrite("soft_signal_log");
     return next;
   },
 
   async clear(): Promise<void> {
-    try {
-      await SecureStore.deleteItemAsync(SECURE_KEY);
-    } catch {
-      // ignore
-    }
-    await AsyncStorage.removeItem(ASYNC_KEY);
+    await localVault.remove("soft_signal_log");
   },
 };

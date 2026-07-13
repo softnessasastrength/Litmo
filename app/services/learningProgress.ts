@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   completeModule,
   emptyLearningProgress,
@@ -6,22 +5,24 @@ import {
   parseLearningProgress,
   recordStep,
 } from "./learningProgressCore";
-
-const STORAGE_KEY = "litmo.learning.progress.v1";
+import { localVault } from "./localVault";
+import { localFirstCoordinator } from "./localFirstCoordinator";
 
 async function load(): Promise<LearningProgress> {
-  return parseLearningProgress(await AsyncStorage.getItem(STORAGE_KEY));
+  const raw = await localVault.getRaw("learning_progress");
+  return parseLearningProgress(raw);
 }
 
 async function save(progress: LearningProgress) {
-  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+  await localVault.setJson("learning_progress", progress);
+  void localFirstCoordinator.afterLocalWrite("learning_progress");
   return progress;
 }
 
 export const learningProgressService = {
   load,
   async reset() {
-    await AsyncStorage.removeItem(STORAGE_KEY);
+    await localVault.remove("learning_progress");
     return emptyLearningProgress;
   },
   async recordStep(moduleId: string, stepIndex: number, stepCount: number) {

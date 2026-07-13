@@ -1,55 +1,19 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from "expo-secure-store";
 import {
   parseDeclaration,
   parseMutualSnapshot,
   type MutualConsentSnapshot,
   type PreSessionDeclaration,
 } from "../lib/sessionConsentSnapshotCore.ts";
+import { localVault } from "./localVault.ts";
+import { localFirstCoordinator } from "./localFirstCoordinator.ts";
+import { privateHistoryStore } from "./privateHistoryStore.ts";
 
-const DECL_SECURE = "litmo.consent_snapshot.declaration.secure.v1";
-const DECL_ASYNC = "litmo.consent_snapshot.declaration.v1";
-const MUTUAL_SECURE = "litmo.consent_snapshot.mutual.secure.v1";
-const MUTUAL_ASYNC = "litmo.consent_snapshot.mutual.v1";
-
-async function read(secureKey: string, asyncKey: string): Promise<string | null> {
-  try {
-    const s = await SecureStore.getItemAsync(secureKey);
-    if (s != null) return s;
-  } catch {
-    // fallback
-  }
-  return AsyncStorage.getItem(asyncKey);
-}
-
-async function write(
-  secureKey: string,
-  asyncKey: string,
-  value: string,
-): Promise<void> {
-  let ok = false;
-  try {
-    await SecureStore.setItemAsync(secureKey, value);
-    ok = true;
-  } catch {
-    ok = false;
-  }
-  if (ok) {
-    await AsyncStorage.removeItem(asyncKey);
-    return;
-  }
-  await AsyncStorage.setItem(asyncKey, value);
-}
-
+/** Pre-session Consent Snapshot — local vault first, offline complete. */
 export const sessionConsentSnapshotStore = {
   async loadDeclaration(): Promise<PreSessionDeclaration | null> {
-    const raw = await read(DECL_SECURE, DECL_ASYNC);
+    const raw = await localVault.getJson<unknown>("consent_declaration");
     if (!raw) return null;
-    try {
-      return parseDeclaration(JSON.parse(raw));
-    } catch {
-      return null;
-    }
+    return parseDeclaration(raw);
   },
 
   async saveDeclaration(
@@ -63,18 +27,23 @@ export const sessionConsentSnapshotStore = {
       version: 1,
     });
     if (!parsed) throw new Error("declaration_invalid");
-    await write(DECL_SECURE, DECL_ASYNC, JSON.stringify(parsed));
+    await localVault.setJson("consent_declaration", parsed);
+    void localFirstCoordinator.afterLocalWrite("consent_declaration");
+    void privateHistoryStore.append({
+      id: `decl-${parsed.id}-${parsed.updatedAt}`,
+      kind: "snapshot_prepared",
+      occurredAt: parsed.updatedAt,
+      summary: "Consent declaration prepared (local)",
+      privateNote: null,
+      sessionId: null,
+    });
     return parsed;
   },
 
   async loadMutual(): Promise<MutualConsentSnapshot | null> {
-    const raw = await read(MUTUAL_SECURE, MUTUAL_ASYNC);
+    const raw = await localVault.getJson<unknown>("consent_mutual");
     if (!raw) return null;
-    try {
-      return parseMutualSnapshot(JSON.parse(raw));
-    } catch {
-      return null;
-    }
+    return parseMutualSnapshot(raw);
   },
 
   async saveMutual(
@@ -82,16 +51,24 @@ export const sessionConsentSnapshotStore = {
   ): Promise<MutualConsentSnapshot> {
     const parsed = parseMutualSnapshot(snap);
     if (!parsed) throw new Error("mutual_snapshot_invalid");
-    await write(MUTUAL_SECURE, MUTUAL_ASYNC, JSON.stringify(parsed));
+    await localVault.setJson("consent_mutual", parsed);
+    void localFirstCoordinator.afterLocalWrite("consent_mutual");
+    void privateHistoryStore.append({
+      id: `mutual-${parsed.id}`,
+      kind: "snapshot_mutual",
+      occurredAt: parsed.sealedAt ?? parsed.createdAt,
+      summary: "Mutual Consent Snapshot sealed (local)",
+      privateNote: null,
+      sessionId: null,
+    });
     return parsed;
   },
 
   async clearMutual(): Promise<void> {
-    try {
-      await SecureStore.deleteItemAsync(MUTUAL_SECURE);
-    } catch {
-      // ignore
-    }
-    await AsyncStorage.removeItem(MUTUAL_ASYNC);
+    await localVault.remove("consent_mutual");
+  },
+
+  async clearDeclaration(): Promise<void> {
+    await localVault.remove("consent_declaration");
   },
 };
