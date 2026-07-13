@@ -27,6 +27,61 @@ compliance claim.
   PR #63
 - `docs/roadmap/CHAPTER_6_PRIVATE_ALPHA.md`
 
+## 2026-07-13 — Close out BETA-001 (physical Track B B1-B26 pass)
+
+### Summary
+
+Founder completed the physical two-device Track B walkthrough (B1-B26) with
+all items passing and no Fail findings, closing BETA-001.
+
+### User-visible impact
+
+- None (validation record, not a code change).
+
+### Developer impact
+
+- `docs/PHYSICAL_BETA_WALKTHROUGH_RESULTS.md` records the full B1-B26 pass;
+  `TASKS.md` / `project-state.json` mark BETA-001 completed;
+  `CURRENT_STATE.md` corrected a stale branch pointer left over from PR #60.
+
+### Related decision and roadmap
+
+- `docs/PHYSICAL_BETA_WALKTHROUGH.md`, BETA-001
+
+## 2026-07-13 — Static accessibility audit fixes (ACCESS-001)
+
+### Summary
+
+Static-analysis accessibility pass over app screens not covered by BETA-001's
+Track C. Fixed two real bugs found along the way: `boundaries.tsx` collapsed
+its body-zone radiogroup into one opaque VoiceOver stop (consent-adjacent
+screen), and `learning/[id].tsx`'s back/exit handler called a React hook
+outside of render, which would throw on tap. Also fixed a dark-mode contrast
+bug (auth/profile screens used a static light-palette stylesheet) and added
+missing `accessibilityRole`/`accessibilityLabel`/`accessibilityState` in
+several places.
+
+### User-visible impact
+
+- VoiceOver can now reach each individual boundary choice on the body-zone
+  setup screen.
+- Sign-up, recovery, and profile-edit screens render readable text in dark
+  mode instead of near-invisible light-on-light text.
+- The learning module's Back/Exit control no longer crashes on tap.
+
+### Developer impact
+
+- `sign-in.tsx` now exports a theme-aware `authFormStyles(colors)` factory
+  (call via `useThemedStyles`) instead of a static `StyleSheet`; sign-up,
+  recovery, and profile/edit updated to match.
+- `SectionTitle` (`components/ui.tsx`) now carries
+  `accessibilityRole="header"`, propagating to every screen that uses it.
+
+### Related decision and roadmap
+
+- `TASKS.md` ACCESS-001 (still pending — physical VoiceOver smoke and two
+  product-decision items remain), PR #61
+
 ## 2026-07-12 — Track B seed-account integration test
 
 ### Summary
