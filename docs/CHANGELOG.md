@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — Dojo state in local inventory + wipe
+
+`litmo.dojo.state.v1` is wiped with device-local data. Portability inventory
+reports Dojo flags/counts only (urge fear text never exported). Pure helper
+`summarizeDojoForInventory` in `dojoCore`.
+
 ## 2026-07-13 — In-app Exorcism Dojo surface
 
 Built dojo into the app: `dojoCore`, device-local store, `/dojo` screen,

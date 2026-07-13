@@ -329,6 +329,48 @@ export function burnReadinessScore(state: DojoLocalState): {
 }
 
 /**
+ * WHAT: Portability / wipe inventory summary — counts and flags only.
+ * WHY: GDPR-style transparency without exporting urge fear text.
+ * NEVER: Include fearSentence, notes, or free-text from the urge log.
+ */
+export type DojoInventorySummary = {
+  present: boolean;
+  acknowledged_artifact: boolean;
+  seen_inventory: boolean;
+  urge_count: number;
+  chose_not_to_build_count: number;
+  burn_gates_checked: number;
+  burn_gates_total: number;
+};
+
+export function summarizeDojoForInventory(
+  state: DojoLocalState | null,
+): DojoInventorySummary {
+  if (!state) {
+    return {
+      present: false,
+      acknowledged_artifact: false,
+      seen_inventory: false,
+      urge_count: 0,
+      chose_not_to_build_count: 0,
+      burn_gates_checked: 0,
+      burn_gates_total: BURN_GATES.length,
+    };
+  }
+  const score = burnReadinessScore(state);
+  return {
+    present: true,
+    acknowledged_artifact: state.acknowledgedArtifact,
+    seen_inventory: state.seenInventory,
+    urge_count: state.urgeLog.length,
+    chose_not_to_build_count: state.urgeLog.filter((u) => u.choseNotToBuild)
+      .length,
+    burn_gates_checked: score.checked,
+    burn_gates_total: score.total,
+  };
+}
+
+/**
  * WHAT: Gate: should I build code for this urge, or only log it?
  * WHY: LOGICAL_EXTREME — if fear already externalized enough, prefer not building.
  * EDGE: unknown defense → allow build (still need visibility).

@@ -114,13 +114,14 @@ Wrong code → decrypt fails closed; local left intact if no write occurred.
 | `app/services/softSignalLogStore.ts` | Soft Signal log → vault |
 | `app/services/learningProgress.ts` | Learning → vault |
 | `app/services/quizResultsStore.ts` | Quiz summaries → vault |
+| `app/services/dojoStore.ts` | Exorcism Dojo urge log + burn gates (AsyncStorage `litmo.dojo.state.v1`) |
 | `app/app/security/local-first.tsx` | User control surface |
 | `supabase/migrations/041_personal_encrypted_backups.sql` | Owner ciphertext table |
 
 ## Wipe & inventory
 
-- `wipeLocalLitmoData` clears all vault domains + backup master + E2E keys + prefs.
-- `collectLocalInventory` reports vault presence, offline_ready, backup enabled — never raw secrets.
+- `wipeLocalLitmoData` clears all vault domains + backup master + E2E keys + prefs, including `litmo.dojo.state.v1`.
+- `collectLocalInventory` reports vault presence, offline_ready, backup enabled, and Dojo **flags/counts only** — never raw secrets, never urge fear sentences.
 
 ## Safety non-claims
 

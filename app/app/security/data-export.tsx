@@ -88,7 +88,8 @@ function DataExportContent() {
         <Body muted>
           Device-local: quiz result counts, learning progress counts, mid-quiz
           save presence, partner invite presence, ND mode flag, privacy notice
-          acknowledgment — not plaintext partner packages or E2E secrets.
+          acknowledgment, Exorcism Dojo flags/counts (not urge free-text) — not
+          plaintext partner packages or E2E secrets.
         </Body>
       </Card>
       <Body muted>

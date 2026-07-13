@@ -125,6 +125,14 @@
   ops. Matching holds stay single-staff. Direct permanent ban RPC fails closed
   while two-person policy is on.
 
+## Exorcism Dojo (device-local)
+
+- Urge log free-text and burn gates live in AsyncStorage (`litmo.dojo.state.v1`),
+  unencrypted at rest, never account-synced. Impact: device backup may retain
+  private fear sentences. Mitigation: wipe includes this key; portability
+  inventory exports flags/counts only. Removal criterion: Secure Store or vault
+  domain if ritual notes need stronger at-rest protection.
+
 ## GDPR / privacy tooling
 
 - In-app Privacy Policy, Data Protection, export, and erase/wipe screens exist

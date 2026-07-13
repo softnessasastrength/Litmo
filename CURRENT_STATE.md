@@ -63,7 +63,8 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
-Follow `docs/DOJO_CONTINUE.md`. Default continue = externalization / honesty docs / named fears — not private-alpha staffing fiction.
+- Done recently: inventory counts + wipe for `litmo.dojo.state.v1` (dojo lifecycle honesty).
+- Follow `docs/DOJO_CONTINUE.md`. Prefer meta-check / simplify over new nuclear engines unless a named fear still lacks visibility. Default continue = externalization / honesty — not private-alpha staffing fiction.
 
 ## Verification baseline
 

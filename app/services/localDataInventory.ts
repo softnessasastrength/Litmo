@@ -1,12 +1,21 @@
 /**
  * Device-local categories for export/portability transparency.
  * Never includes E2E private keys or raw Keychain secrets.
+ * Never includes Exorcism Dojo urge fear text — counts/flags only.
  */
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
+import {
+  summarizeDojoForInventory,
+  type DojoInventorySummary,
+} from "../lib/dojoCore.ts";
 import { localVault } from "./localVault.ts";
 import { encryptedCloudBackupService } from "./encryptedCloudBackupService.ts";
+import {
+  DOJO_STATE_STORAGE_KEY,
+  dojoStore,
+} from "./dojoStore.ts";
 
 export type LocalInventory = {
   collected_at: string;
@@ -28,6 +37,8 @@ export type LocalInventory = {
   neurodivergent_mode_enabled: boolean | null;
   nearby_share_enabled: boolean | null;
   privacy_notice_local: { version: string; acceptedAt: string } | null;
+  /** Dojo ritual state — flags/counts only; never urge free-text. */
+  dojo: DojoInventorySummary;
   notes: string[];
 };
 
@@ -137,8 +148,30 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     notes.push("backup_status_unreadable");
   }
 
+  let dojo: DojoInventorySummary = summarizeDojoForInventory(null);
+  try {
+    const present = await dojoStore.hasStoredState();
+    if (present) {
+      const state = await dojoStore.load();
+      dojo = summarizeDojoForInventory(state);
+    }
+  } catch {
+    notes.push("dojo_state_unreadable");
+    try {
+      const raw = await AsyncStorage.getItem(DOJO_STATE_STORAGE_KEY);
+      if (raw) {
+        notes.push("dojo_state_key_present_but_unparsed");
+      }
+    } catch {
+      /* ignore secondary */
+    }
+  }
+
   notes.push(
     "Nearby share payloads are ephemeral and never stored in this inventory.",
+  );
+  notes.push(
+    "Dojo inventory is flags/counts only; urge fear sentences stay on-device and are wiped with litmo.dojo.state.v1.",
   );
 
   return {
@@ -163,6 +196,7 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     neurodivergent_mode_enabled,
     nearby_share_enabled,
     privacy_notice_local,
+    dojo,
     notes,
   };
 }

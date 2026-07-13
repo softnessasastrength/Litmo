@@ -112,6 +112,10 @@ Route: **`/dojo`** (also Home + Settings).
 
 Code: `app/lib/dojoCore.ts` · `app/services/dojoStore.ts` · `app/app/dojo/index.tsx`
 
+Storage: AsyncStorage key `litmo.dojo.state.v1` (device-local, never synced).  
+Portability: `collectLocalInventory().dojo` is **flags/counts only** (no urge free-text).  
+Wipe: included in `wipeLocalLitmoData` EXTRA_ASYNC_KEYS.
+
 Learning path: **`exorcism-dojo-track`**.
 
 ---

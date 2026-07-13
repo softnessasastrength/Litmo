@@ -8,6 +8,7 @@ import {
   parseDojoState,
   setBurnGate,
   shouldPreferNotToBuild,
+  summarizeDojoForInventory,
 } from "./dojoCore.ts";
 
 describe("dojoCore", () => {
@@ -47,6 +48,27 @@ describe("dojoCore", () => {
       isSoftSignalOrStopPath: false,
     });
     assert.equal(r.preferNotToBuild, true);
+  });
+
+  it("inventory summary is counts only — no fear text keys", () => {
+    let s = defaultDojoState();
+    s = appendUrge(s, {
+      fearSentence: "secret private fear must not appear in export keys",
+      defenseId: "D01",
+      choseNotToBuild: true,
+      note: "private note",
+    });
+    s = { ...s, acknowledgedArtifact: true, seenInventory: true };
+    const inv = summarizeDojoForInventory(s);
+    assert.equal(inv.present, true);
+    assert.equal(inv.acknowledged_artifact, true);
+    assert.equal(inv.seen_inventory, true);
+    assert.equal(inv.urge_count, 1);
+    assert.equal(inv.chose_not_to_build_count, 1);
+    const json = JSON.stringify(inv);
+    assert.equal(json.includes("secret private"), false);
+    assert.equal(json.includes("private note"), false);
+    assert.deepEqual(summarizeDojoForInventory(null).present, false);
   });
 
   it("Soft Signal path stays craftable", () => {

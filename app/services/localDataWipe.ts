@@ -22,6 +22,8 @@ const EXTRA_ASYNC_KEYS = [
   "litmo.trauma_safety.verify.v1",
   "litmo.trauma_safety.reflection.v1",
   "litmo.trauma_safety.reflections.v1",
+  /** Exorcism Dojo urge log + burn gates (device-local only; D23 surface). */
+  "litmo.dojo.state.v1",
 ];
 
 const EXTRA_SECURE_KEYS = [
