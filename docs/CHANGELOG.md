@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-07-13 — Passkey-primary authentication polish
+
+### Summary
+
+Reinforced WebAuthn passkeys as the primary real-account path via Supabase Auth:
+soft native module load, calmer cancel handling, platform readiness checks,
+3-step sign-up, Face ID-forward sign-in, add-passkey on devices screen, honest
+recovery ladder. Canonical doc: `docs/AUTHENTICATION.md`.
+
 ## 2026-07-13 — Robust encrypted QR fallback (proximity + NFC)
 
 ### Summary

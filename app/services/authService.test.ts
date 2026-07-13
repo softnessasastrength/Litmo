@@ -138,3 +138,53 @@ test("development seed password sign-in returns a session", async () => {
     password: "LitmoDemo123!",
   });
 });
+
+test("addPasskey aliases registration and verifies with Supabase", async () => {
+  let verified = false;
+  const deps = dependencies();
+  deps.auth.passkey.verifyRegistration = async () => {
+    verified = true;
+    return { data: { id: "passkey-2" }, error: null };
+  };
+  const service = createAuthService({ auth: deps.auth } as never, deps.native);
+  const result = await service.addPasskey();
+  assert.equal((result as { id: string }).id, "passkey-2");
+  assert.equal(verified, true);
+});
+
+test("isPasskeyPlatformReady respects native availability", async () => {
+  const ready = createAuthService(
+    { auth: dependencies().auth } as never,
+    {
+      register: async () => ({}),
+      authenticate: async () => ({}),
+      isAvailable: async () => true,
+    },
+  );
+  assert.equal(await ready.isPasskeyPlatformReady(), true);
+
+  const unavailable = createAuthService(
+    { auth: dependencies().auth } as never,
+    {
+      register: async () => ({}),
+      authenticate: async () => ({}),
+      isAvailable: async () => false,
+    },
+  );
+  assert.equal(await unavailable.isPasskeyPlatformReady(), false);
+});
+
+test("sign-in fails closed when native passkeys are unavailable", async () => {
+  await assert.rejects(
+    createAuthService(
+      { auth: dependencies().auth } as never,
+      {
+        register: async () => ({}),
+        authenticate: async () => ({}),
+        isAvailable: async () => false,
+      },
+    ).signInWithPasskey(),
+    (error: unknown) =>
+      (error as { code: string }).code === "auth_passkey_unavailable",
+  );
+});

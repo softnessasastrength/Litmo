@@ -45,6 +45,17 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 ## Completed
 
+### AUTH-002 — Passkey-primary WebAuthn polish
+
+- **Status:** completed (engineering foundation already existed; polished)
+- **Result:** `docs/AUTHENTICATION.md`; soft native passkey load; platform
+  readiness; calm cancel; 3-step sign-up; Face ID-forward sign-in; add passkey
+  + list on devices screen; recovery ladder; device registration still after
+  every successful passkey; dev seed remains development-only fallback.
+- **Verification:** authService tests; typecheck.
+- **Boundary:** human recovery operator still not deployed; Expo Go cannot
+  complete WebAuthn; Associated Domains required for real devices.
+
 ### NFC-001 — NFC careful-connect (tag + QR fallback)
 
 - **Status:** completed (engineering foundation)

@@ -26,6 +26,10 @@ type AuthValue = ReturnType<typeof authReducer> & {
   signInWithPasskey(): Promise<void>;
   /** Development seed accounts only (runtimeConfig.allowDemo). */
   signInWithPassword(email: string, password: string): Promise<void>;
+  /** Add another passkey while authenticated (Settings / devices). */
+  addPasskey(): Promise<void>;
+  listPasskeys(): Promise<unknown[]>;
+  isPasskeyPlatformReady(): Promise<boolean>;
   signOut(): Promise<void>;
   refreshProfile(): Promise<void>;
   enterDemoMode(): void;
@@ -128,13 +132,21 @@ export function AuthProvider({ children }: PropsWithChildren) {
         try {
           await authService.confirmAccountCode(email, code);
           dispatch({ type: "REGISTERING" });
+          // Face ID / Touch ID passkey is mandatory before the account is usable.
           await authService.registerPasskey();
+          // Device-bound installation secret (privacy + fail-closed restore).
           await deviceRegistrationService.register();
           await restore((await supabase.auth.getSession()).data.session);
         } catch (error) {
+          const mapped = mapExternalError(error);
           await supabase.auth.signOut();
-          dispatch({ type: "FAILED", error: mapExternalError(error) });
-          throw error;
+          // Cancel keeps the person on sign-up without a sticky global error screen.
+          if (mapped.code === "auth_cancelled") {
+            dispatch({ type: "RESTORED", session: null });
+          } else {
+            dispatch({ type: "FAILED", error: mapped });
+          }
+          throw mapped;
         } finally {
           ceremonyInProgress.current = false;
         }
@@ -144,12 +156,18 @@ export function AuthProvider({ children }: PropsWithChildren) {
         ceremonyInProgress.current = true;
         try {
           const session = await authService.signInWithPasskey();
+          // Register or rotate this installation after every successful passkey.
           await deviceRegistrationService.register();
           await restore(session);
         } catch (error) {
+          const mapped = mapExternalError(error);
           await supabase.auth.signOut();
-          dispatch({ type: "FAILED", error: mapExternalError(error) });
-          throw error;
+          if (mapped.code === "auth_cancelled") {
+            dispatch({ type: "RESTORED", session: null });
+          } else {
+            dispatch({ type: "FAILED", error: mapped });
+          }
+          throw mapped;
         } finally {
           ceremonyInProgress.current = false;
         }
@@ -168,6 +186,22 @@ export function AuthProvider({ children }: PropsWithChildren) {
         } finally {
           ceremonyInProgress.current = false;
         }
+      },
+      async addPasskey() {
+        ceremonyInProgress.current = true;
+        try {
+          await authService.addPasskey();
+        } catch (error) {
+          throw mapExternalError(error);
+        } finally {
+          ceremonyInProgress.current = false;
+        }
+      },
+      async listPasskeys() {
+        return authService.listPasskeys();
+      },
+      async isPasskeyPlatformReady() {
+        return authService.isPasskeyPlatformReady();
       },
       async signOut() {
         sensitiveDataService.lock();

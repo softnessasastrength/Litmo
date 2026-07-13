@@ -35,21 +35,32 @@ export function mapExternalError(error: unknown): PublicAppError {
   if (candidate?.code === "ERR_PASSKEY_CANCELLED")
     return new PublicAppError(
       "auth_cancelled",
-      "Passkey sign-in was cancelled. Nothing was changed.",
+      "Passkey was cancelled. Nothing was changed. You can try again when ready.",
       true,
     );
   if (candidate?.code === "ERR_PASSKEY_REQUEST_IN_PROGRESS")
     return new PublicAppError(
       "auth_request_in_progress",
-      "An authentication request is already in progress.",
+      "An authentication request is already in progress. Finish or cancel Face ID first.",
     );
   if (
     candidate?.code === "ERR_PASSKEY_UNAVAILABLE" ||
-    (message.includes("passkey") && message.includes("unavailable"))
+    (message.includes("passkey") && message.includes("unavailable")) ||
+    message.includes("expo go cannot complete webauthn") ||
+    message.includes("litmopasskeys")
   )
     return new PublicAppError(
       "auth_passkey_unavailable",
-      "Passkeys are unavailable. Check that iCloud Keychain and a device passcode are enabled.",
+      "Passkeys need an iOS development build (not Expo Go), with iCloud Keychain and a device passcode. Demo mode still works without an account.",
+    );
+  if (
+    message.includes("associated domain") ||
+    message.includes("relying party") ||
+    message.includes("rp id")
+  )
+    return new PublicAppError(
+      "auth_passkey_unavailable",
+      "Passkey domain setup is incomplete for this build. Use a paid-team development build with Associated Domains, or demo mode.",
     );
   if (message.includes("invalid login credentials"))
     return new PublicAppError(

@@ -71,10 +71,12 @@ export default function EntryScreen() {
       ) : null}
 
       <Card style={styles.card}>
-        <Text style={styles.cardTitle}>Account sign-in</Text>
+        <Text style={styles.cardTitle}>Real account · passkeys</Text>
         <Body muted>
-          Sign in or create a real account. Your general profile, touch
-          preferences, and consent boundaries persist across visits.
+          Real accounts use WebAuthn passkeys (Face ID / Touch ID) through
+          Supabase Auth — no passwords. Your general profile, touch preferences,
+          and consent boundaries persist across visits. Sensitive screens still
+          require a fresh device-owner check.
         </Body>
         {environmentError ? (
           <View style={styles.notice} accessible accessibilityRole="text">
@@ -86,10 +88,17 @@ export default function EntryScreen() {
           </View>
         ) : null}
         <Button
-          label="Sign in with an account"
+          label="Sign in with passkey"
           onPress={() => router.push("/auth/sign-in")}
           variant="secondary"
-          accessibilityHint="Opens sign-in for a real, persistent account"
+          accessibilityHint="Opens passkey-first sign-in for a real, persistent account"
+          disabled={Boolean(environmentError)}
+        />
+        <Button
+          label="Create account with passkey"
+          onPress={() => router.push("/auth/sign-up")}
+          variant="secondary"
+          accessibilityHint="Opens passkey registration after a one-time email ownership code"
           disabled={Boolean(environmentError)}
         />
       </Card>
