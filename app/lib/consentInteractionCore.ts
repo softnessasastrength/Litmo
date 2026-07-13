@@ -1,12 +1,25 @@
 /**
  * Consent micro-interaction grammar — Apple-level granularity.
  *
- * Philosophy:
- * - Granting consent is slow, deliberate, and specific.
- * - Withdrawing consent (Soft Signal) is faster than continuing.
- * - Every consent point has: id, phase machine, timing, weight, copy,
- *   haptic, a11y contract, and non-claims.
- * - No hand-waving. If a surface claims consent, it must map to a ConsentPoint.
+ * WHAT: Typed catalog + pure helpers for every consent-adjacent control in Litmo
+ *       (timings, weights, phase machines, visual/gesture policy, edge cases,
+ *       grant-arm rules, Soft Signal phase mapping, forbidden labels).
+ * WHY:  UI must not invent “good enough” consent. One closed vocabulary binds
+ *       product, tests, VoiceOver copy, and agent work. Drift = safety bugs.
+ * CONSENT PHILOSOPHY:
+ *   - Grant is slow, specific, revocable, session-bound.
+ *   - Soft Signal (withdraw) is faster than continue; no reason required.
+ *   - Prepare ≠ mutual consent ≠ touch permission.
+ *   - Onboarding (`onboard_*`) is prepare/inform only — never seals a session.
+ *   - Learning scenarios never authorize real contact.
+ *   - Missing/stale/contradictory data fails closed.
+ * EDGE CASES: See CONSENT_EDGE_CASES (13 explicit outcomes). Do not invent
+ *             friendlier-but-unconstitutional behavior under pressure.
+ * NEVER: This module does not talk to the network, seal DB rows, or move
+ *        bodies. Callers must still wire Soft Signal offline-first and server
+ *        fingerprint confirm correctly.
+ * SEE: docs/CODE_COMMENT_STANDARD.md, docs/CONSENT_MICROINTERACTIONS.md,
+ *      docs/ONBOARDING_CONSENT_FLOW.md, docs/LITMO_CONSTITUTION.md.
  *
  * Source of truth for product review, agents, and UI implementation.
  * Living Constitution Articles I–II bind this module.
@@ -51,10 +64,19 @@ export const CONSENT_TIMING = {
 } as const;
 
 /**
- * Constitution check: stop interaction cost < grant interaction cost.
- * Lower number = easier / faster.
+ * WHAT: Returns true iff Soft Signal timing tokens are strictly faster than grant.
+ * WHY:  Living Constitution I.4 — body freedom before beauty. Tests fail the
+ *       build if someone “polishes” Soft Signal slower than Confirm arm.
+ * CONSENT: Enforces withdraw-faster-than-grant at the token layer.
+ * EDGE CASES:
+ *   - Equal timings → false (must be strict <, not ≤).
+ *   - Only one pair failing → false (both pairs required).
+ * NEVER: Does not prove UI wired Soft Signal offline-first; only token math.
+ * SEE: CONSENT_MICRO_RULES.stop_faster_than_grant, constitution tests.
  */
 export function stopFasterThanGrant(): boolean {
+  // Local commit 0ms must beat grant arm 400ms — stop cannot lose a race to continue.
+  // UI “stopped” by 120ms must beat grant ease 360ms — settled stop before seal beauty.
   return (
     CONSENT_TIMING.softSignalLocalCommitMs < CONSENT_TIMING.grantConfirmArmMs &&
     CONSENT_TIMING.softSignalUiStoppedByMs < CONSENT_TIMING.grantPrimaryEaseMs
@@ -1234,21 +1256,42 @@ export const CONSENT_MICRO_RULES: ConsentMicroRule[] = [
   },
 ];
 
+/**
+ * WHAT: Runs every CONSENT_MICRO_RULES check; returns failed rule ids.
+ * WHY:  One call site for tests and optional runtime self-check in diagnostics.
+ * CONSENT: Pure constitution lint — does not grant or withdraw anything.
+ * EDGE CASES: Empty failed[] means ok; partial failures list every id.
+ * NEVER: Passing rules ≠ production legal/clinical approval.
+ * SEE: consentInteractionCore.test.ts “all micro-rules pass”.
+ */
 export function allConsentMicroRulesPass(): {
   ok: boolean;
   failed: string[];
 } {
+  // Collect all failures (not first-only) so agents fix every broken invariant.
   const failed = CONSENT_MICRO_RULES.filter((r) => !r.check()).map((r) => r.id);
   return { ok: failed.length === 0, failed };
 }
 
 // ── Soft Signal outcome → micro phase ──────────────────────────────────────
 
+/**
+ * WHAT: Maps SoftSignalOutcome (service layer) → SoftSignalPhase (UI micro SM).
+ * WHY:  UI phase machines stay decoupled from service outcome enum drift.
+ * CONSENT: After any stop outcome, UI settles as free — never “half active”.
+ * EDGE CASES:
+ *   - pending_sync → syncing (body already free; network may catch up).
+ *   - already_ended → settled (idempotent second tap — no error punishment).
+ *   - unknown future outcome → settled (fail toward free, not stuck firing).
+ * NEVER: Does not re-enable an active session timer.
+ * SEE: softSignalCore SoftSignalOutcome, SoftSignalButton phase display.
+ */
 export function softSignalPhaseFromOutcome(
   outcome: SoftSignalOutcome,
 ): SoftSignalPhase {
   switch (outcome) {
     case "pending_sync":
+      // Local end already happened; UI may show quiet sync without re-arming session.
       return "syncing";
     case "stopped_local":
     case "stopped_synced":
@@ -1256,6 +1299,7 @@ export function softSignalPhaseFromOutcome(
     case "already_ended":
       return "settled";
     default:
+      // Exhaustiveness fallback: prefer settled (free) over stuck in firing.
       return "settled";
   }
 }
@@ -1263,8 +1307,18 @@ export function softSignalPhaseFromOutcome(
 // ── Grant arming helper ────────────────────────────────────────────────────
 
 /**
- * Whether a grant Confirm control may enable.
- * Apple-level: both content readiness AND minimum dwell.
+ * WHAT: Pure predicate — may the grant Confirm/Seal control enable?
+ * WHY:  Apple-level anti-accidental: content + all toggles + dwell + fresh
+ *       fingerprint + not withdrawn. Shared by hook and tests.
+ * CONSENT: Gate for saying yes only. Soft Signal ignores this function entirely.
+ * EDGE CASES (order is intentional — cheapest fail-closed first):
+ *   - withdrawn → false (stop wins mid-seal).
+ *   - !contentReady → false (never seal unread package).
+ *   - !requiredTogglesAllOn → false (incomplete affirm).
+ *   - !fingerprintCurrent → false (stale package after profile edit).
+ *   - dwellMs < grantArmDwellMs → false (still arming).
+ * NEVER: true does not mean sealed, mutual, or touch authorized — only “Confirm may enable”.
+ * SEE: useConsentGrantArm, CONSENT_TIMING.grantArmDwellMs.
  */
 export function mayEnableGrantConfirm(input: {
   contentReady: boolean;
@@ -1273,29 +1327,50 @@ export function mayEnableGrantConfirm(input: {
   fingerprintCurrent: boolean;
   withdrawn: boolean;
 }): boolean {
+  // Stop always wins — do not let Confirm light up after Soft Signal.
   if (input.withdrawn) return false;
+  // Unread / loading snapshot must not arm (blind consent is invalid).
   if (!input.contentReady) return false;
+  // Missing required Soft Signal ack or protective checks → not deliberate yet.
   if (!input.requiredTogglesAllOn) return false;
+  // Material profile change mid-review invalidates the package (fail closed).
   if (!input.fingerprintCurrent) return false;
+  // Deliberate dwell — last checkbox + instant seal is forbidden by edge matrix.
   if (input.dwellMs < CONSENT_TIMING.grantArmDwellMs) return false;
   return true;
 }
 
 /**
- * Soft Signal may fire whenever idle — no dwell, no peer, no reason.
+ * WHAT: Pure predicate — may Soft Signal fire right now?
+ * WHY:  Centralize “no dwell / no peer / no reason” so UI cannot add a confirm dialog.
+ * CONSENT: Withdraw path — opposite philosophy of mayEnableGrantConfirm.
+ * EDGE CASES:
+ *   - alreadyEnded → false (idempotent; no double-withdraw penalty).
+ *   - phase firing | local_ended → false (in-flight; wait settle).
+ *   - idle | syncing | settled (if not alreadyEnded) → true when still stoppable.
+ * NEVER: false must not block a first press while idle; true does not require network.
+ * SEE: SoftSignalButton, CONSENT_GESTURES.withdraw.forbidden.
  */
 export function mayFireSoftSignal(input: {
   alreadyEnded: boolean;
   phase: SoftSignalPhase;
 }): boolean {
+  // Second hammer after end: no-op, not an error toast blaming the user.
   if (input.alreadyEnded) return false;
+  // In-flight local end — do not re-enter fire (avoids duplicate side effects).
   if (input.phase === "firing" || input.phase === "local_ended") return false;
+  // No peer check, no dwell, no reason — body is free immediately on press path.
   return true;
 }
 
 // ── Forbidden language (user-facing) ───────────────────────────────────────
 
-/** Strings that must not appear as primary labels on grant/withdraw controls. */
+/**
+ * WHAT: Regex list of labels banned on grant/withdraw primary controls.
+ * WHY:  Copy can reintroduce dark patterns (swipe-to-consent, “why did you stop”).
+ * CONSENT: Language is product logic — these phrases violate constitution.
+ * NEVER: Passing a label check ≠ adequate consent UX overall.
+ */
 export const FORBIDDEN_CONSENT_LABELS = [
   /swipe to (agree|consent|yes)/i,
   /by continuing you agree/i,
@@ -1307,12 +1382,26 @@ export const FORBIDDEN_CONSENT_LABELS = [
   /certified ready/i,
 ] as const;
 
+/**
+ * WHAT: true if label matches any FORBIDDEN_CONSENT_LABELS pattern.
+ * WHY:  Tests scan catalog primaries; CI blocks dark-pattern copy.
+ * CONSENT: Enforces no reason-at-stop, no swipe-to-yes, no safety-score theater.
+ * EDGE CASES: Empty string → false; case-insensitive via regex flags.
+ * NEVER: false does not prove the screen is ethical — only that this string is clean.
+ */
 export function labelViolatesConsentGrammar(label: string): boolean {
   return FORBIDDEN_CONSENT_LABELS.some((re) => re.test(label));
 }
 
 // ── Inventory helpers ──────────────────────────────────────────────────────
 
+/**
+ * WHAT: Filter CONSENT_POINTS by kind (withdraw, grant, prepare, …).
+ * WHY:  Docs generators and tests need kind buckets without hand lists.
+ * CONSENT: Inventory only — no authorization effect.
+ * EDGE CASES: Unknown kind type-prevented; empty array if none.
+ * NEVER: Presence of a prepare point does not mean a session is ready.
+ */
 export function consentPointsByKind(
   kind: ConsentPointKind,
 ): ConsentPointSpec[] {
@@ -1321,8 +1410,17 @@ export function consentPointsByKind(
   );
 }
 
+/**
+ * WHAT: Return ConsentPointSpec or throw unknown_consent_point.
+ * WHY:  UI must fail loud on typos — silent fallback would invent consent copy.
+ * CONSENT: Closed catalog; free-string point ids are a product defect.
+ * EDGE CASES: Valid id → spec; invalid at runtime → throw (TypeScript narrows compile-time).
+ * NEVER: Successful assert ≠ user has consented to anything.
+ * SEE: ConsentAffirmRow, ConsentAcceptGate.
+ */
 export function assertConsentPoint(id: ConsentPointId): ConsentPointSpec {
   const p = CONSENT_POINTS[id];
+  // Defensive for JS callers / future partial catalogs — fail closed, no default point.
   if (!p) throw new Error(`unknown_consent_point:${id}`);
   return p;
 }
@@ -1396,13 +1494,25 @@ export const CONSENT_VISUAL: Record<
   },
 };
 
+/**
+ * WHAT: Map a ConsentPointId to a semantic visual role (theme keys, not raw hex).
+ * WHY:  Soft Signal must never render moss “happy continue”; grant never signal-rose.
+ * CONSENT: Color is secondary to labels; role still prevents withdraw/grant swap.
+ * EDGE CASES:
+ *   - snapshot_mutual_partner_affirm → demo (apricot) even if kind is grant-like.
+ *   - inform kind / learning → inform (neutral paper).
+ * NEVER: Correct color ≠ valid consent; never color-only meaning in UI.
+ * SEE: CONSENT_VISUAL, theme tokens.
+ */
 export function visualRoleForPoint(id: ConsentPointId): ConsentVisualRole {
   const p = CONSENT_POINTS[id];
+  // Kind drives default role — withdraw always signal, grant always moss family.
   if (p.kind === "withdraw") return "withdraw";
   if (p.kind === "grant") return "grant";
   if (p.kind === "prepare") return "prepare";
   if (p.kind === "share") return "share";
   if (p.kind === "decline") return "decline";
+  // Single-device dual affirm must look like practice, not two real humans.
   if (id === "snapshot_mutual_partner_affirm") return "demo";
   return "inform";
 }
@@ -1576,13 +1686,25 @@ export const CONSENT_EDGE_CASES: ConsentEdgeCase[] = [
   },
 ];
 
+/**
+ * WHAT: Lookup CONSENT_EDGE_CASES by id or throw.
+ * WHY:  Agents/tests reference cases by stable id without scanning the array.
+ * CONSENT: Documents required vs forbidden behavior under pressure.
+ * EDGE CASES: Unknown id throws (no silent empty case that looks “handled”).
+ * NEVER: Reading a case does not implement it — UI must still wire behavior.
+ */
 export function edgeCaseById(id: ConsentEdgeCaseId): ConsentEdgeCase {
   const e = CONSENT_EDGE_CASES.find((c) => c.id === id);
   if (!e) throw new Error(`unknown_edge_case:${id}`);
   return e;
 }
 
-/** Easing tokens for RN Animated (when motion allowed). */
+/**
+ * WHAT: Easing token names for RN Animated on consent surfaces.
+ * WHY:  Ban spring bounce on consent — playful dopamine is wrong for safety UX.
+ * CONSENT: Motion may follow Soft Signal commit; motion must never delay commit.
+ * NEVER: Easing does not authorize anything.
+ */
 export const CONSENT_EASING = {
   /** Soft Signal cover after end — gentle, never delay commit. */
   afterStopEase: "ease-out" as const,
@@ -1592,12 +1714,25 @@ export const CONSENT_EASING = {
   banSpringBounceOnConsent: true,
 } as const;
 
+/**
+ * WHAT: Duration ms for consent-related motion by kind + Reduce Motion.
+ * WHY:  One helper so ND / Reduce Motion cannot be forgotten on a single screen.
+ * CONSENT: Cover motion happens AFTER local Soft Signal end; grant ease is slower.
+ * EDGE CASES:
+ *   - reducedMotion true → cap at reducedMotionMaxMs (meaning stays in copy).
+ *   - kind row → snapshot row transition (calm, not celebratory).
+ * NEVER: Duration 0 on Soft Signal local commit is CONSENT_TIMING — not this helper’s cover ease.
+ * SEE: CONSENT_EDGE_CASES.reduced_motion_on.
+ */
 export function consentMotionDurationMs(
   kind: "softSignalCover" | "grantEase" | "row",
   reducedMotion: boolean,
 ): number {
+  // Accessibility: motion never carries sole meaning; cut duration hard when reduced.
   if (reducedMotion) return CONSENT_TIMING.reducedMotionMaxMs;
+  // Cover eases after stop — must not be confused with softSignalLocalCommitMs (0).
   if (kind === "softSignalCover") return CONSENT_TIMING.softSignalCoverEaseMs;
+  // Grant success ease is deliberately slower than Soft Signal settle budget.
   if (kind === "grantEase") return CONSENT_TIMING.grantPrimaryEaseMs;
   return CONSENT_TIMING.snapshotRowTransitionMs;
 }

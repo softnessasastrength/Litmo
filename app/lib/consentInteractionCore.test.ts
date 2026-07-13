@@ -20,6 +20,9 @@ import {
   visualRoleForPoint,
 } from "./consentInteractionCore.ts";
 
+// WHAT: Soft Signal local commit is strictly faster than grant arm.
+// WHY: Constitution I.4 — body freedom before beauty; stop must not lose a race to continue.
+// NEVER: This does not prove UI wiring; only the timing tokens.
 test("stop is faster than grant (constitution I.4)", () => {
   assert.equal(stopFasterThanGrant(), true);
   assert.ok(
@@ -27,11 +30,17 @@ test("stop is faster than grant (constitution I.4)", () => {
   );
 });
 
+// WHAT: Every CONSENT_MICRO_RULES check passes.
+// WHY: Catalog drift must fail CI, not silent product review.
+// NEVER: Green rules ≠ legal/clinical approval.
 test("all micro-rules pass", () => {
   const { ok, failed } = allConsentMicroRulesPass();
   assert.equal(ok, true, `failed: ${failed.join(",")}`);
 });
 
+// WHAT: Every catalog point has title, authorizes, neverMeans, a11y, clean labels.
+// WHY: Incomplete points would ship hand-waved consent copy.
+// NEVER: Completeness ≠ correct screen wiring.
 test("catalog is exhaustive and consistent", () => {
   assert.ok(CONSENT_POINT_IDS.length >= 20);
   for (const id of CONSENT_POINT_IDS) {
@@ -47,6 +56,9 @@ test("catalog is exhaustive and consistent", () => {
   }
 });
 
+// WHAT: Soft Signal withdraw points are high weight, no arm, offline, non-claim reason/emergency.
+// WHY: Stop must dominate UI and never require deliberate dwell.
+// NEVER: Does not prove SoftSignalButton sticky layout.
 test("withdraw Soft Signal points dominate weight and never arm", () => {
   for (const p of consentPointsByKind("withdraw")) {
     if (!p.id.startsWith("soft_signal") && p.id !== "block_and_leave") continue;
@@ -61,16 +73,26 @@ test("withdraw Soft Signal points dominate weight and never arm", () => {
   }
 });
 
+// WHAT: Prepare declaration is kind prepare and denies mutual consent in neverMeans.
+// WHY: Prepare ≠ seal is the core non-claim of snapshot prepare.
+// NEVER: Does not prove prepare screen uses ConsentAffirmRow.
 test("prepare is not grant", () => {
   const prep = CONSENT_POINTS.snapshot_prepare_declaration;
   assert.equal(prep.kind, "prepare");
   assert.ok(prep.neverMeans.some((n) => /mutual consent/i.test(n)));
 });
 
+// WHAT: Learning scenario choices are inform only.
+// WHY: Completing modules must never certify real-world consent competence.
+// NEVER: Does not grade module content quality.
 test("learning scenario is inform only", () => {
   assert.equal(CONSENT_POINTS.learning_scenario_choice.kind, "inform");
 });
 
+// WHAT: All onboard_* points are inform|prepare, no arm, no peer, with non-claims.
+// WHY: Onboarding must never be mistaken for session dual seal or touch grant.
+// SEE: docs/ONBOARDING_CONSENT_FLOW.md
+// NEVER: Catalog correct ≠ every onboarding screen wired to assertConsentPoint.
 test("onboarding points exist and never grant session touch", () => {
   const onboardIds = CONSENT_POINT_IDS.filter((id) => id.startsWith("onboard_"));
   assert.ok(onboardIds.length >= 18, `expected onboard_* catalog, got ${onboardIds.length}`);

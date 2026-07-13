@@ -19,6 +19,26 @@ For every meaningful architectural, product, data, safety, or implementation dec
 
 Documentation must be maintained continuously while coding. Do not defer it to a final cleanup pass.
 
+## In-code comment rule (maximum intentionality)
+
+**Standing order:** every function and every safety-relevant line that ships must
+carry autistic-level reasoning in comments — what it does, why it exists, which
+edge cases it handles, and how it fits Litmo’s consent philosophy (or an
+explicit “not a consent surface” note).
+
+Canonical standard: [`CODE_COMMENT_STANDARD.md`](CODE_COMMENT_STANDARD.md).
+
+Summary of the bar:
+
+- Block comment on every function: WHAT / WHY / CONSENT / EDGE CASES / NEVER / SEE
+- Line comments wherever order, fail-closed, privacy, demo/real split, or non-obvious booleans matter
+- Consent-critical modules get the strictest bar (no short functions without NEVER)
+- Touched legacy code is brought up to standard in the same workstream
+- Comments must match control flow; aspirational docs-as-comments are forbidden
+
+A change that adds behavior without meeting `CODE_COMMENT_STANDARD.md` is incomplete
+even if tests pass.
+
 ## Required living documents
 
 Keep these current whenever relevant:

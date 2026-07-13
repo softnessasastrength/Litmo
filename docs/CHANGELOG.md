@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-07-14 — Code comment standard (maximum intentionality)
+
+### Summary
+
+Standing order: every function and safety-relevant line must ship with autistic-level
+in-code documentation (WHAT / WHY / CONSENT / EDGE CASES / NEVER). Codified in
+`docs/CODE_COMMENT_STANDARD.md`, bound in `Agents.md` and `DOCUMENTATION_STANDARD.md`.
+Applied as the exemplar bar to consent grammar helpers, `useConsentGrantArm`,
+`ConsentAffirmRow`, and `ConsentAcceptGate`.
+
+### Developer impact
+
+- New/touched code incomplete without the comment bar (even if tests pass)
+- Consent-critical modules use the strictest template
+- Retrofit policy: touch a file → raise it to standard in the same workstream
+
 ## 2026-07-14 — Initial onboarding consent flow (full granularity)
 
 ### Summary

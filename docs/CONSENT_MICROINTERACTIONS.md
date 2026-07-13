@@ -3,6 +3,7 @@
 **Status:** canonical product grammar  
 **Code:** `app/lib/consentInteractionCore.ts`  
 **Version:** 1  
+**In-code bar:** [`CODE_COMMENT_STANDARD.md`](CODE_COMMENT_STANDARD.md) (WHAT / WHY / CONSENT / EDGE / NEVER)
 
 > We are granular about consent at the same level Apple obsesses over button  
 > animations and system behavior. Every consent point is intentional, clear,  
