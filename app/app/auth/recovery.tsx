@@ -1,8 +1,10 @@
 import { Link } from "expo-router";
 import { Body, Eyebrow, Screen, Title } from "../../components/ui";
-import { authFormStyles as styles } from "./sign-in";
+import { authFormStyles } from "./sign-in";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
 
 export default function RecoveryScreen() {
+  const styles = useThemedStyles(authFormStyles);
   return (
     <Screen>
       <Eyebrow>ACCOUNT RECOVERY</Eyebrow>

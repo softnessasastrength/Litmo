@@ -4,8 +4,10 @@ import { useRouter } from "expo-router";
 import { Body, Button, Eyebrow, Screen, Title } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { profileRepository } from "../../services/profileRepository";
-import { authFormStyles as styles } from "../auth/sign-in";
+import { authFormStyles } from "../auth/sign-in";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
 export default function EditProfileScreen() {
+  const styles = useThemedStyles(authFormStyles);
   const router = useRouter();
   const { user } = useAuth();
   const [name, setName] = useState("");

@@ -4,7 +4,7 @@ import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { Body, Button, Eyebrow, Screen, Title } from "../../components/ui";
 import { deviceRegistrationService } from "../../services/deviceRegistrationService";
 import { mapExternalError } from "../../services/errors";
-import { colors } from "../../theme";
+import { useColors } from "../../context/ThemeContext";
 
 type Device = Awaited<
   ReturnType<typeof deviceRegistrationService.list>
@@ -19,6 +19,7 @@ export default function DevicesScreen() {
 }
 
 function DeviceList() {
+  const colors = useColors();
   const [devices, setDevices] = useState<Device[]>([]);
   const [error, setError] = useState("");
   const load = async () => {

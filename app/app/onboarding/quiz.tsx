@@ -72,7 +72,9 @@ export default function QuizScreen() {
       <FadeIn key={question.id}>
         <View style={styles.header}>
           <Text style={styles.kicker}>{question.kicker}</Text>
-          <Text style={styles.prompt}>{question.prompt}</Text>
+          <Text style={styles.prompt} accessibilityRole="header">
+            {question.prompt}
+          </Text>
         </View>
         <View accessibilityRole="radiogroup" style={styles.options}>
           {question.answers.map((answer) => (

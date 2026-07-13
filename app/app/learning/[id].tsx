@@ -53,8 +53,14 @@ export default function LearningModuleScreen() {
   if (!module) {
     return (
       <View style={styles.missing}>
-        <Text style={styles.title}>Module unavailable</Text>
-        <Pressable onPress={() => router.back()} style={styles.secondaryButton}>
+        <Text style={styles.title} accessibilityRole="header">
+          Module unavailable
+        </Text>
+        <Pressable
+          onPress={() => router.back()}
+          style={styles.secondaryButton}
+          accessibilityRole="button"
+        >
           <Text style={styles.secondaryButtonText}>Go back</Text>
         </Pressable>
       </View>
@@ -66,8 +72,14 @@ export default function LearningModuleScreen() {
   if (!step) {
     return (
       <View style={styles.missing}>
-        <Text style={styles.title}>Lesson step unavailable</Text>
-        <Pressable onPress={() => router.back()} style={styles.secondaryButton}>
+        <Text style={styles.title} accessibilityRole="header">
+          Lesson step unavailable
+        </Text>
+        <Pressable
+          onPress={() => router.back()}
+          style={styles.secondaryButton}
+          accessibilityRole="button"
+        >
           <Text style={styles.secondaryButtonText}>Go back</Text>
         </Pressable>
       </View>
@@ -101,7 +113,6 @@ export default function LearningModuleScreen() {
   }
 
   async function goBackStep() {
-    const styles = useThemedStyles(makeStyles);
     if (stepIndex === 0) {
       router.back();
       return;
@@ -127,7 +138,9 @@ export default function LearningModuleScreen() {
         </Text>
         <View
           style={styles.track}
+          accessible
           accessibilityRole="progressbar"
+          accessibilityLabel={`Step ${stepIndex + 1} of ${current.steps.length}`}
           accessibilityValue={{
             min: 1,
             max: current.steps.length,
@@ -144,7 +157,9 @@ export default function LearningModuleScreen() {
           />
         </View>
 
-        <Text style={styles.title}>{step.title}</Text>
+        <Text style={styles.title} accessibilityRole="header">
+          {step.title}
+        </Text>
         <Text style={styles.body}>{step.body}</Text>
 
         <View style={styles.takeaway}>
@@ -186,6 +201,7 @@ export default function LearningModuleScreen() {
           <Pressable
             onPress={() => void goBackStep()}
             style={styles.secondaryButton}
+            accessibilityRole="button"
           >
             <Text style={styles.secondaryButtonText}>
               {stepIndex === 0 ? "Exit" : "Back"}
@@ -198,6 +214,8 @@ export default function LearningModuleScreen() {
               styles.primaryButton,
               (!canContinue || !loaded) && styles.disabled,
             ]}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: !canContinue || !loaded }}
           >
             <Text style={styles.primaryButtonText}>
               {isLast ? "Complete module" : "Continue"}

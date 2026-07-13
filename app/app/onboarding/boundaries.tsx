@@ -57,8 +57,10 @@ export default function BoundariesScreen() {
         consent. Every real session still needs a fresh Consent Snapshot.
       </Body>
       {demoBodyZones.map((zone) => (
-        <View key={zone.id} style={styles.group} accessible>
-          <Text style={styles.question}>{zone.label}</Text>
+        <View key={zone.id} style={styles.group}>
+          <Text style={styles.question} accessibilityRole="header">
+            {zone.label}
+          </Text>
           <View accessibilityRole="radiogroup" style={styles.choices}>
             {statuses.map((status) => (
               <Choice
