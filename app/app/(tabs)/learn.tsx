@@ -270,6 +270,30 @@ export default function LearningHomeScreen() {
 
       <Pressable
         accessibilityRole="button"
+        accessibilityLabel="Open Exorcism Dojo. Private ritual surface for defense inventory, urge log, and burn gates. Not a consumer product feature."
+        accessibilityHint="Device-local only. Completing dojo steps never proves safety or consent."
+        onPress={() => router.push("/dojo" as never)}
+        style={({ pressed }) => [
+          styles.campfireCard,
+          pressed && styles.pressed,
+        ]}
+      >
+        <View style={styles.campfireIcon}>
+          <Ionicons name="flame-outline" size={22} color={colors.moss} />
+        </View>
+        <View style={styles.cardCopy}>
+          <Text style={styles.cardTitle}>Exorcism Dojo</Text>
+          <Text style={styles.cardSummary}>
+            THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT. Name defenses
+            D01–D24, log urges before building, track burn readiness. Pair with
+            the Exorcism Dojo learning path.
+          </Text>
+        </View>
+        <Ionicons name="chevron-forward" size={22} color={colors.muted} />
+      </Pressable>
+
+      <Pressable
+        accessibilityRole="button"
         accessibilityLabel="Open Campfire Mode. Three local practices for group presence, quiet co-regulation, and calm focus."
         onPress={() => router.push("/campfire" as never)}
         style={({ pressed }) => [
@@ -323,16 +347,23 @@ export default function LearningHomeScreen() {
         </Text>
       </View>
 
-      {learningPaths.map((path) => (
-        <PathCard
-          key={path.id}
-          path={path}
-          progress={progress}
-          styles={styles}
-          colors={colors}
-          onOpenFirst={() => openPath(path)}
-        />
-      ))}
+      {[...learningPaths]
+        .sort((a, b) => {
+          // Surface the dojo path first — ritual honesty over product curriculum.
+          if (a.id === "exorcism-dojo-track") return -1;
+          if (b.id === "exorcism-dojo-track") return 1;
+          return 0;
+        })
+        .map((path) => (
+          <PathCard
+            key={path.id}
+            path={path}
+            progress={progress}
+            styles={styles}
+            colors={colors}
+            onOpenFirst={() => openPath(path)}
+          />
+        ))}
 
       <View style={styles.sectionHeader}>
         <Text style={styles.section} accessibilityRole="header">

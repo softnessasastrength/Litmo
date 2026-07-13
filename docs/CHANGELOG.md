@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — Dojo diagnostics flags + Learn hub entry
+
+Non-sensitive diagnostics show Dojo counts/flags (never urge text). Learn tab
+surfaces Exorcism Dojo card and pins `exorcism-dojo-track` first. Inventory JSON
+records D23 lifecycle (storage/wipe/portability).
+
 ## 2026-07-13 — Dojo state in local inventory + wipe
 
 `litmo.dojo.state.v1` is wiped with device-local data. Portability inventory

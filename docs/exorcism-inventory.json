@@ -33,8 +33,13 @@
     {"id": "D20", "system": "age_gate", "path": "app/services/ageGateService.ts", "fear": "category catastrophe"},
     {"id": "D21", "system": "block_report_appeal", "path": "app/services/blockService.ts", "fear": "hard no + justice without mob"},
     {"id": "D22", "system": "request_expiry", "path": "docs/adr/0015-session-request-creation-and-recipient-authorization.md", "fear": "open loops as liability"},
-    {"id": "D23", "system": "exorcism_dojo_itself", "path": "docs/EXORCISM_MANIFESTO.md", "fear": "without ritual I disappear"},
+    {"id": "D23", "system": "exorcism_dojo_itself", "path": "app/lib/dojoCore.ts|app/app/dojo/index.tsx|docs/EXORCISM_MANIFESTO.md", "fear": "without ritual I disappear", "storage": "litmo.dojo.state.v1", "portability": "counts_flags_only", "wipe": "localDataWipe EXTRA_ASYNC_KEYS"},
     {"id": "D24", "system": "infinite_documentation", "path": "docs/", "fear": "stopping means death of meaning"}
   ],
-  "agent_rule": "Prefer naming D-ids over inventing new engines. Logical extreme is seeing, not more bars."
+  "agent_rule": "Prefer naming D-ids over inventing new engines. Logical extreme is seeing, not more bars.",
+  "lifecycle": {
+    "inventory": "app/services/localDataInventory.ts → dojo: DojoInventorySummary",
+    "wipe": "app/services/localDataWipe.ts → litmo.dojo.state.v1",
+    "route": "/dojo"
+  }
 }
