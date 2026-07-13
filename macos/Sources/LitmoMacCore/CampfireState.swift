@@ -121,4 +121,6 @@ public enum PlatformAuthority: Sendable {
     public static let activeSessions = "Active physical sessions and Soft Signal remain phone-first."
     public static let server = "Consent, authorization, and staff decisions remain server-authoritative."
     public static let localCampfire = "Campfire state stays on this Mac and is not a consent record."
+    public static let trustHistory =
+        "Self trust facts are server-authoritative and never a safety score. They never grant consent."
 }

@@ -6,8 +6,8 @@
 
 - **Name:** SAFETY-OPS-001 — Recommended private-alpha safety-operations foundation
 - **Status:** active; founder selected the recommended defaults on 2026-07-13
-- **Branch:** `main` contains PRs #72–#76, including the founder-authorized native macOS foundation. SAFETY-OPS-001 remains the active milestone.
-- **Latest known coherent milestone:** Chapters 1–5, LEARN-002, HAPTIC-001, matching-hold ends open sessions (ADR 0038), semantic haptics (ADR 0039), BETA-001 physical walkthrough (Track A/B/C all Pass, including physical B1–B26).
+- **Branch:** `agent/macos-trust-history-read` carries MACOS-002. `main` contains PRs #72–#78.
+- **Latest known coherent milestone:** Chapters 1–5, LEARN-002, HAPTIC-001, BETA-001, native macOS foundation (ADR 0045 / PR #76), ACCESS-001 semantics cleanup (PR #78).
 
 ## Completed foundation
 
@@ -19,30 +19,23 @@
 - Model-portable workflow files and `npm run state:check` enforcement.
 - Publish-ready GitHub Wiki source under `wiki/`.
 - Guided learning catalog, lesson player, fictional scenarios, private device-local progress, resume behavior, and progress tests.
-- Chapter 5: blocks, age gate, reports, review queue, rate limits, trust events, restrictions, moderator console, peer signals, appeals, real discovery, ban ends open sessions, real Consent Snapshot UI.
-- Physical beta walkthrough checklist for founder/private validation (not external TestFlight).
-- BETA-001 complete: Track A Pass, Track C Pass, Track B Pass (automated backend + physical B1–B26 on device, founder, 2026-07-13). No Fail items recorded. Do not claim external beta readiness until RELEASE_AND_TESTFLIGHT blockers clear.
-- Private-alpha safety foundation and mobile controls are integrated on `main` through PR #72.
-- Campfire Mode's three device-local practices are integrated on `main` through PR #73.
-- MPL-2.0 licensing and ADR 0044 are integrated on `main` through PR #74.
-- A hosted unsigned Xcode 26.5 simulator build passed in strict CocoaPods deployment mode on PR #75 and produced a compiled `.app` plus full build log.
-- PR #76 has a green hosted Xcode 26.5 macOS run: four Campfire tests passed, both separate arm64 app targets compiled, and unsigned inspection artifacts uploaded.
+- Chapter 5 safety surfaces and private-alpha safety foundation through PR #72.
+- Campfire Mode through PR #73; MPL-2.0 through PR #74; hosted iOS compile through PR #75; native macOS foundation through PR #76; continuity finalize through PR #77.
+- PR #78 standardized ACCESS-001 deferred a11y semantics (moderation filter selected-state, Settings haptics Switch). Physical founder VoiceOver smoke remains open.
 
 ## Work in progress
 
-SAFETY-OPS-001 remains active. Merged PR #76 is a bounded, founder-authorized platform slice under ADR 0045, not a roadmap promotion: native Litmo provides local Campfire and a read-only participant shell; the separately bundled Litmo Ops target remains locked until real staff authentication and server authorization exist. External-review-dependent destructive retention, deletion, jurisdiction, escalation, and two-person staffing decisions remain blocked. ACCESS-001's deferred semantics fixes (moderation filter selected-state, Settings haptics `Switch`) have been standardized in code; the optional founder VoiceOver smoke is the only remaining item on that task.
+SAFETY-OPS-001 remains active and externally blocked on named qualified review and an independent backup reviewer. MACOS-002 (PR #79) implements the first server-backed macOS participant read: self-only trust history via `my_trust_signals` (ADR 0046), fail-closed without configuration/session. Litmo Ops remains locked.
 
 ## Priority next work
 
-1. Select the next separately reviewed macOS integration slice or return to governance work; keep Litmo Ops locked until real staff authentication and authorization exist.
-2. Keep Campfire Mode interpreted only as a local practice tool, never real group matching or group consent.
-3. Keep destructive retention and account deletion blocked until legal/privacy/security review names the permissible data categories, holds, and timing.
-4. Name and train an independent backup reviewer before external alpha; implement two-person permanent-ban approval only when that role exists.
-5. Optional founder VoiceOver smoke remains tracked under ACCESS-001.
+1. Merge green PR #79 (MACOS-002 trust history); keep Litmo Ops locked.
+2. Next macOS read surface after #79: own profile, requests, or export — one slice at a time.
+3. Keep Campfire Mode as local practice only; keep destructive retention/deletion blocked until review.
+4. Optional founder VoiceOver smoke remains under ACCESS-001.
+5. Name and train an independent backup reviewer before external alpha.
 
 ## Verification baseline
-
-The repository contains commands for:
 
 ```bash
 npm run state:check
@@ -54,34 +47,27 @@ npm run db:lint
 npm run build
 ```
 
-Database and integration checks require local Supabase. Native passkey, biometric, device-build, and release verification require Xcode, signing configuration, and a physical iPhone where applicable.
-
-Do not claim the current integrated `main` has passed every command unless the exact current commit was tested. Review the latest CI and local test evidence before release decisions.
+Database and integration checks require local Supabase. macOS native checks require XcodeGen and the `macos/` generation path.
 
 ## Known limitations and risks
 
 - The product is not production-ready and must not be presented as safe for arranging meetings with strangers.
-- Discovery and trust-history presentation remain partly synthetic or beta-oriented.
+- macOS trust history is server-backed only when explicitly configured; missing config/session fails closed.
 - Learning progress is device-local and does not synchronize across accounts or devices.
-- Learning completion is not evidence of safety, competence, or consent.
-- First-session learning gates have not been approved or implemented.
-- Physical-device accessibility validation remains incomplete.
-- Moderation operations still require qualified review and named backup staffing; the engineering invitation-expiry and eligibility gates are implemented.
-- Campfire circle readiness is local, ephemeral facilitation and is not a multi-person Consent Snapshot.
-- Passkey deployment depends on correct Associated Domains and server-side relying-party configuration.
+- Physical-device accessibility validation remains incomplete (VoiceOver smoke pending).
+- Moderation operations still require qualified review and named backup staffing.
+- Campfire is local facilitation, not multi-person consent.
+- macOS participant auth is env-token inspection only, not production passkey sign-in.
 
 ## Architectural decisions
 
 - Repository state, commits, tests, and documentation are the source of truth.
-- No agent may depend on hidden reasoning or prior chat context for continuity.
-- Model switches should occur at coherent commit boundaries whenever practical.
-- Security-sensitive partial work must fail closed and be explicitly documented.
 - Consent is explicit, current, revocable, session-specific, and never inferred from trust or compatibility.
-- Guided learning teaches product behavior but never certifies a participant as safe.
+- macOS may display server-authoritative read models but must not reimplement consent or staff authorization in Swift.
 
 ## Exact next action
 
-PRs #72–#76 are merged on `main`. PR #76 contains the first native macOS participant/Campfire and separately locked Ops foundations. Next: choose a separately reviewed integration slice. Do not treat unsigned artifacts as releases or unlock Ops without server-backed staff authentication and authorization. SAFETY-OPS-001 remains externally blocked on named qualified review and an independent backup reviewer. Separately, ACCESS-001's only remaining item is the optional founder VoiceOver smoke on physical iPhone.
+Land PR #79 when checks are green on the rebased head. Then implement the next single fail-closed macOS participant read (own profile recommended). Do not unlock Ops without server-backed staff authentication and authorization.
 
 ## Resume checklist
 
@@ -92,8 +78,6 @@ PRs #72–#76 are merged on `main`. PR #76 contains the first native macOS parti
 5. Continue only from an explicitly selected active task.
 
 ## Stop checklist
-
-Before stopping because of a rate limit, context limit, tool failure, interruption, or model switch:
 
 1. Stop at the safest coherent boundary available.
 2. Preserve all working changes.
