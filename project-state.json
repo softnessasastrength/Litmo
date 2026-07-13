@@ -1,36 +1,38 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T11:00:00-04:00",
+  "updatedAt": "2026-07-13T11:38:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
     "status": "active"
   },
   "git": {
-    "branch": "agent/adopt-mpl-2.0",
-    "latestCoherentCommit": "e0809527966d6a609395e20272a2067f16cd5411",
+    "branch": "agent/ios-native-ci-build",
+    "latestCoherentCommit": "025c4be5672b7ad4120df683b979d7ff8bd00913",
     "workingTreeExpectedClean": true
   },
   "verification": {
     "status": "passed",
     "commands": [
-      "npm run state:check — pass on merged PRs #72 and #73",
-      "npm run lint — pass on merged PRs #72 and #73",
-      "npm run typecheck — pass on merged PRs #72 and #73",
-      "npm test — pass on merged PRs #72 and #73",
-      "npm run build — pass on merged PRs #72 and #73",
-      "npm run db:start / db:reset / db:lint — pass on merged PRs #72 and #73",
-      "npx supabase test db — pass, including private_alpha_safety_ops.test.sql 17/17",
-      "npm run test:integration — 5/5 pass"
+      "npm run state:check — pass on PR #75 recovery head",
+      "npm run lint — pass on PR #75 recovery head",
+      "npm run typecheck — pass on PR #75 recovery head",
+      "npm test — pass on PR #75 recovery head",
+      "npm run build — pass on PR #75 recovery head",
+      "GitHub Actions iOS Native Build run #4 — pass with Xcode 26.5; unsigned simulator .app and log uploaded",
+      "npm run db:start / db:reset / db:lint — pass on merged baseline",
+      "npx supabase test db — pass on merged baseline",
+      "npm run test:integration — 5/5 pass on merged baseline"
     ],
     "failures": []
   },
-  "nextAction": "Review and merge the focused MPL-2.0 licensing PR. Then create contributor-attestation and trademark policies as separate governance decisions; SAFETY-OPS-001 remains active and externally blocked on qualified review and a named independent backup reviewer.",
+  "nextAction": "Merge PR #75 after its final strict pod-lock/Xcode run is green. Then create contributor-attestation and trademark policies as separate governance decisions; SAFETY-OPS-001 remains active and externally blocked on qualified review and a named independent backup reviewer.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
-    "Named independent backup reviewer before external alpha and two-person permanent bans"
+    "Named independent backup reviewer before external alpha and two-person permanent bans",
+    "Apple signing credentials and reviewed staging configuration for a signed device/TestFlight build"
   ],
   "risks": [
     "Invitation membership is admission control, not identity verification, proof of safety, or consent.",
@@ -38,14 +40,13 @@
     "Self export is an engineering portability primitive, not a claim of legally complete data access.",
     "External TestFlight remains blocked by deletion, hosted staging, AASA, disclosures, independent review, and signed-release evidence.",
     "Campfire circle readiness is ephemeral local facilitation, not a real group session or multi-person consent record.",
-    "MPL-2.0 licensing does not replace contributor, trademark, third-party notice, or qualified legal review."
+    "The hosted Xcode lane is unsigned simulator compilation, not device, entitlement, archive, or TestFlight validation."
   ],
   "notes": [
-    "Founder selected the recommended S1-S10 directions on 2026-07-13.",
-    "ADR 0042 distinguishes implemented engineering defaults from external-review-dependent policy.",
-    "Migration 036 and PR #72 add invitations, membership gates, matching pause, tombstones, cleanup, self export, and mobile controls.",
-    "PR #73 adds all three device-local Campfire practices under ADR 0043.",
-    "Founder selected MPL-2.0 on 2026-07-13; ADR 0044 records the file-level copyleft decision.",
+    "PRs #72 and #73 integrated private-alpha mobile controls and all three local Campfire practices.",
+    "PR #74 selected MPL-2.0 under ADR 0044.",
+    "PR #75 iOS Native Build run #4 passed on Xcode 26.5 and exposed/repaired a stale Podfile.lock.",
+    "The final PR #75 workflow restores CocoaPods deployment mode so future native builds fail on lock drift.",
     "Destructive report/case/trust retention and account deletion are deliberately unimplemented pending review."
   ]
 }
