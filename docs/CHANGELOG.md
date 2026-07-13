@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026-07-13 — Recommended private-alpha safety-operations foundation
+
+### Summary
+
+Founder selected the recommended SAFETY-OPS directions. Added ADR 0042,
+migration 036, and pgTAP coverage for staff-issued hashed invitations,
+seven-day expiry, private-alpha membership gates, a scoped matching pause,
+minimal unblock tombstones, non-destructive cleanup, and self data export.
+
+### User-visible impact
+
+- Non-member accounts cannot enter real discovery or create session requests.
+- Staff can pause new matching activity without removing active-session safety
+  controls.
+- No mobile invitation or export UI is added in this slice.
+
+### Data and safety impact
+
+- Plaintext invitation codes are returned once and never stored.
+- Existing accounts form the initial named cohort; new accounts require
+  invitation redemption.
+- Unblock tombstones contain pair identifiers and timestamps only and expire
+  after 90 days.
+- Destructive safety-record retention and account deletion remain blocked
+  pending qualified review.
+
+### Verification
+
+- `supabase/tests/private_alpha_safety_ops.test.sql` covers admission, code
+  issuance/redemption, matching pause, export categories, and tombstones.
+- GitHub Project State, lint, typecheck, unit tests, build, database reset/lint, all pgTAP tests, and integration 5/5 pass on PR #67.
+
+### Related decision
+
+- ADR 0042
+- SAFETY-OPS-001
+
 ## 2026-07-13 — Continuity reconciliation and SAFETY-OPS decision packet
 
 ### Summary
