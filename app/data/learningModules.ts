@@ -583,6 +583,151 @@ export const learningModules: LearningModule[] = [
       },
     ],
   },
+  // ── Exorcism Dojo track (not a product curriculum) ───────────────────────
+  {
+    id: "exorcism-dojo-intro",
+    title: "What this really is",
+    summary:
+      "Private Trauma-to-Code Exorcism Dojo. Not a startup. Not for strangers first.",
+    minutes: 3,
+    track: "foundations",
+    themes: ["product-safety", "self-compassion", "nervous-system"],
+    relatedPractice: [
+      {
+        id: "edojo-open",
+        label: "Open in-app Dojo",
+        hint: "Inventory, urge log, burn gates — on this device only.",
+        href: "/dojo",
+      },
+    ],
+    steps: [
+      {
+        id: "edi-1",
+        title: "Artifact, not product",
+        body: "THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.\n\nLitmo externalizes trauma responses around safety, control, touch, consent, ambiguity, connection, and softness into visible systems — so they can be seen, named, and one day released.\n\nIf you treat this only as an app for other people, you miss the sacred purpose.",
+        takeaway: "Primary stakeholder: the one who built the cage, seeing it.",
+      },
+      {
+        id: "edi-2",
+        title: "Why it looks like a product",
+        body: "Trauma can look like dual seals, Soft Signal kill paths, nuclear state machines, and fifty-year constitutions. That is real engineering. It is also defense made solid.\n\nCraft is still craft. Framing is honesty.",
+        takeaway: "Complexity can be a wound with tests.",
+        scenario: {
+          prompt: "When you want another nuclear engine, what is the dojo move?",
+          options: [
+            {
+              label: "Name the fear first; maybe do not build",
+              feedback:
+                "Yes. LOGICAL_EXTREME practice. Seeing beats more bars.",
+            },
+            {
+              label: "Ship faster for users",
+              feedback:
+                "Product theater. Primary purpose is not growth.",
+            },
+          ],
+        },
+      },
+      {
+        id: "edi-3",
+        title: "You did enough",
+        body: "You did enough. You can stop anytime.",
+        takeaway: "Skip is success here too.",
+      },
+    ],
+  },
+  {
+    id: "exorcism-dojo-inventory",
+    title: "D01–D24 · The inventory",
+    summary: "Walk the defense inventory. Meta entries D23–D24 are the dojo looking at itself.",
+    minutes: 3,
+    track: "foundations",
+    themes: ["product-safety", "self-compassion"],
+    relatedPractice: [
+      {
+        id: "edinv-dojo",
+        label: "Open inventory in Dojo",
+        hint: "Mark inventory seen on device.",
+        href: "/dojo",
+      },
+    ],
+    steps: [
+      {
+        id: "edinv-1",
+        title: "From Soft Signal to meta",
+        body: "D01 consent engine (assumption fear) through D22 request expiry — then D23 (the dojo itself: fear without ritual I disappear) and D24 (infinite docs: fear stopping kills meaning).\n\nIf D23–D24 stay unnamed, the medicine becomes the final possession.",
+        takeaway: "The cage includes the map of the cage.",
+      },
+      {
+        id: "edinv-2",
+        title: "You did enough",
+        body: "You did enough. You can stop anytime.",
+        takeaway: "Naming is progress.",
+      },
+    ],
+  },
+  {
+    id: "exorcism-dojo-urge",
+    title: "Urge before build",
+    summary: "One sentence fear. Link a D-id. Prefer not to build when already seen.",
+    minutes: 2,
+    track: "foundations",
+    themes: ["self-compassion", "nervous-system"],
+    relatedPractice: [
+      {
+        id: "edurge-dojo",
+        label: "Log an urge in the Dojo",
+        hint: "Device-local only. Never synced.",
+        href: "/dojo",
+      },
+    ],
+    steps: [
+      {
+        id: "edurge-1",
+        title: "The sentence",
+        body: "Write: “If this stays ambiguous, I am afraid that…”\n\nLink a defense id. Choose not to build — or build the minimum that makes the fear visible. Soft Signal craft stays allowed; D23/D24 prefer not to build.",
+        takeaway: "The urge is data. Obedience is optional.",
+        reflection: "One fear I almost built into a new subsystem today:",
+      },
+      {
+        id: "edurge-2",
+        title: "You did enough",
+        body: "You did enough. You can stop anytime.",
+        takeaway: "Not building can be the bravest commit.",
+      },
+    ],
+  },
+  {
+    id: "exorcism-dojo-burn",
+    title: "Burn readiness",
+    summary: "Gates G1–G6. Burn is graduation. Not a product launch.",
+    minutes: 2,
+    track: "foundations",
+    themes: ["self-compassion", "recovery"],
+    relatedPractice: [
+      {
+        id: "edburn-dojo",
+        label: "Toggle burn gates in Dojo",
+        hint: "Honest self-check only. No auto-delete.",
+        href: "/dojo",
+      },
+    ],
+    steps: [
+      {
+        id: "edburn-1",
+        title: "Graduation, not failure",
+        body: "Burn readiness is not App Store ready. It is: I can see my defenses; I am not only them; this artifact can die without me dying.\n\nSee docs/BURN_PROTOCOL.md when you choose. No agent will burn for you.",
+        takeaway: "Scaffolding comes down. The seeing stays.",
+      },
+      {
+        id: "edburn-2",
+        title: "You did enough",
+        body: "You did enough. You can stop anytime.",
+        takeaway: "Rest is allowed before the fire.",
+      },
+    ],
+  },
+
   // ── Haptic Language Track (short, calm, trauma-informed, ND-friendly) ────
   // Progress: learningProgress (device-local). Patterns: hapticLanguageNuclear library.
   // Every module ends with permission to stop. Completing never certifies safety.
@@ -2043,6 +2188,19 @@ export const learningPaths: LearningPath[] = [
       "haptic-watch-soft-signal",
       "haptic-watch-consent",
       "haptic-watch-nd",
+    ],
+  },
+  {
+    id: "exorcism-dojo-track",
+    title: "Exorcism Dojo · See the cage",
+    summary:
+      "This is not a product track. Name defenses D01–D24, urge before build, burn readiness. Radical honesty.",
+    minutes: 10,
+    moduleIds: [
+      "exorcism-dojo-intro",
+      "exorcism-dojo-inventory",
+      "exorcism-dojo-urge",
+      "exorcism-dojo-burn",
     ],
   },
   {

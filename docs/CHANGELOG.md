@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — In-app Exorcism Dojo surface
+
+Built dojo into the app: `dojoCore`, device-local store, `/dojo` screen,
+Home/Settings entry, learning path `exorcism-dojo-track`. Ritual visibility —
+not a product feature.
+
 ## 2026-07-13 — Watch app scaffold + Soft Signal wrist/phone kill bridge
 
 ### Summary

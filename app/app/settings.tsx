@@ -240,6 +240,16 @@ function SettingsContent() {
         />
       </View>
       <Button
+        variant="signal"
+        label="Exorcism Dojo (not a product)"
+        onPress={() => router.push("/dojo" as never)}
+        accessibilityHint="Private ritual surface: defense inventory, urge log, burn readiness. Not a consumer feature."
+      />
+      <Body muted>
+        THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT. Open the Dojo to
+        name fears before building more cage bars.
+      </Body>
+      <Button
         variant="secondary"
         label="Passkeys and registered devices"
         onPress={() => router.push("/security/devices" as never)}

@@ -252,6 +252,12 @@ export default function HomeTabScreen() {
         accessibilityHint="Serious pre-session process: boundaries, mood, safewords, aftercare, Soft Signal. Both people must affirm. Never automatic consent."
       />
       <Button
+        variant="signal"
+        label="Exorcism Dojo — not a product"
+        onPress={() => router.push("/dojo" as never)}
+        accessibilityHint="Private ritual: defense inventory, urge before build, burn readiness. Not a consumer feature."
+      />
+      <Button
         variant="secondary"
         label="Soft Signal (practice & private log)"
         onPress={() => router.push("/soft-signal/practice" as never)}

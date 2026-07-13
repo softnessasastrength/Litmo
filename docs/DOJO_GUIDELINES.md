@@ -102,7 +102,21 @@ Ambiguity gets to exist *sometimes* without a new subsystem.
 
 ---
 
-## 7. Notice
+## 7. In-app Dojo
+
+Route: **`/dojo`** (also Home + Settings).
+
+- Defense inventory D01–D24  
+- Urge-before-build log (device-local)  
+- Burn gates G1–G6 (self-check only; no auto-delete)  
+
+Code: `app/lib/dojoCore.ts` · `app/services/dojoStore.ts` · `app/app/dojo/index.tsx`
+
+Learning path: **`exorcism-dojo-track`**.
+
+---
+
+## 8. Notice
 
 > **This is a private exorcism artifact, not a product.**
 
@@ -110,4 +124,4 @@ Stamp this on major docs. Do not hide it.
 
 ---
 
-See also: [`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md) · [`TRAUMA_ARCHITECTURE.md`](TRAUMA_ARCHITECTURE.md) · root `CONSTITUTION.md` · `README.md`
+See also: [`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md) · [`TRAUMA_ARCHITECTURE.md`](TRAUMA_ARCHITECTURE.md) · [`LOGICAL_EXTREME.md`](LOGICAL_EXTREME.md) · root `CONSTITUTION.md` · `README.md`
