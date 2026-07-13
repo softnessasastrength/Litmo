@@ -1,5 +1,8 @@
 # Litmo concept
 
+**This is currently a personal emotional containment system, not a public product.**  
+Live purpose: [`REAL_PURPOSE.md`](REAL_PURPOSE.md). The product language below is **residue** (historical concept), not the current core truth.
+
 Litmo is infrastructure for explicit, revocable consent around platonic physical connection between adults.
 
 ## Product promise

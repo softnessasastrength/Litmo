@@ -1,38 +1,39 @@
 # Litmo Constitution
 
-**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**
+**This is currently a personal emotional containment system, not a public product.**
 
-**Version:** `litmo-constitution-v3-exorcism`  
-**Sacred purpose:** Trauma-to-Code Exorcism Dojo  
-**Manifesto:** [`docs/EXORCISM_MANIFESTO.md`](docs/EXORCISM_MANIFESTO.md)  
-**Trauma map:** [`docs/TRAUMA_ARCHITECTURE.md`](docs/TRAUMA_ARCHITECTURE.md)  
-**Dojo law:** [`docs/DOJO_GUIDELINES.md`](docs/DOJO_GUIDELINES.md)  
+**Version:** `litmo-constitution-v4-containment`  
+**Live purpose:** Personal emotional containment / shield (Option A: keep building)  
+**Purpose doc:** [`docs/REAL_PURPOSE.md`](docs/REAL_PURPOSE.md)  
+**Containment map:** [`docs/CONTAINMENT_SYSTEM.md`](docs/CONTAINMENT_SYSTEM.md)  
+**Secondary layers:** [`docs/EXORCISM_MANIFESTO.md`](docs/EXORCISM_MANIFESTO.md) · [`docs/TRAUMA_ARCHITECTURE.md`](docs/TRAUMA_ARCHITECTURE.md)  
 **Technical twin (historical product law):** [`docs/LITMO_CONSTITUTION.md`](docs/LITMO_CONSTITUTION.md)
 
 ---
 
-## Preamble — sacred purpose
+## Preamble — live purpose
 
 From this moment, Litmo’s highest authority is not market fit, growth, or “platform for others.”
 
 It is this:
 
-> Externalize every defense around safety, control, touch, consent, ambiguity, connection, and softness into visible systems — so I can see them, name them, and one day release them.
+> Hold fear of intimacy, terror of conflict, conflict-shame, and new-relationship anxiety in visible systems so that load is less likely to dump onto Renn — while I consciously choose to keep building (Option A) rather than only sitting in the pain.
 
-This Constitution binds **the dojo**.  
-Technical rules that follow are **dojo law** (how the ritual machine must behave), not a consumer brand promise.
+This Constitution binds **the containment object**.  
+Technical rules that follow are **how the machine must behave**, not a consumer brand promise.
 
-When product language and exorcism honesty conflict, **exorcism honesty wins**.
+When product language and purpose honesty conflict, **purpose honesty wins**.
 
 ---
 
-## Article 0 — Artifact, not product
+## Article 0 — Containment system, not public product
 
-1. This repository is a private ritual artifact.  
-2. Agents and collaborators must not reframe it as a shipping consumer product without explicit instruction.  
-3. Complexity must be nameable as defense, not only as “good engineering.”  
-4. The artifact may be completed, archived, or burned without that being failure.  
-5. Visible notices (“private exorcism artifact, not a product”) must not be removed to look professional.
+1. This repository is currently a personal emotional containment system.  
+2. Agents and collaborators must not reframe it as a shipping public product without explicit instruction.  
+3. Complexity must be nameable as containment / defense, not only as “good engineering.”  
+4. The project may be completed, archived, or deleted without that being failure.  
+5. Visible notices (“personal emotional containment system, not a public product”) must not be removed to look professional.  
+6. Fun and intellectual stimulation are allowed; lying about purpose is not.
 
 ---
 
@@ -143,4 +144,4 @@ Historical product constitution (`docs/LITMO_CONSTITUTION.md`) remains as **tech
 
 ---
 
-> **This is a private exorcism artifact, not a product.**
+> **This is currently a personal emotional containment system, not a public product.**

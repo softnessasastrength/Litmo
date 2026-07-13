@@ -1,6 +1,8 @@
 # What “continue” means in the Exorcism Dojo
 
-**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**
+**This is currently a personal emotional containment system, not a public product.**
+
+> Live purpose outranks this file: [`REAL_PURPOSE.md`](REAL_PURPOSE.md) · [`CONTAINMENT_SYSTEM.md`](CONTAINMENT_SYSTEM.md).
 
 When the human says **continue**, agents must **not** default to private-alpha product milestones (SAFETY-OPS staffing, App Store, growth). Those are residual cages unless explicitly requested.
 

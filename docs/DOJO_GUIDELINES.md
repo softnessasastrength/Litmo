@@ -1,6 +1,9 @@
 # Dojo Guidelines
 
-**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**
+**This is currently a personal emotional containment system, not a public product.**
+
+> **Primary purpose lives in [`REAL_PURPOSE.md`](REAL_PURPOSE.md) (2026-07-13).**  
+> This file is a secondary work-style layer. Containment map: [`CONTAINMENT_SYSTEM.md`](CONTAINMENT_SYSTEM.md).
 
 How to work in this repository from this moment forward.
 
@@ -8,13 +11,14 @@ How to work in this repository from this moment forward.
 
 ## 1. Primary purpose (non-negotiable)
 
-Litmo is my private **Trauma-to-Code Exorcism Dojo**.
+Litmo is currently my private **psychological containment system / emotional shield** (Option A: keep building).
 
 Primary goals, in order:
 
-1. Externalize defense mechanisms into visible code and docs  
-2. Document them so I can *see* them  
-3. Practice honesty until the system is complete enough to **burn** (release)  
+1. Stay honest about purpose (`REAL_PURPOSE.md`)  
+2. Name how systems contain specific fears (`CONTAINMENT_SYSTEM.md`)  
+3. Keep craft sound without product theater  
+4. Fun and intellectual stimulation are allowed  
 
 Secondary (optional, never primary):
 
@@ -122,7 +126,7 @@ Learning path: **`exorcism-dojo-track`**.
 
 ## 8. Notice
 
-> **This is a private exorcism artifact, not a product.**
+> **This is currently a personal emotional containment system, not a public product.**
 
 Stamp this on major docs. Do not hide it.
 

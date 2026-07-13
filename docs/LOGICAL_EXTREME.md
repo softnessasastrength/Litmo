@@ -1,6 +1,6 @@
 # Logical Extreme
 
-**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**
+**This is currently a personal emotional containment system, not a public product.**
 
 This is the dojo looking at itself without mercy.
 

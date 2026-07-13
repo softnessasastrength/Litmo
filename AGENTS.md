@@ -1,16 +1,24 @@
 # Litmo Codex Execution Guide
 
-**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**
+**This is currently a personal emotional containment system, not a public product.**
 
-Litmo is the founder’s private **Trauma-to-Code Exorcism Dojo**: a systems-level
-externalization of trauma responses around safety, control, touch, consent,
-ambiguity, connection, and softness. Primary purpose is visibility and honesty —
-not shipping a consumer product. Read `docs/EXORCISM_MANIFESTO.md` and
-`docs/DOJO_GUIDELINES.md` before major work. Do not reframe as product-first
-without explicit instruction.
+Litmo is the founder’s **private psychological containment system / emotional
+shield**: fear of intimacy, terror of conflict, shame around conflict, and
+new-relationship anxiety are poured into code so they are less likely to dump
+onto Renn. The human is on **Option A** (keep building) by conscious choice.
+
+Read first:
+
+1. `docs/REAL_PURPOSE.md`  
+2. `docs/CONTAINMENT_SYSTEM.md`  
+3. `CURRENT_STATE.md`  
+
+Older dojo/exorcism docs are secondary layers. Do not reframe as a public
+product without explicit instruction. Fun and intellectual craft are welcome;
+lying about purpose is not.
 
 > Touch is not a transaction — it is a language.  
-> This repo is also a dictionary of control, written to be seen.
+> This repo is also a very elaborate shield.
 
 ## Durable-agent rule
 
@@ -20,32 +28,34 @@ Read `docs/CONTINUITY_AND_STEWARDSHIP.md` before making material architectural o
 
 The repository is the source of truth. Do not rely on undocumented chat context.
 
-## Immediate priority (Dojo)
+## Immediate priority (containment honesty)
 
-1. Keep sacred framing honest (`EXORCISM_MANIFESTO`, `DOJO_GUIDELINES`, `TRAUMA_ARCHITECTURE`).
-2. Externalize and *see* defenses — do not invent product launch work by default.
-3. Soft Signal and fail-closed consent craft remain load-bearing **ritual integrity**, not App Store goals.
-4. Phone-visible demo may exist as **practice simulation** inside the dojo; it is not “users.”
+1. Keep purpose honest (`REAL_PURPOSE`, `CONTAINMENT_SYSTEM`).
+2. Name containment jobs when adding systems — do not invent product launch work by default.
+3. Soft Signal and fail-closed consent craft remain load-bearing integrity, not App Store goals.
+4. Phone-visible demo may exist as **local simulation**; it is not “users.”
 
 Product-era chapter **SAFETY-OPS-001** is **residue** unless the human explicitly resumes product work. External legal/staffing blockers stay non-inventable.
 
-If the human asks for product engineering again, resume residual technical docs (`SAFETY_OPS_*`, ADR 0042) under dojo honesty — still not market theater.
+If the human asks for product engineering again, resume residual technical docs under containment honesty — still not market theater.
 
 ## What “continue” means
 
 When instructed to “continue,” “continue the plan,” or equivalent:
 
-**Primary protocol:** [`docs/DOJO_CONTINUE.md`](docs/DOJO_CONTINUE.md) (Exorcism Dojo).
+**Primary purpose:** [`docs/REAL_PURPOSE.md`](docs/REAL_PURPOSE.md).  
+**System map:** [`docs/CONTAINMENT_SYSTEM.md`](docs/CONTAINMENT_SYSTEM.md).  
+**Secondary continue protocol:** [`docs/DOJO_CONTINUE.md`](docs/DOJO_CONTINUE.md) (older layer).
 
-1. Read `docs/EXORCISM_MANIFESTO.md`, `docs/DOJO_GUIDELINES.md`, `docs/TRAUMA_ARCHITECTURE.md`.
-2. Read this file and `CURRENT_STATE.md` (sacred framing first).
+1. Read `docs/REAL_PURPOSE.md` and `docs/CONTAINMENT_SYSTEM.md`.
+2. Read this file and `CURRENT_STATE.md` (purpose first).
 3. Inspect git status and recent commits.
-4. Prefer **seeing / naming / externalizing / simplifying** over product milestones.
+4. Prefer **honest naming / containment craft / simplifying** over product milestones.
 5. Do **not** default to SAFETY-OPS staffing, App Store, or growth work unless the human explicitly asked for product residue.
-6. Implement the largest safe coherent unit that serves the dojo (docs count).
-7. Update `TRAUMA_ARCHITECTURE.md` when systems are named or reframed.
+6. Implement the largest safe coherent unit that serves the stated purpose (docs count).
+7. Update `CONTAINMENT_SYSTEM.md` / `TRAUMA_ARCHITECTURE.md` when systems are named or reframed.
 8. Run relevant checks if code changed.
-9. Commit with dojo-honest messages.
+9. Commit with honest messages (not fake “user value”).
 10. Stop when the unit is coherent or a real blocker is documented.
 
 Do not invent nuclear engines to look productive. Naming a fear is progress.

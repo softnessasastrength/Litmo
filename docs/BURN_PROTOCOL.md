@@ -1,6 +1,6 @@
 # Burn Protocol
 
-**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**
+**This is currently a personal emotional containment system, not a public product.**
 
 Burn = graduation. Not failure. Not giving up. **Release of the obligation to keep perfecting the cage.**
 

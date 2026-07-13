@@ -1,11 +1,13 @@
 # Trauma Architecture
 
-**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**
+**This is currently a personal emotional containment system, not a public product.**
+
+> Live purpose: [`REAL_PURPOSE.md`](REAL_PURPOSE.md) · [`CONTAINMENT_SYSTEM.md`](CONTAINMENT_SYSTEM.md). This trauma map remains a useful layer.
 
 This document maps **major Litmo systems** to the **trauma responses** they externalize.  
 It is not clinical diagnosis. It is systems-level honesty: *what wound does this machine serve?*
 
-Read with [`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md) and [`DOJO_GUIDELINES.md`](DOJO_GUIDELINES.md).
+Read with live purpose docs first; secondary: [`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md).
 
 ---
 
@@ -281,4 +283,6 @@ If I cannot answer, the feature is not ready — not for product reasons, but fo
 
 ---
 
-**This is a private exorcism artifact, not a product.**
+**This is currently a personal emotional containment system, not a public product.**
+
+> Live purpose: [`REAL_PURPOSE.md`](REAL_PURPOSE.md) · [`CONTAINMENT_SYSTEM.md`](CONTAINMENT_SYSTEM.md). This trauma map remains a useful layer.

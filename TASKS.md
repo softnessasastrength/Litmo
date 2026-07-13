@@ -1,6 +1,7 @@
 # Task Ledger
 
-**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**  
+**This is currently a personal emotional containment system, not a public product.**  
+Live purpose: `docs/REAL_PURPOSE.md` · `docs/CONTAINMENT_SYSTEM.md`.  
 Primary framing: Trauma-to-Code Exorcism Dojo — [`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md) · [`DOJO_GUIDELINES.md`](DOJO_GUIDELINES.md) · [`TRAUMA_ARCHITECTURE.md`](TRAUMA_ARCHITECTURE.md).
 
 Allowed statuses: `pending`, `active`, `blocked`, `completed`, `abandoned`.

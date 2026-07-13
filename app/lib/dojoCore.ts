@@ -441,7 +441,8 @@ export function setBurnGate(
 }
 
 export const DOJO_COPY = {
-  banner: "THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.",
+  banner:
+    "This is currently a personal emotional containment system, not a public product.",
   title: "Trauma-to-Code Exorcism Dojo",
   subtitle:
     "Get the defenses out of your body into systems you can see. Not a startup. Not for strangers first.",

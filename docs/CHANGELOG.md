@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-07-13 — Radical honesty: personal containment system
+
+Live purpose restated without product theater or ritual fluff as the core stamp:
+private psychological containment / emotional shield (intimacy fear, conflict
+terror/shame, new-relationship anxiety; Option A keep building). New
+`docs/REAL_PURPOSE.md`, `docs/CONTAINMENT_SYSTEM.md`; README, Agents, CURRENT_STATE,
+CONSTITUTION v4-containment, DOCUMENTATION_MAP notices updated.
+
 ## 2026-07-13 — Dojo diagnostics flags + Learn hub entry
 
 Non-sensitive diagnostics show Dojo counts/flags (never urge text). Learn tab

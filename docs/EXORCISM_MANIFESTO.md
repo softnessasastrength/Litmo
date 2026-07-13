@@ -1,6 +1,10 @@
 # Exorcism Manifesto
 
-**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**
+**This is currently a personal emotional containment system, not a public product.**
+
+> **Superseded as primary framing (2026-07-13).**  
+> Live truth: [`REAL_PURPOSE.md`](REAL_PURPOSE.md) · [`CONTAINMENT_SYSTEM.md`](CONTAINMENT_SYSTEM.md).  
+> This manifesto remains a useful layer about externalizing defenses into code. It does not outrank the containment purpose.
 
 ---
 

@@ -1,24 +1,27 @@
 # Current Project State
 
-**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**  
-Primary framing: Trauma-to-Code Exorcism Dojo — [`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md) · [`DOJO_GUIDELINES.md`](DOJO_GUIDELINES.md) · [`TRAUMA_ARCHITECTURE.md`](TRAUMA_ARCHITECTURE.md).
+**This is currently a personal emotional containment system, not a public product.**
+
+Primary framing (2026-07-13): private psychological containment / emotional shield —
+[`docs/REAL_PURPOSE.md`](docs/REAL_PURPOSE.md) · [`docs/CONTAINMENT_SYSTEM.md`](docs/CONTAINMENT_SYSTEM.md).
 
 > Durable handoff for humans and coding agents. Update this file before stopping work for any reason.
 
-## Sacred framing (overrides product narrative)
+## Purpose framing (overrides product narrative)
 
-- **This is a private exorcism artifact, not a product.**
-- Primary: Trauma-to-Code Exorcism Dojo — `docs/EXORCISM_MANIFESTO.md`, `docs/DOJO_GUIDELINES.md`, `docs/TRAUMA_ARCHITECTURE.md`
-- **Logical extreme:** `docs/LOGICAL_EXTREME.md` · inventory D01–D24 · `docs/BURN_PROTOCOL.md`
-- Constitution: `litmo-constitution-v3-exorcism` (root `CONSTITUTION.md`)
+- **This is currently a personal emotional containment system, not a public product.**
+- Primary: Option A — keep building so fear/conflict/intimacy anxiety land in code, not on Renn first
+- Map: `docs/CONTAINMENT_SYSTEM.md` · purpose: `docs/REAL_PURPOSE.md`
+- Secondary layers: exorcism/dojo docs, trauma architecture, logical extreme (still useful, not the core stamp)
+- Constitution: root `CONSTITUTION.md` (update notices to match containment honesty)
 
 ## Active milestone
 
-- **Name:** SAFETY-OPS-001 / dojo externalization (engineering may continue as craft)
-- **Status:** technical residue of control systems; framing is dojo, not private alpha product
+- **Name:** Containment honesty + residual craft (engineering may continue under Option A)
+- **Status:** personal shield; not private-alpha product theater
 - **Branch:** `main`
-- **Latest swarm:** NUCLEAR-001 — Living Constitution; reframed under Exorcism Dojo 2026-07-13
-- **Constitution:** v3-exorcism sacred purpose + historical technical twin `docs/LITMO_CONSTITUTION.md`
+- **Latest framing:** REAL_PURPOSE / CONTAINMENT_SYSTEM 2026-07-13
+- **Constitution:** technical twin still at `docs/LITMO_CONSTITUTION.md`
 
 ## Completed major product streams (on main)
 
@@ -63,8 +66,8 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
-- Done recently: inventory counts + wipe for `litmo.dojo.state.v1` (dojo lifecycle honesty).
-- Follow `docs/DOJO_CONTINUE.md`. Prefer meta-check / simplify over new nuclear engines unless a named fear still lacks visibility. Default continue = externalization / honesty — not private-alpha staffing fiction.
+- Done recently: radical honesty stamp — `REAL_PURPOSE.md` + `CONTAINMENT_SYSTEM.md` (2026-07-13).
+- Follow `docs/REAL_PURPOSE.md`. Prefer honest naming / Option A craft over product theater. Secondary: `docs/DOJO_CONTINUE.md`.
 
 ## Verification baseline
 

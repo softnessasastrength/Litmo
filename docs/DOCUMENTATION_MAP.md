@@ -1,42 +1,40 @@
 # Litmo Documentation Map
 
+**This is currently a personal emotional containment system, not a public product.**
+
 This map identifies which documents are authoritative, which preserve historical completion evidence, and which describe future intent. It exists to prevent an old chapter plan or completion report from being mistaken for current execution state.
 
 ## Read first
 
-1. [`README.md`](../README.md) — current public repository overview.
-2. [`CURRENT_STATE.md`](../CURRENT_STATE.md) — current handoff, priorities, risks, and exact next-action rule.
-3. [`TASKS.md`](../TASKS.md) — prioritized execution ledger and task status.
-4. [`FEATURE_SWARM_TRACKER.md`](FEATURE_SWARM_TRACKER.md) — five-stream product swarm status (TL, safety, proximity, learning, hardware).
-5. [`NUCLEAR_SWARM.md`](NUCLEAR_SWARM.md) — six-agent maximum-ambition command center.
-6. [`CONSTITUTION_ENFORCEMENT.md`](CONSTITUTION_ENFORCEMENT.md) — Living Constitution → code/tests map.
-7. [`project-state.json`](../project-state.json) — machine-readable handoff validated by `npm run state:check`.
-8. [`KNOWN_LIMITATIONS.md`](KNOWN_LIMITATIONS.md) — unresolved product, safety, technical, and operational limits.
+1. [`REAL_PURPOSE.md`](REAL_PURPOSE.md) — **live purpose** (containment / shield; Option A).
+2. [`CONTAINMENT_SYSTEM.md`](CONTAINMENT_SYSTEM.md) — systems → which fears they hold.
+3. [`README.md`](../README.md) — repository overview under that framing.
+4. [`CURRENT_STATE.md`](../CURRENT_STATE.md) — handoff, priorities, next-action rule.
+5. [`TASKS.md`](../TASKS.md) — prioritized execution ledger (often product residue).
+6. [`KNOWN_LIMITATIONS.md`](KNOWN_LIMITATIONS.md) — unresolved limits.
+7. [`project-state.json`](../project-state.json) — machine-readable handoff (`npm run state:check`).
 
-When these disagree, stop and reconcile them before implementing new work.
+When these disagree, stop and reconcile them before implementing new work. **Purpose docs outrank product theater.**
 
-## Governing product intent
+## Governing purpose (live)
 
-These documents define why Litmo exists and the principles that outrank implementation convenience:
+These documents define why Litmo exists *right now*:
 
-- **[`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md)** — **primary framing**: private Trauma-to-Code Exorcism Dojo (not a product)
-- **[`DOJO_GUIDELINES.md`](DOJO_GUIDELINES.md)** — how to work in this repo (radical honesty)
-- **[`DOJO_CONTINUE.md`](DOJO_CONTINUE.md)** — what “continue” means under dojo law (not product milestones)
-- **[`LOGICAL_EXTREME.md`](LOGICAL_EXTREME.md)** — full control tower, theorems T1–T12, D01–D24, burn gates
-- **[`BURN_PROTOCOL.md`](BURN_PROTOCOL.md)** — how to graduate / release the artifact
-- **[`exorcism-inventory.json`](exorcism-inventory.json)** — machine-readable defense inventory for agents
-- **[`TRAUMA_ARCHITECTURE.md`](TRAUMA_ARCHITECTURE.md)** — systems mapped to defenses / wounds
-- [`philosophy/00_Founding_Thesis.md`](philosophy/00_Founding_Thesis.md) — founding thesis (now subordinate residue + living consent language)
-- [`philosophy/VISION_2030.md`](philosophy/VISION_2030.md) — fifty-year cultural horizon (subordinate to Constitution)
-- [`LITMO_CONSTITUTION.md`](LITMO_CONSTITUTION.md) — binding articles 0–XV (`litmo-constitution-v2`)
-- Root [`CONSTITUTION.md`](../CONSTITUTION.md) — human charter twin
-- [`LITMO_CONSTITUTION.md`](LITMO_CONSTITUTION.md)
-- [`CONCEPT.md`](CONCEPT.md)
-- [`../documents/GOVERNANCE.md`](../documents/GOVERNANCE.md)
-- [`../documents/DESIGN_PRINCIPLES.md`](../documents/DESIGN_PRINCIPLES.md)
-- [`../documents/UX_UI_PHILOSOPHY.md`](../documents/UX_UI_PHILOSOPHY.md)
+- **[`REAL_PURPOSE.md`](REAL_PURPOSE.md)** — **primary framing**: personal emotional containment, not a public product (2026-07-13)
+- **[`CONTAINMENT_SYSTEM.md`](CONTAINMENT_SYSTEM.md)** — major systems as containment for specific fears
+- Root [`CONSTITUTION.md`](../CONSTITUTION.md) — `litmo-constitution-v4-containment`
 
-A change that conflicts with these documents requires an explicit product/governance decision, not a silent code edit.
+### Secondary layers (useful, not primary stamp)
+
+- [`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md) — earlier “exorcism dojo” layer
+- [`DOJO_GUIDELINES.md`](DOJO_GUIDELINES.md) · [`DOJO_CONTINUE.md`](DOJO_CONTINUE.md)
+- [`LOGICAL_EXTREME.md`](LOGICAL_EXTREME.md) · [`BURN_PROTOCOL.md`](BURN_PROTOCOL.md)
+- [`exorcism-inventory.json`](exorcism-inventory.json) · [`TRAUMA_ARCHITECTURE.md`](TRAUMA_ARCHITECTURE.md)
+- [`philosophy/00_Founding_Thesis.md`](philosophy/00_Founding_Thesis.md) · [`philosophy/VISION_2030.md`](philosophy/VISION_2030.md) — subordinate residue
+- [`LITMO_CONSTITUTION.md`](LITMO_CONSTITUTION.md) — historical technical articles
+- [`CONCEPT.md`](CONCEPT.md) · governance/design docs under `documents/`
+
+A change that conflicts with live purpose requires an explicit human decision, not a silent code edit.
 
 ## Current system behavior
 

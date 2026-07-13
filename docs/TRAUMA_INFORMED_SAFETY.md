@@ -1,6 +1,6 @@
 # Trauma-informed safety system
 
-**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**  
+**This is currently a personal emotional containment system, not a public product.**  
 Primary framing: Trauma-to-Code Exorcism Dojo — [`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md) · [`DOJO_GUIDELINES.md`](DOJO_GUIDELINES.md) · [`TRAUMA_ARCHITECTURE.md`](TRAUMA_ARCHITECTURE.md).
 
 **Status:** implemented in mobile app (local-first; Soft Signal remains stop authority)  
