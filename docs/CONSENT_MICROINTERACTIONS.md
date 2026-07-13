@@ -21,6 +21,7 @@
 | **No reason at stop** | Forbidden label set rejects “why did you stop” |
 | **Prepare ≠ consent** | Declaration authorizes nothing mutual |
 | **Learning ≠ real** | Scenario choices are `inform` kind |
+| **Continuous** | After seal, privilege is re-evaluated every second — see [`CONTINUOUS_CONSENT_SYSTEM.md`](CONTINUOUS_CONSENT_SYSTEM.md) |
 
 ## Operating doctrine (maximum detail)
 

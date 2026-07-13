@@ -51,6 +51,7 @@ Use these documents when modifying or reviewing implemented behavior:
 - [`TOUCH_LANGUAGE.md`](TOUCH_LANGUAGE.md) — full Touch Language map (local save + encrypted partner share)
 - [`CONSENT_SNAPSHOT_SYSTEM.md`](CONSENT_SNAPSHOT_SYSTEM.md) — pre-session declaration + mutual seal (Soft Signal, safewords, aftercare)
 - [`CONSENT_MICROINTERACTIONS.md`](CONSENT_MICROINTERACTIONS.md) — Apple-level consent timing, weight, catalog, phase machines
+- [`CONTINUOUS_CONSENT_SYSTEM.md`](CONTINUOUS_CONSENT_SYSTEM.md) — continuous granular revocable consent (states, L0–L8, check-ins, session architecture)
 - [`ONBOARDING_CONSENT_FLOW.md`](ONBOARDING_CONSENT_FLOW.md) — first-open onboarding consent flow (frame-by-frame, every control)
 - [`CODE_COMMENT_STANDARD.md`](CODE_COMMENT_STANDARD.md) — mandatory in-code WHAT/WHY/CONSENT/EDGE/NEVER documentation bar
 - [`BUILD_MODES.md`](BUILD_MODES.md) — Maximum vs App Store Safe dual-mode operator manual (ADR 0060)

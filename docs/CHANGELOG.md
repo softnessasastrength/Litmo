@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-07-14 — Continuous Consent System (maximum granularity)
+
+### Summary
+
+Designed consent as a continuous security property: dimensional privilege lattice,
+GREEN/YELLOW/RED/BLACK continuous states, withdraw ladder L0–L8, re-grant ladder
+G0–G6, real-time revocation, check-in/heartbeat clocks, and active-session
+architecture. Pure executable twin `continuousConsentCore` + tests; Soft Signal
+L0 remains 0ms and fail-closed silence≠yes.
+
+### Developer impact
+
+- `docs/CONTINUOUS_CONSENT_SYSTEM.md` (canonical design)
+- `app/lib/continuousConsentCore.ts` + tests
+- Linked from CONSENT_MICROINTERACTIONS + DOCUMENTATION_MAP
+
 ## 2026-07-14 — 16-agent dual-mode architecture swarm
 
 ### Summary
