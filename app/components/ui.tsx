@@ -352,7 +352,9 @@ export function SectionTitle({
   const styles = useUiStyles();
   return (
     <View style={styles.sectionRow}>
-      <Text style={styles.sectionTitle}>{children}</Text>
+      <Text style={styles.sectionTitle} accessibilityRole="header">
+        {children}
+      </Text>
       {action}
     </View>
   );

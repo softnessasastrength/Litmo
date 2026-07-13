@@ -1,38 +1,16 @@
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 import { Body, Button, Eyebrow, Screen, Title } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { mapExternalError } from "../../services/errors";
-import { colors, type AppColors } from "../../theme";
+import type { AppColors } from "../../theme";
 import { runtimeConfig } from "../../config/runtime";
 import { environmentError } from "../../services/supabase";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
-/** Shared form styles for sign-up / recovery / profile (light palette baseline). */
-export const authFormStyles = StyleSheet.create({
-  form: { gap: 10, marginTop: 20 },
-  label: { color: colors.ink, fontWeight: "700", marginTop: 6 },
-  input: {
-    minHeight: 52,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    borderColor: colors.line,
-    backgroundColor: colors.paper,
-    color: colors.ink,
-    paddingHorizontal: 16,
-    fontSize: 17,
-  },
-  error: { color: colors.signal, lineHeight: 21, marginVertical: 5 },
-  link: {
-    color: colors.moss,
-    fontWeight: "800",
-    textAlign: "center",
-    padding: 14,
-  },
-});
-
-function makeStyles(c: AppColors) {
+/** Shared themed form styles for sign-up / recovery / profile. Call via useThemedStyles(authFormStyles) so colors track light/dark mode. */
+export function authFormStyles(c: AppColors) {
   return {
     form: { gap: 10, marginTop: 8 },
     label: { color: c.ink, fontWeight: "700" as const, marginTop: 6 },
@@ -64,7 +42,7 @@ function makeStyles(c: AppColors) {
 }
 
 export default function SignInScreen() {
-  const styles = useThemedStyles(makeStyles);
+  const styles = useThemedStyles(authFormStyles);
   const router = useRouter();
   const { signInWithPasskey, signInWithPassword, enterDemoMode, status } =
     useAuth();

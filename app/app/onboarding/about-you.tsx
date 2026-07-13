@@ -60,7 +60,9 @@ export default function AboutYouScreen() {
       <FadeIn key={step}>
         {step === "name" ? (
           <View style={styles.block}>
-            <Text style={styles.kicker}>What should we call you?</Text>
+            <Text style={styles.kicker} accessibilityRole="header">
+              What should we call you?
+            </Text>
             <Text style={styles.prompt}>Just your name — nothing formal.</Text>
             <TextInput
               accessibilityLabel="Your name"
@@ -76,7 +78,9 @@ export default function AboutYouScreen() {
         ) : null}
         {step === "age" ? (
           <View style={styles.block}>
-            <Text style={styles.kicker}>How many trips around the sun?</Text>
+            <Text style={styles.kicker} accessibilityRole="header">
+              How many trips around the sun?
+            </Text>
             <Text style={styles.prompt}>Litmo is for adults only — 18+.</Text>
             <TextInput
               accessibilityLabel="Your age"
@@ -95,7 +99,9 @@ export default function AboutYouScreen() {
         ) : null}
         {step === "gender" ? (
           <View style={styles.block}>
-            <Text style={styles.kicker}>How do you describe your gender?</Text>
+            <Text style={styles.kicker} accessibilityRole="header">
+              How do you describe your gender?
+            </Text>
             <Text style={styles.prompt}>
               Pick what fits, or tell us in your own words.
             </Text>
@@ -124,7 +130,7 @@ export default function AboutYouScreen() {
         ) : null}
         {step === "orientation" ? (
           <View style={styles.block}>
-            <Text style={styles.kicker}>
+            <Text style={styles.kicker} accessibilityRole="header">
               What&rsquo;s your sexual orientation?
             </Text>
             <Text style={styles.prompt}>

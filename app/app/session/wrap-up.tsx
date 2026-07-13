@@ -152,7 +152,7 @@ export default function SessionWrapUpScreen() {
               : "You ended the session together."}
       </Body>
       <View style={styles.question}>
-        <Text style={styles.questionText}>
+        <Text style={styles.questionText} accessibilityRole="header">
           How did this interaction feel for you?
         </Text>
         <View accessibilityRole="radiogroup" style={styles.options}>

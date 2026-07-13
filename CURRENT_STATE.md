@@ -5,9 +5,9 @@
 ## Active milestone
 
 - **Name:** Private-beta validation (physical walkthrough)
-- **Status:** active
+- **Status:** complete (BETA-001 closed 2026-07-13); no milestone is currently active
 - **Branch:** `main` is the current integrated baseline; use a feature branch for new work.
-- **Latest known coherent milestone:** Chapters 1–5, LEARN-002, HAPTIC-001, matching-hold ends open sessions (ADR 0038), semantic haptics (ADR 0039), physical walkthrough checklist.
+- **Latest known coherent milestone:** Chapters 1–5, LEARN-002, HAPTIC-001, matching-hold ends open sessions (ADR 0038), semantic haptics (ADR 0039), BETA-001 physical walkthrough (Track A/B/C all Pass, including physical B1–B26).
 
 ## Completed foundation
 
@@ -21,17 +21,17 @@
 - Guided learning catalog, lesson player, fictional scenarios, private device-local progress, resume behavior, and progress tests.
 - Chapter 5: blocks, age gate, reports, review queue, rate limits, trust events, restrictions, moderator console, peer signals, appeals, real discovery, ban ends open sessions, real Consent Snapshot UI.
 - Physical beta walkthrough checklist for founder/private validation (not external TestFlight).
+- BETA-001 complete: Track A Pass, Track C Pass, Track B Pass (automated backend + physical B1–B26 on device, founder, 2026-07-13). No Fail items recorded. Do not claim external beta readiness until RELEASE_AND_TESTFLIGHT blockers clear.
 
 ## Work in progress
 
-**Track A Pass** (founder). **Track C Pass** (engineering). **Track B automated backend Pass** (2026-07-12): Docker + setup + seed password grant for all four emails + integration **5/5** (includes seed maya↔eli request→snapshot→Soft Signal) + pgTAP 240/240. Seed GoTrue token NULL bug fixed. **Track B physical UI (B1–B26)** still founder-owned. Do not claim external beta readiness until RELEASE_AND_TESTFLIGHT blockers clear.
+None recorded. BETA-001 closed 2026-07-13 with all tracks Pass and no outstanding Fail items. No task is currently `active` in `TASKS.md`.
 
 ## Priority next work
 
-1. **Track B on device** — `bash scripts/setup-track-b-local.sh` → `npm run api` + `npm run mobile` → two seed accounts → B1–B26 (`docs/TRACK_B_LOCAL.md`).
-2. Optional founder VoiceOver smoke (`docs/ACCESSIBILITY_TRACK_C.md`).
-3. Reconcile any Fail findings into tests, ADRs, `KNOWN_LIMITATIONS.md`.
-4. Clear external TestFlight blockers only when intentionally starting private alpha distribution.
+1. Optional founder VoiceOver smoke (`docs/ACCESSIBILITY_TRACK_C.md`, tracked under ACCESS-001).
+2. Select and mark `active` the next task in `TASKS.md` — candidates are SAFETY-OPS-001 (moderation/beta-operations design) and DOCS-002 (ongoing). Do not start new product chapters without an explicit human decision (per `AGENTS.md` chapter promotion rule).
+3. Clear external TestFlight blockers only when intentionally starting private alpha distribution.
 
 ## Verification baseline
 
@@ -73,7 +73,7 @@ Do not claim the current integrated `main` has passed every command unless the e
 
 ## Exact next action
 
-Founder: run Track B B1–B26 on physical device(s) after `bash scripts/setup-track-b-local.sh`. Agent: merge seed password fix if not already on `main`; open fix PRs only for Fail items from the walkthrough.
+BETA-001 is closed with no Fail items. Next: a human should either run the optional VoiceOver smoke, or explicitly select and mark `active` the next task in `TASKS.md` (e.g. SAFETY-OPS-001).
 
 ## Resume checklist
 

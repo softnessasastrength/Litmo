@@ -35,7 +35,9 @@ export default function LearningHomeScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.eyebrow}>GUIDED PRACTICE</Text>
-      <Text style={styles.title}>Learn the language before you need it.</Text>
+      <Text style={styles.title} accessibilityRole="header">
+        Learn the language before you need it.
+      </Text>
       <Text style={styles.intro}>
         Short, step-by-step modules explain how Litmo works and why each safety
         boundary exists. No scores, streaks, or public badges.
@@ -43,6 +45,13 @@ export default function LearningHomeScreen() {
 
       <View
         style={styles.progressCard}
+        accessible
+        accessibilityRole="progressbar"
+        accessibilityValue={{
+          min: 0,
+          max: learningModules.length,
+          now: completed,
+        }}
         accessibilityLabel={`${completed} of ${learningModules.length} modules completed`}
       >
         <Text style={styles.progressNumber}>

@@ -4,9 +4,11 @@ import { Text, TextInput, View } from "react-native";
 import { Body, Button, Eyebrow, Screen, Title } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { mapExternalError } from "../../services/errors";
-import { authFormStyles as styles } from "./sign-in";
+import { authFormStyles } from "./sign-in";
+import { useThemedStyles } from "../../hooks/useThemedStyles";
 
 export default function SignUpScreen() {
+  const styles = useThemedStyles(authFormStyles);
   const { requestAccountCode, confirmAccountAndCreatePasskey } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

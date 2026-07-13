@@ -16,7 +16,7 @@ Status: **implemented at foundation level**
 - [x] Private wrap-up and synthetic Trust Ledger
 - [x] Shared visual system, reduced-motion support, and non-color status language
 - [x] Expo-compatible setup and native iOS development-build path
-- [ ] Full founder acceptance pass on the latest integrated physical-iPhone build
+- [x] Full founder acceptance pass on the latest integrated physical-iPhone build (BETA-001, 2026-07-13)
 
 ## Chapter 2 — Production-grade foundation
 
@@ -74,10 +74,10 @@ See [`docs/LEARNING_SYSTEM.md`](docs/LEARNING_SYSTEM.md).
 
 ## Current private-beta priorities
 
-1. Integrated physical-iPhone validation of the latest `main`.
-2. VoiceOver, Dynamic Type, reduced-motion, focus-order, and touch-target review.
-3. Full fictional two-person guided-practice flow.
-4. Moderation, reporting, blocking, eligibility, invitation expiry, human review, and beta kill-switch design.
+1. ~~Integrated physical-iPhone validation of the latest `main`.~~ Complete (BETA-001, 2026-07-13).
+2. Optional founder VoiceOver smoke; broader Dynamic Type, reduced-motion, focus-order, and touch-target review.
+3. ~~Full fictional two-person guided-practice flow.~~ Complete (LEARN-002).
+4. Moderation, reporting, blocking, eligibility, invitation expiry, human review, and beta kill-switch design (SAFETY-OPS-001, pending).
 5. Invite-only beta operations and release evidence.
 
 The prioritized execution ledger is [`TASKS.md`](TASKS.md).

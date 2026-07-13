@@ -120,7 +120,9 @@ export default function TouchLanguageScreen() {
       </Body>
       {groups.map((group) => (
         <View key={group.key} style={styles.group}>
-          <Text style={styles.question}>{group.title}</Text>
+          <Text style={styles.question} accessibilityRole="header">
+            {group.title}
+          </Text>
           <View accessibilityRole="radiogroup" style={styles.choices}>
             {group.choices.map((choice) => (
               <Choice
