@@ -69,6 +69,7 @@ Completion reports are evidence, not current task assignments. Do not use their 
 
 ## Roadmaps and future intent
 
+- [`HARDWARE_DEVICE_EXPERIENCE.md`](HARDWARE_DEVICE_EXPERIENCE.md) — design vision for a dedicated Litmo hardware device (not a shipping program)
 - [`../ROADMAP.md`](../ROADMAP.md) — concise current status and explicitly deferred work.
 - [`roadmap/README.md`](roadmap/README.md) — detailed chapter sequence and planning documents.
 - [`TODO.md`](TODO.md) — future work not necessarily authorized.
