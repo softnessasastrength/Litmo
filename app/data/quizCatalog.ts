@@ -36,7 +36,7 @@ export const quizCatalog: QuizCatalogEntry[] = [
     family: "vibe",
     title: "Vibe Quiz — Deep",
     summary:
-      "One hundred light scenes for a fuller weather mix. Save and resume anytime.",
+      "One hundred light scenes for a fuller weather mix. Progress saves on this device — leave and resume anytime.",
     minutes: 35,
     shareable: true,
     disclaimer: sharedDisclaimer,

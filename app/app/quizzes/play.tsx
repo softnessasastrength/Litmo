@@ -30,9 +30,10 @@ export default function QuizPlayScreen() {
   const [loadedProgress, setLoadedProgress] = useState(false);
   const advancing = useRef(false);
 
-  // Load mid-quiz progress when save/resume is on.
+  // Always device-local mid-quiz save/resume (calm for short + deep).
+  // Neurodivergent Mode only changes how prominently we surface it.
   useEffect(() => {
-    if (!entry || !prefs.saveResume) {
+    if (!entry) {
       setLoadedProgress(true);
       return;
     }
@@ -47,11 +48,10 @@ export default function QuizPlayScreen() {
     return () => {
       active = false;
     };
-  }, [entry, prefs.saveResume]);
+  }, [entry]);
 
-  // Auto-save when enabled.
   useEffect(() => {
-    if (!entry || !prefs.saveResume || !loadedProgress) return;
+    if (!entry || !loadedProgress) return;
     if (answers.length === 0 && index === 0) return;
     void quizPlayProgress.save({
       quizId: entry.id,
@@ -59,7 +59,7 @@ export default function QuizPlayScreen() {
       answers,
       updatedAt: new Date().toISOString(),
     });
-  }, [answers, entry, index, loadedProgress, prefs.saveResume]);
+  }, [answers, entry, index, loadedProgress]);
 
   if (!entry || questions.length === 0) {
     return (
@@ -425,13 +425,11 @@ const questionBlock = (
         </View>
       ) : null}
 
-      {prefs.saveResume ? (
-        <Text style={styles.savedHint} accessibilityLiveRegion="polite">
-          {plain
-            ? clearLanguage.quizSaved
-            : "Progress saves on this device as you go."}
-        </Text>
-      ) : null}
+      <Text style={styles.savedHint} accessibilityLiveRegion="polite">
+        {plain
+          ? clearLanguage.quizSaved
+          : "Progress saves on this device as you go. Leave anytime and resume later."}
+      </Text>
 
       <View style={styles.disclaimerBlock} accessible>
         <Text style={styles.disclaimerTitle}>

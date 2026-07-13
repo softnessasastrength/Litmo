@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-07-13 — Vibe Quiz review + calm demo path
+
+### Summary
+
+Review pass on Vibe Quiz short/deep, partner invite + E2E stub, and ND-friendly
+demo. Mid-quiz save/resume always available; demo enables Neurodivergent Mode
+and uses short onboarding weather; copy no longer claims “nothing is saved.”
+
+### User-visible impact
+
+- Deep Vibe promises match behavior (device-local save/resume).
+- Demo walkthrough is quieter by default (ND Mode on).
+- Onboarding Vibe is short in demo/ND; full bank for real-account onboarding.
+
+### Developer impact
+
+- QUIZ-004 in TASKS; ADR 0052 notes focused E2E stub scope.
+
 ## 2026-07-13 — Neurodivergent Mode (quiz, partner, learning)
 
 ### Summary

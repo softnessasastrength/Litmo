@@ -32,9 +32,11 @@ Use pure TypeScript crypto (`@noble/curves`, `@noble/hashes`, `@noble/ciphers`):
 | 4 | Either | Encrypt `ShareableQuizResult` as AES-256-GCM under ratchet message keys |
 | 5 | Either | Decrypt partner ciphertext only with local ratchet state |
 
-This is **not** a full multi-device Signal client (no OPKs, no skipped-key store
-beyond sequential quiz messages, no sealed sender). It is a focused 1:1 ratchet
-for partner quiz packages.
+This is a **focused E2E encryption stub / product path**, not a full multi-device
+Signal client (no OPKs, no skipped-key store beyond sequential quiz messages, no
+sealed sender). It is intentionally Signal-inspired X3DH + Double Ratchet for
+1:1 partner quiz packages only. Independent crypto review remains before
+external beta.
 
 ### 2. Device-local private keys (Secure Store + Secure Enclave vault wrap)
 

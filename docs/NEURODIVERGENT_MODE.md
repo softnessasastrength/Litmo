@@ -15,6 +15,10 @@ whether Soft Signal works.
 **Settings → Neurodivergent Mode** (toggle). Preference key:
 `litmo.neurodivergent.prefs.v1` (AsyncStorage only).
 
+**Demo mode** turns Neurodivergent Mode **on by default** when you enter the
+fictional demo from the entry screen (calm phone-visible walkthrough). Change
+anytime in Settings.
+
 When enabled, the optimized bundle turns on:
 
 | Feature | Behavior |

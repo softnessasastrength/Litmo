@@ -44,6 +44,22 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 ## Completed
 
+### QUIZ-004 — Vibe Quiz review (short/deep, partner, E2E stub, ND/demo)
+
+- **Status:** completed
+- **Result:** Reviewed and tightened Quizzes surface. Short path = 10 fixed
+  theme scenes (all 10 dimensions including repair); deep = full 100-scene bank.
+  Mid-quiz save/resume always on-device (not ND-only). Partner invite retains
+  dual share+compare consent + Signal-inspired E2E (focused stub, ADR 0052).
+  Demo entry enables Neurodivergent Mode by default; onboarding Vibe uses short
+  path in demo/ND for calm walkthrough; honest demo copy (local progress may
+  remain). UX stays non-authority (weather ≠ consent).
+- **Verification:** `vibeQuestionsForMode` short≥9/deep=100; full app test
+  suite green; typecheck.
+- **Boundary:** E2E is not a multi-device Signal audit; peer package consents
+  package-asserted; ND/demo prefs device-local only.
+- **Related:** QUIZ-001–003, ACCESS-002, ADR 0050/0052.
+
 ### ACCESS-002 — Neurodivergent Mode (quiz, partner, learning)
 
 - **Status:** completed
