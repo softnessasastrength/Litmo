@@ -1,28 +1,27 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T16:10:00-04:00",
+  "updatedAt": "2026-07-13T23:55:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
     "status": "active"
   },
   "git": {
-    "branch": "agent/macos-self-export-read",
-    "latestCoherentCommit": "5f1978a",
+    "branch": "main",
+    "latestCoherentCommit": "70131cb",
     "workingTreeExpectedClean": true
   },
   "verification": {
     "status": "partial",
     "commands": [
-      "xcodebuild -scheme Litmo test \u2014 33/33",
-      "xcodebuild -scheme LitmoOps build unsigned \u2014 success",
-      "npm run state:check \u2014 pass",
-      "Hosted macOS CI pending on PR"
+      "npm run typecheck — pass (swarm closeout)",
+      "learningModules + traumaSafety unit tests — pass",
+      "Five-agent FEATURE_SWARM audit — complete"
     ],
     "failures": []
   },
-  "nextAction": "Review/merge MACOS-005 export PR and rebased quiz PR #83. Ops stays locked.",
+  "nextAction": "Physical smokes (Soft Signal offline, Multipeer, NFC, VoiceOver) or TL server soft_limit/speed mapping when prioritized. SAFETY-OPS-001 external reviews only with named owners. Ops stays locked.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
@@ -31,14 +30,16 @@
     "Optional: independent crypto review of quiz partner E2E and local share before external beta"
   ],
   "risks": [
-    "Self export is not legally complete data access.",
-    "macOS env tokens are not production passkey sign-in.",
-    "Litmo Ops remains locked until real staff auth.",
-    "ACCESS-001 VoiceOver smoke still pending."
+    "Product not production-ready for stranger meetings.",
+    "Hardware Device OS is design-only (not a SKU).",
+    "Local session timeout not dual-agreed on server snapshot yet.",
+    "ACCESS-001 VoiceOver smoke still pending.",
+    "Litmo Ops remains locked until real staff auth."
   ],
   "notes": [
-    "PRs #72\u2013#82 merged on main.",
-    "PR #83 rebased: 100-question quiz + vibe-mix-1.0.",
-    "MACOS-005 adds export_my_data read + local copy."
+    "SWARM-001 complete: TL, Consent Snapshot, Soft Signal, Proximity/NFC, Learning shipped; Device OS design-only.",
+    "Tracker: docs/FEATURE_SWARM_TRACKER.md",
+    "Closeout: sticky Soft Signal, presence haptic, proximity teardown, aftercare scenario.",
+    "Local-first ADR 0058; trauma safety ADR 0059 on main."
   ]
 }
