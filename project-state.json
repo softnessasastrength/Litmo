@@ -9,17 +9,17 @@
   },
   "git": {
     "branch": "agent/macos-own-profile-read",
-    "latestCoherentCommit": "2857366",
+    "latestCoherentCommit": "8945a1e",
     "workingTreeExpectedClean": true
   },
   "verification": {
     "status": "passed",
     "commands": [
-      "xcodegen generate — success",
-      "xcodebuild -scheme Litmo test (arm64, unsigned) — 22/22 tests pass (4 Campfire + 9 TrustSignals + 9 OwnProfile)",
-      "xcodebuild -scheme LitmoOps build (arm64, unsigned) — BUILD SUCCEEDED",
-      "npm run state:check — pass",
-      "Hosted macOS Native Build — pending on implementation PR"
+      "xcodegen generate \u2014 success",
+      "xcodebuild -scheme Litmo test (arm64, unsigned) \u2014 22/22 tests pass (4 Campfire + 9 TrustSignals + 9 OwnProfile)",
+      "xcodebuild -scheme LitmoOps build (arm64, unsigned) \u2014 BUILD SUCCEEDED",
+      "npm run state:check \u2014 pass",
+      "Hosted macOS Native Build \u2014 pending on implementation PR"
     ],
     "failures": []
   },
@@ -38,7 +38,7 @@
     "Unsigned hosted artifacts are inspection builds, not releases."
   ],
   "notes": [
-    "PRs #72–#79 are merged on main.",
+    "PRs #72\u2013#79 are merged on main.",
     "MACOS-002 trust history (ADR 0046) landed as PR #79.",
     "MACOS-003 adds own-profile read and shared transport (ADR 0047).",
     "Destructive retention and account deletion remain blocked pending review."
