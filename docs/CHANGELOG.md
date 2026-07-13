@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-13 — Haptic Language Track (5 calm learning modules)
+
+### Summary
+
+Ready-to-play Guided Learning path: intro, vocabulary, consent/preview, ND
+customization, integration practice. Trauma-informed scripts, Soft Signal
+links, local progress only.
+
+### Material
+
+- Modules `haptic-language` … `haptic-language-practice`
+- Path `haptic-language-track`
+- Docs cross-link in `HAPTIC_LANGUAGE.md`
+
 ## 2026-07-13 — Haptic Language v0.1 Nuclear Autistic Edition
 
 ### Summary

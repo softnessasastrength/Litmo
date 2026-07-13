@@ -583,91 +583,363 @@ export const learningModules: LearningModule[] = [
       },
     ],
   },
+  // ── Haptic Language Track (short, calm, trauma-informed, ND-friendly) ────
+  // Progress: learningProgress (device-local). Patterns: hapticLanguageNuclear library.
+  // Every module ends with permission to stop. Completing never certifies safety.
   {
     id: "haptic-language",
-    title: "Haptic language — nuclear edition",
+    title: "Touch Without Words",
     summary:
-      "Touch is a language; haptics are phonemes. Preview, consent-bound vocabulary, Soft Signal kill-all, ND ceilings. Never peer consent.",
-    minutes: 8,
+      "Intro: haptics as language — always previewed, consensual, interruptible. Listen to yourself first.",
+    minutes: 3,
     track: "foundations",
     themes: ["product-safety", "communication", "nervous-system"],
     relatedPractice: [
       {
-        id: "hl-soft",
-        label: "Soft Signal drills",
-        hint: "Practice interrupt — freedom first, motor second.",
-        href: "/soft-signal/practice",
-      },
-      {
-        id: "hl-tl",
-        label: "Feel your own boundaries (TL map)",
-        hint: "Self-only pressure previews on zone select — never a seal.",
+        id: "hl1-tl",
+        label: "Feel a gentle map preview",
+        hint: "Self-only zone tap may play feather pressure — never a seal.",
         href: "/onboarding/touch-language",
       },
       {
-        id: "hl-nd",
-        label: "Neurodivergent Mode settings",
-        hint: "Lower intensity ceilings and stop-only haptics.",
-        href: "/settings",
+        id: "hl1-soft",
+        label: "Soft Signal practice",
+        hint: "The triple-pulse meaning: I need space. No explanation needed.",
+        href: "/soft-signal/practice",
       },
     ],
     steps: [
       {
-        id: "hl-frame",
-        title: "Phonemes, not decoration",
-        body: "In Litmo, haptics are never decorative buzz. They are a consensual, expressive, revocable channel: opt-in, previewable, interruptible. They never say another person agreed, is near, or is safe. Silence is valid.",
-        takeaway: "Meaning before sensation. Soft Signal is sacred punctuation.",
+        id: "hl1-welcome",
+        title: "Welcome",
+        body: "Welcome. In Litmo, touch is a language — and haptics are how your device can speak it safely.\n\nHaptics here are never surprises.\nThey are always previewed.\nAlways consensual.\nAlways interruptible.",
+        takeaway: "No surprises. Your pace only.",
       },
       {
-        id: "hl-feel-own",
-        title: "Feel your own boundaries",
-        body: "Start alone. Test patterns on yourself first — short/medium, feather to firm, presence vs Soft Signal. Your body learns the vocabulary without social pressure. Completing practice never certifies readiness for touch with someone else.",
-        takeaway: "Self-first literacy. No peer required.",
-        reflection: "Which intensity feels grounding rather than jarring for you today?",
+        id: "hl1-tone",
+        title: "Like tone of voice",
+        body: "Think of them like tone of voice:\n\nA soft double tap can say “I’m here.”\nA slow rising wave can say “this feels safe.”\nA distinct triple pulse means “I need space right now.”\n\nYour nervous system gets to decide what feels good.\nThere is no wrong way to feel.",
+        takeaway: "Meaning before sensation. Silence is valid.",
+        reflection:
+          "If a soft double tap played on this phone, what would you want it to mean for you — if anything?",
       },
       {
-        id: "hl-preview-together",
-        title: "Preview together before live",
-        body: "In a real session path, allowed haptic vocabulary belongs with the Consent Snapshot. Both people affirm zones, max intensity, and contexts. Preview is mandatory before live patterns. You can revoke “sustained” or a zone mid-session without rewriting the whole seal.",
-        takeaway: "Dual affirm vocabulary. Instant granular revoke.",
+        id: "hl1-test",
+        title: "Gentle test (you choose)",
+        body: "When you are ready, try the Touch Language map or Soft Signal practice from the related links. Prefer feather intensity. This is self-only. Completing this step never means you must like haptics.",
+        takeaway: "Listening to yourself is the skill.",
         scenario: {
-          prompt: "Partner wants a sustained rumble you never previewed. What happens?",
+          prompt: "Does a gentle (feather) presence pattern feel okay for you right now?",
           options: [
             {
-              label: "It plays because they asked verbally",
+              label: "Yes — okay for now",
               feedback:
-                "No. Live patterns require preview + sealed vocabulary — words alone do not motor-authorize.",
+                "Noted as comfort, not commitment. You can change this anytime in Settings. You did enough.",
             },
             {
-              label: "It is denied until previewed and allowed in the seal",
+              label: "Too much",
               feedback:
-                "Yes. Preview and dual-affirmed vocabulary gate live play.",
+                "Thank you for noticing. Prefer lower intensity or haptics off in Neurodivergent Mode. That is data, not failure. You can stop anytime.",
             },
             {
-              label: "Soft Signal is required to try it",
+              label: "Not now",
               feedback:
-                "Soft Signal stops everything — it is not a try-pattern key.",
+                "Perfect. Skipping is success. Return when you want — progress stays on this device.",
             },
           ],
         },
       },
       {
-        id: "hl-soft-drills",
-        title: "Soft Signal drills",
-        body: "Soft Signal’s haptic is unmistakable: sharp pulse energy plus warm decay — freedom, not a siren. It cannot be overridden by greeting, play, or check-in patterns. The session ends first; the motor is optional. Practice until interrupt is muscle memory.",
-        takeaway: "Stop kills all other haptics. Commit before motor.",
+        id: "hl1-close",
+        title: "You practiced listening",
+        body: "You just practiced the most important skill: listening to yourself.\n\nYou did enough. You can stop anytime.",
+        takeaway: "Self-listening outranks any pattern library.",
+      },
+    ],
+  },
+  {
+    id: "haptic-language-vocabulary",
+    title: "Your First Words",
+    summary:
+      "Core patterns: presence, affirmation, check-in, grounding, Soft Signal — suggestions you can remix or mute.",
+    minutes: 4,
+    track: "foundations",
+    themes: ["communication", "nervous-system", "product-safety"],
+    relatedPractice: [
+      {
+        id: "hl2-soft",
+        label: "Practice Soft Signal pattern",
+        hint: "Sharp triple + decay = stop. Commit first, haptic second.",
+        href: "/soft-signal/practice",
+      },
+    ],
+    steps: [
+      {
+        id: "hl2-frame",
+        title: "Foundational patterns",
+        body: "Here are the foundational patterns. Try them one at a time — in practice surfaces when ready. You are in complete control. These are suggestions, not requirements. You can remix, mute, or create your own later.",
+        takeaway: "Vocabulary is optional. Control is not.",
       },
       {
-        id: "hl-grammar",
-        title: "Grammar under the hood",
-        body: "Patterns use duration classes, a five-step intensity scale, rhythm (including heartbeat BPM), body-mapped locations, texture modifiers, and private context tags. Internal syntax looks like [shoulder-left][firm][wave-rising 600ms][affirming]. ND Mode lowers ceilings by default.",
-        takeaway: "Programmable and composable — still fail-closed.",
+        id: "hl2-presence",
+        title: "Presence",
+        body: "Presence — soft double tap.\nMeaning: “I am here with you.”\n\nLibrary id: greeting_double_tap. Local device only — never proves a peer is present.",
+        takeaway: "Presence is a local hello, not remote proof.",
+        reflection: "This one feels ___ (calm / sharp / neutral / skip).",
       },
       {
-        id: "hl-nd-track",
-        title: "Neurodivergent track",
-        body: "ND Mode defaults: lower max intensity, shorter patterns, no sustained, longer previews, reduced motion chrome, overload exits. Haptics can be stop-only or off. Visual Soft Signal always remains. Accommodations are never public traits or match filters.",
-        takeaway: "Sensory ownership. Inclusion without diagnosis.",
+        id: "hl2-affirmation",
+        title: "Affirmation",
+        body: "Affirmation — gentle rising wave.\nMeaning: “This moment feels good.”\n\nLibrary: greeting_shoulder_wave / affirmation_stroke (when allowed).",
+        takeaway: "Affirmation never replaces dual consent for touch.",
+        reflection: "Would you mark this favorite, avoid, or neither?",
+      },
+      {
+        id: "hl2-checkin",
+        title: "Check-in",
+        body: "Check-in — slow heartbeat pulse.\nMeaning: “How are you feeling right now?”\n\nLibrary: checkin_heartbeat · checkin_soft_pulse. Soft, no pressure to answer with more contact.",
+        takeaway: "A check-in asks; it does not demand a yes.",
+      },
+      {
+        id: "hl2-grounding",
+        title: "Grounding",
+        body: "Grounding — deep bilateral rumble with fade.\nMeaning: “You are safe. I am steady.”\n\nLibrary: grounding_rumble · grounding_bilateral. “Safe” here is co-regulation language — not a safety certificate about another person.",
+        takeaway: "Grounding is for your body, not a score about them.",
+      },
+      {
+        id: "hl2-soft-signal",
+        title: "Soft Signal",
+        body: "Soft Signal — sharp triple pulse + decay.\nMeaning: “I need to stop. No explanation needed.”\n\nSacred. Cannot be overridden by other haptics. Session ends first.",
+        takeaway: "Stop is free. Motors never delay freedom.",
+        scenario: {
+          prompt: "Which pattern must always win if another haptic is playing?",
+          options: [
+            {
+              label: "Soft Signal — it kills other patterns",
+              feedback:
+                "Yes. Soft Signal interrupt priority is highest among ordinary phrases (emergency-stop class is reserved for panic paths).",
+            },
+            {
+              label: "Affirmation wave — positive vibes first",
+              feedback:
+                "No. Affirmation never outranks stop.",
+            },
+            {
+              label: "Whatever the peer prefers",
+              feedback:
+                "No. Your stop does not need peer preference.",
+            },
+          ],
+        },
+      },
+      {
+        id: "hl2-close",
+        title: "Enough for today",
+        body: "You can stop here. Favorites and avoids live in your private notes and device settings — never as a public profile trait.\n\nYou did enough. You can stop anytime.",
+        takeaway: "Suggestions, not requirements.",
+      },
+    ],
+  },
+  {
+    id: "haptic-language-consent",
+    title: "Asking and Answering with Haptics",
+    summary:
+      "Preview → affirm → live. Snapshot updates. Revoke anytime. Soft Signal if you dislike a proposal.",
+    minutes: 3,
+    track: "foundations",
+    themes: ["consent", "product-safety", "communication"],
+    relatedPractice: [
+      {
+        id: "hl3-snapshot",
+        label: "Consent Snapshot prepare",
+        hint: "Haptic vocabulary belongs with dual seal — practice the mutual path.",
+        href: "/consent-snapshot/prepare",
+      },
+      {
+        id: "hl3-soft",
+        label: "If a pattern feels wrong",
+        hint: "Soft Signal demo — no explanation needed.",
+        href: "/soft-signal/practice",
+      },
+    ],
+    steps: [
+      {
+        id: "hl3-frame",
+        title: "Before any live haptic",
+        body: "Before any live haptic, both people preview the exact patterns.\n\nYou propose a pattern → Partner previews it → They affirm or adjust → Only then does it become live.\n\nYou can always change your mind mid-session. The snapshot updates. Old patterns become invalid instantly. This is how we protect the language.",
+        takeaway: "Preview is mandatory for live session patterns.",
+      },
+      {
+        id: "hl3-flow",
+        title: "Propose · affirm · revoke",
+        body: "Practice the flow mentally (and with prepare/mutual when ready):\n1) Propose — name zone, intensity, meaning.\n2) Preview — both feel it alone first when possible.\n3) Affirm into sealed vocabulary (consent-id bound).\n4) Revoke a zone or “sustained” without rewriting your whole self.\n\nVerbal ask never bypasses the motor gate.",
+        takeaway: "Words help; seals authorize live motors.",
+        scenario: {
+          prompt: "What if your partner proposes something you don’t like?",
+          options: [
+            {
+              label: "Soft Signal — stop, no explanation needed",
+              feedback:
+                "Always available. Soft Signal ends contact authority and kills other haptics.",
+            },
+            {
+              label: "Stay quiet so they don’t feel rejected",
+              feedback:
+                "Silence is not a yes. You may Soft Signal, revoke, or say no without performing comfort for them.",
+            },
+            {
+              label: "Accept once so the session continues smoothly",
+              feedback:
+                "Never required. Continuity never outranks your boundary.",
+            },
+          ],
+        },
+      },
+      {
+        id: "hl3-close",
+        title: "Language protected",
+        body: "Old patterns become invalid the moment vocabulary or seal changes. That is a feature.\n\nYou did enough. You can stop anytime.",
+        takeaway: "Revocation is instant. No performance required.",
+      },
+    ],
+  },
+  {
+    id: "haptic-language-nd",
+    title: "Making It Work for Your Brain",
+    summary:
+      "ND Mode: lower intensity, longer previews, reduced motion, overload escape. Personal profiles — private, not a diagnosis.",
+    minutes: 3,
+    track: "foundations",
+    themes: ["nervous-system", "self-compassion", "product-safety"],
+    relatedPractice: [
+      {
+        id: "hl4-settings",
+        label: "Open Neurodivergent Mode",
+        hint: "Intensity, motion, language, overload exit — device-local only.",
+        href: "/settings",
+      },
+      {
+        id: "hl4-safety",
+        label: "Safety tools",
+        hint: "Panic cover and Soft Signal stay free regardless of ND settings.",
+        href: "/safety",
+      },
+    ],
+    steps: [
+      {
+        id: "hl4-frame",
+        title: "Less is data, not failure",
+        body: "Some days your nervous system needs less. That’s not a limitation — it’s data.\n\nIn Neurodivergent Mode (on by default in demo and recommended in learning):\n• Lower default intensities\n• Longer preview times\n• Reduced motion variants\n• Sensory overload escape (instant Soft Signal path + calm tools)\n\nYou can think in personal modes: “Overstimulated days,” “Needing co-regulation,” “Playful energy.” Your device can remember so you don’t have to explain.",
+        takeaway: "Accommodations are ownership, not diagnosis.",
+      },
+      {
+        id: "hl4-toggle",
+        title: "Try a quieter preset",
+        body: "Open Settings and cycle: haptic intensity (off / stop-only / standard), sensory profile (low / balanced), motion reduced. Same presence pattern should feel different under low vs standard — or silent if off. Visual meaning remains.",
+        takeaway: "Same meaning, different volume.",
+        scenario: {
+          prompt: "On an overstimulated day, which default fits Litmo’s ND strength?",
+          options: [
+            {
+              label: "Lower intensity, no sustained, Soft Signal still free",
+              feedback:
+                "Yes. ND envelopes lower ceilings without burying stop.",
+            },
+            {
+              label: "Hide Soft Signal so nothing interrupts rest",
+              feedback:
+                "Never. Soft Signal stays available.",
+            },
+            {
+              label: "Publish “low sensory” on your discovery profile",
+              feedback:
+                "No. Accommodations are never peer-visible traits.",
+            },
+          ],
+        },
+      },
+      {
+        id: "hl4-close",
+        title: "Remembered privately",
+        body: "Preferences stay on this phone. They never become a public neurotype badge.\n\nYou did enough. You can stop anytime.",
+        takeaway: "Your brain, your volume knob.",
+      },
+    ],
+  },
+  {
+    id: "haptic-language-practice",
+    title: "Putting It Together",
+    summary:
+      "Compose a short sequence, preview, imagine share, practice Soft Signal end, private wrap-up. Comfort first.",
+    minutes: 4,
+    track: "foundations",
+    themes: ["consent", "communication", "product-safety"],
+    relatedPractice: [
+      {
+        id: "hl5-soft",
+        label: "End with Soft Signal practice",
+        hint: "Anytime. Comfort always comes first.",
+        href: "/soft-signal/practice",
+      },
+      {
+        id: "hl5-snapshot",
+        label: "Consent Snapshot mutual (demo)",
+        hint: "Simulate dual affirm of shared language.",
+        href: "/consent-snapshot/mutual",
+      },
+      {
+        id: "hl5-wrap",
+        label: "Optional reflection",
+        hint: "Private, skippable — not clinical.",
+        href: "/safety/reflection",
+      },
+    ],
+    steps: [
+      {
+        id: "hl5-frame",
+        title: "Combine everything",
+        body: "Now combine everything.\nChoose a short sequence (for example: presence → check-in → Soft Signal).\nPreview it on yourself.\nImagine sharing it with a trusted person — only after dual preview in real life.\nPractice sending and receiving as fiction only.\nEnd with Soft Signal whenever you want.\n\nThis is practice for real life — where your comfort always comes first.",
+        takeaway: "Sandbox first. Live needs dual seal.",
+      },
+      {
+        id: "hl5-compose",
+        title: "Mini sandbox",
+        body: "Compose 2–3 patterns from the library in your mind or notes:\n1) greeting_double_tap\n2) checkin_soft_pulse\n3) soft_signal_sacred\n\nAsk: Did I preview? Would I need their affirm? Can I Soft Signal anytime?",
+        takeaway: "Sequence still ends free.",
+        reflection:
+          "Write a private note: the sequence I would only share after dual preview is…",
+      },
+      {
+        id: "hl5-seal",
+        title: "Consent snapshot simulation",
+        body: "In a real path, the haptic vocabulary rides with the Consent Snapshot. Both people affirm allowed zones and max intensity. Mid-session you can revoke “sustained” or a zone. Old patterns invalidate instantly.",
+        takeaway: "Seal updates kill stale motors.",
+        scenario: {
+          prompt: "When should a live haptic sequence stop?",
+          options: [
+            {
+              label: "Whenever either person Soft Signals",
+              feedback:
+                "Yes — and Soft Signal does not need a reason or peer OK.",
+            },
+            {
+              label: "Only when the full sequence finishes",
+              feedback:
+                "No. Stop is free mid-pattern.",
+            },
+            {
+              label: "Only if both people Soft Signal",
+              feedback:
+                "No. Soft Signal is unilateral.",
+            },
+          ],
+        },
+      },
+      {
+        id: "hl5-close",
+        title: "Private wrap-up",
+        body: "Optional: open reflection tools and jot what helped. Skip is success.\n\nYou did enough. You can stop anytime.",
+        takeaway: "Practice ends with permission, not a grade.",
       },
     ],
   },
@@ -1556,6 +1828,20 @@ export const learningModules: LearningModule[] = [
  */
 export const learningPaths: LearningPath[] = [
   {
+    id: "haptic-language-track",
+    title: "Haptic Language Track",
+    summary:
+      "Short, calm, ND-friendly: intro → vocabulary → consent preview → sensory customization → practice sandbox. Never a certificate.",
+    minutes: 17,
+    moduleIds: [
+      "haptic-language",
+      "haptic-language-vocabulary",
+      "haptic-language-consent",
+      "haptic-language-nd",
+      "haptic-language-practice",
+    ],
+  },
+  {
     id: "first-session-readiness",
     title: "Before a first session",
     summary:
@@ -1591,6 +1877,8 @@ export const learningPaths: LearningPath[] = [
     minutes: 15,
     moduleIds: [
       "neurodivergent-mode",
+      "haptic-language",
+      "haptic-language-nd",
       "nervous-system-safety",
       "soft-signal",
       "self-compassion",

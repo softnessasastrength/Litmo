@@ -151,16 +151,20 @@ Nuclear syntax / library id
 
 ---
 
-## 5. Learning & onboarding flow
+## 5. Learning & onboarding flow (Haptic Language Track)
 
-| Module | Goal |
-| ------ | ---- |
-| **Feel Your Own Boundaries** | Self-only pattern tests |
-| **Preview Together** | Mutual preview before live |
-| **Soft Signal Drills** | Interrupt practice |
-| **ND track** | Slower pace, plain language, lower intensity |
+Path id: **`haptic-language-track`** · progress via `learningProgress` (device-local).
 
-Catalog: Guided Learning `haptic-language` + extensions in module steps.
+| # | Module id | Title | Minutes |
+| - | --------- | ----- | ------- |
+| 1 | `haptic-language` | Touch Without Words | ~3 |
+| 2 | `haptic-language-vocabulary` | Your First Words | ~4 |
+| 3 | `haptic-language-consent` | Asking and Answering with Haptics | ~3 |
+| 4 | `haptic-language-nd` | Making It Work for Your Brain | ~3 |
+| 5 | `haptic-language-practice` | Putting It Together | ~4 |
+
+Every module ends with **“You did enough. You can stop anytime.”**  
+Patterns reference `HAPTIC_PHRASE_LIBRARY` / Soft Signal practice — not peer motors.
 
 ---
 
