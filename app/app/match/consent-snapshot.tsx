@@ -29,6 +29,10 @@ import { type AppColors } from "../../theme";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { FailureState, LoadingState } from "../../components/AsyncState";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
+import {
+  buildEncryptedQr,
+  buildSnapshotStartInner,
+} from "../../services/qrInviteCore";
 
 export default function ConsentSnapshotScreen() {
   return (
@@ -429,7 +433,36 @@ function ConsentSnapshotContent() {
             },
           } as never)
         }
-        accessibilityHint="Creates an NFC or QR invite for co-located snapshot review. Receiver must Accept after scan. Never activates a session."
+        accessibilityHint="Creates an NFC or encrypted QR invite for co-located snapshot review. Receiver must Accept after scan. Never activates a session."
+      />
+      <Button
+        variant="secondary"
+        label="Encrypted QR only (snapshot start)"
+        disabled={rows.length === 0}
+        onPress={() => {
+          const qr = buildEncryptedQr({
+            kind: "snapshot_start",
+            inner: buildSnapshotStartInner({
+              title: isReal
+                ? "Consent Snapshot review"
+                : "Mock Consent Snapshot review",
+              rows,
+            }),
+            mode: "colocated",
+          });
+          router.push({
+            pathname: "/nfc/connect",
+            params: {
+              intent: "snapshot_initiate",
+              title: isReal
+                ? "Consent Snapshot review"
+                : "Mock Consent Snapshot review",
+              rows: JSON.stringify(rows),
+              payload: qr.deepLink,
+            },
+          } as never);
+        }}
+        accessibilityHint="Builds a time-limited encrypted QR for snapshot review start, then opens careful-connect to show it."
       />
       <Body muted center>
         Nearby share is co-located review only. It does not replace independent

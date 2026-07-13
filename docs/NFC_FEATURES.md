@@ -140,18 +140,19 @@ Entry points: Home, Settings, Profile edit, Consent Snapshot.
 
 ---
 
-## 7. Fallback matrix
+## 7. Fallback matrix (NFC → encrypted QR → manual)
 
 | Situation | Path |
 | --- | --- |
-| Expo Go / no Core NFC module | Share sheet + paste deep link / JSON |
-| No writable tag | Host shows code + deep link only |
-| Guest cannot use NFC | Paste invite or open shared link |
+| NFC tag available | Write/scan NDEF (primary) |
+| No tag / Expo Go | **On-screen encrypted QR** (`litmo://q/v1/…`, AES-GCM, 3 min TTL) |
+| Cannot scan QR | Manual deep link + unlock code via Share/paste |
+| Split privacy mode | QR omits media key; unlock code required to open |
 | Offer expired | Create a new offer (fail closed) |
 | Decline | Soft clear; no penalty messaging |
 
-System **Share** is the primary QR path: many OS share sheets can present a QR
-for a URL. Litmo does not require a third-party QR dependency for private alpha.
+Shared implementation: `qrInviteCore` + `LitmoQrCode` + `CarefulConnectFallback`.
+Same ladder is used by the proximity layer (`PROXIMITY_LAYER.md` §1b).
 
 ---
 

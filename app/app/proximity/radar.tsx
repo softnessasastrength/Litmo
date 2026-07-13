@@ -10,6 +10,7 @@ import {
   Screen,
   Title,
 } from "../../components/ui";
+import { CarefulConnectFallback } from "../../components/CarefulConnectFallback";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { useAuth } from "../../context/AuthContext";
 import { useNeurodivergent } from "../../context/NeurodivergentContext";
@@ -25,6 +26,7 @@ import {
   proximityService,
   type ProximityUiState,
 } from "../../services/proximityService";
+import type { QrPrivacyMode } from "../../services/qrInviteCore";
 import { profileRepository } from "../../services/profileRepository";
 import { defaultProximityPrefs } from "../../services/proximityPreferenceCore";
 
@@ -53,6 +55,7 @@ function ProximityRadarContent() {
   });
   const [busy, setBusy] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [privacyMode, setPrivacyMode] = useState<QrPrivacyMode>("colocated");
 
   useEffect(() => {
     const unsub = proximityService.subscribe(setState);
@@ -252,6 +255,10 @@ function ProximityRadarContent() {
             onPress={() => void start(true)}
             accessibilityHint="Opens a trauma-informed practice radar with fictional neighbors. No local network radio."
           />
+          <Body muted>
+            Multipeer is preferred for anonymous radar. Encrypted QR is the
+            robust fallback when NFC/radio is unavailable.
+          </Body>
           <Button variant="secondary" label="Back" onPress={() => router.back()} />
         </>
       ) : null}
@@ -285,6 +292,40 @@ function ProximityRadarContent() {
             Soft Signal ends nearby presence immediately. No explanation. No
             penalty. Litmo is not emergency response or crisis services.
           </Body>
+
+          <CarefulConnectFallback
+            nfcAvailable={false}
+            qrAvailable
+            qr={state.qr}
+            privacyMode={privacyMode}
+            onPrivacyModeChange={(mode) => {
+              setPrivacyMode(mode);
+              proximityService.setQrPrivacyMode(mode);
+            }}
+            title="Fallback when Multipeer is weak (encrypted QR → manual)"
+            onIngestPaste={(raw, unlock) =>
+              proximityService.ingestQr(raw, unlock)
+            }
+          />
+
+          {state.pendingQrInvite ? (
+            <Card style={styles.card}>
+              <Body>QR peer waiting for your accept</Body>
+              <Body muted>
+                Label {state.pendingQrInvite.label ?? "anonymous"}. Weather
+                axes only until you accept — still not a name, not consent.
+              </Body>
+              <Button
+                label="Accept QR peer carefully"
+                onPress={() => proximityService.acceptPendingQrInvite()}
+              />
+              <Button
+                variant="signal"
+                label="Decline QR peer"
+                onPress={() => proximityService.declinePendingQrInvite()}
+              />
+            </Card>
+          ) : null}
 
           {state.invitation ? (
             <Card style={styles.card}>

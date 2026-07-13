@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-07-13 — Robust encrypted QR fallback (proximity + NFC)
+
+### Summary
+
+Time-limited AES-GCM QR envelopes (`qrInviteCore`) for proximity invites,
+NFC offers/accepts/sealed packages, and Consent Snapshot starts. On-screen QR
+renderer, NFC → QR → manual degradation UI, split/co-located privacy modes.
+Proximity docs updated (`PROXIMITY_LAYER.md` §1b).
+
 ## 2026-07-13 — NFC careful-connect (tag + QR fallback)
 
 ### Summary

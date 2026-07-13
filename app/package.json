@@ -38,6 +38,7 @@
     "litmo-local-share": "file:modules/litmo-local-share",
     "litmo-nfc": "file:modules/litmo-nfc",
     "litmo-passkeys": "file:modules/litmo-passkeys",
+    "qrcode": "^1.5.4",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-native": "0.83.6",
@@ -45,6 +46,7 @@
     "react-native-screens": "~4.23.0"
   },
   "devDependencies": {
+    "@types/qrcode": "^1.5.5",
     "@types/react": "19.2.2",
     "prettier": "^3.9.5",
     "typescript": "~5.9.2"

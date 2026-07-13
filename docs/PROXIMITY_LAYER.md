@@ -35,6 +35,32 @@ Non-goals for this layer:
 
 ---
 
+## 1b. Graceful degradation (NFC → QR → manual)
+
+When Multipeer radio or NFC hardware is weak or missing, Litmo degrades in a
+**fixed, consent-preserving order**:
+
+```text
+1. Multipeer anonymous radar / NFC tag (when available)
+2. Time-limited encrypted QR  (litmo://q/v1/…)
+3. Manual deep link + unlock code (Share / paste)
+```
+
+| Property | Rule |
+| --- | --- |
+| Encryption | AES-256-GCM envelope (`qrInviteCore`) — no raw PII in QR plaintext |
+| Time limit | Default **3 minutes**; expired envelopes fail closed |
+| Privacy modes | **Co-located** (media key in QR) or **Split** (unlock code required) |
+| Consent | Opening still requires **Accept carefully** in-app |
+| Snapshot starts | `snapshot_start` kind is **review-only** — never session activation |
+| Soft Signal | Still tears down radio + QR session state |
+
+Shared UI: `CarefulConnectFallback` + `LitmoQrCode`.  
+Protocol: `app/services/qrInviteCore.ts`.  
+Also documented under [NFC_FEATURES.md](NFC_FEATURES.md) for tag/NFC paths.
+
+---
+
 ## 2. Disclosure ladder (never skip)
 
 ```text
@@ -63,6 +89,15 @@ later ones. Soft Signal may be pressed at **any** step.
 | Mutual interest | Willingness to continue carefully | Same |
 | Identity revealed | Display name / pronouns / short intro **only if both consented** | Same |
 | Soft Signal | Radio gone; optional best-effort `px_soft_signal` | Calm exit copy |
+| Encrypted QR fallback | Sealed beacon + optional epk; still anonymous until accept | Same after Accept |
+
+### QR proximity invite (when Multipeer fails)
+
+1. Host radar mints encrypted QR (`proximity_invite` inner: token, compact beacon, optional epk).  
+2. Guest pastes/scans → **pending QR peer** UI.  
+3. Guest **Accept QR peer carefully** → anonymous match card (weather resonance only).  
+4. Optional Multipeer/NFC handshake still required for identity path.  
+5. Soft Signal / Decline clears pending invite with no penalty.
 
 ---
 
@@ -223,9 +258,13 @@ Default privacy timeout: **5 minutes** of radio, then Soft Signal for the user.
 | Pure protocol | `app/services/proximityCore.ts` |
 | Preferences | `app/services/proximityPreference*.ts` |
 | Orchestration | `app/services/proximityService.ts` |
+| Encrypted QR envelopes | `app/services/qrInviteCore.ts` |
+| QR matrix + UI | `app/lib/qrMatrix.ts`, `components/LitmoQrCode.tsx` |
+| Degradation ladder UI | `components/CarefulConnectFallback.tsx` |
 | UI | `app/app/proximity/radar.tsx` |
 | Native transport | `app/modules/litmo-local-share` (`startProximityAsync`) |
 | Payload share (post-reveal) | `app/app/share/local.tsx` (ADR 0053) |
+| NFC + QR careful-connect | `docs/NFC_FEATURES.md`, ADR 0055 |
 
 ---
 

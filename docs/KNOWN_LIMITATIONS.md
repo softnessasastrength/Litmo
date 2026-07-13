@@ -20,10 +20,19 @@
   missing governance policies and complete legal/distribution review before
   public launch.
 
+## Encrypted QR fallback
+
+- QR payloads use short TTL (~3 min) AES-GCM envelopes. Co-located mode embeds
+  the media key in the QR (ease); split mode requires the unlock code.
+- On-screen QR is generated in-app; camera-based scanning of foreign QR apps is
+  not required — paste/deep link works. OS Camera may open `litmo://` links when
+  registered on a development build.
+- A successful QR decode still requires **explicit Accept** before content use.
+
 ## NFC careful-connect
 
 - Real NFC read/write needs an **iOS development build** with Core NFC and the
-  `litmo-nfc` module. Expo Go uses QR/share/manual paste only.
+  `litmo-nfc` module. Expo Go uses encrypted QR/share/manual paste.
 - iOS third-party apps **cannot** do general phone-to-phone NFC P2P; Litmo uses
   NDEF **tags** plus deep-link fallbacks. Do not claim AirDrop-like phone bumps.
 - Offers expire (~3 minutes). Post-tap Accept is mandatory; a scan alone never

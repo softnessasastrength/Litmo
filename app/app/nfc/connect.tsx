@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import {
-  Share,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Share, Text, TextInput, View } from "react-native";
 import {
   Body,
   Button,
@@ -15,6 +10,7 @@ import {
   Screen,
   Title,
 } from "../../components/ui";
+import { CarefulConnectFallback } from "../../components/CarefulConnectFallback";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { useAuth } from "../../context/AuthContext";
 import { useNeurodivergent } from "../../context/NeurodivergentContext";
@@ -26,6 +22,7 @@ import {
   type NfcUiState,
 } from "../../services/nfcService";
 import type { NfcIntent } from "../../services/nfcCore";
+import type { QrPrivacyMode } from "../../services/qrInviteCore";
 import { profileRepository } from "../../services/profileRepository";
 
 export default function NfcConnectScreen() {
@@ -67,6 +64,7 @@ function NfcConnectContent() {
   });
   const [busy, setBusy] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [privacyMode, setPrivacyMode] = useState<QrPrivacyMode>("colocated");
 
   const snapshotRows = (() => {
     if (typeof params.rows !== "string" || !params.rows) return [];
@@ -233,32 +231,22 @@ function NfcConnectContent() {
             disabled={busy}
             onPress={() => void create()}
           />
-          <Body muted>Or receive someone else&apos;s invite</Body>
-          <Button
-            variant="secondary"
-            label={
-              state.nfcHardware ? "Scan NFC tag" : "Scan NFC (needs dev build)"
+          <CarefulConnectFallback
+            nfcAvailable={state.nfcHardware}
+            qrAvailable
+            qr={null}
+            privacyMode={privacyMode}
+            onPrivacyModeChange={(mode) => {
+              setPrivacyMode(mode);
+              nfcService.setQrPrivacyMode(mode);
+            }}
+            nfcPrimaryLabel="Scan NFC tag"
+            nfcEnabled={state.nfcHardware && !busy}
+            onNfcPrimary={() => void nfcService.beginScan()}
+            onIngestPaste={(raw, unlock) =>
+              nfcService.ingestExternalPayload(raw, "qr", unlock)
             }
-            disabled={!state.nfcHardware || busy}
-            onPress={() => void nfcService.beginScan()}
-          />
-          <Text style={styles.label}>Paste invite / QR payload / deep link</Text>
-          <TextInput
-            accessibilityLabel="Paste Litmo NFC or QR invite"
-            value={paste}
-            onChangeText={setPaste}
-            multiline
-            style={styles.input}
-            placeholder="litmo://nfc/v1/… or full JSON"
-            placeholderTextColor="#8A8074"
-          />
-          <Button
-            variant="secondary"
-            label="Review pasted invite"
-            disabled={!paste.trim()}
-            onPress={() =>
-              nfcService.ingestExternalPayload(paste.trim(), "manual")
-            }
+            title="Receive an invite (NFC → QR → manual)"
           />
         </>
       ) : null}
@@ -278,48 +266,39 @@ function NfcConnectContent() {
       {state.phase === "offer_ready" ||
       state.phase === "writing" ||
       state.phase === "accepted" ||
+      state.phase === "key_ready" ||
       state.phase === "content_ready" ? (
-        <Card style={styles.card}>
-          <Body>Your offer</Body>
-          {state.offer ? (
-            <>
-              <Body>
-                {intentLabel(state.offer.intent)} · code{" "}
-                <Text style={styles.code}>{state.offer.code}</Text>
-              </Body>
-              <Body muted>
-                Expires{" "}
-                {new Date(state.offer.exp).toLocaleTimeString(undefined, {
-                  hour: "numeric",
-                  minute: "2-digit",
-                })}
-              </Body>
-              <Body muted>{state.offer.disclaimer}</Body>
-            </>
-          ) : null}
-          {state.nfcWrite ? (
-            <Button
-              label="Write invite to NFC tag"
-              onPress={() => void nfcService.writeOfferToTag()}
-              accessibilityHint="Places the invite on a physical NFC tag. Receiver still must Accept in Litmo."
-            />
-          ) : null}
-          <Button
-            variant="secondary"
-            label="Share link / QR via system share"
-            onPress={() => void shareFallback()}
-            accessibilityHint="Opens the system share sheet so the other person can open the deep link or screenshot a QR if their OS offers one"
+        <>
+          <Card style={styles.card}>
+            <Body>Your package</Body>
+            {state.offer ? (
+              <>
+                <Body>
+                  {intentLabel(state.offer.intent)} · code{" "}
+                  <Text style={styles.code}>{state.offer.code}</Text>
+                </Body>
+                <Body muted>{state.offer.disclaimer}</Body>
+              </>
+            ) : null}
+          </Card>
+          <CarefulConnectFallback
+            nfcAvailable={state.nfcHardware}
+            qrAvailable
+            qr={state.qr}
+            privacyMode={privacyMode}
+            onPrivacyModeChange={(mode) => {
+              setPrivacyMode(mode);
+              nfcService.setQrPrivacyMode(mode);
+            }}
+            nfcPrimaryLabel="Write invite to NFC tag"
+            nfcEnabled={Boolean(state.nfcWrite && state.offer)}
+            onNfcPrimary={() => void nfcService.writeOfferToTag()}
+            title="Share carefully (NFC → encrypted QR → manual)"
           />
-          {state.fallback ? (
-            <Text selectable style={styles.linkText}>
-              {state.fallback.deepLink}
-            </Text>
-          ) : null}
-
           {(state.phase === "offer_ready" || state.phase === "accepted") && (
-            <>
+            <Card style={styles.card}>
               <Text style={styles.label}>
-                Paste their Accept link (after they consent)
+                Paste their Accept QR/link (after they consent)
               </Text>
               <TextInput
                 accessibilityLabel="Paste peer accept link"
@@ -327,7 +306,7 @@ function NfcConnectContent() {
                 onChangeText={setAcceptPaste}
                 style={styles.input}
                 multiline
-                placeholder="litmo://nfc/accept/v1/…"
+                placeholder="litmo://q/v1/… or litmo://nfc/accept/v1/…"
                 placeholderTextColor="#8A8074"
               />
               <Button
@@ -335,9 +314,14 @@ function NfcConnectContent() {
                 disabled={busy}
                 onPress={() => void seal()}
               />
-            </>
+              <Button
+                variant="secondary"
+                label="Share legacy non-QR link"
+                onPress={() => void shareFallback()}
+              />
+            </Card>
           )}
-        </Card>
+        </>
       ) : null}
 
       {state.phase === "awaiting_post_tap_consent" && state.pendingOffer ? (
@@ -367,20 +351,13 @@ function NfcConnectContent() {
         </Card>
       ) : null}
 
-      {state.phase === "key_ready" && state.fallback ? (
+      {state.phase === "key_ready" ? (
         <Card style={styles.card}>
           <Body>Keys ready after your accept</Body>
           <Body muted>
-            Share this Accept link back if they are sealing content for you.
+            Show them your Accept encrypted QR above (if visible) or paste a
+            sealed package they send next.
           </Body>
-          <Text selectable style={styles.linkText}>
-            {state.fallback.deepLink}
-          </Text>
-          <Button
-            variant="secondary"
-            label="Share my Accept"
-            onPress={() => void shareFallback()}
-          />
           <Text style={styles.label}>Paste sealed package (optional)</Text>
           <TextInput
             accessibilityLabel="Paste sealed package"
@@ -391,7 +368,12 @@ function NfcConnectContent() {
           />
           <Button
             label="Open sealed package"
-            onPress={() => nfcService.openSealed(paste.trim() || undefined)}
+            onPress={() => {
+              if (paste.trim()) {
+                nfcService.ingestExternalPayload(paste.trim(), "qr");
+              }
+              nfcService.openSealed(paste.trim() || undefined);
+            }}
           />
         </Card>
       ) : null}

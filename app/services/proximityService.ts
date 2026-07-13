@@ -40,6 +40,16 @@ import {
   getProximityPrefs,
   type ProximityPrefs,
 } from "./proximityPreference.ts";
+import {
+  buildEncryptedQr,
+  buildProximityInviteInner,
+  buildSnapshotStartInner,
+  isProximityInviteInner,
+  isSnapshotStartInner,
+  openEncryptedQr,
+  type QrBuildResult,
+  type QrPrivacyMode,
+} from "./qrInviteCore.ts";
 
 export type ProximityUiState = {
   phase: DisclosurePhase;
@@ -58,6 +68,15 @@ export type ProximityUiState = {
   statusNote: string | null;
   errorMessage: string | null;
   startedAtMs: number | null;
+  /** Encrypted QR fallback for invites / snapshot start. */
+  qr: QrBuildResult | null;
+  qrPrivacyMode: QrPrivacyMode;
+  /** Pending proximity invite from QR awaiting post-scan consent. */
+  pendingQrInvite: {
+    token: string;
+    beacon: string;
+    label: string | null;
+  } | null;
 };
 
 type Listener = (state: ProximityUiState) => void;
@@ -86,6 +105,9 @@ const initial = (): ProximityUiState => ({
   statusNote: null,
   errorMessage: null,
   startedAtMs: null,
+  qr: null,
+  qrPrivacyMode: "colocated",
+  pendingQrInvite: null,
 });
 
 class ProximityController {
@@ -97,6 +119,7 @@ class ProximityController {
   private crypto: CryptoState | null = null;
   private timeoutTimer: ReturnType<typeof setTimeout> | null = null;
   private matchMap = new Map<string, RadarMatch>();
+  private qrPrivacyMode: QrPrivacyMode = "colocated";
 
   subscribe(listener: Listener): () => void {
     this.listeners.add(listener);
@@ -116,7 +139,149 @@ class ProximityController {
   async refresh(): Promise<void> {
     const available = await litmoLocalShare.isAvailable();
     const prefs = await getProximityPrefs();
-    this.set({ available, prefs });
+    this.set({ available, prefs, qrPrivacyMode: this.qrPrivacyMode });
+  }
+
+  setQrPrivacyMode(mode: QrPrivacyMode): void {
+    this.qrPrivacyMode = mode;
+    this.set({ qrPrivacyMode: mode });
+    if (this.selfBeacon) {
+      this.mintProximityQr();
+    }
+  }
+
+  /**
+   * Time-limited encrypted QR for proximity handshake bootstrap when Multipeer
+   * discovery fails or is unavailable. Still requires explicit Accept.
+   */
+  mintProximityQr(): QrBuildResult | null {
+    if (!this.selfBeacon) {
+      // Allow minting from prefs alone for pre-radar QR.
+      return null;
+    }
+    const epk = this.crypto
+      ? b64url(this.crypto.pair.publicKey)
+      : null;
+    const inner = buildProximityInviteInner({
+      token: this.selfBeacon.token,
+      beacon: encodeBeaconForDiscovery(this.selfBeacon),
+      epk,
+      label: this.anonymousLabel,
+    });
+    const qr = buildEncryptedQr({
+      kind: "proximity_invite",
+      inner,
+      mode: this.qrPrivacyMode,
+    });
+    this.set({ qr, qrPrivacyMode: this.qrPrivacyMode });
+    return qr;
+  }
+
+  /**
+   * Encrypted QR for Consent Snapshot review start (review-only).
+   */
+  mintSnapshotStartQr(input: {
+    title?: string;
+    rows: { label: string; value: string }[];
+  }): QrBuildResult {
+    const inner = buildSnapshotStartInner(input);
+    const qr = buildEncryptedQr({
+      kind: "snapshot_start",
+      inner,
+      mode: this.qrPrivacyMode,
+    });
+    this.set({ qr, qrPrivacyMode: this.qrPrivacyMode });
+    return qr;
+  }
+
+  /**
+   * Ingest encrypted QR (proximity invite). Consent-first: does not auto-connect.
+   */
+  ingestQr(raw: string, unlockCode?: string): void {
+    const opened = openEncryptedQr(raw, { unlockCode });
+    if (!opened.ok) {
+      const msg =
+        opened.reason === "expired"
+          ? "This proximity QR has expired. Ask for a new one."
+          : opened.reason === "need_unlock"
+            ? "This QR needs the unlock code (split mode)."
+            : opened.reason === "bad_unlock"
+              ? "Unlock code did not work."
+              : "Could not open that QR invite.";
+      this.set({ errorMessage: msg });
+      return;
+    }
+    if (opened.kind === "snapshot_start" && isSnapshotStartInner(opened.inner)) {
+      this.set({
+        statusNote:
+          "Encrypted snapshot-start QR opened. Accept carefully on the NFC/careful-connect screen for review-only flow, or continue only if you intended this.",
+        errorMessage: null,
+      });
+      // Proximity UI is not the primary snapshot host; surface note only.
+      return;
+    }
+    if (
+      opened.kind !== "proximity_invite" ||
+      !isProximityInviteInner(opened.inner)
+    ) {
+      this.set({
+        errorMessage:
+          "That QR is not a proximity invite. Use NFC careful-connect for profile/snapshot packages.",
+      });
+      return;
+    }
+    const invite = opened.inner;
+    this.set({
+      pendingQrInvite: {
+        token: invite.token,
+        beacon: invite.beacon,
+        label: invite.label,
+      },
+      statusNote:
+        "Proximity QR received. Accept carefully to add them as an anonymous radar match — still not identity or consent to touch.",
+      errorMessage: null,
+    });
+  }
+
+  /** Explicit accept of a QR-sourced anonymous peer (post-scan consent). */
+  acceptPendingQrInvite(): void {
+    const pending = this.state.pendingQrInvite;
+    if (!pending || !this.selfBeacon) {
+      this.set({
+        errorMessage:
+          "Nothing to accept, or radar is off. Start radar first, then accept the QR peer.",
+      });
+      return;
+    }
+    const beacon = decodeBeaconFromDiscovery(pending.beacon);
+    if (!beacon) {
+      this.set({ errorMessage: "QR beacon was invalid." });
+      return;
+    }
+    const match = buildRadarMatch({
+      peerKey: `qr-${pending.token}`,
+      ephemeralLabel: pending.label || `·${pending.token.slice(0, 6)}`,
+      selfBeacon: this.selfBeacon,
+      peerBeacon: beacon,
+    });
+    this.matchMap.set(match.peerKey, match);
+    this.set({
+      matches: [...this.matchMap.values()].sort(
+        (a, b) => b.resonance - a.resonance,
+      ),
+      pendingQrInvite: null,
+      statusNote:
+        "QR peer added as anonymous match after your accept. Handshake still optional. Soft Signal anytime.",
+    });
+    void hapticService.play("confirmation");
+  }
+
+  declinePendingQrInvite(): void {
+    this.set({
+      pendingQrInvite: null,
+      statusNote: "QR invite declined. No problem.",
+    });
+    void hapticService.play("softSignal");
   }
 
   async startRadar(options?: { forceDemo?: boolean }): Promise<void> {
@@ -154,7 +319,7 @@ class ProximityController {
         phase: "radar",
         startedAtMs: Date.now(),
         statusNote:
-          "Practice radar (demo). No real radio. Soft Signal still ends this practice immediately. Real devices need a development build.",
+          "Practice radar (demo). No real radio. Soft Signal still ends this practice immediately. Use encrypted QR fallback anytime.",
         errorMessage: null,
         invitation: null,
         activePeerId: null,
@@ -163,7 +328,9 @@ class ProximityController {
         peerInterest: false,
         localRevealOffer: false,
         peerRevealOffer: false,
+        pendingQrInvite: null,
       });
+      this.mintProximityQr();
       this.armTimeout();
       return;
     }
@@ -183,7 +350,7 @@ class ProximityController {
         phase: "radar",
         startedAtMs: Date.now(),
         statusNote:
-          "Anonymous nearby radar is on. Others see only weather axes — not your name. Soft Signal stops everything immediately.",
+          "Anonymous nearby radar is on. Others see only weather axes — not your name. If Multipeer fails, use encrypted QR. Soft Signal stops everything immediately.",
         errorMessage: null,
         invitation: null,
         activePeerId: null,
@@ -192,10 +359,32 @@ class ProximityController {
         peerInterest: false,
         localRevealOffer: false,
         peerRevealOffer: false,
+        pendingQrInvite: null,
       });
+      this.mintProximityQr();
       this.armTimeout();
     } catch (error) {
-      this.fail(error);
+      // Multipeer failed — still allow QR-only careful connect.
+      this.set({
+        available,
+        prefs,
+        demoMode: true,
+        matches: this.selfBeacon ? demoRadarPeers(this.selfBeacon) : [],
+        phase: "radar",
+        startedAtMs: Date.now(),
+        statusNote:
+          "Multipeer radio could not start. Falling back to encrypted QR invites (and demo matches if needed). Soft Signal still works.",
+        errorMessage:
+          error instanceof Error ? error.message : "Proximity radio failed.",
+      });
+      this.crypto = {
+        pair: generateX25519KeyPair(),
+        sessionKey: null,
+        sentHello: false,
+        myToken: this.selfBeacon?.token ?? "fallback",
+      };
+      this.mintProximityQr();
+      this.armTimeout();
     }
   }
 
@@ -407,6 +596,8 @@ class ProximityController {
       peerInterest: false,
       localRevealOffer: false,
       peerRevealOffer: false,
+      qr: null,
+      pendingQrInvite: null,
       statusNote:
         "Soft Signal. Nearby radio is off. No explanation needed. No penalty. Litmo is not emergency response.",
       startedAtMs: null,
@@ -422,6 +613,8 @@ class ProximityController {
       invitation: null,
       activePeerId: null,
       peerIdentity: null,
+      qr: null,
+      pendingQrInvite: null,
       statusNote: "Proximity stopped. Radio is off.",
       startedAtMs: null,
     });

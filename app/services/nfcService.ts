@@ -39,6 +39,12 @@ import {
   type NfcTransport,
   type X25519KeyPair,
 } from "./nfcCore.ts";
+import {
+  buildEncryptedQr,
+  openEncryptedQr,
+  type QrBuildResult,
+  type QrPrivacyMode,
+} from "./qrInviteCore.ts";
 
 export type NfcPhase =
   | "idle"
@@ -59,6 +65,9 @@ export type NfcUiState = {
   intent: NfcIntent | null;
   offer: NfcOffer | null;
   fallback: ReturnType<typeof buildFallbackBundle> | null;
+  /** Time-limited encrypted QR for the current host package. */
+  qr: QrBuildResult | null;
+  qrPrivacyMode: QrPrivacyMode;
   pendingOffer: NfcOffer | null;
   transport: NfcTransport | null;
   peerAccept: NfcAccept | null;
@@ -77,6 +86,8 @@ const initial = (): NfcUiState => ({
   intent: null,
   offer: null,
   fallback: null,
+  qr: null,
+  qrPrivacyMode: "colocated",
   pendingOffer: null,
   transport: null,
   peerAccept: null,
@@ -94,6 +105,7 @@ class NfcController {
   private guestPair: X25519KeyPair | null = null;
   private sessionKey: Uint8Array | null = null;
   private postTapAccepted = false;
+  private qrPrivacyMode: QrPrivacyMode = "colocated";
 
   subscribe(listener: Listener): () => void {
     this.listeners.add(listener);
@@ -119,6 +131,27 @@ class NfcController {
   /**
    * Host: create ephemeral offer for an intent. Does not auto-write NFC.
    */
+  setQrPrivacyMode(mode: QrPrivacyMode): void {
+    this.qrPrivacyMode = mode;
+    this.set({ qrPrivacyMode: mode });
+    // Rebuild QR for current offer if present.
+    if (this.state.offer) {
+      const qr = buildEncryptedQr({
+        kind: "nfc_offer",
+        inner: this.state.offer,
+        mode,
+      });
+      this.set({ qr });
+    } else if (this.state.sealed) {
+      const qr = buildEncryptedQr({
+        kind: "nfc_sealed",
+        inner: this.state.sealed,
+        mode,
+      });
+      this.set({ qr });
+    }
+  }
+
   async createOffer(input: {
     intent: NfcIntent;
     label?: string | null;
@@ -132,16 +165,23 @@ class NfcController {
       label: input.label,
     });
     const fallback = buildFallbackBundle(offer);
+    const qr = buildEncryptedQr({
+      kind: "nfc_offer",
+      inner: offer,
+      mode: this.qrPrivacyMode,
+    });
     this.set({
       phase: "offer_ready",
       intent: input.intent,
       offer,
       fallback,
+      qr,
+      qrPrivacyMode: this.qrPrivacyMode,
       pendingOffer: null,
       peerAccept: null,
       sealed: null,
       opened: null,
-      statusNote: `Offer ready for ${intentLabel(input.intent)}. Write to an NFC tag, share QR/link, or show the code. A tap is never consent.`,
+      statusNote: `Offer ready for ${intentLabel(input.intent)}. Prefer NFC → encrypted QR → manual link. A tap is never consent.`,
       errorMessage: null,
       transport: null,
     });
@@ -188,12 +228,76 @@ class NfcController {
 
   /**
    * Ingest offer from QR scan result, deep link, paste, or manual JSON.
+   * Supports encrypted litmo://q/v1 envelopes and legacy litmo://nfc links.
    */
   ingestExternalPayload(
     raw: string,
     transport: NfcTransport = "manual",
+    unlockCode?: string,
   ): void {
     this.postTapAccepted = false;
+
+    // Encrypted QR envelope (preferred robust fallback).
+    const qrOpened = openEncryptedQr(raw, { unlockCode });
+    if (qrOpened.ok) {
+      if (qrOpened.kind === "nfc_offer" && isValidOffer(qrOpened.inner)) {
+        this.ingestOfferObject(qrOpened.inner, "qr");
+        return;
+      }
+      if (qrOpened.kind === "nfc_accept") {
+        void this.ingestPeerAccept(qrOpened.inner as NfcAccept, "qr");
+        return;
+      }
+      if (qrOpened.kind === "nfc_sealed") {
+        this.set({
+          sealed: qrOpened.inner as NfcSealedPayload,
+          phase: "awaiting_post_tap_consent",
+          transport: "qr",
+          statusNote:
+            "Received a sealed encrypted QR package. Accept only if you intended this exchange.",
+        });
+        return;
+      }
+      if (qrOpened.kind === "snapshot_start") {
+        // Surface as snapshot initiate offer path via pending sealed-like open after accept.
+        this.set({
+          phase: "awaiting_post_tap_consent",
+          transport: "qr",
+          statusNote:
+            "Encrypted Consent Snapshot start QR received. Accept carefully — review only, never session activation.",
+          opened: null,
+          pendingOffer: null,
+          sealed: null,
+          errorMessage: null,
+        });
+        // Stash snapshot inner on opened only after accept — store temporarily via sealed bypass:
+        this._pendingSnapshotInner = qrOpened.inner;
+        return;
+      }
+      // Other kinds handled by proximity UI.
+      this.set({
+        phase: "error",
+        errorMessage:
+          "This QR is a proximity invite. Open Proximity radar to use it, or paste an NFC offer QR.",
+      });
+      return;
+    }
+    if (!qrOpened.ok && qrOpened.reason === "need_unlock") {
+      this.set({
+        phase: "error",
+        errorMessage:
+          "This encrypted QR needs the unlock code (split mode). Enter the code from the other person’s screen.",
+      });
+      return;
+    }
+    if (!qrOpened.ok && qrOpened.reason === "expired") {
+      this.set({
+        phase: "error",
+        errorMessage: "This encrypted QR has expired. Ask for a fresh invite.",
+      });
+      return;
+    }
+
     const sealed = parseSealedDeepLink(raw);
     if (sealed) {
       this.set({
@@ -220,6 +324,12 @@ class NfcController {
       });
       return;
     }
+    this.ingestOfferObject(offer, transport);
+  }
+
+  private _pendingSnapshotInner: unknown = null;
+
+  private ingestOfferObject(offer: NfcOffer, transport: NfcTransport): void {
     if (isOfferExpired(offer)) {
       this.set({
         phase: "error",
@@ -242,6 +352,32 @@ class NfcController {
    * Explicit post-tap consent (receiver). Required before keys or content.
    */
   async acceptPostTap(): Promise<void> {
+    // Snapshot-start QR path: no ECDH offer, just explicit accept then show review rows.
+    if (!this.state.pendingOffer && this._pendingSnapshotInner) {
+      this.postTapAccepted = true;
+      const inner = this._pendingSnapshotInner as {
+        title?: string;
+        rows?: { label: string; value: string }[];
+        kind?: string;
+      };
+      this._pendingSnapshotInner = null;
+      this.set({
+        phase: "content_ready",
+        opened: {
+          kind: "snapshot_initiate",
+          title: inner.title ?? "Consent Snapshot review",
+          rows: Array.isArray(inner.rows) ? inner.rows : [],
+          notSessionActivation: true,
+          notConsentToTouch: true,
+          reviewOnly: true,
+        },
+        statusNote:
+          "Snapshot review opened after your explicit accept. Never session activation. Soft clear anytime.",
+      });
+      void hapticService.play("confirmation");
+      return;
+    }
+
     const offer = this.state.pendingOffer;
     if (!offer) {
       this.set({ errorMessage: "Nothing to accept." });
@@ -275,20 +411,24 @@ class NfcController {
       sid: offer.sid,
     });
     void hapticService.play("confirmation");
+    const acceptLink = encodeAcceptDeepLink(accept);
+    const qr = buildEncryptedQr({
+      kind: "nfc_accept",
+      inner: accept,
+      mode: this.qrPrivacyMode,
+    });
     this.set({
       phase: "key_ready",
       peerAccept: accept,
       intent: offer.intent,
       statusNote:
-        "You accepted carefully. Ephemeral keys are ready. Share your accept code/link with them if they need it, or wait for sealed content.",
+        "You accepted carefully. Ephemeral keys are ready. Share your Accept QR/link with them if they need it, or wait for sealed content.",
+      qr,
       fallback: {
         shortCode: offer.code,
-        deepLink: encodeAcceptDeepLink(accept),
+        deepLink: acceptLink,
         json: JSON.stringify(accept),
-        shareMessage: [
-          "Litmo accept (still not consent to touch).",
-          encodeAcceptDeepLink(accept),
-        ].join("\n"),
+        shareMessage: qr.shareMessage,
       },
     });
   }
@@ -370,21 +510,24 @@ class NfcController {
       intent,
       plain,
     );
+    const qr = buildEncryptedQr({
+      kind: "nfc_sealed",
+      inner: sealed,
+      mode: this.qrPrivacyMode,
+    });
     this.set({
       phase: "content_ready",
       peerAccept: accept,
       sealed,
       opened: plain,
+      qr,
       statusNote:
-        "Sealed content ready. Share the sealed link, write it to a tag, or keep keys-only for key_exchange. Still not consent to touch.",
+        "Sealed content ready. Prefer encrypted QR → NFC tag → manual link. Still not consent to touch.",
       fallback: {
         shortCode: this.state.offer.code,
         deepLink: encodeSealedDeepLink(sealed),
         json: JSON.stringify(sealed),
-        shareMessage: [
-          "Litmo sealed package (open only in Litmo after careful accept).",
-          encodeSealedDeepLink(sealed),
-        ].join("\n"),
+        shareMessage: qr.shareMessage,
       },
     });
   }
