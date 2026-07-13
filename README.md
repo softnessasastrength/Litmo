@@ -64,6 +64,7 @@ Do not pretend this is therapy, clinical treatment, or proof of relationship ski
 | ND Mode | Permission to need less volume |
 | Docs / constitution / dojo screens | Meaning and structure so I don’t freefall |
 | **Spooning Protocol** | Intimacy anxiety as a sealable joke-spec with Soft Signal |
+| **Morning Cuddle Protocol** | 7:42am neediness spiral before coffee |
 
 Full map: [`docs/CONTAINMENT_SYSTEM.md`](docs/CONTAINMENT_SYSTEM.md).  
 Spooning: [`docs/SPOONING_PROTOCOL.md`](docs/SPOONING_PROTOCOL.md) · in-app `/spooning`.

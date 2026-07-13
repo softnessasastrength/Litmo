@@ -253,6 +253,12 @@ export default function HomeTabScreen() {
       />
       <Button
         variant="signal"
+        label="Morning Cuddle Protocol v0.1"
+        onPress={() => router.push("/morning-cuddle" as never)}
+        accessibilityHint="7:42am negotiation before coffee. Gremlin energy, Soft Signal, exit ritual. Containment, not a product."
+      />
+      <Button
+        variant="signal"
         label="Spooning Protocol v0.1"
         onPress={() => router.push("/spooning" as never)}
         accessibilityHint="Over-engineered cuddle planner: roles, positions, duration, Soft Signal, private debrief. Containment, not a product."

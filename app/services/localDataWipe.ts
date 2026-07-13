@@ -26,6 +26,8 @@ const EXTRA_ASYNC_KEYS = [
   "litmo.dojo.state.v1",
   /** Spooning Protocol history (local practice seals; not skill scores). */
   "litmo.spooning.history.v1",
+  /** Morning Cuddle Protocol history (7:42am spiral containment). */
+  "litmo.morning_cuddle.history.v1",
 ];
 
 const EXTRA_SECURE_KEYS = [

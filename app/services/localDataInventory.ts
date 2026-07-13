@@ -18,6 +18,8 @@ import {
 } from "./dojoStore.ts";
 import { summarizeHistory } from "../lib/spooningCore.ts";
 import { spooningStore } from "./spooningStore.ts";
+import { summarizeMorningHistory } from "../lib/morningCuddleCore.ts";
+import { morningCuddleStore } from "./morningCuddleStore.ts";
 
 export type LocalInventory = {
   collected_at: string;
@@ -46,6 +48,13 @@ export type LocalInventory = {
     history_present: boolean;
     spoon_count: number;
     soft_signal_exits: number;
+  };
+  /** Morning cuddle history — counts only. */
+  morning_cuddle: {
+    history_present: boolean;
+    session_count: number;
+    soft_signal_exits: number;
+    no_spiral_plus: number;
   };
   notes: string[];
 };
@@ -202,6 +211,25 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     "Spooning inventory is counts only; anxiety/debrief free-text wiped with litmo.spooning.history.v1.",
   );
 
+  let morning_cuddle: LocalInventory["morning_cuddle"] = {
+    history_present: false,
+    session_count: 0,
+    soft_signal_exits: 0,
+    no_spiral_plus: 0,
+  };
+  try {
+    const mornings = await morningCuddleStore.load();
+    const m = summarizeMorningHistory(mornings);
+    morning_cuddle = {
+      history_present: m.total > 0,
+      session_count: m.total,
+      soft_signal_exits: m.soft_signal_exits,
+      no_spiral_plus: m.no_spiral_plus,
+    };
+  } catch {
+    notes.push("morning_cuddle_history_unreadable");
+  }
+
   return {
     collected_at: new Date().toISOString(),
     offline_ready: true,
@@ -226,6 +254,7 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     privacy_notice_local,
     dojo,
     spooning,
+    morning_cuddle,
     notes,
   };
 }

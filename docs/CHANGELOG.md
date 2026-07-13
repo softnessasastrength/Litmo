@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-13 — Morning Cuddle Protocol v0.1
+
+Pre-coffee negotiation: Crispy/Toasty/Gremlin/Exit Protocol, micro–extended
+duration, styles (incl. Jetpack + Koala), morning zones, Soft Signal, Good
+Morning Haptic, silly check-in, gremlin pee window, exit ritual + private
+safety debrief + no-spiral/no-guilt joke ledger. `/morning-cuddle`.
+
 ## 2026-07-13 — Spooning Protocol v0.1 (full spec)
 
 Tagline + purpose (Renn / intimacy anxiety). Role cards (Little = strength,

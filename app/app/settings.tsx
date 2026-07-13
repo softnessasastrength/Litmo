@@ -241,6 +241,12 @@ function SettingsContent() {
       </View>
       <Button
         variant="signal"
+        label="Morning Cuddle Protocol v0.1"
+        onPress={() => router.push("/morning-cuddle" as never)}
+        accessibilityHint="Pre-coffee negotiation, gremlin mode, Soft Signal, exit ritual. Personal containment."
+      />
+      <Button
+        variant="signal"
         label="Spooning Protocol v0.1"
         onPress={() => router.push("/spooning" as never)}
         accessibilityHint="Legendary cuddle planner with Soft Signal mid-spoon. Personal containment, not a product."
