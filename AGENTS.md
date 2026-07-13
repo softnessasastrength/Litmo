@@ -1,8 +1,16 @@
 # Litmo Codex Execution Guide
 
-Litmo is a consent-centered, trauma-informed platform for safe, non-sexual, platonic physical connection between consenting adults.
+**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**
 
-> Touch is not a transaction — it is a language.
+Litmo is the founder’s private **Trauma-to-Code Exorcism Dojo**: a systems-level
+externalization of trauma responses around safety, control, touch, consent,
+ambiguity, connection, and softness. Primary purpose is visibility and honesty —
+not shipping a consumer product. Read `docs/EXORCISM_MANIFESTO.md` and
+`docs/DOJO_GUIDELINES.md` before major work. Do not reframe as product-first
+without explicit instruction.
+
+> Touch is not a transaction — it is a language.  
+> This repo is also a dictionary of control, written to be seen.
 
 ## Durable-agent rule
 
