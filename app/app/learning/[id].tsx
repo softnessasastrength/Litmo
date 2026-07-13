@@ -2,6 +2,7 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { findLearningModule } from "../../data/learningModules";
+import { getQuizEntry } from "../../data/quizCatalog";
 import { hapticService } from "../../services/hapticService";
 import { learningProgressService } from "../../services/learningProgress";
 import { fonts, radius, type AppColors } from "../../theme";
@@ -39,7 +40,9 @@ export default function LearningModuleScreen() {
     };
   }, [module]);
 
-  const step = module?.steps[stepIndex];
+  const completedView =
+    Boolean(module) && stepIndex >= (module?.steps.length ?? 0);
+  const step = module && !completedView ? module.steps[stepIndex] : undefined;
   const hasScenario = Boolean(step?.scenario);
 
   // attention once when landing on a consent-critical scenario step.
@@ -69,6 +72,128 @@ export default function LearningModuleScreen() {
 
   // Capture after the null check so nested async handlers keep a defined type.
   const current = module;
+
+  async function advanceFromStep() {
+    if (!step) return;
+    const canContinue = !step.scenario || selectedOption !== null;
+    if (!canContinue) return;
+    const stepId = step.id;
+    // Fictional Soft Signal practice: acknowledge local stop registration only.
+    if (stepId === "scenario-response" || stepId === "practice-soft-signal") {
+      void hapticService.play("softSignal");
+    }
+    const isLast = stepIndex === current.steps.length - 1;
+    if (isLast) {
+      await learningProgressService.complete(current.id, current.steps.length);
+      void hapticService.play("confirmation");
+      // Stay on screen so optional related quiz is one calm tap away.
+      setStepIndex(current.steps.length);
+      return;
+    }
+    const next = stepIndex + 1;
+    await learningProgressService.recordStep(
+      current.id,
+      next,
+      current.steps.length,
+    );
+    setSelectedOption(null);
+    setStepIndex(next);
+  }
+
+  async function goBackStep() {
+    if (completedView) {
+      setStepIndex(current.steps.length - 1);
+      return;
+    }
+    if (stepIndex === 0) {
+      router.back();
+      return;
+    }
+    const previous = stepIndex - 1;
+    await learningProgressService.recordStep(
+      current.id,
+      previous,
+      current.steps.length,
+    );
+    setSelectedOption(null);
+    setStepIndex(previous);
+  }
+
+  if (completedView) {
+    const relatedQuiz = current.relatedQuizId
+      ? getQuizEntry(current.relatedQuizId)
+      : null;
+    return (
+      <>
+        <Stack.Screen
+          options={{ title: current.title, headerBackTitle: "Learn" }}
+        />
+        <ScrollView contentContainerStyle={styles.container}>
+          <Text style={styles.progress}>MODULE COMPLETE · PRIVATE</Text>
+          <Text style={styles.title} accessibilityRole="header">
+            Soft close.
+          </Text>
+          <Text style={styles.body}>
+            You finished “{current.title}.” Progress stays on this device only.
+            Completing a module never certifies readiness, safety, or consent
+            skill — it is practice with language.
+          </Text>
+          <View style={styles.takeaway}>
+            <Text style={styles.takeawayLabel}>REMEMBER</Text>
+            <Text style={styles.takeawayText}>
+              You can revisit anytime. Rest is allowed. Real sessions still need
+              real, current mutual consent.
+            </Text>
+          </View>
+          {relatedQuiz ? (
+            <View style={styles.relatedCard}>
+              <Text style={styles.relatedTitle}>Optional private quiz</Text>
+              <Text style={styles.relatedBody}>
+                {current.relatedQuizPrompt ??
+                  `${relatedQuiz.title} is available if you want a soft mirror — never required.`}
+              </Text>
+              <Text style={styles.relatedMeta}>
+                {relatedQuiz.title} · ~{relatedQuiz.minutes} min · never
+                consent
+              </Text>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityHint="Opens a private quiz. Results are never consent to touch."
+                onPress={() =>
+                  router.push({
+                    pathname: "/quizzes/play",
+                    params: { quizId: relatedQuiz.id },
+                  } as never)
+                }
+                style={styles.primaryButton}
+              >
+                <Text style={styles.primaryButtonText}>
+                  Try {relatedQuiz.title}
+                </Text>
+              </Pressable>
+            </View>
+          ) : null}
+          <View style={styles.actions}>
+            <Pressable
+              onPress={() => void goBackStep()}
+              style={styles.secondaryButton}
+              accessibilityRole="button"
+            >
+              <Text style={styles.secondaryButtonText}>Review last step</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => router.replace("/(tabs)/learn" as never)}
+              style={styles.primaryButton}
+              accessibilityRole="button"
+            >
+              <Text style={styles.primaryButtonText}>Back to Learn</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+      </>
+    );
+  }
+
   if (!step) {
     return (
       <View style={styles.missing}>
@@ -88,44 +213,6 @@ export default function LearningModuleScreen() {
 
   const isLast = stepIndex === current.steps.length - 1;
   const canContinue = !step.scenario || selectedOption !== null;
-  const stepId = step.id;
-
-  async function advance() {
-    if (!canContinue) return;
-    // Fictional Soft Signal practice: acknowledge local stop registration only.
-    if (stepId === "scenario-response" || stepId === "practice-soft-signal") {
-      void hapticService.play("softSignal");
-    }
-    if (isLast) {
-      await learningProgressService.complete(current.id, current.steps.length);
-      void hapticService.play("confirmation");
-      router.replace("/(tabs)/learn");
-      return;
-    }
-    const next = stepIndex + 1;
-    await learningProgressService.recordStep(
-      current.id,
-      next,
-      current.steps.length,
-    );
-    setSelectedOption(null);
-    setStepIndex(next);
-  }
-
-  async function goBackStep() {
-    if (stepIndex === 0) {
-      router.back();
-      return;
-    }
-    const previous = stepIndex - 1;
-    await learningProgressService.recordStep(
-      current.id,
-      previous,
-      current.steps.length,
-    );
-    setSelectedOption(null);
-    setStepIndex(previous);
-  }
 
   return (
     <>
@@ -135,6 +222,7 @@ export default function LearningModuleScreen() {
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.progress}>
           STEP {stepIndex + 1} OF {current.steps.length}
+          {current.track === "lived-lessons" ? " · LIVED LESSON" : ""}
         </Text>
         <View
           style={styles.track}
@@ -209,7 +297,7 @@ export default function LearningModuleScreen() {
           </Pressable>
           <Pressable
             disabled={!canContinue || !loaded}
-            onPress={() => void advance()}
+            onPress={() => void advanceFromStep()}
             style={[
               styles.primaryButton,
               (!canContinue || !loaded) && styles.disabled,
@@ -308,6 +396,23 @@ function makeStyles(colors: AppColors) {
     optionLabel: { color: colors.ink, fontSize: 16, fontWeight: "600" },
     optionLabelSelected: { color: colors.moss },
     feedback: { color: colors.moss, fontSize: 14, lineHeight: 20 },
+    relatedCard: {
+      backgroundColor: colors.paper,
+      borderRadius: radius.md,
+      borderWidth: 1,
+      borderColor: colors.plum,
+      padding: 18,
+      gap: 10,
+    },
+    relatedTitle: {
+      color: colors.plum,
+      fontSize: 13,
+      fontWeight: "800",
+      letterSpacing: 0.6,
+      textTransform: "uppercase" as const,
+    },
+    relatedBody: { color: colors.ink, fontSize: 16, lineHeight: 24 },
+    relatedMeta: { color: colors.muted, fontSize: 13, lineHeight: 18 },
     actions: { flexDirection: "row", gap: 12, marginTop: "auto" },
     primaryButton: {
       flex: 1,

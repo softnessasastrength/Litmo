@@ -44,6 +44,17 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 ## Completed
 
+### LEARN-004 — Lived-lesson modules + Vibe Quiz pairing
+
+- **Status:** completed
+- **Result:** Six short private modules (consent language, nervous system
+  safety, boundaries, recovering from violation, partner communication,
+  self-compassion) with scenarios; Learn hub tracks; soft-close optional quiz
+  CTAs; Quizzes ↔ Learn links; curriculum tests.
+- **Verification:** `learningModules.test.ts` + app typecheck/tests.
+- **Boundary:** not therapy; not safety certification; weather ≠ consent.
+- **Related docs:** `docs/LEARNING_SYSTEM.md`.
+
 ### QUIZ-003 — Partner invite & shared comparison flow
 
 - **Status:** completed

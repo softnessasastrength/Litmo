@@ -102,6 +102,22 @@ export default function QuizzesHubScreen() {
         </Text>
       </View>
 
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Open Guided Practice lived lessons. Consent language, nervous system safety, boundaries, recovery, communication, and self-compassion."
+        accessibilityHint="Opens short trauma-informed learning modules that pair with private quizzes"
+        onPress={() => router.push("/(tabs)/learn" as never)}
+        style={({ pressed }) => [styles.learnLinkCard, pressed && styles.pressed]}
+      >
+        <Text style={styles.learnLinkTitle}>From learning → weather</Text>
+        <Text style={styles.learnLinkBody}>
+          Lived lessons on Learn pair with these quizzes: consent as language,
+          capacity, boundaries, recovery, pace, and care. Modules stay private
+          and never grade you.
+        </Text>
+        <Text style={styles.learnLinkAction}>Open Guided Practice →</Text>
+      </Pressable>
+
       <View style={styles.sectionHeader}>
         <Text style={styles.section} accessibilityRole="header">
           Vibe Quiz
@@ -285,6 +301,25 @@ function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
       fontWeight: "800" as const,
     },
     safetyBody: { color: colors.ink, fontSize: 14, lineHeight: 21 },
+    learnLinkCard: {
+      backgroundColor: colors.paper,
+      borderRadius: radius.md,
+      borderWidth: 1,
+      borderColor: colors.moss,
+      padding: 16,
+      gap: 8,
+    },
+    learnLinkTitle: {
+      color: colors.moss,
+      fontSize: 14,
+      fontWeight: "800" as const,
+    },
+    learnLinkBody: { color: colors.ink, fontSize: 14, lineHeight: 21 },
+    learnLinkAction: {
+      color: colors.moss,
+      fontSize: 14,
+      fontWeight: "700" as const,
+    },
     sectionHeader: { marginTop: 8, gap: 4 },
     section: {
       color: colors.ink,

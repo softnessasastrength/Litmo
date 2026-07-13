@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-07-13 — Lived-lesson Guided Learning modules
+
+### Summary
+
+Expanded Guided Practice with six short trauma-informed **lived lessons**
+(Consent as Language, Nervous System Safety, Boundaries, Recovering from
+Violation, Partner Communication, Self-Compassion), interactive scenarios,
+private progress, and optional Vibe/self-quiz pairing after soft close.
+
+### User-visible impact
+
+- Learn hub splits **Lived lessons** and **Litmo foundations**.
+- Module complete screen offers optional related private quiz (never required).
+- Quizzes hub links back to learning; Learn links to Quizzes.
+- Recovering-from-violation copy stays non-graphic, tool-focused, non-clinical.
+
+### Developer impact
+
+- `LearningModule.track`, `relatedQuizId`, `relatedQuizPrompt`.
+- `learningModules.test.ts`; Learn/[id] soft-close UX; `docs/LEARNING_SYSTEM.md`.
+
 ## 2026-07-13 — Partner invite & shared comparison flow
 
 ### Summary

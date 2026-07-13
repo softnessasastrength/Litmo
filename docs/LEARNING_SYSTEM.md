@@ -14,27 +14,52 @@ The learning system uses short, step-by-step modules inspired by station trainin
 - No module completion is evidence that a participant is safe.
 - Scenario feedback explains consequences without shaming the learner.
 - Every module reinforces that consent is current, specific, revocable, and session-bound.
+- Lived-lesson modules never replace clinical care; “Recovering from Violation” points to tools and optional outside support without graphic detail or forced processing.
 
-## Initial curriculum
+## Curriculum tracks
+
+### Foundations (product safety map)
 
 1. **Consent Snapshots** — nothing is inferred; the strictest compatible boundary wins; both people affirm the same current snapshot.
 2. **The Soft Signal** — stopping is unilateral, immediate, and requires no explanation.
 3. **Understanding Touch Language** — preferences are contextual and never obligations.
-4. **A full practice session** (LEARN-002) — fictional River & Sam walk request → snapshot → dual confirm → active → Soft Signal → wrap-up. No real session authority. Completing it is never safety certification.
-5. **Blocking and reporting** (LEARN-003) — blocking is immediate, unilateral, and non-disclosing; reporting starts a private human review, not a public dispute; restrictions are always a human decision with a human-reviewed appeal, never automatic.
-6. **Your trust signals, not a score** (LEARN-003) — the two peer-visible facts (account age, completed sessions) are not a rating; a fuller self-only view exists in Settings; history can inform a session decision but never substitutes for a current Consent Snapshot.
+4. **A full practice session** — fictional River & Sam walk request → snapshot → dual confirm → active → Soft Signal → wrap-up. No real session authority.
+5. **Blocking and reporting** — block is immediate and private; report starts human review.
+6. **Your trust signals, not a score** — peer-visible facts are not a rating.
 
-Safety-critical modules (including the full practice path) are labeled as recommended before a first session. This implementation does not yet hard-block session creation because gating behavior requires a separate product decision and accessibility review.
+### Lived lessons (hard-earned relational skills)
+
+Short, interactive modules (≈3–4 minutes each) with at least one scenario:
+
+| Module | Focus | Optional private quiz |
+| ------ | ----- | --------------------- |
+| **Consent as Language** | Words over weather/vibe; specific, revocable yes | Vibe Quiz — Short |
+| **Nervous System Safety** | Capacity, freeze as data, private aftercare | Soft Capacity |
+| **Boundaries** | Early clarity; limits are not earned | Boundary Voice |
+| **Recovering from Violation** | Believe yourself; tools not performance; repair optional | Soft Capacity |
+| **Partner Communication** | Check-ins; small repair; pace; dual-consent quiz share | Connection Pace |
+| **Self-Compassion** | Awkwardness without cruelty; rest is curriculum | Comfort & Care |
+
+Safety-critical foundation modules are labeled as recommended before a first session. This implementation does not hard-block session creation (separate product/accessibility decision).
+
+## Vibe Quiz integration
+
+- Lived lessons may set `relatedQuizId` + `relatedQuizPrompt` on the module.
+- Completing a module shows a **soft close** screen with an optional quiz CTA (never required).
+- Learn hub links to Quizzes; Quizzes hub links back to Guided Practice.
+- Copy always states weather/quizzes are never consent, safety scores, or competence proof.
+- Partner quiz comparison remains behind dual share+compare consent (ADR 0050/0052).
 
 ## Architecture
 
-- `app/data/learningModules.ts` contains typed, static curriculum content.
-- `app/services/learningProgressCore.ts` contains deterministic progress and resume rules.
-- `app/services/learningProgress.ts` persists private device-local progress through AsyncStorage.
-- `app/app/(tabs)/learn.tsx` displays the module catalog and private completion summary.
-- `app/app/learning/[id].tsx` renders one step at a time and provides scenario feedback.
+- `app/data/learningModules.ts` — typed, static curriculum (`track`, optional quiz links).
+- `app/data/learningModules.test.ts` — structure and lived-lesson presence checks.
+- `app/services/learningProgressCore.ts` — deterministic progress and resume rules.
+- `app/services/learningProgress.ts` — private device-local progress (AsyncStorage).
+- `app/app/(tabs)/learn.tsx` — catalog by track + Campfire + Quizzes entry.
+- `app/app/learning/[id].tsx` — one step at a time, scenarios, soft-close + quiz CTA.
 
-Progress is intentionally local in this first slice. It contains only module identifiers, step positions, completion flags, and timestamps. It contains no reflections, sensitive free text, or social data.
+Progress is intentionally local. It contains only module identifiers, step positions, completion flags, and timestamps — no reflections, free text, or social data.
 
 ### Haptics (HAPTIC-001)
 
@@ -47,22 +72,20 @@ Haptics can be disabled in Settings; meaning always remains in copy.
 
 - Opening an unfinished module resumes at the saved step.
 - Completing a step saves the next position.
-- Completing a module records its final step and completion status.
+- Completing a module records completion and shows a private soft-close (optional quiz).
 - Corrupt or invalid persisted state fails safely to empty progress.
 - Completed modules may be revisited from the beginning.
 
 ## Accessibility
 
-The interface includes semantic button roles, selected states, descriptive labels, progress-bar values, evergreen high-contrast actions, and no color-only completion meaning.
+Semantic button roles, selected states, descriptive labels, progress-bar values, evergreen high-contrast actions, and no color-only completion meaning.
 
 Future validation should include VoiceOver, Dynamic Type, reduced motion, and physical-device testing.
 
 ## Future work
 
-- Authoring schema and content validation.
-- More modules, including respectful communication, ending sessions well, and accessibility.
-- ~~Practice mode covering the full session lifecycle with fictional participants.~~ **Landed 2026-07-12** as module `full-session-practice` (content-only; not a separate interactive simulator).
-- ~~Privacy and the Trust Ledger.~~ **Landed 2026-07-13** as modules `blocking-and-reporting` and `trust-signals` (LEARN-003, content-only).
+- Authoring schema and content validation beyond unit structure tests.
 - Optional account synchronization without exposing learning data publicly.
 - A separately reviewed decision about whether specific modules gate first-session features.
-- Localization and plain-language editorial review.
+- Localization and plain-language / clinical editorial review for lived lessons.
+- More optional quiz pairings as self-quiz catalog grows.

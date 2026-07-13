@@ -10,7 +10,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test lib/*.test.ts context/*.test.ts services/*.test.ts",
+    "test": "node --experimental-strip-types --test lib/*.test.ts context/*.test.ts services/*.test.ts data/*.test.ts",
     "build": "expo export --platform ios --output-dir dist",
     "format:check": "prettier --check \"**/*.{ts,tsx,json,md}\""
   },

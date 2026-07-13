@@ -62,6 +62,16 @@
   backup reviewer staffing, and two-person permanent-ban approval remain
   blocked.
 
+## Guided learning lived lessons
+
+- Six **lived-lesson** modules (consent language, nervous system safety,
+  boundaries, recovering from violation, partner communication, self-compassion)
+  are short, private, device-local content. They are **not therapy**, not crisis
+  care, and not safety certification. Recovering-from-violation is non-graphic
+  and tool-focused (Soft Signal, block, report); it does not force processing.
+- Optional quiz pairings after soft-close never require completion and never
+  treat weather as consent. Progress stays on-device (no server learning table).
+
 ## Partner invite & shared comparison (demo + real)
 
 - **Demo path (single device):** Quizzes → Partner invites → Create invite →
