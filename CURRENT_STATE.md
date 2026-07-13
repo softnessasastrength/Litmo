@@ -7,7 +7,7 @@
 - **Name:** SAFETY-OPS-001 — Recommended private-alpha safety-operations foundation
 - **Status:** active; founder selected recommended defaults 2026-07-13; external review blockers remain
 - **Branch:** `main`
-- **Latest swarm:** SWARM-001 five-stream feature build/audit completed 2026-07-13 — see `docs/FEATURE_SWARM_TRACKER.md`
+- **Latest swarm:** NUCLEAR-001 six-agent activation 2026-07-13 — Living Constitution enforceable by design; see `docs/NUCLEAR_SWARM.md`
 
 ## Completed major product streams (on main)
 

@@ -4,6 +4,8 @@ import {
   buildSharePayload,
   completenessOf,
   createDefaultTouchLanguage,
+  effectiveZoneStatus,
+  hardLimitForcesZoneOffLimits,
   migrateFromLegacyDemo,
   parseSharePayload,
   parseTouchLanguageDocument,
@@ -12,6 +14,17 @@ import {
   summarizeForDisplay,
 } from "./touchLanguageCore.ts";
 import { sealTouchLanguageShare, openTouchLanguageShare } from "../services/touchLanguageShareCore.ts";
+
+test("hard limits force zones off_limits (constitution: hard limits win)", () => {
+  let doc = createDefaultTouchLanguage();
+  doc = setZone(doc, "face", "welcomed", "light");
+  doc = setZone(doc, "hands", "welcomed", "medium");
+  doc = { ...doc, hardLimits: ["No face contact", "zone:hands"] };
+  assert.equal(effectiveZoneStatus(doc, "face"), "off_limits");
+  assert.equal(effectiveZoneStatus(doc, "hands"), "off_limits");
+  assert.equal(hardLimitForcesZoneOffLimits("neck only", "neck"), true);
+  assert.equal(hardLimitForcesZoneOffLimits("neck only", "feet"), false);
+});
 
 test("default document fails closed flags and parses round-trip", () => {
   const doc = createDefaultTouchLanguage();

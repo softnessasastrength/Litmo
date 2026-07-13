@@ -552,6 +552,23 @@ Together → physical Soft Signal
 → no explanation field → Resting when ready
 ```
 
+### 6.14 Soft Signal multi-modal matrix (single source)
+
+Stop is **local-first**. Beauty never delays freedom. Copy ≤2 sentences under stress.
+
+| Mode | Local effect | Peer sees | Light | Haptic | Copy (device) |
+| ---- | ------------ | --------- | ----- | ------ | ------------- |
+| **Together** | Session ends terminal | Soft stop | Soft rose → cream | warmDescent | “You stopped. That is enough.” |
+| **Review** | Leave without granting | Nothing granted | Soft rose flash | breathLeave | “Left without granting. Complete.” |
+| **Nearby** | Radio off, keys wiped | Beacon gone | Amber→off | soft presence end | “Nearby is off. You’re quiet again.” |
+| **Invite** | Cancel local request path | Decline-safe | Moss calm | attention optional | “Not now is complete.” |
+| **Practice** | Practice log only | None | Soft moss | warmDescent gentle | “Practice only. No peer.” |
+| **Lock + active** | Physical Soft Signal still ends | Soft stop | Soft rose | warmDescent | Lock face stays non-intimate |
+| **Low battery** | Prefer Soft Signal path before hard cut | Disconnect/stop | Amber warn | none required | “Battery low — end gently if you can.” |
+| **Peer disconnect** | Treat as stop → Quiet | N/A | Soft rose | optional | “Session ended. You’re okay to stop.” |
+
+**Confirm key** is always slower/harder than Soft Signal. Never labeled “like.”
+
 ---
 
 ## 7. Signals & interruptions (anti-FOMO)

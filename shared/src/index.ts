@@ -11,7 +11,20 @@ export const environmentValues = [
   "outdoors",
   "hosted_community",
 ] as const;
+/**
+ * Server/engine zone statuses (strict subset).
+ * Full mobile Touch Language also has `soft_limit`, which maps to `ask_first`
+ * at the engine boundary so uncertainty never becomes welcomed (ADR 0002 +
+ * constitution Article I.6).
+ */
 export const boundaryValues = ["off_limits", "ask_first", "welcomed"] as const;
+/** Full client Touch Language statuses including soft_limit. */
+export const touchLanguageBoundaryValues = [
+  "off_limits",
+  "soft_limit",
+  "ask_first",
+  "welcomed",
+] as const;
 export const sessionStatusValues = [
   "requested",
   "consent_pending",
@@ -58,8 +71,16 @@ export const BodyZonePreferenceSchema = z
         message: "Pressure is required for a zone that is not off limits.",
       });
   });
+export const speedValues = [
+  "slow",
+  "unhurried",
+  "moderate",
+  "brisk",
+] as const;
 export const TouchLanguageProfileSchema = z.object({
   pressure: z.enum(pressureValues),
+  /** Optional for legacy rows; full TL always sets speed. */
+  speed: z.enum(speedValues).optional(),
   duration: z.enum(durationValues),
   environments: z.array(z.enum(environmentValues)).min(1),
   holdTypes: z.array(z.string().trim().min(1).max(60)).max(20),
@@ -146,3 +167,4 @@ export * from "./consentEngine.ts";
 export * from "./consentSnapshot.ts";
 export * from "./legacyProfileAdapter.ts";
 export * from "./sessionLifecycle.ts";
+export * from "./constitutionInvariants.ts";

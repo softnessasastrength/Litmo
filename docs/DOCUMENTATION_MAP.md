@@ -8,8 +8,10 @@ This map identifies which documents are authoritative, which preserve historical
 2. [`CURRENT_STATE.md`](../CURRENT_STATE.md) — current handoff, priorities, risks, and exact next-action rule.
 3. [`TASKS.md`](../TASKS.md) — prioritized execution ledger and task status.
 4. [`FEATURE_SWARM_TRACKER.md`](FEATURE_SWARM_TRACKER.md) — five-stream product swarm status (TL, safety, proximity, learning, hardware).
-5. [`project-state.json`](../project-state.json) — machine-readable handoff validated by `npm run state:check`.
-6. [`KNOWN_LIMITATIONS.md`](KNOWN_LIMITATIONS.md) — unresolved product, safety, technical, and operational limits.
+5. [`NUCLEAR_SWARM.md`](NUCLEAR_SWARM.md) — six-agent maximum-ambition command center.
+6. [`CONSTITUTION_ENFORCEMENT.md`](CONSTITUTION_ENFORCEMENT.md) — Living Constitution → code/tests map.
+7. [`project-state.json`](../project-state.json) — machine-readable handoff validated by `npm run state:check`.
+8. [`KNOWN_LIMITATIONS.md`](KNOWN_LIMITATIONS.md) — unresolved product, safety, technical, and operational limits.
 
 When these disagree, stop and reconcile them before implementing new work.
 

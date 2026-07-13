@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-13 — Nuclear swarm: Living Constitution + EmotionalOS hardening
+
+### Summary
+
+Full six-agent nuclear activation. Shipped machine-checkable **Living Constitution**
+invariants (`@litmo/domain` constitutionInvariants), hardened Touch Language hard
+limits, sacred Soft Signal copy, Living Constitution learning module + path,
+Device OS Soft Signal multi-modal matrix, and `docs/NUCLEAR_SWARM.md` /
+`CONSTITUTION_ENFORCEMENT.md`.
+
+### Constitution
+
+- Articles I–VIII → callable guards + tests
+- Soft Signal sacred contract encoded
+- `evaluateFeatureConstitutionally` feature gate for agents
+
+### Product
+
+- Hard-limit zone aliases (hard limits win)
+- Shared TL profile: optional `speed`; soft_limit → ask_first at engine
+- Foundations module: **The Living Constitution**
+- Soft Signal sticky label: never a penalty
+
 ## 2026-07-13 — Multi-agent feature swarm closeout
 
 ### Summary

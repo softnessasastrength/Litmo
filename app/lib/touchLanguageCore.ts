@@ -237,26 +237,67 @@ export function completenessOf(
   return report;
 }
 
+/**
+ * Structured aliases: hard-limit free text → zones forced off_limits.
+ * Living Constitution: hard limits always win over zone status.
+ */
+export const HARD_LIMIT_ZONE_ALIASES: Record<string, ZoneId[]> = {
+  face: ["face"],
+  neck: ["neck"],
+  throat: ["neck"],
+  head: ["face", "head_scalp"],
+  scalp: ["head_scalp"],
+  chest: ["torso"],
+  torso: ["torso", "upper_back", "lower_back"],
+  belly: ["torso"],
+  stomach: ["torso"],
+  back: ["upper_back", "lower_back"],
+  hands: ["hands"],
+  hand: ["hands"],
+  arms: ["arms"],
+  arm: ["arms"],
+  shoulders: ["shoulders"],
+  shoulder: ["shoulders"],
+  hips: ["hips_outer"],
+  legs: ["legs"],
+  leg: ["legs"],
+  feet: ["feet"],
+  foot: ["feet"],
+  surprise: [], // global soft rule in UI copy, not zone-wide wipe
+};
+
+export function hardLimitForcesZoneOffLimits(
+  hardLimit: string,
+  zoneId: ZoneId,
+): boolean {
+  const h = hardLimit.toLowerCase().trim();
+  if (!h) return false;
+  // Explicit zone id tokens: "zone:face" or bare id match
+  if (h === zoneId || h === `zone:${zoneId}` || h.includes(`zone:${zoneId}`)) {
+    return true;
+  }
+  const zoneMeta = BODY_ZONES.find((z) => z.id === zoneId);
+  const label = (zoneMeta?.label ?? "").toLowerCase();
+  for (const [alias, zones] of Object.entries(HARD_LIMIT_ZONE_ALIASES)) {
+    if (!h.includes(alias)) continue;
+    if (zones.includes(zoneId)) return true;
+  }
+  // Phrase contains full zone label
+  if (label && h.includes(label.toLowerCase())) return true;
+  // First word of label (e.g. "Upper" from "Upper back") is too loose — skip.
+  return false;
+}
+
 export function effectiveZoneStatus(
   doc: TouchLanguageDocument,
   zoneId: ZoneId,
 ): BoundaryStatusId {
   const zone = doc.zones[zoneId];
   if (!zone) return "off_limits";
-  // Hard limits that match zone labels force off_limits.
-  const zoneMeta = BODY_ZONES.find((z) => z.id === zoneId);
-  if (zoneMeta) {
-    const label = zoneMeta.label.toLowerCase();
-    for (const hard of doc.hardLimits) {
-      const h = hard.toLowerCase();
-      if (
-        h.includes(zoneId.replace("_", " ")) ||
-        h.includes(label.split(" ")[0] ?? "") ||
-        (zoneId === "face" && h.includes("face")) ||
-        (zoneId === "neck" && h.includes("neck"))
-      ) {
-        return "off_limits";
-      }
+  // Hard limits win — structured aliases + explicit zone:id tokens.
+  for (const hard of doc.hardLimits) {
+    if (hardLimitForcesZoneOffLimits(hard, zoneId)) {
+      return "off_limits";
     }
   }
   return zone.status;

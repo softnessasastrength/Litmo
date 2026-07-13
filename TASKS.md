@@ -6,6 +6,14 @@ Only one implementation task should normally be `active`. Every status change mu
 
 ## Active
 
+### NUCLEAR-001 — Six-agent nuclear swarm (constitution + harden)
+
+- **Status:** completed (2026-07-13)
+- **Owner:** multi-agent swarm + orchestrator
+- **Result:** Living Constitution machine invariants; TL hard-limit enforcement; sacred Soft Signal copy; Living Constitution learning module; Device Soft Signal matrix; docs/NUCLEAR_SWARM.md + CONSTITUTION_ENFORCEMENT.md.
+- **Verification:** shared constitution tests + app typecheck + TL/learning unit tests.
+- **Residual:** physical smokes, crypto review, dual-agreed timeout, engine-native soft_limit — see NUCLEAR_SWARM residual war path.
+
 ### SWARM-001 — Five-stream feature swarm (tracking)
 
 - **Status:** completed (2026-07-13)

@@ -96,27 +96,32 @@ export type SoftSignalHardwareCommand = {
   firedAt: string;
 };
 
+/**
+ * Soft Signal voice — sacred, not clinical.
+ * Stopping is dignity. Never a penalty. Never an interrogation.
+ */
 export const SOFT_SIGNAL_COPY = {
   button: "Soft Signal — end now",
   buttonStopping: "Stopping…",
-  buttonStopped: "Stopped safely",
-  hint: "Ends the session immediately. No explanation needed. No penalty. Not emergency or crisis services.",
+  buttonStopped: "You are free",
+  hint: "Ends everything immediately. No explanation. No penalty. A complete sentence of care. Not emergency or crisis services.",
   bannerTitle: "Soft Signal",
   bannerBody:
-    "You can stop anytime. Soft Signal is success — a safe exit — never failure or blame.",
-  endedTitle: "You stopped safely.",
+    "Your stop is sacred here. Soft Signal is success — a safe exit — never failure, never blame, never a debate.",
+  endedTitle: "You stopped. That is enough.",
   endedBody:
-    "The session has ended. You do not owe an explanation. Soft Signal is never a penalty.",
+    "The session has ended. You do not owe a story. Soft Signal is never a penalty and never requires their permission.",
   pendingSync:
     "Stopped on this device. Litmo will sync privately when the network returns. The session cannot resume.",
   practiceTitle: "Practice Soft Signal",
   practiceBody:
-    "Feel the stop without a real peer. Practice never starts a session or notifies anyone.",
+    "Feel the stop without a real peer. Muscle memory for freedom. Practice never starts a session or notifies anyone.",
   logEmpty: "No Soft Signal records on this device yet.",
   logPrivacy:
     "These notes are private to you on this device. They are not a score, not shared with partners, and never required when you stop.",
   notEmergency:
     "Litmo is not emergency response or crisis services. If you are in danger, use local emergency services.",
+  stickyLabel: "ALWAYS AVAILABLE · NO REASON NEEDED · NEVER A PENALTY",
 } as const;
 
 export function createLogEntry(

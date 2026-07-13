@@ -531,6 +531,107 @@ export const learningModules: LearningModule[] = [
       },
     ],
   },
+  {
+    id: "living-constitution",
+    title: "The Living Constitution",
+    summary:
+      "How Litmo’s values become product logic — consent, Soft Signal, privacy, and fail-closed design you can feel.",
+    minutes: 6,
+    track: "foundations",
+    themes: ["product-safety", "consent"],
+    requiredBeforeFirstSession: true,
+    relatedPractice: [
+      {
+        id: "lc-soft",
+        label: "Practice Soft Signal",
+        hint: "Article I in your hands — stop is always free.",
+        href: "/soft-signal/practice",
+      },
+      {
+        id: "lc-safety",
+        label: "Trauma-informed safety tools",
+        hint: "Panic, timeout, reflection — constitution as care.",
+        href: "/safety",
+      },
+    ],
+    steps: [
+      {
+        id: "lc-preamble",
+        title: "Values that outrank growth",
+        body: "Litmo’s constitution is not marketing. Consent, safety-as-product-logic, privacy-by-default, user agency, inclusion, and fail-closed design outrank engagement, streaks, and speed. If a feature fights the constitution, the feature loses.",
+        takeaway: "Principles are load-bearing walls, not wallpaper.",
+        reflection:
+          "Where have you seen products punish you for saying no?",
+      },
+      {
+        id: "lc-consent",
+        title: "Consent is never inferred",
+        body: "A match, prior session, vibe quiz, proximity resonance, or trust history never grants touch. Consent is current, specific, dual, and revocable. The strictest shared boundary wins. Soft Signal ends everything for one person alone — no explanation required.",
+        takeaway: "Social heat is not a seal.",
+        scenario: {
+          prompt:
+            "Someone has perfect TL compatibility % and a long account history. What is still required?",
+          options: [
+            {
+              label:
+                "A current mutual Consent Snapshot — history and % never authorize touch",
+              feedback:
+                "Yes. Constitution Article I: nothing social substitutes for present consent.",
+            },
+            {
+              label: "Nothing — compatibility is enough",
+              feedback:
+                "No. Compatibility starts conversation only. Snapshot and dual affirm remain the gate.",
+            },
+            {
+              label: "A vibe quiz match is enough if both smiled",
+              feedback:
+                "Weather and smiles are not consent. Soft Signal and snapshots exist so this stays structural.",
+            },
+          ],
+        },
+      },
+      {
+        id: "lc-stop",
+        title: "Stopping is sacred",
+        body: "Litmo must make stopping easier than continuing. Soft Signal, panic cover, and quick exit are success paths. No streak, badge, or AI may punish a stop. Litmo is not emergency services — and it will never pretend to be.",
+        takeaway: "Freedom to leave is the product.",
+        scenario: {
+          prompt: "After Soft Signal, what does the constitution require of Litmo?",
+          options: [
+            {
+              label:
+                "Honor the stop immediately, no reason form, no peer negotiation",
+              feedback:
+                "Yes. Unilateral, local-first, non-punitive. That is the sacred contract.",
+            },
+            {
+              label: "Ask them to rate why they stopped before leaving",
+              feedback:
+                "Forbidden. Reasons are never required at stop time.",
+            },
+            {
+              label: "Lower their trust score for Soft Signaling",
+              feedback:
+                "Constitutionally banned. Soft Signal is never a penalty or score event.",
+            },
+          ],
+        },
+      },
+      {
+        id: "lc-privacy-agency",
+        title: "Privacy and agency by default",
+        body: "Intimate data stays private unless you take a clear action to share. Dark patterns, artificial urgency, and engagement traps are prohibited. Defaults favor caution. Completing learning modules never certifies readiness — practice is not proof.",
+        takeaway: "Agency over optimization.",
+      },
+      {
+        id: "lc-close",
+        title: "Enforced in code, not only in prose",
+        body: "The Living Constitution is mirrored in domain tests, Soft Signal contracts, local-first vaults, and fail-closed engines. You do not need to memorize articles — the product should refuse unconstitutional patterns for you.",
+        takeaway: "Alignment is design, not hope.",
+      },
+    ],
+  },
 
   // ── Lived lessons: hard-earned relational skills ─────────────────────────
   // Consent · nervous system · boundaries · recovery · communication · self-compassion
@@ -1244,6 +1345,7 @@ export const learningPaths: LearningPath[] = [
       "Product gates and lived consent language — recommended practice, not a certificate.",
     minutes: 28,
     moduleIds: [
+      "living-constitution",
       "consent-as-language",
       "consent-snapshots",
       "soft-signal",
@@ -1309,6 +1411,19 @@ export const learningPaths: LearningPath[] = [
       "recovering-from-violation",
       "partner-communication",
       "self-compassion",
+    ],
+  },
+  {
+    id: "constitution-and-care",
+    title: "Constitution & care",
+    summary:
+      "Living Constitution foundations plus Soft Signal and Consent Snapshot practice.",
+    minutes: 18,
+    moduleIds: [
+      "living-constitution",
+      "soft-signal",
+      "consent-snapshots",
+      "consent-as-language",
     ],
   },
 ];

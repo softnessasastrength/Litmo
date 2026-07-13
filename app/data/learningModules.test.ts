@@ -131,12 +131,12 @@ test("learning paths reference existing modules only", () => {
 test("recommended next prefers first-session readiness path", () => {
   const first = recommendedNextModule({});
   assert.ok(first);
-  assert.equal(first!.id, "consent-as-language");
+  assert.equal(first!.id, "living-constitution");
 
   const afterFirst = recommendedNextModule({
-    "consent-as-language": { completed: true },
+    "living-constitution": { completed: true },
   });
-  assert.equal(afterFirst?.id, "consent-snapshots");
+  assert.equal(afterFirst?.id, "consent-as-language");
 
   const allDone: Record<string, { completed: boolean }> = {};
   for (const m of learningModules) allDone[m.id] = { completed: true };
@@ -158,9 +158,13 @@ test("no module claims safety certification or public scoring", () => {
   assert.match(blob, /never proof|not certify|not clinical|not therapy/i);
 });
 
-test("foundations track has six product modules including practice session", () => {
+test("foundations track includes product modules, practice session, and living constitution", () => {
   const foundations = learningModulesForTrack("foundations");
-  assert.equal(foundations.length, 6);
+  assert.ok(foundations.length >= 7);
   assert.ok(findLearningModule("full-session-practice"));
   assert.ok(findLearningModule("soft-signal")?.requiredBeforeFirstSession);
+  assert.ok(findLearningModule("living-constitution"));
+  assert.ok(
+    findLearningModule("living-constitution")!.steps.some((s) => s.scenario),
+  );
 });

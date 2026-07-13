@@ -55,7 +55,18 @@ export function toConsentProfileVersion(input: {
     pressure: zone.pressure,
     maxDurationMinutes: null,
   });
-  for (const zone of consent.bodyZones) rules.push(bodyZoneRule(zone));
+  for (const zone of consent.bodyZones) {
+    // soft_limit is a client-only status; map conservatively to ask_first so it
+    // never widens to welcomed (Living Constitution Article I.6).
+    const status =
+      (zone.status as string) === "soft_limit" ? "ask_first" : zone.status;
+    rules.push(
+      bodyZoneRule({
+        ...zone,
+        status: status as BodyZonePreference["status"],
+      }),
+    );
+  }
   for (const hardStop of consent.hardStops)
     rules.push({
       dimension: "body_zone",
@@ -95,6 +106,19 @@ export function toConsentProfileVersion(input: {
     pressure: touch.pressure,
     maxDurationMinutes: null,
   });
+  // Speed is part of full Touch Language; encode as sensory preference so
+  // dual-profile overlap can respect tempo (missing → fail closed by engine).
+  if (touch.speed) {
+    rules.push({
+      dimension: "sensory",
+      value: `speed:${touch.speed}`,
+      state: "welcomed",
+      canReceive: true,
+      canOffer: true,
+      pressure: null,
+      maxDurationMinutes: null,
+    });
+  }
   rules.push({
     dimension: "duration",
     value: "general",

@@ -26,6 +26,7 @@ import { softSignalService } from "../../services/softSignalService";
 import { traumaSafetyService } from "../../services/traumaSafetyService";
 import type { TraumaSafetyPrefs } from "../../lib/traumaSafetyCore";
 import { defaultTraumaSafetyPrefs } from "../../lib/traumaSafetyCore";
+import { SOFT_SIGNAL_COPY } from "../../lib/softSignalCore";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
 const terminalEndedReason: Record<string, string> = {
@@ -491,7 +492,7 @@ function ActiveSessionContent() {
         accessibilityRole="summary"
         accessibilityLabel="Soft Signal. Ends the session immediately. Always available."
       >
-        <Text style={styles.stickyLabel}>ALWAYS AVAILABLE · NO REASON NEEDED</Text>
+        <Text style={styles.stickyLabel}>{SOFT_SIGNAL_COPY.stickyLabel}</Text>
         <SoftSignalButton
           prominent
           state={softSignalState}
