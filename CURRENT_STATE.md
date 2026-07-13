@@ -66,8 +66,8 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
-- Done recently: radical honesty stamp — `REAL_PURPOSE.md` + `CONTAINMENT_SYSTEM.md` (2026-07-13).
-- Follow `docs/REAL_PURPOSE.md`. Prefer honest naming / Option A craft over product theater. Secondary: `docs/DOJO_CONTINUE.md`.
+- Done recently: **Spooning Protocol v0.1** (`/spooning`, `docs/SPOONING_PROTOCOL.md`) + radical honesty stamp.
+- Follow `docs/REAL_PURPOSE.md`. Prefer honest naming / Option A craft over product theater. Next silly-useful candidates: Conflict Navigation Simulator, Interest Reverse Engineering.
 
 ## Verification baseline
 

@@ -241,6 +241,12 @@ function SettingsContent() {
       </View>
       <Button
         variant="signal"
+        label="Spooning Protocol v0.1"
+        onPress={() => router.push("/spooning" as never)}
+        accessibilityHint="Legendary cuddle planner with Soft Signal mid-spoon. Personal containment, not a product."
+      />
+      <Button
+        variant="signal"
         label="Exorcism Dojo (not a product)"
         onPress={() => router.push("/dojo" as never)}
         accessibilityHint="Private ritual surface: defense inventory, urge log, burn readiness. Not a consumer feature."

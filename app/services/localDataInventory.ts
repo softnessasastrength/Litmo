@@ -16,6 +16,8 @@ import {
   DOJO_STATE_STORAGE_KEY,
   dojoStore,
 } from "./dojoStore.ts";
+import { summarizeHistory } from "../lib/spooningCore.ts";
+import { spooningStore } from "./spooningStore.ts";
 
 export type LocalInventory = {
   collected_at: string;
@@ -39,6 +41,12 @@ export type LocalInventory = {
   privacy_notice_local: { version: string; acceptedAt: string } | null;
   /** Dojo ritual state — flags/counts only; never urge free-text. */
   dojo: DojoInventorySummary;
+  /** Spooning history — counts only; never anxiety/debrief free-text. */
+  spooning: {
+    history_present: boolean;
+    spoon_count: number;
+    soft_signal_exits: number;
+  };
   notes: string[];
 };
 
@@ -174,6 +182,26 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     "Dojo inventory is flags/counts only; urge fear sentences stay on-device and are wiped with litmo.dojo.state.v1.",
   );
 
+  let spooning: LocalInventory["spooning"] = {
+    history_present: false,
+    spoon_count: 0,
+    soft_signal_exits: 0,
+  };
+  try {
+    const spoons = await spooningStore.load();
+    const s = summarizeHistory(spoons);
+    spooning = {
+      history_present: s.total > 0,
+      spoon_count: s.total,
+      soft_signal_exits: s.soft_signal_exits,
+    };
+  } catch {
+    notes.push("spooning_history_unreadable");
+  }
+  notes.push(
+    "Spooning inventory is counts only; anxiety/debrief free-text wiped with litmo.spooning.history.v1.",
+  );
+
   return {
     collected_at: new Date().toISOString(),
     offline_ready: true,
@@ -197,6 +225,7 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     nearby_share_enabled,
     privacy_notice_local,
     dojo,
+    spooning,
     notes,
   };
 }

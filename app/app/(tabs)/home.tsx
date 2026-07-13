@@ -253,6 +253,12 @@ export default function HomeTabScreen() {
       />
       <Button
         variant="signal"
+        label="Spooning Protocol v0.1"
+        onPress={() => router.push("/spooning" as never)}
+        accessibilityHint="Over-engineered cuddle planner: roles, positions, duration, Soft Signal, private debrief. Containment, not a product."
+      />
+      <Button
+        variant="signal"
         label="Exorcism Dojo — not a product"
         onPress={() => router.push("/dojo" as never)}
         accessibilityHint="Private ritual: defense inventory, urge before build, burn readiness. Not a consumer feature."

@@ -24,6 +24,8 @@ const EXTRA_ASYNC_KEYS = [
   "litmo.trauma_safety.reflections.v1",
   /** Exorcism Dojo urge log + burn gates (device-local only; D23 surface). */
   "litmo.dojo.state.v1",
+  /** Spooning Protocol history (local practice seals; not skill scores). */
+  "litmo.spooning.history.v1",
 ];
 
 const EXTRA_SECURE_KEYS = [

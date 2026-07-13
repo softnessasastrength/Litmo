@@ -22,6 +22,7 @@ These documents define why Litmo exists *right now*:
 
 - **[`REAL_PURPOSE.md`](REAL_PURPOSE.md)** — **primary framing**: personal emotional containment, not a public product (2026-07-13)
 - **[`CONTAINMENT_SYSTEM.md`](CONTAINMENT_SYSTEM.md)** — major systems as containment for specific fears
+- **[`SPOONING_PROTOCOL.md`](SPOONING_PROTOCOL.md)** — Spooning Protocol v0.1 (funny + useful containment module)
 - Root [`CONSTITUTION.md`](../CONSTITUTION.md) — `litmo-constitution-v4-containment`
 
 ### Secondary layers (useful, not primary stamp)

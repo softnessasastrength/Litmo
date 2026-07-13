@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-13 — Spooning Protocol v0.1
+
+Legendary over-engineered cuddle planner: roles, positions, duration/energy
+local seal, mid-spoon Soft Signal, private debrief, device-local history.
+`docs/SPOONING_PROTOCOL.md` · `/spooning` · `spooningCore` + tests. Containment
+comedy with fail-closed invariants.
+
 ## 2026-07-13 — Radical honesty: personal containment system
 
 Live purpose restated without product theater or ritual fluff as the core stamp:
