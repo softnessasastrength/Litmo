@@ -30,7 +30,7 @@ minimal unblock tombstones, non-destructive cleanup, and self data export.
 
 - `supabase/tests/private_alpha_safety_ops.test.sql` covers admission, code
   issuance/redemption, matching pause, export categories, and tombstones.
-- Full GitHub CI is required before this entry may be treated as verified.
+- GitHub Project State, lint, typecheck, unit tests, build, database reset/lint, all pgTAP tests, and integration 5/5 pass on PR #67.
 
 ### Related decision
 
