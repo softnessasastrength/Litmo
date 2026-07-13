@@ -1,7 +1,7 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T15:05:00-04:00",
+  "updatedAt": "2026-07-13T15:10:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
@@ -15,15 +15,14 @@
   "verification": {
     "status": "passed",
     "commands": [
-      "xcodegen generate \u2014 success",
-      "xcodebuild -scheme Litmo test (arm64, unsigned) \u2014 22/22 tests pass (4 Campfire + 9 TrustSignals + 9 OwnProfile)",
-      "xcodebuild -scheme LitmoOps build (arm64, unsigned) \u2014 BUILD SUCCEEDED",
+      "Local xcodegen + Litmo 22/22 tests + LitmoOps unsigned build \u2014 pass",
       "npm run state:check \u2014 pass",
-      "Hosted macOS Native Build \u2014 pending on implementation PR"
+      "GitHub Actions macOS Native Build run 29274759532 \u2014 pass on PR #80",
+      "GitHub Actions CI checks + database + Project State \u2014 pass on PR #80"
     ],
     "failures": []
   },
-  "nextAction": "Review and merge MACOS-003 own-profile PR after hosted macOS CI is green. Next slice: requests or export. Ops stays locked.",
+  "nextAction": "Review and merge green PR #80 (MACOS-003). Next macOS read: requests or export. Ops stays locked. SAFETY-OPS external blockers remain.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
@@ -39,8 +38,8 @@
   ],
   "notes": [
     "PRs #72\u2013#79 are merged on main.",
-    "MACOS-002 trust history (ADR 0046) landed as PR #79.",
-    "MACOS-003 adds own-profile read and shared transport (ADR 0047).",
+    "PR #80 (MACOS-003) adds own-profile read + shared fail-closed transport (ADR 0047).",
+    "Hosted macOS Native Build 29274759532 passed on PR #80.",
     "Destructive retention and account deletion remain blocked pending review."
   ]
 }

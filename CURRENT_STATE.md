@@ -59,7 +59,7 @@ macOS: `cd macos && xcodegen generate` then unsigned `xcodebuild` test/build.
 
 ## Exact next action
 
-Land MACOS-003 after green local/hosted verification. Then choose requests or export as the next fail-closed macOS read, or return to SAFETY-OPS external blockers. Do not unlock Ops without server-backed staff authentication.
+PR #80 (MACOS-003 own profile + shared transport) is green locally and on hosted CI. Review and merge when ready. Next single macOS read: requests or export. Do not unlock Ops without server-backed staff authentication.
 
 ## Resume checklist
 
