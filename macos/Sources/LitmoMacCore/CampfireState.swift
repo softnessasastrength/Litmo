@@ -123,4 +123,6 @@ public enum PlatformAuthority: Sendable {
     public static let localCampfire = "Campfire state stays on this Mac and is not a consent record."
     public static let trustHistory =
         "Self trust facts are server-authoritative and never a safety score. They never grant consent."
+    public static let ownProfile =
+        "Your profile is server-authoritative and read-only here. A profile never grants consent or proves safety."
 }

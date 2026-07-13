@@ -1,28 +1,28 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T14:40:00-04:00",
+  "updatedAt": "2026-07-13T15:10:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
     "status": "active"
   },
   "git": {
-    "branch": "agent/macos-trust-history-read",
-    "latestCoherentCommit": "622058a",
+    "branch": "agent/macos-own-profile-read",
+    "latestCoherentCommit": "8945a1e",
     "workingTreeExpectedClean": true
   },
   "verification": {
     "status": "passed",
     "commands": [
-      "Local xcodegen + Litmo tests 13/13 and LitmoOps unsigned build \u2014 passed on MACOS-002 implementation",
-      "Prior hosted macOS Native Build on PR #79 \u2014 passed before rebase onto #78",
-      "npm run state:check \u2014 pass after rebase continuity",
-      "Hosted recheck pending after force-push rebase onto PR #78"
+      "Local xcodegen + Litmo 22/22 tests + LitmoOps unsigned build \u2014 pass",
+      "npm run state:check \u2014 pass",
+      "GitHub Actions macOS Native Build run 29274759532 \u2014 pass on PR #80",
+      "GitHub Actions CI checks + database + Project State \u2014 pass on PR #80"
     ],
     "failures": []
   },
-  "nextAction": "Force-push rebased PR #79 onto main (includes #78), wait for green checks, merge. Then implement MACOS-003 own-profile read.",
+  "nextAction": "Review and merge green PR #80 (MACOS-003). Next macOS read: requests or export. Ops stays locked. SAFETY-OPS external blockers remain.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
@@ -30,15 +30,16 @@
     "Apple signing credentials and reviewed staging configuration for a signed device/TestFlight build"
   ],
   "risks": [
-    "Invitation membership is admission control, not identity verification, proof of safety, or consent.",
-    "macOS trust history uses developer env tokens for inspection only; it is not production passkey sign-in.",
+    "macOS participant reads use developer env tokens for inspection only; not production passkey sign-in.",
+    "A profile is never consent or proof of safety.",
     "Litmo Ops remains non-operational until real staff authentication and authorization exist.",
     "ACCESS-001 still requires a physical founder VoiceOver smoke before it can be closed.",
     "Unsigned hosted artifacts are inspection builds, not releases."
   ],
   "notes": [
-    "PRs #72\u2013#78 are merged on main.",
-    "PR #79 rebased onto #78 adds fail-closed self-only trust history (ADR 0046).",
+    "PRs #72\u2013#79 are merged on main.",
+    "PR #80 (MACOS-003) adds own-profile read + shared fail-closed transport (ADR 0047).",
+    "Hosted macOS Native Build 29274759532 passed on PR #80.",
     "Destructive retention and account deletion remain blocked pending review."
   ]
 }

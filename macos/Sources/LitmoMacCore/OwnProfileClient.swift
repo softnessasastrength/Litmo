@@ -1,12 +1,11 @@
 import Foundation
 
-/// Read-only access to self trust signals. Does not mutate account state.
-public protocol TrustSignalsClient: Sendable {
-    func fetchMyTrustSignals() async -> TrustHistoryLoadState
+/// Read-only access to the authenticated participant's own profile row.
+public protocol OwnProfileClient: Sendable {
+    func fetchOwnProfile() async -> OwnProfileLoadState
 }
 
-/// Resolves configuration and credentials, then calls the server RPC.
-public struct SupabaseTrustSignalsClient: TrustSignalsClient {
+public struct SupabaseOwnProfileClient: OwnProfileClient {
     private let transport: SupabaseParticipantTransport
 
     public init(transport: SupabaseParticipantTransport) {
@@ -22,24 +21,29 @@ public struct SupabaseTrustSignalsClient: TrustSignalsClient {
             configuration: configuration,
             credentials: credentials,
             http: http,
-            surfaceName: "trust history"
+            surfaceName: "profile"
         )
     }
 
     public static func fromEnvironment(
         _ environment: [String: String] = ProcessInfo.processInfo.environment,
         http: any HTTPPerforming = URLSessionHTTPPerformer()
-    ) -> SupabaseTrustSignalsClient {
-        SupabaseTrustSignalsClient(
-            transport: .fromEnvironment(environment, http: http, surfaceName: "trust history")
+    ) -> SupabaseOwnProfileClient {
+        SupabaseOwnProfileClient(
+            transport: .fromEnvironment(environment, http: http, surfaceName: "profile")
         )
     }
 
-    public func fetchMyTrustSignals() async -> TrustHistoryLoadState {
+    public func fetchOwnProfile() async -> OwnProfileLoadState {
         let request = transport.authenticatedRequest(
-            pathComponents: ["rest", "v1", "rpc", "my_trust_signals"],
-            method: "POST",
-            body: Data("{}".utf8)
+            pathComponents: ["rest", "v1", "profiles"],
+            method: "GET",
+            queryItems: [
+                URLQueryItem(
+                    name: "select",
+                    value: "user_id,display_name,pronouns,bio,vibe_archetype,onboarding_completed_at"
+                )
+            ]
         )
 
         switch await transport.send(request) {
@@ -47,25 +51,24 @@ public struct SupabaseTrustSignalsClient: TrustSignalsClient {
             return .from(failure: failure)
         case .success(let data):
             do {
-                return .loaded(try TrustSignalsDecoder.decode(data))
+                return .loaded(try OwnProfileDecoder.decode(data))
             } catch let failure as ParticipantReadFailure {
                 return .from(failure: failure)
             } catch {
-                return .unavailable("Trust signals could not be decoded. No substitute data is shown.")
+                return .unavailable("Profile could not be decoded. No substitute data is shown.")
             }
         }
     }
 }
 
-/// Always-closed client used when the surface must not attempt network I/O.
-public struct UnavailableTrustSignalsClient: TrustSignalsClient {
+public struct UnavailableOwnProfileClient: OwnProfileClient {
     private let message: String
 
-    public init(message: String = "Trust history is not available in this build.") {
+    public init(message: String = "Profile is not available in this build.") {
         self.message = message
     }
 
-    public func fetchMyTrustSignals() async -> TrustHistoryLoadState {
+    public func fetchOwnProfile() async -> OwnProfileLoadState {
         .unavailable(message)
     }
 }

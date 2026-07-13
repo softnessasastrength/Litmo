@@ -6,34 +6,27 @@
 
 - **Name:** SAFETY-OPS-001 — Recommended private-alpha safety-operations foundation
 - **Status:** active; founder selected the recommended defaults on 2026-07-13
-- **Branch:** `agent/macos-trust-history-read` carries MACOS-002. `main` contains PRs #72–#78.
-- **Latest known coherent milestone:** Chapters 1–5, LEARN-002, HAPTIC-001, BETA-001, native macOS foundation (ADR 0045 / PR #76), ACCESS-001 semantics cleanup (PR #78).
+- **Branch:** `agent/macos-own-profile-read` carries MACOS-003. `main` contains PRs #72–#79.
+- **Latest known coherent milestone:** Chapters 1–5 foundation, BETA-001, ACCESS-001 semantics (PR #78), native macOS foundation (PR #76), MACOS-002 trust history (PR #79 / ADR 0046).
 
 ## Completed foundation
 
-- First playable mobile experience and backend-free demo mode.
-- Supabase persistence, owner-only RLS, immutable profile versions, and consent compatibility engine.
-- Database-enforced session lifecycle, immutable Consent Snapshots, session requests, realtime updates, private wrap-ups, and unilateral withdrawal/emergency stop.
-- Passkey-first authentication architecture, device registration, mandatory biometric locking, sensitive-data protection, and privacy-safe notifications.
-- Release/TestFlight boundaries, privacy and security documentation, ADRs, and database tests.
-- Model-portable workflow files and `npm run state:check` enforcement.
-- Publish-ready GitHub Wiki source under `wiki/`.
-- Guided learning catalog, lesson player, fictional scenarios, private device-local progress, resume behavior, and progress tests.
-- Chapter 5 safety surfaces and private-alpha safety foundation through PR #72.
-- Campfire Mode through PR #73; MPL-2.0 through PR #74; hosted iOS compile through PR #75; native macOS foundation through PR #76; continuity finalize through PR #77.
-- PR #78 standardized ACCESS-001 deferred a11y semantics (moderation filter selected-state, Settings haptics Switch). Physical founder VoiceOver smoke remains open.
+- Playable mobile experience, demo mode, Supabase persistence, consent engine, session lifecycle, passkey architecture, learning system, Chapter 5 safety, private-alpha safety ops foundation.
+- Campfire Mode (PR #73), MPL-2.0 (PR #74), hosted iOS compile (PR #75), native macOS foundation (PR #76), continuity finalize (PR #77).
+- PR #78 ACCESS-001 semantics cleanup (moderation filter selected-state, Settings haptics Switch); VoiceOver smoke still optional.
+- PR #79 MACOS-002 self-only trust history via `my_trust_signals` (ADR 0046).
 
 ## Work in progress
 
-SAFETY-OPS-001 remains active and externally blocked on named qualified review and an independent backup reviewer. MACOS-002 (PR #79) implements the first server-backed macOS participant read: self-only trust history via `my_trust_signals` (ADR 0046), fail-closed without configuration/session. Litmo Ops remains locked.
+SAFETY-OPS-001 remains externally blocked on named qualified review and backup staffing. MACOS-003 adds own-profile read and shared fail-closed Supabase transport (ADR 0047). Litmo Ops remains locked.
 
 ## Priority next work
 
-1. Merge green PR #79 (MACOS-002 trust history); keep Litmo Ops locked.
-2. Next macOS read surface after #79: own profile, requests, or export — one slice at a time.
-3. Keep Campfire Mode as local practice only; keep destructive retention/deletion blocked until review.
-4. Optional founder VoiceOver smoke remains under ACCESS-001.
-5. Name and train an independent backup reviewer before external alpha.
+1. Review/merge MACOS-003 (own profile + shared transport).
+2. Next single macOS read surface: requests or export — one at a time.
+3. Keep Campfire local-only; keep destructive retention/deletion blocked until review.
+4. Optional founder VoiceOver smoke (ACCESS-001 residual).
+5. Name independent backup reviewer before external alpha.
 
 ## Verification baseline
 
@@ -47,42 +40,38 @@ npm run db:lint
 npm run build
 ```
 
-Database and integration checks require local Supabase. macOS native checks require XcodeGen and the `macos/` generation path.
+macOS: `cd macos && xcodegen generate` then unsigned `xcodebuild` test/build.
 
 ## Known limitations and risks
 
-- The product is not production-ready and must not be presented as safe for arranging meetings with strangers.
-- macOS trust history is server-backed only when explicitly configured; missing config/session fails closed.
-- Learning progress is device-local and does not synchronize across accounts or devices.
-- Physical-device accessibility validation remains incomplete (VoiceOver smoke pending).
-- Moderation operations still require qualified review and named backup staffing.
-- Campfire is local facilitation, not multi-person consent.
-- macOS participant auth is env-token inspection only, not production passkey sign-in.
+- Product is not production-ready for stranger meetings.
+- macOS reads require env configuration + access token; not production passkey UX.
+- Profile and trust history never grant consent or prove safety.
+- Learning progress is device-local only.
+- Physical VoiceOver smoke still pending.
+- Ops is non-operational until real staff auth.
 
 ## Architectural decisions
 
-- Repository state, commits, tests, and documentation are the source of truth.
-- Consent is explicit, current, revocable, session-specific, and never inferred from trust or compatibility.
-- macOS may display server-authoritative read models but must not reimplement consent or staff authorization in Swift.
+- Repository artifacts are the source of truth.
+- Consent is explicit, current, revocable, session-specific.
+- macOS displays server-authoritative read models only; no Swift consent engine.
 
 ## Exact next action
 
-Land PR #79 when checks are green on the rebased head. Then implement the next single fail-closed macOS participant read (own profile recommended). Do not unlock Ops without server-backed staff authentication and authorization.
+PR #80 (MACOS-003 own profile + shared transport) is green locally and on hosted CI. Review and merge when ready. Next single macOS read: requests or export. Do not unlock Ops without server-backed staff authentication.
 
 ## Resume checklist
 
 1. Read `CURRENT_STATE.md`, `TASKS.md`, `DECISIONS.md`, and `project-state.json`.
-2. Read `docs/DOCUMENTATION_MAP.md`, `docs/KNOWN_LIMITATIONS.md`, and the relevant ADRs.
-3. Run `git status`, inspect the current diff, and read recent commits.
-4. Verify the last recorded checks before changing code.
-5. Continue only from an explicitly selected active task.
+2. Read `docs/KNOWN_LIMITATIONS.md` and relevant ADRs (0045–0047).
+3. Run `git status` and inspect recent commits.
+4. Verify last recorded checks before changing code.
 
 ## Stop checklist
 
-1. Stop at the safest coherent boundary available.
-2. Preserve all working changes.
-3. Run all practical checks and record the exact results.
-4. Commit coherent completed work.
-5. Update this file, `TASKS.md`, and `project-state.json`.
-6. State whether the working tree is clean.
-7. Record the exact next command or action required to resume.
+1. Stop at a coherent boundary.
+2. Preserve working changes.
+3. Run practical checks and record results.
+4. Commit coherent work; update continuity files.
+5. Note whether the tree is clean and the next resume action.

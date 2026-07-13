@@ -161,10 +161,4 @@ final class TrustSignalsTests: XCTestCase {
     }
 }
 
-private struct FixedHTTPPerformer: HTTPPerforming {
-    let result: Result<(Data, URLResponse), Error>
-
-    func data(for request: URLRequest) async throws -> (Data, URLResponse) {
-        try result.get()
-    }
-}
+// FixedHTTPPerformer is defined in OwnProfileTests.swift for the shared test target.

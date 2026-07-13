@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-07-13 — macOS own-profile read and shared transport
+
+### Summary
+
+Added the second server-backed macOS participant read surface: self-only own
+profile via owner-RLS `profiles` (ADR 0047). Extracted shared fail-closed
+Supabase transport and load outcomes so trust history and profile use one
+pattern.
+
+### User-visible impact
+
+- The Litmo macOS app gains a **Profile** sidebar surface.
+- When configured with a session token, the app loads display name, pronouns,
+  bio, vibe archetype, and onboarding completion from the server.
+- Missing configuration/session or incomplete server payloads fail closed with
+  no fabricated profile defaults.
+
+### Safety and developer impact
+
+- Shared `SupabaseParticipantTransport`, `ParticipantReadOutcome`, and JSON
+  field helpers live in `LitmoMacCore`.
+- Profile remains read-only on Mac; editing stays phone-first.
+- Unit tests cover profile decoding and fail-closed HTTP paths (plus existing
+  trust-history coverage after the transport refactor).
+
+### Related work
+
+- MACOS-003
+- ADR 0047
+- ADR 0046
+
 ## 2026-07-13 — macOS self-only trust history read
 
 ### Summary
