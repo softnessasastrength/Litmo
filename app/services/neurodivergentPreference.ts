@@ -1,30 +1,53 @@
+/**
+ * AsyncStorage adapter for Neurodivergent Mode prefs (v3 + v2/v1 load).
+ * SEE: neurodivergentPreferenceCore.ts
+ */
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   NEURO_PREF_KEY,
+  NEURO_PREF_KEY_V1,
+  NEURO_PREF_KEY_V2,
   parseNeurodivergentPrefs,
+  patchNeurodivergentPrefs,
   setNeurodivergentEnabled,
   setPaceMode as setPaceModeCore,
   type NeurodivergentPrefs,
   type PaceMode,
 } from "./neurodivergentPreferenceCore.ts";
 
-export type { NeurodivergentPrefs, PaceMode } from "./neurodivergentPreferenceCore.ts";
+export type {
+  NeurodivergentPrefs,
+  PaceMode,
+  HapticIntensity,
+  LanguagePreference,
+  MotionPreference,
+  OverloadExitMode,
+  SensoryProfile,
+} from "./neurodivergentPreferenceCore.ts";
 export {
   defaultNeurodivergentPrefs,
   optimizedNeurodivergentPrefs,
+  demoStrengthNeurodivergentPrefs,
   effectiveReducedStimulation,
   setNeurodivergentEnabled,
   setPaceMode,
+  patchNeurodivergentPrefs,
   autoAdvanceDelayMs,
+  cyclePaceMode,
+  cycleSensoryProfile,
+  cycleHapticIntensity,
+  cycleLanguagePreference,
+  cycleOverloadExitMode,
+  cycleMotionPreference,
 } from "./neurodivergentPreferenceCore.ts";
 
 export const neurodivergentPreference = {
   async load(): Promise<NeurodivergentPrefs> {
     try {
-      // Prefer v2 key; fall back to v1 so existing toggles still load.
       const raw =
         (await AsyncStorage.getItem(NEURO_PREF_KEY)) ??
-        (await AsyncStorage.getItem("litmo.neurodivergent.prefs.v1"));
+        (await AsyncStorage.getItem(NEURO_PREF_KEY_V2)) ??
+        (await AsyncStorage.getItem(NEURO_PREF_KEY_V1));
       return parseNeurodivergentPrefs(raw);
     } catch {
       return parseNeurodivergentPrefs(null);
@@ -49,6 +72,15 @@ export const neurodivergentPreference = {
   async setPaceMode(paceMode: PaceMode): Promise<NeurodivergentPrefs> {
     const current = await this.load();
     const next = setPaceModeCore(current, paceMode);
+    await this.save(next);
+    return next;
+  },
+
+  async patch(
+    patch: Partial<Omit<NeurodivergentPrefs, "version">>,
+  ): Promise<NeurodivergentPrefs> {
+    const current = await this.load();
+    const next = patchNeurodivergentPrefs(current, patch);
     await this.save(next);
     return next;
   },

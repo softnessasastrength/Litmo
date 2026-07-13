@@ -1,11 +1,25 @@
+/**
+ * Guided Learning curriculum catalog (static content + pure lookup helpers).
+ *
+ * WHAT: Module/path definitions for Learn hub and recommendation helpers.
+ * WHY: Keep curriculum copy versioned in-repo; progress stays device-local elsewhere.
+ * CONSENT: Completing modules never certifies safety, readiness, or consent skill.
+ *          requiredBeforeFirstSession is soft product guidance — not a hard product lock
+ *          enforced as legal competence.
+ * EDGE CASES: Unknown module ids → undefined from find*; recommendations never block features.
+ * NEVER: Treat quiz completion as Soft Signal training proof; grade people; public certificates.
+ * SEE: learningProgress · CODE_COMMENT_STANDARD · Learn hub screens
+ */
+
 import type { QuizCatalogId } from "./quizCatalog.ts";
 
 /**
- * Guided Learning curriculum — foundations (product safety map) + lived lessons
- * (hard-earned relational skills). Completing modules never certifies safety,
- * readiness, or consent skill. Progress is device-local only.
+ * WHAT: One step inside a learning module (copy + optional reflection/scenario).
+ * WHY: Player advances step-by-step without treating choices as scored exams.
+ * CONSENT: Scenario feedback educates; never seals consent or records peer judgment.
+ * EDGE CASES: reflection never persisted; scenario options have equal “validity” as learning.
+ * NEVER: Persist reflection text; score options as pass/fail safety grades.
  */
-
 export type LearningStep = {
   id: string;
   title: string;
@@ -19,10 +33,22 @@ export type LearningStep = {
   };
 };
 
-/** Catalog tracks for the Learn hub. */
+/**
+ * WHAT: Catalog tracks for the Learn hub.
+ * WHY: Separate product-safety map (foundations) from relational lived lessons.
+ * CONSENT: Track membership is navigation only — not consent status.
+ * EDGE CASES: none — closed union.
+ * NEVER: Use track as a public skill badge.
+ */
 export type LearningTrack = "foundations" | "lived-lessons";
 
-/** Soft themes for paths and filtering — never grades or safety scores. */
+/**
+ * WHAT: Soft themes for paths and filtering.
+ * WHY: Hub filters without inventing numeric competence scores.
+ * CONSENT: Themes are content tags — never grades or safety scores.
+ * EDGE CASES: modules may list multiple themes.
+ * NEVER: Rank people by theme completion counts as trust.
+ */
 export type LearningTheme =
   | "consent"
   | "nervous-system"
@@ -32,7 +58,13 @@ export type LearningTheme =
   | "self-compassion"
   | "product-safety";
 
-/** Optional product practice after a module — never required, never scored. */
+/**
+ * WHAT: Optional deep link into product practice after a module.
+ * WHY: Transfer learning into real prepare/snapshot surfaces without forcing it.
+ * CONSENT: Practice links never required; never auto-confirm sessions.
+ * EDGE CASES: href is in-app path only.
+ * NEVER: Deep-link that activates a session without Consent Snapshot.
+ */
 export type LearningPracticeLink = {
   id: string;
   label: string;
@@ -41,6 +73,13 @@ export type LearningPracticeLink = {
   href: string;
 };
 
+/**
+ * WHAT: Full module metadata + ordered steps for the player.
+ * WHY: Single catalog entry powers hub cards, paths, and recommendations.
+ * CONSENT: requiredBeforeFirstSession is soft guidance — not dual consent.
+ * EDGE CASES: relatedQuizId optional; relatedPractice optional.
+ * NEVER: related quiz as competence proof; minutes as certification requirement.
+ */
 export type LearningModule = {
   id: string;
   title: string;
@@ -62,7 +101,13 @@ export type LearningModule = {
   steps: LearningStep[];
 };
 
-/** Curated sequences — recommendations only; never gates or certificates. */
+/**
+ * WHAT: Curated sequences of module ids.
+ * WHY: Recommendations and “first session readiness” ordering without hard gates.
+ * CONSENT: Paths never issue certificates or unlock contact alone.
+ * EDGE CASES: moduleIds may reference missing ids → findLearningModule undefined.
+ * NEVER: Block Soft Signal or matching solely on path completion.
+ */
 export type LearningPath = {
   id: string;
   title: string;
@@ -72,6 +117,13 @@ export type LearningPath = {
   moduleIds: string[];
 };
 
+/**
+ * WHAT: Full static module catalog (foundations + lived lessons).
+ * WHY: Content lives in git for review; no remote CMS for private alpha.
+ * CONSENT: Catalog copy teaches consent philosophy; completing it is not consent.
+ * EDGE CASES: Large array — helpers index by id rather than scanning in UI repeatedly.
+ * NEVER: Mutate catalog at runtime based on peer trust scores.
+ */
 export const learningModules: LearningModule[] = [
   // ── Foundations ──────────────────────────────────────────────────────────
   {
@@ -528,6 +580,77 @@ export const learningModules: LearningModule[] = [
         body: "A restriction — a temporary matching hold or a permanent one — only happens after a human reviews a report. If it happens to you, Litmo tells you that matching is paused and lets you submit an appeal, which a different staff member reviews.",
         takeaway:
           "A restriction always comes with a human-reviewed way to respond.",
+      },
+    ],
+  },
+  {
+    id: "neurodivergent-mode",
+    title: "Neurodivergent Mode & calm defaults",
+    summary:
+      "Device-local accommodations: pace, sensory load, reduced motion and haptics, plain language, overload exits. Never a diagnosis or match trait.",
+    minutes: 5,
+    track: "foundations",
+    themes: ["product-safety", "nervous-system", "self-compassion"],
+    relatedPractice: [
+      {
+        id: "nd-settings",
+        label: "Open Neurodivergent Mode settings",
+        hint: "Turn on demo-strength calm defaults or tune each axis on this phone only.",
+        href: "/settings",
+      },
+      {
+        id: "nd-safety",
+        label: "Trauma-informed safety tools",
+        hint: "Panic cover, reflection, and Soft Signal stay free regardless of ND settings.",
+        href: "/safety",
+      },
+    ],
+    steps: [
+      {
+        id: "nd-frame",
+        title: "Accommodations, not a label",
+        body: "Neurodivergent Mode is a calm design pack for this device. It is not a diagnosis, not a public profile field, and not something partners see. Demo entry turns it on by default so the phone walkthrough is quieter. Soft Signal and consent stay the same — stop is never harder.",
+        takeaway: "Support is local. Labels are not product currency.",
+        reflection:
+          "Which setting would make a hard day more livable: slower pace, less motion, or easier exits?",
+      },
+      {
+        id: "nd-second-level",
+        title: "Second-level axes you can tune",
+        body: "Beyond the master switch: sensory profile (low / balanced / variable), motion preference, haptic intensity (off / stop-only / standard), language density (plain / standard / detailed), pace (confirm / slow / auto), and overload exit (break, Home, or calm safety tools). Each axis is reconfigurable without turning the whole mode off.",
+        takeaway: "Configurable strength — demo is calm-first, not locked.",
+        scenario: {
+          prompt: "You want quiet chrome but still want Soft Signal haptic feedback. What intensity fits?",
+          options: [
+            {
+              label: "Minimal — presence/confirm off; Soft Signal may still pulse",
+              feedback:
+                "Yes. Minimal keeps stop-class feedback without continuous buzz.",
+            },
+            {
+              label: "Export “low sensory” on my profile so partners know",
+              feedback:
+                "No. Accommodations never become public traits or matching signals.",
+            },
+            {
+              label: "Disable Soft Signal so nothing can interrupt",
+              feedback:
+                "Never. Soft Signal remains free; accommodations must not bury stop.",
+            },
+          ],
+        },
+      },
+      {
+        id: "nd-overload",
+        title: "Overload exits without shame",
+        body: "Take a break is success. Overload exit routes leave a quiz or lesson without a reason field and without peer visibility. In sessions, panic cover still Soft-Signals first. Trauma-informed surfaces treat skip, pause, and leave as valid — not incomplete character.",
+        takeaway: "Exit is always allowed. No narrative required.",
+      },
+      {
+        id: "nd-constitution",
+        title: "Inclusion without assumption",
+        body: "Living Constitution Article V: Litmo must not assume neurotype, disability, or trauma history. Mode language stays plain and nonjudgmental. Completing this module never certifies readiness for touch or sessions.",
+        takeaway: "Inclusion is defaults and choice — not ranking people.",
       },
     ],
   },
@@ -1336,7 +1459,13 @@ export const learningModules: LearningModule[] = [
   },
 ];
 
-/** Recommended paths through the curriculum — never required, never scored. */
+/**
+ * WHAT: Recommended ordered paths through the curriculum.
+ * WHY: Hub can suggest sequences without hard-gating product features.
+ * CONSENT: Never required, never scored, never certificates of safety.
+ * EDGE CASES: first-session-readiness used by recommendedNextModule priority.
+ * NEVER: Block Soft Signal or matching on incomplete path.
+ */
 export const learningPaths: LearningPath[] = [
   {
     id: "first-session-readiness",
@@ -1373,6 +1502,7 @@ export const learningPaths: LearningPath[] = [
       "Capacity, freeze, Soft Signal, and self-compassion — private, non-clinical.",
     minutes: 15,
     moduleIds: [
+      "neurodivergent-mode",
       "nervous-system-safety",
       "soft-signal",
       "self-compassion",
@@ -1428,36 +1558,75 @@ export const learningPaths: LearningPath[] = [
   },
 ];
 
+/**
+ * WHAT: Lookup one module by id, or undefined if missing/undefined id.
+ * WHY: Safe route param resolution without throwing into the player.
+ * CONSENT: Not a consent surface.
+ * EDGE CASES: undefined id → undefined (no invent default module as completed).
+ * NEVER: Return a stub that marks completion true.
+ */
 export function findLearningModule(id: string | undefined) {
   return learningModules.find((module) => module.id === id);
 }
 
+/**
+ * WHAT: Lookup one learning path by id.
+ * WHY: Path player / hub cards resolve routes safely.
+ * CONSENT: Not a consent surface.
+ * EDGE CASES: unknown id → undefined.
+ * NEVER: Invent a path that certifies the person.
+ */
 export function findLearningPath(id: string | undefined) {
   return learningPaths.find((path) => path.id === id);
 }
 
+/**
+ * WHAT: Filter catalog modules by track.
+ * WHY: Learn hub sections for foundations vs lived lessons.
+ * CONSENT: Not a consent surface.
+ * EDGE CASES: empty array if none match (should not happen with static catalog).
+ * NEVER: Hide Soft Signal docs behind track completion.
+ */
 export function learningModulesForTrack(track: LearningTrack) {
   return learningModules.filter((module) => module.track === track);
 }
 
+/**
+ * WHAT: Filter modules that include a theme tag.
+ * WHY: Theme chips on Learn hub.
+ * CONSENT: Theme filter is not a grade.
+ * EDGE CASES: multi-theme modules appear under each matching theme.
+ * NEVER: Rank modules by “importance score” that implies safety rank.
+ */
 export function learningModulesForTheme(theme: LearningTheme) {
   return learningModules.filter((module) => module.themes.includes(theme));
 }
 
-/** Lived-lesson modules that suggest a related private quiz. */
+/**
+ * WHAT: Modules that optionally link a given private quiz id.
+ * WHY: Quiz detail can offer reverse links into related learning.
+ * CONSENT: Link is invitation only — never required competence chain.
+ * EDGE CASES: empty when quiz has no related modules.
+ * NEVER: Treat quiz + module pair as safety certification.
+ */
 export function modulesLinkedToQuiz(quizId: QuizCatalogId) {
   return learningModules.filter((module) => module.relatedQuizId === quizId);
 }
 
 /**
- * First incomplete module in path order, then required foundations, then
- * remaining catalog. Never blocks product features.
+ * WHAT: First incomplete module: first-session path, then required foundations, then rest.
+ * WHY: Soft “what next” without blocking discovery/session product features.
+ * CONSENT: Recommendation only — never a hard gate for contact or Soft Signal.
+ * EDGE CASES: all complete → undefined; missing progress keys treat as incomplete.
+ * NEVER: Block navigation when undefined or incomplete; issue a certificate on complete.
+ * SEE: learningPaths first-session-readiness
  */
 export function recommendedNextModule(
   progress: Record<string, { completed?: boolean } | undefined>,
 ): LearningModule | undefined {
   const incomplete = (id: string) => !progress[id]?.completed;
 
+  // Prefer the curated first-session path order when incomplete modules remain.
   for (const path of learningPaths) {
     if (path.id !== "first-session-readiness") continue;
     for (const id of path.moduleIds) {
@@ -1465,6 +1634,7 @@ export function recommendedNextModule(
     }
   }
 
+  // Soft product guidance modules flagged requiredBeforeFirstSession.
   for (const module of learningModules) {
     if (module.requiredBeforeFirstSession && incomplete(module.id)) {
       return module;
@@ -1482,7 +1652,13 @@ export function recommendedNextModule(
   return undefined;
 }
 
-/** Next incomplete module after `currentId` within a path, or undefined. */
+/**
+ * WHAT: Next incomplete module after currentId within a path, or undefined.
+ * WHY: Sequential path player “continue” without wrapping into completed work.
+ * CONSENT: Not a consent surface; optional sequencing only.
+ * EDGE CASES: unknown path/current → undefined; all later complete → undefined.
+ * NEVER: Skip incomplete required modules by jumping to end as certified.
+ */
 export function nextModuleInPath(
   pathId: string,
   currentId: string,
@@ -1499,6 +1675,13 @@ export function nextModuleInPath(
   return undefined;
 }
 
+/**
+ * WHAT: Count completed vs total modules in a path for progress UI.
+ * WHY: Show soft progress bars without grades.
+ * CONSENT: done/total is not a safety score or public badge.
+ * EDGE CASES: missing progress keys count incomplete; total is path length.
+ * NEVER: Publish completion ratio as peer trust.
+ */
 export function pathCompletion(
   path: LearningPath,
   progress: Record<string, { completed?: boolean } | undefined>,

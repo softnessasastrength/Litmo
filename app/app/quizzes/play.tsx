@@ -34,6 +34,7 @@ export default function QuizPlayScreen() {
     easyBreaks,
     autoAdvanceDelayMs: paceDelay,
     paceMode,
+    overloadExitFor,
   } = useNeurodivergent();
   const { quizId } = useLocalSearchParams<{ quizId: string }>();
   const entry = getQuizEntry(String(quizId ?? ""));
@@ -151,10 +152,11 @@ export default function QuizPlayScreen() {
   };
 
   const takeBreak = () => {
-    // Progress already auto-saves; leave calmly.
+    // Progress already auto-saves; leave calmly via overload-exit preference.
     advancing.current = false;
     setAwaitingContinue(false);
-    router.replace("/(tabs)/quizzes" as never);
+    const exit = overloadExitFor("quiz");
+    router.replace(exit.href as never);
   };
 
   const goNextUnanswered = () => {

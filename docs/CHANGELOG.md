@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-07-13 — ND Mode second-level accommodations + trauma surfaces
+
+### Summary
+
+Deep expansion of Neurodivergent Mode: sensory profiles, motion preference,
+haptic intensity, language density, overload exits, critical-step confirm, demo-
+strength defaults. Pure `neuroAccommodationCore`, v3 prefs, Settings cycles,
+learning module, quiz/learning break routing.
+
+### Material
+
+- `app/lib/neuroAccommodationCore.ts` + tests
+- `neurodivergentPreferenceCore` v3 + context projections
+- Settings second-level controls; `OverloadExitBar`
+- Learning module `neurodivergent-mode`
+- `docs/NEURODIVERGENT_MODE.md` rewrite
+
 ## 2026-07-13 — Nuclear session lifecycle + Consent Snapshot machine
 
 ### Summary

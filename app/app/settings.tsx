@@ -30,8 +30,18 @@ function SettingsContent() {
   const {
     prefs: neuroPrefs,
     setEnabled: setNeuroEnabled,
-    setPaceMode,
+    cyclePace,
+    cycleSensory,
+    cycleHaptics,
+    cycleLanguage,
+    cycleOverloadExit,
+    cycleMotion,
     paceMode,
+    sensoryProfile,
+    hapticIntensity,
+    languagePreference,
+    overloadExitMode,
+    motionPreference,
   } = useNeurodivergent();
   const [isStaff, setIsStaff] = useState(false);
   const [hapticsOn, setHapticsOn] = useState(true);
@@ -106,6 +116,11 @@ function SettingsContent() {
 
       {neuroPrefs.enabled ? (
         <>
+          <Body muted>
+            Second-level accommodations stay on this phone. Change any axis
+            without turning the whole mode off. Soft Signal and consent rules
+            never change.
+          </Body>
           <Button
             variant="secondary"
             label={
@@ -115,20 +130,70 @@ function SettingsContent() {
                   ? "Pace: slower auto-advance"
                   : "Pace: brief auto-advance"
             }
-            onPress={() => {
-              const next =
-                paceMode === "confirm"
-                  ? "slow"
-                  : paceMode === "slow"
-                    ? "auto"
-                    : "confirm";
-              void setPaceMode(next);
-            }}
+            onPress={() => void cyclePace()}
             accessibilityHint="Cycles quiz pace: confirm to continue, slow auto-advance, or brief auto-advance"
           />
+          <Button
+            variant="secondary"
+            label={
+              sensoryProfile === "low"
+                ? "Sensory profile: low stimulation"
+                : sensoryProfile === "variable"
+                  ? "Sensory profile: variable day"
+                  : "Sensory profile: balanced"
+            }
+            onPress={() => void cycleSensory()}
+            accessibilityHint="Cycles sensory density preference for chrome and auto-advance"
+          />
+          <Button
+            variant="secondary"
+            label={
+              motionPreference === "reduced"
+                ? "Motion: reduced"
+                : "Motion: standard"
+            }
+            onPress={() => void cycleMotion()}
+            accessibilityHint="Cycles reduced motion preference. System Reduce Motion is always honored."
+          />
+          <Button
+            variant="secondary"
+            label={
+              hapticIntensity === "off"
+                ? "Haptics intensity: off"
+                : hapticIntensity === "minimal"
+                  ? "Haptics intensity: stop signals only"
+                  : "Haptics intensity: standard"
+            }
+            onPress={() => void cycleHaptics()}
+            accessibilityHint="Cycles haptic intensity. Minimal keeps Soft Signal feedback only."
+          />
+          <Button
+            variant="secondary"
+            label={
+              languagePreference === "plain"
+                ? "Language: plain and short"
+                : languagePreference === "detailed"
+                  ? "Language: more detail"
+                  : "Language: standard"
+            }
+            onPress={() => void cycleLanguage()}
+            accessibilityHint="Cycles how much explainer text chrome shows. Consent meaning never softens."
+          />
+          <Button
+            variant="secondary"
+            label={
+              overloadExitMode === "break"
+                ? "Overload exit: take a break (saved)"
+                : overloadExitMode === "home"
+                  ? "Overload exit: leave to Home"
+                  : "Overload exit: calm cover / safety tools"
+            }
+            onPress={() => void cycleOverloadExit()}
+            accessibilityHint="Cycles where overload exit goes. Session panic path still uses Soft Signal first."
+          />
           <Body muted>
-            Customize how fast questions move on. Confirm mode waits for you —
-            best for sensory and attention needs.
+            Confirm pace waits for you. Low sensory reduces simultaneous chrome.
+            Overload exits never require a reason and never show to a peer.
           </Body>
         </>
       ) : null}

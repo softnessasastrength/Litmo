@@ -1,7 +1,7 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T23:30:00-04:00",
+  "updatedAt": "2026-07-14T00:15:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
@@ -21,7 +21,7 @@
     ],
     "failures": []
   },
-  "nextAction": "Nuclear session/consent machine (ADR 0062) + SAFETY-OPS HITL (ADR 0061) in-repo. Name second reviewer or run physical Soft Signal offline chaos; do not invent external approval.",
+  "nextAction": "ND Mode v3 accommodations + session nuclear + SAFETY-OPS HITL in-repo. Physical VO/Soft Signal chaos or named second reviewer next.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
@@ -35,6 +35,10 @@
     "Hardware Device OS design-only."
   ],
   "notes": [
+    {
+      "at": "2026-07-13",
+      "text": "ND Mode v3: sensory/pace/language/haptics/overload exits; demo-strength defaults; learning module."
+    },
     {
       "at": "2026-07-13",
       "text": "ADR 0062 nuclear sessionConsentNuclear + migration 043 immutability/revocation/offline/wrap-up."

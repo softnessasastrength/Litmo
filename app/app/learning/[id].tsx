@@ -29,6 +29,7 @@ export default function LearningModuleScreen() {
     oneAtATime,
     progressiveDisclosure,
     easyBreaks,
+    overloadExitFor,
   } = useNeurodivergent();
   const module = useMemo(() => findLearningModule(id), [id]);
   const [stepIndex, setStepIndex] = useState(0);
@@ -326,7 +327,8 @@ export default function LearningModuleScreen() {
       : step.body;
 
   const takeBreak = () => {
-    router.replace("/(tabs)/learn" as never);
+    const exit = overloadExitFor("learning");
+    router.replace(exit.href as never);
   };
 
   const readStep = () => {

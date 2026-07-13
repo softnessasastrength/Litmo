@@ -17,6 +17,7 @@
 | Consent Snapshot prepare + mutual seal | shipped | `docs/CONSENT_SNAPSHOT_SYSTEM.md` |
 | **Nuclear session + seal machine** | shipped (domain+SQL) | ADR 0062 · `@litmo/domain` `sessionConsentNuclear` |
 | Soft Signal + trauma safety (panic/timeout/reflect) | shipped | `docs/SOFT_SIGNAL.md`, `docs/TRAUMA_INFORMED_SAFETY.md` |
+| **Neurodivergent Mode v3** (sensory/pace/language/exits) | shipped | `docs/NEURODIVERGENT_MODE.md` · `neuroAccommodationCore` |
 | Proximity · NFC · QR · Multipeer | shipped | `docs/PROXIMITY_LAYER.md`, `docs/NFC_FEATURES.md` |
 | Guided Learning (lived + foundations + paths) | shipped | `docs/LEARNING_SYSTEM.md` |
 | Local-first vault + encrypted backup | shipped | `docs/LOCAL_FIRST.md` (ADR 0058) |
@@ -32,6 +33,8 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
   retention, jurisdiction, external referral, complete deletion.
 - Session nuclear machine (ADR 0062 / migration 043) shipped in domain + SQL;
   continuous-consent **UI clocks** and physical offline Soft Signal chaos still open.
+- ND Mode v3 second-level accommodations shipped (demo-strength default); ACCESS-001
+  physical VoiceOver smoke still open.
 - ACCESS-001 residual: optional founder VoiceOver physical smoke.
 - Swarm residuals: dual-agreed session duration; TL soft_limit/speed server mapping; physical Multipeer/NFC/Soft Signal chaos; independent crypto review.
 - Litmo Ops remains locked without staff auth.

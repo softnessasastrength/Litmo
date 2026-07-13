@@ -21,6 +21,11 @@ Give people tools that protect **choice and nervous-system capacity** during and
 
 This layer builds on **Soft Signal** and emergency withdrawal. It does not replace them.
 
+**Neurodivergent Mode** (see [`NEURODIVERGENT_MODE.md`](NEURODIVERGENT_MODE.md)) is the complementary
+device-local accommodation layer: pacing, sensory density, reduced motion/haptics,
+plain language, and overload exits. Demo turns ND Mode on by default. Accommodations
+never gate Soft Signal or consent — they make pause and leave easier under overload.
+
 ## Invariants
 
 | Rule | Meaning |
