@@ -2,7 +2,9 @@ import * as Crypto from "expo-crypto";
 import * as SecureStore from "expo-secure-store";
 import type { QuizCatalogId } from "../data/quizCatalog.ts";
 import {
+  adoptInviteFromPackage,
   createInvite,
+  parsePortablePackage,
   type QuizInvite,
   type SealedQuizResult,
   withHostCompareConsent,
@@ -98,5 +100,21 @@ export const quizInviteStore = {
     const next = importPeerPackage(invite, peer);
     if ("error" in next) return next;
     return this.update(next);
+  },
+
+  /**
+   * Join a partner's invite by adopting their seal key (dual-device path).
+   * Does not grant this device's share/compare consents.
+   */
+  async joinFromPackage(raw: string): Promise<QuizInvite | { error: string }> {
+    const pack = parsePortablePackage(raw.trim());
+    if ("error" in pack) return pack;
+    const invite = adoptInviteFromPackage(pack, new Date().toISOString());
+    if ("error" in invite) return invite;
+    const all = await loadAll();
+    const without = all.filter((i) => i.id !== invite.id);
+    without.unshift(invite);
+    await saveAll(without);
+    return invite;
   },
 };

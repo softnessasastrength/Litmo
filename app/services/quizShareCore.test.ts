@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  adoptInviteFromPackage,
   buildComparison,
   canCompare,
   compareInvite,
@@ -76,7 +77,7 @@ test("export package omits sealed result without share consent", () => {
   const invite = createInvite(
     "vibe-short",
     "inv1",
-    "seal",
+    "seal-key-long-enough",
     "2026-07-13T00:00:00.000Z",
   );
   const pack = exportHostPackage(invite);
@@ -88,11 +89,38 @@ test("share consent fails closed without a sealed payload", () => {
   const invite = createInvite(
     "vibe-short",
     "inv1",
-    "seal",
+    "seal-key-long-enough",
     "2026-07-13T00:00:00.000Z",
   );
   const attempted = withHostShareConsent(invite, true, null);
   assert.equal(attempted.hostConsentToShare, false);
   assert.equal(attempted.hostSealed, null);
   assert.equal(canCompare(attempted), false);
+});
+
+test("adoptInviteFromPackage joins seal without granting host consents", () => {
+  const seal = "seal-key-long-enough-12";
+  const sealed = sealResult(sample("lantern"), seal);
+  const adopted = adoptInviteFromPackage(
+    {
+      v: 1,
+      inviteId: "inv-join",
+      quizId: "vibe-short",
+      sealKey: seal,
+      sealed,
+      consentToShare: true,
+      consentToCompare: true,
+    },
+    "2026-07-13T00:00:00.000Z",
+  );
+  assert.ok(!("error" in adopted));
+  assert.equal(adopted.hostConsentToShare, false);
+  assert.equal(adopted.hostConsentToCompare, false);
+  assert.equal(adopted.peerConsentToShare, true);
+  assert.equal(adopted.peerSealed?.quizId, "vibe-short");
+  assert.ok(
+    buildComparison(sample("hearth"), sample("lantern")).notes.some((n) =>
+      n.text.includes("Gentle Hearth"),
+    ),
+  );
 });

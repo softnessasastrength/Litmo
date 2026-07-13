@@ -238,6 +238,17 @@ export function compareInvite(
   return buildComparison(host, peer);
 }
 
+function friendlyArchetype(id: ArchetypeId): string {
+  switch (id) {
+    case "hearth":
+      return "Gentle Hearth";
+    case "lantern":
+      return "Wandering Lantern";
+    case "tidepool":
+      return "Quiet Tidepool";
+  }
+}
+
 export function buildComparison(
   host: ShareableQuizResult,
   peer: ShareableQuizResult,
@@ -246,17 +257,17 @@ export function buildComparison(
   if (host.primary === peer.primary) {
     notes.push({
       kind: "same-primary",
-      text: `You both landed near “${host.primary}” weather. That can be a conversation starter — never a rule.`,
+      text: `You both landed near “${friendlyArchetype(host.primary)}” weather. That can start a conversation — never a rule about closeness or touch.`,
     });
   } else {
     notes.push({
       kind: "different-primary",
-      text: `Different primary weather (${host.primary} · ${peer.primary}). Difference is ordinary and never blocks care or requires closeness.`,
+      text: `Different primary weather (${friendlyArchetype(host.primary)} · ${friendlyArchetype(peer.primary)}). Difference is ordinary and never blocks care or requires closeness.`,
     });
   }
   notes.push({
     kind: "mix",
-    text: `Mix snapshot — you: H${host.mixPercent.hearth}/L${host.mixPercent.lantern}/T${host.mixPercent.tidepool}; them: H${peer.mixPercent.hearth}/L${peer.mixPercent.lantern}/T${peer.mixPercent.tidepool}. Soft percentages only.`,
+    text: `Soft mix only — you: Hearth ${host.mixPercent.hearth}% · Lantern ${host.mixPercent.lantern}% · Tidepool ${host.mixPercent.tidepool}%. Them: Hearth ${peer.mixPercent.hearth}% · Lantern ${peer.mixPercent.lantern}% · Tidepool ${peer.mixPercent.tidepool}%. Percentages are playful weights, not ranks.`,
   });
   notes.push({
     kind: "safety",
@@ -306,8 +317,52 @@ export function parsePortablePackage(
     ) {
       return { error: "Invite package is incomplete." };
     }
+    if (typeof parsed.sealKey !== "string" || parsed.sealKey.length < 16) {
+      return { error: "Invite seal is too short. Fail closed." };
+    }
     return parsed;
   } catch {
     return { error: "Invite package is not valid JSON." };
   }
+}
+
+/**
+ * Adopt a partner's invite shell (same seal key + quiz) so dual-device compare
+ * is possible. Does not grant host share/compare consent.
+ */
+export function adoptInviteFromPackage(
+  pack: PortableInvitePackage,
+  nowIso: string,
+): QuizInvite | { error: string } {
+  if (pack.sealKey.length < 16) {
+    return { error: "Invite seal is too short. Fail closed." };
+  }
+  let peerSealed: SealedQuizResult | null = null;
+  let peerConsentToShare = false;
+  let peerConsentToCompare = false;
+  if (pack.sealed && pack.consentToShare) {
+    if (!openSealed(pack.sealed, pack.sealKey)) {
+      return {
+        error: "Could not open the package with its own seal. Fail closed.",
+      };
+    }
+    if (pack.sealed.quizId !== pack.quizId) {
+      return { error: "Package quiz id does not match sealed result." };
+    }
+    peerSealed = pack.sealed;
+    peerConsentToShare = true;
+    peerConsentToCompare = Boolean(pack.consentToCompare);
+  }
+  return {
+    id: pack.inviteId,
+    quizId: pack.quizId,
+    sealKey: pack.sealKey,
+    createdAt: nowIso,
+    hostConsentToShare: false,
+    hostConsentToCompare: false,
+    peerConsentToShare,
+    peerConsentToCompare,
+    hostSealed: null,
+    peerSealed,
+  };
 }

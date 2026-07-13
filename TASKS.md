@@ -47,18 +47,22 @@ None recorded. External credentials, signing, App Store configuration, or policy
 ### QUIZ-001 — Quizzes section (short/deep + partner consent)
 
 - **Status:** completed
-- **Result:** Quizzes tab with vibe short/deep and four self quizzes; local-first
-  results; Face ID step-up on private result/share; partner invites with four
-  consent gates and lightweight seal; hard non-authority copy. Optional
-  owner-only summary backup added under ADR 0051. ADR 0050.
+- **Result:** Quizzes tab with Vibe short (~10 scenes, all themes) and deep
+  (100); four self quizzes; private results behind Face ID with retry/back on
+  deny; partner invites with join-from-package, four consent gates, sealed
+  payloads; comparison uses friendly names and hard non-authority copy.
+  Results prefer Secure Store. Optional owner-only summary backup (ADR 0051).
+  Demo entry + Home link to Quizzes. ADR 0050 constitution review pass.
 - **Verification:** unit tests for `quizShareCore` (seal fail-closed, dual
-  share+compare, export omission), path/scoring, and repository core tests.
-  Full suite and migration 037 pgTAP should be re-run on the implementation PR
-  before merge.
-- **Boundary:** never consent/safety/matching authority; seal is not production
-  E2E; partner path has no server API; own summaries may use owner-RLS backup;
-  macOS has no Quizzes surface.
+  share+compare, adopt join, export omission), path/scoring, repository core;
+  `npm run typecheck` / lint / app test suite on implementation PR.
+- **Boundary:** never consent/safety/matching authority; seal is lightweight
+  device package crypto (not production E2E audit); partner path has no server
+  API; peer consent flags remain package-asserted; macOS has no Quizzes surface.
 - **Related decision:** ADR 0050, ADR 0051.
+- **Constitution review 2026-07-13:** fixed SensitiveAccessGate fail UI; hub
+  non-disclosure; share-without-seal fail-closed; join invite; Secure Store
+  results; demo path mentions quizzes.
 
 ### MACOS-004 — macOS session-requests read (read-only)
 

@@ -128,8 +128,8 @@ export default function HomeTabScreen() {
       <Eyebrow>{status === "demo" ? "DEMO MODE" : "HOME"}</Eyebrow>
       <Title>Good to see you.</Title>
       <Body muted>
-        A quiet landing spot. Discovery and trust history live in their own
-        tabs. Open sessions can be resumed here after a restart.
+        A quiet landing spot. Discovery, Quizzes, and trust history live in
+        their own tabs. Open sessions can be resumed here after a restart.
       </Body>
 
       {status === "authenticated" && openSessions.length > 0
@@ -196,6 +196,12 @@ export default function HomeTabScreen() {
           </View>
         ) : null}
       </Card>
+      <Button
+        variant="secondary"
+        label="Explore Quizzes (short or deep Vibe)"
+        onPress={() => router.push("/(tabs)/quizzes" as never)}
+        accessibilityHint="Opens self-understanding quizzes. Results are never consent to touch."
+      />
       <Button
         variant="secondary"
         label="Meet the mock community"

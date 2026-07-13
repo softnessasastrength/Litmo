@@ -39,13 +39,14 @@ export default function EntryScreen() {
           <Text style={styles.cardTitle}>Demo mode</Text>
           <Body>
             Walk through Touch Language onboarding, boundaries, discovery,
-            consent, a practice session, Soft Signal, and private wrap-up.
+            Quizzes (short or deep Vibe), consent, a practice session, Soft
+            Signal, and private wrap-up.
           </Body>
           <View style={styles.notice} accessible accessibilityRole="text">
             <Text style={styles.noticeTitle}>Important</Text>
             <Text style={styles.noticeBody}>
-              Compatibility and trust examples are educational signals only.
-              They do not establish consent or prove that anyone is safe.
+              Compatibility, quizzes, and trust examples are educational signals
+              only. They do not establish consent or prove that anyone is safe.
             </Text>
           </View>
           <Button

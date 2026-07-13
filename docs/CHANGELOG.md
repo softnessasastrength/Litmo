@@ -25,6 +25,25 @@ device-local. Demo and unauthenticated use stay AsyncStorage-only.
 
 - Builds on ADR 0050 quizzes section.
 
+## 2026-07-13 — Quizzes constitution review (privacy + consent gates)
+
+### Summary
+
+Constitution/trauma-informed pass on Quizzes: Face ID deny retry, join-invite
+seal adoption, Secure Store for private results, friendlier non-ranking compare
+copy, demo/home entry points, and hardened fail-closed share consent.
+
+### User-visible impact
+
+- Private quiz screens offer **Try Face ID again** / **Go back** if unlock fails.
+- Partner flow supports **Join invite from package** (adopt their seal).
+- Comparison language uses archetype display names, not raw ids.
+- Demo entry and Home link surface Quizzes with non-consent disclaimers.
+
+### Related work
+
+- QUIZ-001 / ADR 0050
+
 ## 2026-07-13 — Quizzes section (short/deep vibe + partner consent)
 
 ### Summary

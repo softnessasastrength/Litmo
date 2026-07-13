@@ -155,8 +155,34 @@ function ShareBody() {
     );
   };
 
+  const joinInvite = async () => {
+    const raw = peerJson.trim();
+    if (!raw) {
+      setStatus("Closed: paste a partner package first.", "closed");
+      return;
+    }
+    const next = await quizInviteStore.joinFromPackage(raw);
+    if ("error" in next) {
+      setStatus(`Closed: ${next.error}`, "closed");
+      return;
+    }
+    setSelectedId(next.id);
+    setComparisonText(null);
+    setStatus(
+      "Joined their invite seal on this device. Take the same quiz, then consent to share and compare — comparison stays closed until both of you opt in.",
+      "ok",
+    );
+    await refresh();
+  };
+
   const importPeer = async () => {
-    if (!selected) return;
+    if (!selected) {
+      setStatus(
+        "Closed: create or join an invite first, then import their sealed result.",
+        "closed",
+      );
+      return;
+    }
     const parsed = parsePortablePackage(peerJson.trim());
     if ("error" in parsed) {
       setStatus(`Closed: ${parsed.error}`, "closed");
@@ -258,6 +284,12 @@ function ShareBody() {
           steps. Missing consent fails closed.
         </Body>
         <Button label="Create invite" onPress={() => void create()} />
+        <Button
+          label="Join invite from package below"
+          variant="secondary"
+          onPress={() => void joinInvite()}
+          accessibilityHint="Adopts a partner seal key so you can share into the same invite without granting compare consent yet"
+        />
       </Card>
 
       {invites.length > 0 ? (
