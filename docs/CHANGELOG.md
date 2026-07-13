@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-07-13 — Proximity social layer
+
+### Summary
+
+Full proximity social layer: opt-in anonymous Multipeer radar, weather-resonance
+compatibility (never safety), encrypted local handshake, mutual interest and
+mutual identity-reveal gates, Soft Signal exits, ND-friendly progressive
+disclosure, and practice demo path for Expo Go. Architecture in
+`docs/PROXIMITY_LAYER.md` (ADR 0054).
+
+### Entry points
+
+- Home → Proximity  
+- Settings → Proximity radar  
+- Practice radar without radio  
+
 ## 2026-07-13 — Nearby local share (AirDrop-style)
 
 ### Summary

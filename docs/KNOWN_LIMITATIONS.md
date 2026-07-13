@@ -20,6 +20,17 @@
   missing governance policies and complete legal/distribution review before
   public launch.
 
+## Proximity social layer
+
+- Proximity radar real radio requires an **iOS development build** with
+  `startProximityAsync`. Expo Go uses a **practice demo** path only.
+- Anonymous beacons still emit RF while the screen is open — users who need zero
+  presence must leave radio off. Tokens are ephemeral, not account IDs.
+- Weather resonance is **not** safety, trust, or consent. Physical two-device
+  Multipeer smoke is human-led. Android deferred.
+- Soft Signal on proximity tears down nearby radio; it does not replace Soft
+  Signal on an active physical session screen.
+
 ## Nearby local share (Multipeer)
 
 - Nearby Share requires an **iOS development build** with the `litmo-local-share`

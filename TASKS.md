@@ -45,6 +45,19 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 ## Completed
 
+### PROX-001 — Proximity social layer
+
+- **Status:** completed (engineering foundation)
+- **Result:** `docs/PROXIMITY_LAYER.md` + ADR 0054; anonymous Multipeer radar
+  beacons; weather-resonance core (non-safety); encrypted handshake; mutual
+  interest + mutual identity-reveal gates; Soft Signal teardown; ND-friendly
+  progressive UI; practice demo path; Home/Settings entry; Multipeer
+  `startProximityAsync`.
+- **Verification:** proximityCore + preference unit tests; typecheck.
+- **Boundary:** two-device physical smoke human-led; Android deferred; RF
+  presence only while screen open and opted in.
+- **Related:** SHARE-001 / ADR 0053 post-reveal payload share.
+
 ### SHARE-001 — Nearby local share (Multipeer / AirDrop-style)
 
 - **Status:** completed (engineering foundation)

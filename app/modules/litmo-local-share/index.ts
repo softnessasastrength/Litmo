@@ -31,6 +31,11 @@ type NativeLocalShare = {
     shareKind?: string;
   }): Promise<boolean>;
   startBrowsingAsync(options: { displayName: string }): Promise<boolean>;
+  startProximityAsync(options: {
+    displayName: string;
+    beacon?: string;
+    discoveryInfo?: Record<string, string>;
+  }): Promise<boolean>;
   invitePeerAsync(peerId: string): Promise<boolean>;
   respondToInvitationAsync(peerId: string, accept: boolean): Promise<boolean>;
   sendDataAsync(peerId: string, utf8Payload: string): Promise<boolean>;
@@ -88,6 +93,25 @@ export const litmoLocalShare = {
       );
     }
     await native.startBrowsingAsync(options);
+  },
+
+  /** Anonymous advertise + browse for proximity radar. */
+  async startProximity(options: {
+    displayName: string;
+    beacon?: string;
+    discoveryInfo?: Record<string, string>;
+  }): Promise<void> {
+    if (!native) {
+      throw new Error(
+        "Proximity radar needs an iOS development build with Multipeer Connectivity (not Expo Go).",
+      );
+    }
+    if (typeof native.startProximityAsync !== "function") {
+      throw new Error(
+        "This development build is missing proximity Multipeer support. Rebuild with the latest litmo-local-share module.",
+      );
+    }
+    await native.startProximityAsync(options);
   },
 
   async invitePeer(peerId: string): Promise<void> {

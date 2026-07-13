@@ -105,6 +105,23 @@ Settings master opt-in (default off)
   → review on device → Stop / timeout / leave screen
 ```
 
+## Proximity social layer
+
+Opt-in anonymous nearby discovery and gated handshake (ADR 0054,
+`docs/PROXIMITY_LAYER.md`). Beacons carry only coarse weather axes; resonance is
+local and non-authoritative. Identity requires mutual interest and mutual
+reveal. Soft Signal tears down radio and keys. Practice demo works without
+native Multipeer.
+
+```text
+Master opt-in (default off)
+  → /proximity/radar anonymous Multipeer radar (m=px beacon)
+  → optional handshake → ECDH channel
+  → mutual interest → mutual identity reveal
+  → optional ADR 0053 deeper share
+  → Soft Signal / timeout / leave → off
+```
+
 ## Native macOS boundary
 
 The native macOS workspace is generated from `macos/project.yml` and contains three targets with deliberately narrow responsibilities:

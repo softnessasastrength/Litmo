@@ -59,6 +59,18 @@ public final class LitmoLocalShareModule: Module {
       }
     }
 
+    /// Simultaneous anonymous advertise + browse for the proximity radar layer.
+    AsyncFunction("startProximityAsync") { (options: [String: Any], promise: Promise) in
+      do {
+        try self.session.startProximity(options: options) { event, body in
+          self.sendEvent(event, body)
+        }
+        promise.resolve(true)
+      } catch {
+        promise.reject("ERR_LOCAL_SHARE_START", error.localizedDescription)
+      }
+    }
+
     AsyncFunction("invitePeerAsync") { (peerId: String, promise: Promise) in
       do {
         try self.session.invite(peerId: peerId)
@@ -169,6 +181,49 @@ private final class LocalShareSession: NSObject {
       self.peerID = peer
       self.session = session
       self.browser = browser
+      browser.startBrowsingForPeers()
+    }
+  }
+
+  /// Proximity mode: anonymous peer name + discoveryInfo beacon + advertise and browse.
+  func startProximity(options: [String: Any], emit: @escaping (String, [String: Any]) -> Void) throws {
+    try queue.sync {
+      guard self.session == nil else { throw LocalShareError.alreadyActive }
+      guard let displayName = options["displayName"] as? String, !displayName.isEmpty else {
+        throw LocalShareError.invalidOptions
+      }
+      self.emit = emit
+      let peer = MCPeerID(displayName: String(displayName.prefix(63)))
+      let session = MCSession(peer: peer, securityIdentity: nil, encryptionPreference: .required)
+      session.delegate = self
+
+      var discoveryInfo: [String: String] = ["m": "px"]
+      if let info = options["discoveryInfo"] as? [String: String] {
+        for (key, value) in info {
+          // Multipeer discoveryInfo keys/values must stay small.
+          let k = String(key.prefix(16))
+          let v = String(value.prefix(180))
+          if !k.isEmpty { discoveryInfo[k] = v }
+        }
+      }
+      if let beacon = options["beacon"] as? String {
+        discoveryInfo["b"] = String(beacon.prefix(180))
+      }
+
+      let advertiser = MCNearbyServiceAdvertiser(
+        peer: peer,
+        discoveryInfo: discoveryInfo,
+        serviceType: serviceType
+      )
+      advertiser.delegate = self
+      let browser = MCNearbyServiceBrowser(peer: peer, serviceType: serviceType)
+      browser.delegate = self
+
+      self.peerID = peer
+      self.session = session
+      self.advertiser = advertiser
+      self.browser = browser
+      advertiser.startAdvertisingPeer()
       browser.startBrowsingForPeers()
     }
   }
@@ -294,13 +349,19 @@ extension LocalShareSession: MCNearbyServiceBrowserDelegate {
   func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String: String]?) {
     let key = peerKey(peerID)
     discovered[key] = peerID
-    emitEvent("onPeerFound", [
+    var body: [String: Any] = [
       "peerId": key,
       "displayName": peerID.displayName,
       "discoveryLabel": info?["label"] as Any,
       "shareKind": info?["kind"] as Any,
       "role": info?["role"] as Any,
-    ])
+      "mode": info?["m"] as Any,
+      "beacon": info?["b"] as Any,
+    ]
+    if let info {
+      body["discoveryInfo"] = info
+    }
+    emitEvent("onPeerFound", body)
   }
 
   func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {

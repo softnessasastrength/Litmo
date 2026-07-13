@@ -198,6 +198,12 @@ export default function HomeTabScreen() {
       </Card>
       <Button
         variant="secondary"
+        label="Proximity (anonymous nearby radar)"
+        onPress={() => router.push("/proximity/radar" as never)}
+        accessibilityHint="Opens opt-in proximity layer: anonymous weather radar, encrypted handshake, mutual consent before any name. Soft Signal exits anytime. Never consent to touch."
+      />
+      <Button
+        variant="secondary"
         label="Explore Quizzes (short or deep Vibe)"
         onPress={() => router.push("/(tabs)/quizzes" as never)}
         accessibilityHint="Opens self-understanding quizzes. Results are never consent to touch."

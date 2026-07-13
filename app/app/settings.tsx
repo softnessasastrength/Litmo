@@ -215,6 +215,12 @@ function SettingsContent() {
         onPress={() => router.push("/share/local" as never)}
         accessibilityHint="Open the intentional nearby share screen for profiles or snapshot review"
       />
+      <Button
+        variant="secondary"
+        label="Proximity radar (anonymous nearby)"
+        onPress={() => router.push("/proximity/radar" as never)}
+        accessibilityHint="Opt-in anonymous compatibility radar, encrypted handshake, mutual consent before identity. Soft Signal exits. Never consent to touch."
+      />
 
       <Body>Privacy & data protection</Body>
       <Body muted>
