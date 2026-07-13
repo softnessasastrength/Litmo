@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-07-13 — Soft Edge haptic system refined (warm, EI, anti cold-tech)
+
+### Summary
+
+Expanded `docs/HAPTIC_SYSTEM_DEVICE.md` to **v1.1 Soft Edge**: emotional
+intelligence rules, explicit contrast vs cold/tech haptics, full pattern palette
+(`breath`, `warmSeal`, `curtainClose`, `thorn`, …), profiles (`quiet_hearth`,
+etc.), EmotionalGuard, Soft Signal emotional safety, and authoring/validation
+gates. ADR 0057 updated to name Soft Edge personality.
+
+### User-visible impact
+
+- None in the current mobile app (design/vision).
+
+### Developer impact
+
+- `docs/HAPTIC_SYSTEM_DEVICE.md` — major expansion.
+- `docs/adr/0057-device-haptic-vca-lra-architecture.md` — Soft Edge decision notes.
+
 ## 2026-07-13 — Dedicated-device haptic system design (VCA + LRA)
 
 ### Summary

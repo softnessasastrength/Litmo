@@ -23,8 +23,8 @@ Soft Signal must be instant, unmistakable, and emotionally safe: a clear stop, n
 2. Keep **semantic event names** shared with phone clients; implement richer waveforms only on device firmware.
 3. Map Soft Signal to a dual-actuator **“curtain close”** pattern with ≤ 30 ms start latency and state-commit-before-playback ordering.
 4. Forbid ERM as the primary Soft Signal path; forbid engagement, secret, or interpersonal-touch-imitation haptics.
-5. Treat full pattern tables, mounting, and drivers as specified in `docs/HAPTIC_SYSTEM_DEVICE.md`.
-
+5. Adopt **Soft Edge** as the named tactile personality: warm, sparse, rounded envelopes, mid-low VCA body, emotional-intelligence guards (no fake mutual seal, no cold max-sharp UI as default). Full tables in `docs/HAPTIC_SYSTEM_DEVICE.md` v1.1+.
+6. Treat cold/tech haptics (reward ticks, alarm buzzes, continuous social pulses) as explicit anti-references — not design targets.
 ## Alternatives considered
 
 | Alternative | Why not (primary) |

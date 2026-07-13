@@ -1,13 +1,45 @@
-# Litmo Device Haptic System
+# Litmo Device Haptic System — Soft Edge
 
 **Status:** design specification (hardware vision — not a shipping SKU)  
-**Date:** 2026-07-13  
-**Related:** [ADR 0057](adr/0057-device-haptic-vca-lra-architecture.md) · [Phone haptics plan](roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md) · [ADR 0039](adr/0039-semantic-haptic-language.md) · Soft Signal / Consent Snapshot product rules
+**Version:** 1.1 · refined 2026-07-13  
+**Related:** [ADR 0057](adr/0057-device-haptic-vca-lra-architecture.md) · [Phone haptics](roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md) · [ADR 0039](adr/0039-semantic-haptic-language.md) · Soft Signal / Consent Snapshot product rules
 
 > A gentle haptic can say “I’m here” without demanding attention.  
-> A Soft Signal haptic must say “you stopped — you are free” without terror.
+> A Soft Signal haptic must say “you stopped — you are free” without terror.  
+> Litmo does not buzz at people. It **answers** them — warmly, sparsely, and honestly.
 
-This document specifies the **tactile language** of the dedicated Litmo companion device: actuators, waveforms, semantic events, timing budgets, accessibility, and implementation interfaces. It extends the phone-first five-event vocabulary into a high-fidelity **voice-coil + LRA** stack suited to warm, soft-edged hardware.
+This document is the **authority** for the tactile language of the dedicated Litmo companion: emotional design, actuators, waveforms, semantic events, timing, accessibility, and firmware interfaces. It extends the phone-first five-event vocabulary into a high-fidelity **voice-coil + LRA** stack that feels like the rest of Litmo: soft-edged, trauma-informed, and deliberately **not** cold consumer-tech haptics.
+
+---
+
+## 0. Design thesis
+
+### 0.1 What Soft Edge is
+
+**Soft Edge** is Litmo’s haptic personality: feedback that feels like a calm hand on a wooden table, not a game controller, not a smartwatch reward, not a factory buzzer.
+
+| Soft Edge wants people to feel | Soft Edge refuses to make people feel |
+| --- | --- |
+| Grounded | Startled |
+| Free to leave | Trapped or punished |
+| Locally acknowledged | Judged by the device |
+| Gently invited to pause | Nudged to engage |
+| Safe in their body | Sexualized or “tickled” |
+| Clear about stop | Confused about whether stop worked |
+
+### 0.2 Emotional intelligence (EI) rules for every pattern
+
+Before any waveform ships, it must pass this checklist:
+
+1. **Whose action is this?** If it is not *this user’s* local action or a fully sealed mutual protocol state, do not play a “success” feel.
+2. **What feeling after?** Prefer grounded, complete, free — never urgent dopamine or shame.
+3. **Would this be kind if someone is activated or dissociated?** If not, soften envelope or drop the haptic and keep visuals.
+4. **Can silence carry the moment?** Default to silence; haptics earn their place.
+5. **Is Soft Signal still the clearest word in the vocabulary?** Nothing may outrank or out-alarm it except true emergency, and even emergency is not a siren.
+
+### 0.3 Tagline
+
+*Warm enough to invite presence. Clear enough to end it. Quiet enough to leave room for humans.*
 
 ---
 
@@ -16,329 +48,439 @@ This document specifies the **tactile language** of the dedicated Litmo companio
 ### 1.1 Intent
 
 - Make consent-critical moments **feel** distinct, calm, and trustworthy in the hand.
-- Prioritize **warm, inviting, high-fidelity** feedback over rumble or game-controller “hit.”
-- Make **Soft Signal** instant, unmistakable, and **emotionally safe** (clear stop ≠ alarm).
-- Support **consent exchange**, **connection**, and everyday UI without turning the device into a buzzbox.
-- Remain optional, private, multi-modal, and fail-safe.
+- Prioritize **warm, inviting, high-fidelity** feedback over rumble, metallic “tick,” or engagement buzz.
+- Make **Soft Signal** instant, unmistakable, and **emotionally safe** (clear stop ≠ alarm, ≠ blame).
+- Support **consent exchange** and **connection** without chatty social haptics.
+- Stay optional, private, multi-modal, fail-safe, and sparse.
 
-### 1.2 Non-goals
+### 1.2 Explicit contrast: Soft Edge vs cold / tech haptics
+
+| Dimension | Typical cold tech | Litmo Soft Edge |
+| --- | --- | --- |
+| Goal | Notify, reward, “premium click,” retain | Acknowledge, ground, free, clarify stop |
+| Density | Frequent micro-ticks on every tap | Most taps silent |
+| Envelope | Square, hard attack, snappy decay | Rounded attack, soft bloom, short warm release |
+| Spectrum | High-frequency grit / sharp LRA only | Mid-low VCA body + soft LRA edge |
+| Soft Signal cousin | Error buzz, triple alert, continuous vibrate | Dual-beat **curtain close** — firm, finished, kind |
+| Social | “Someone liked you” buzz | No partner-emotion impersonation |
+| Power metaphor | Device demands attention | Device yields the room back to people |
+| Failure | Retry buzz loops | Fail silent; safety UI still complete |
+
+**Anti-references (do not copy):** slot-machine reward ticks, endless “typing” pulses, fitness streak celebrations, harsh keyboard haptics, police-radio buzz, sexual “purr” rumbles, horror-game heartbeats.
+
+### 1.3 Non-goals (hard bans)
 
 | Forbidden | Why |
 | --- | --- |
-| Haptic as proof of another person’s consent | Consent is mutual, explicit, session-specific — never inferred from vibration |
-| Inter-device “secret touch” or encoded messages | Opens coercion and misread-as-affection risks |
-| Imitating interpersonal skin contact | Creepy, trauma-unsafe, product-dishonest |
-| Engagement loops, streaks, reward buzzes | Engagement-maximizing haptics are out of constitution |
-| Soft Signal delayed by haptic playback | Safety state always wins; haptics are acknowledgement only |
-| Logging haptic events as sensitive telemetry | Local only; no analytics of stops or consent moments |
-| ERM-only “phone buzz” as the primary Soft Signal | Too slow and muddy for a trauma-informed stop |
+| Haptic as proof of another person’s consent | Consent is mutual, explicit, session-specific |
+| Inter-device secret codes / “haptic Morse” | Coercion and misread-as-affection risk |
+| Imitating interpersonal skin contact | Trauma-unsafe, product-dishonest |
+| Engagement loops, streaks, FOMO buzzes | Out of constitution |
+| Soft Signal delayed by playback | Safety state always wins |
+| Sensitive haptic analytics | Local only |
+| ERM-primary Soft Signal | Muddy, slow, generic phone buzz |
+| Continuous nearby “presence field” | Stalking pressure / sensory load |
+| Rising intensity to force a response | Coercive design |
 
-### 1.3 Relationship to phone haptics
+### 1.4 Relationship to phone haptics
 
-| Layer | Scope | Vocabulary |
+| Layer | Scope | Expression |
 | --- | --- | --- |
-| Phone (ADR 0039 / Expo) | iOS demo & private alpha | 5 semantic events, platform presets |
-| Device (this doc) | Dedicated hardware vision | Same **meanings**, richer **waveforms**, dual actuators |
+| Phone (ADR 0039) | iOS demo & private alpha | 5 events, Expo presets |
+| Device (this doc) | Hardware vision | Same **meanings**, Soft Edge waveforms, dual actuators |
 
-Semantic **event names** stay stable across clients. Waveforms, actuators, and drivers differ. A Litmo concept must mean the same thing on every platform ([platform future](roadmap/CHAPTERS_7_TO_13_PLATFORM_FUTURE.md)).
+Event **names** are stable across clients. Feel may deepen on hardware; meaning may not fork.
 
 ---
 
-## 2. Tactile personality (“Soft Edge”)
+## 2. Tactile personality — Soft Edge in depth
 
-The dedicated device should feel like **furniture for connection**, not a game pad.
+### 2.1 Material metaphor
 
-### 2.1 Personality adjectives
+The device is **furniture for connection**: rounded square, soft-touch shell, calm light. Haptics must match:
+
+- Think **thumb on linen-wrapped wood**, not metal trackpad.
+- Energy should feel **absorbed into the body of the device**, not rattling the corners.
+- After Soft Signal, the hand should feel **released**, not still buzzing.
+
+### 2.2 Personality adjectives
 
 | Do | Don’t |
 | --- | --- |
 | Warm | Cold / metallic sting |
-| Rounded envelopes | Square on/off clicks only |
-| Low–mid fundamental “bloom” | High-frequency buzz grit |
-| Short decays | Long ringing tails |
+| Rounded envelopes | Square on/off only |
+| Low–mid fundamental “bloom” | High-frequency grit |
+| Short warm decays | Long ringing tails |
 | Sparse | Chatty |
-| Grounding | Alarming (except true emergency path) |
-| Local action acknowledgement | Impersonating a partner |
+| Grounding | Alarming (except true emergency, still not a siren) |
+| Local acknowledgement | Impersonating a partner |
+| Finished / complete | Needy / unfinished pulses |
+| Optional | Mandatory for comprehension |
 
-### 2.2 Sensory metaphor (design language only)
+### 2.3 Sensory lexicon (authoring labels only)
 
-Patterns are described in product docs as:
-
-- **Breath** — soft swell / release (presence, idle settle)
-- **Knock** — short definite impact (local confirmation)
-- **Bell** — brief clear peak with quick decay (attention)
-- **Curtain** — firm dual pulse that closes (Soft Signal)
-- **Anchor** — deep single settle (session ended / grounded)
-
-These metaphors are **authoring labels**, not claims that the device is “touching” the user.
-
-### 2.3 Intensity ladder
-
-| Level | Name | Use |
+| Name | Perceptual story | Typical use |
 | --- | --- | --- |
-| L0 | Off | User disabled or hardware unavailable |
-| L1 | Whisper | ND quiet profile; learning presence |
-| L2 | Soft | Default UI confirms |
-| L3 | Clear | Attention / consent checkpoint |
-| L4 | Firm | Soft Signal (primary stop) |
-| L5 | Urgent | Emergency stop only — still not a siren |
+| **Breath** | Soft swell and release — like settling into a chair | `presence`, quiet nearby |
+| **Knock** | One polite knuckle on a wooden door | Local `confirmation` |
+| **Bell** | Brief clear note, no clang | `attention`, consent invite |
+| **Seal** | Soft knock + short warm exhale — a page closed gently | `consentMutualSealed` only |
+| **Curtain** | Two firm beats: edge, then closed | Soft Signal |
+| **Anchor** | Deep single settle into the palm | Session end / clean disconnect |
+| **Thorn** | Very short muted tick — “that didn’t go; look at the screen” | Fail closed, never alarm |
 
-Default shipping profile: **L2** for routine, **L4** for Soft Signal, **L5** only for emergency. Users may lower globally; Soft Signal may optionally stay one step above UI (see §8).
+These are **metaphors for designers**, not claims the device is touching or soothing the user like a person.
+
+### 2.4 Emotional temperature scale
+
+| Temp | Character | Allowed for |
+| --- | --- | --- |
+| Cool-neutral | Almost silent, thin LRA | ND quiet UI ticks |
+| Warm-soft | VCA bloom dominant | Presence, nearby, seal |
+| Warm-firm | VCA + LRA balanced | Soft Signal |
+| Clear-urgent | Higher int, still rounded | Emergency only |
+
+**Never use cold-hard** (max sharp, no body) for Soft Signal or consent.
+
+### 2.5 Intensity ladder
+
+| Level | Name | Emotional job |
+| --- | --- | --- |
+| L0 | Off | Full silence; meaning in UI only |
+| L1 | Whisper | “I’m barely here with you” |
+| L2 | Soft | Default kindness |
+| L3 | Clear | “Please look” without shout |
+| L4 | Firm | Soft Signal — complete, free |
+| L5 | Urgent | Emergency — decisive, still not cruel |
+
+**Defaults:** UI L2 · Soft Signal L4 · Emergency L5.  
+**User Soft Signal floor:** when haptics on, Soft Signal ≥ L3 by default (configurable down for sensory safety).
+
+### 2.6 Rhythm of the product day
+
+Litmo’s day should be mostly **tactile silence**. Expected haptic density for a full demo session: on the order of **8–20 events**, not hundreds. If a flow would fire more than once every few seconds, delete patterns until it breathes.
 
 ---
 
 ## 3. Hardware architecture
 
-### 3.1 Decision summary
+### 3.1 Decision
 
-Use a **dual-actuator stack**:
+Dual stack ([ADR 0057](adr/0057-device-haptic-vca-lra-architecture.md)):
 
-1. **Wideband voice-coil actuator (VCA / VCM)** — high-fidelity, broadband “skin” and soft textures (≈ 40–250+ Hz usable with proper mounting).
-2. **Linear resonant actuator (LRA)** — efficient sharp impacts and discrete ticks near resonance (typically ≈ 150–200 Hz class; tune to part).
+1. **Wideband voice-coil (VCA / VCM)** — warmth, breath, body (≈ 40–250+ Hz usable with mounting).
+2. **LRA** — soft-edged ticks near resonance (often ≈ 150–200 Hz class; tune to part).
 
-**Do not** use ERM as the primary Soft Signal path. ERM may exist only as optional low-cost prototype fallback with degraded fidelity.
+ERM only as degraded prototype fallback. Piezo optional later for ultra-sharp clicks — not required for Soft Edge v1.
 
-Piezo remains a **future option** for ultra-sharp clicks if mechanical integration allows; not required for v1 vision.
+### 3.2 Why this stack feels warmer than phones
 
-Research basis (industry): LRAs are efficient but narrow-band; voice-coil / VCM variants trade power for **broader frequency response** and more realistic tactile stimulation; psychophysics spans roughly 1–400 Hz for distinct fingertip vibration perception. See [Immersion haptic stack hardware notes](https://www.immersion.com/the-haptic-stack-hardware-layer/) and LRA/VCA manufacturer guidance on resonance tracking vs broadband drive.
+Phones often optimize LRA for **efficiency and click**. Soft Edge prioritizes:
 
-### 3.2 Placement (industrial design coupling)
+- **VCA body** so confirms and Soft Signal have a human-scale “mass,” not a needle poke.
+- **Rounded LRA sharpness** (sharpness ≤ 0.55 for Soft Signal edge; UI knocks ≤ 0.40).
+- **Mechanical isolation** so energy is felt as palm pressure, not shell chatter.
 
-| Actuator | Mount | Hand feel goal |
+### 3.3 Placement
+
+| Actuator | Mount | Feel goal |
 | --- | --- | --- |
-| VCA | Chassis center / palm coupling plate under soft-touch shell | Whole-device “warm bloom” |
-| LRA | Near Soft Signal physical control / front edge | Finger-local crisp confirm + stop |
-| Isolation | Silicone / foam pads per mech eng | Avoid shell buzz and long ring |
+| VCA | Center / palm coupling under soft-touch shell | Whole-device warm bloom |
+| LRA | Near Soft Signal control + front edge | Finger finds stop; soft ticks |
+| Isolation | Silicone / foam | No corner rattle; decay ≤ 40 ms after Soft Signal end |
 
-Enclosure: soft-edged rounded square, matte/tactile outer — haptics must **not** make the shell chatter. Target: decay to −20 dB mechanical within **≤ 40 ms** after waveform end for Soft Signal.
-
-### 3.3 Drive electronics (implementation targets)
+### 3.4 Drive targets
 
 | Item | Spec |
 | --- | --- |
-| Driver | Closed-loop or auto-resonance capable LRA driver + broadband VCA amp (class-D or dedicated haptic IC pair) |
-| Sample rate | ≥ 8 kHz PWM / DAC stream for VCA; LRA may use click envelopes or short bursts |
-| Latency budget (command → first motion) | Soft Signal **≤ 30 ms** p95; routine UI **≤ 50 ms** p95 |
-| Power | Soft Signal burst ≤ 120 mJ; continuous patterns banned except timed softBreath ≤ 400 ms |
-| Overtemp / overdrive | Hardware clamp; firmware must not retry Soft Signal into thermal fault loops |
-| Mute pin | Global haptic enable line for factory test and user off |
+| Drivers | Auto-resonance LRA + broadband VCA amp |
+| VCA stream | ≥ 8 kHz |
+| Soft Signal latency | **≤ 30 ms** p95 first motion |
+| Routine UI latency | ≤ 50 ms p95 |
+| Soft Signal energy | ≤ 120 mJ |
+| Continuous drive | Banned except timed breath ≤ 400 ms |
+| Watchdog | Abort continuous > 500 ms |
+| Mute | Hardware + user software mute |
 
-### 3.4 Dual-actuator role split
+### 3.5 Dual-actuator mix philosophy
 
 | Role | VCA | LRA |
 | --- | --- | --- |
-| Soft textures / breath | Primary | Support (optional) |
-| UI tick / local confirm | Light envelope | Primary sharp transient |
-| Soft Signal | Deep firm body | Simultaneous crisp edge |
-| Consent attention | Soft swell | Optional double tick |
-| Connection notify | Gentle single bloom | None or very light |
-| Emergency | Strong body + sharp edge | Max short burst |
+| Breath / presence | Primary, soft | Optional whisper support |
+| UI knock | Light under-layer | Primary soft transient |
+| Soft Signal | Firm warm body | Firm-but-rounded edge + close beat |
+| Mutual seal | Short warm exhale | Soft knock |
+| Nearby | Whisper only | Off preferred |
+| Fail / thorn | Off | Single muted tick |
+| Emergency | Strong body | Short max edge — still rounded |
 
-Always **compose** patterns in software as named presets; never fire raw motors from UI code.
+**Authoring rule:** if a pattern is only LRA max-sharp with no VCA body, it is **too cold** for Soft Edge shipping personality (except optional ND “crisp only” accessibility mode).
 
 ---
 
-## 4. Waveform language (implementation units)
+## 4. Waveform language
 
 ### 4.1 Primitives
 
 ```text
 Transient  { actuator: VCA|LRA|BOTH, intensity: 0..1, sharpness: 0..1, duration_ms }
-Continuous { actuator: VCA|LRA, f_hz, intensity: 0..1, attack_ms, sustain_ms, release_ms }
+Continuous { actuator: VCA|LRA, f_hz, intensity: 0..1, attack_ms, sustain_ms, release_ms,
+             curve: soft|linear }   // soft = ease-in-out envelope (default)
 Silence    { ms }
-Composite  { steps: Primitive[] }   // sequential
-Parallel   { a: Composite, b: Composite }  // VCA + LRA together
+Composite  { steps: Primitive[] }
+Parallel   { a: Composite, b: Composite }
 ```
 
-**Sharpness** (0 soft / 1 hard) maps to envelope shape and high-frequency content on VCA; LRA maps sharpness to attack time and amplitude.
+**Soft curve default:** all Continuous use `curve: soft` unless emergency.
 
-### 4.2 Authoring constraints
+**Sharpness guidance:**
+
+| Range | Character |
+| --- | --- |
+| 0.00–0.25 | Almost cushioned |
+| 0.25–0.40 | Soft Edge default UI |
+| 0.40–0.55 | Soft Signal edge (max for stop) |
+| 0.55–0.70 | Emergency only |
+| > 0.70 | Forbidden in Soft Edge shipping profiles |
+
+### 4.2 Global authoring constraints
 
 | Rule | Limit |
 | --- | --- |
-| Max total pattern length (non-emergency) | 450 ms |
-| Max Soft Signal length | 280 ms |
-| Max emergency length | 350 ms |
-| Max continuous tone | 400 ms |
-| Min gap between unrelated events | 120 ms (queue or drop low priority) |
-| Soft Signal priority | Preempts all other patterns immediately |
-| No infinite loops | Firmware watchdog aborts > 500 ms continuous drive |
+| Max pattern (non-emergency) | 450 ms |
+| Soft Signal | ≤ 280 ms |
+| Emergency | ≤ 350 ms |
+| Continuous tone | ≤ 400 ms |
+| Min gap unrelated events | 120 ms |
+| Soft Signal priority | Preempts everything |
+| No loops | Watchdog |
+| No escalation ramps | Intensity may not rise across repeats to pressure the user |
 
-### 4.3 Example envelope values (starting calibration)
+### 4.3 Soft Edge base palette (v1.1 calibration seeds)
 
-Nominal for **default intensity L2–L4**. Final values require physical bring-up.
+Nominal **Default profile L2–L4**. Physical bring-up required.
 
-| Pattern ID | Composition (sketch) |
-| --- | --- |
-| `breathIn` | VCA Continuous 60–80 Hz, attack 80, sustain 40, release 120, int 0.25 |
-| `softKnock` | LRA Transient int 0.45 sharp 0.35 dur 18 + VCA soft under 25 ms int 0.2 |
-| `doubleBell` | two `softKnock` with 70 ms silence |
-| `curtainClose` | Parallel: LRA Transient int 0.85 sharp 0.55 dur 22; VCA Continuous ~70 Hz attack 15 sustain 60 release 90 int 0.7 — then 40 ms silence — second softer LRA tick int 0.5 |
-| `anchorDown` | VCA Continuous 50–65 Hz attack 30 sustain 50 release 150 int 0.4 |
+| Pattern ID | Composition | Emotional note |
+| --- | --- | --- |
+| `breathIn` | VCA 55–75 Hz, attack 90, sustain 30, release 140, int 0.22, soft | Arrive without demand |
+| `breathOut` | VCA 50–65 Hz, attack 40, sustain 20, release 160, int 0.20 | Soft completion / seal exhale |
+| `softKnock` | LRA int 0.42 sharp 0.32 dur 16 + VCA under int 0.18 dur 28 | Polite local yes |
+| `doubleBell` | softKnock · silence 75 · softKnock @ 0.9× int | Pause and look |
+| `warmSeal` | softKnock · silence 50 · breathOut @ 0.85× | Mutual map sealed — calm, not fanfare |
+| `curtainClose` | See §6.2 | Soft Signal free / complete |
+| `curtainSoft` | curtainClose @ 0.75× int, second tick softer | Peer “session ended” / revoke |
+| `anchorDown` | VCA 48–62 Hz attack 35 sustain 45 release 160 int 0.35 | Grounded end |
+| `thorn` | LRA int 0.28 sharp 0.30 dur 12 | Fail closed; look at UI |
+| `emergencyFirm` | Parallel LRA sharp 0.60 int 0.9 dur 20 + VCA 60–80 Hz body int 0.85 attack 12 sustain 70 release 100 · silence 30 · LRA int 0.55 | Decisive, not cruel |
+
+### 4.4 Frequency “warm band”
+
+Prefer VCA energy concentrated in **≈ 50–90 Hz** for body (felt as mass/pressure). Avoid prolonged energy above **≈ 180 Hz** on VCA (reads as cheap buzz). LRA may sit at part resonance for ticks but **always** under-layered with VCA for Soft Edge default profile.
 
 ---
 
-## 5. Semantic vocabulary (device)
-
-Preserve phone event names; add device-only connection and consent-exchange events carefully.
+## 5. Semantic vocabulary
 
 ### 5.1 Core (shared with phone)
 
-| Event | Meaning | Feel | Actuators |
+| Event | Meaning in words the user could say | Feel | Pattern |
 | --- | --- | --- | --- |
-| `presence` | Arrive; you are here | Breath / whisper | VCA |
-| `attention` | Pause; look carefully | Double bell | LRA (+ light VCA) |
-| `confirmation` | **Your** local action registered | Soft knock | LRA primary |
-| `softSignal` | Stop/exit registered — you are free | Curtain close | BOTH |
-| `emergencyStop` | Emergency stop registered | Anchor + firm edge | BOTH (L5) |
+| `presence` | “I’m here; I can go slowly.” | Breath | `breathIn` |
+| `attention` | “This moment wants care.” | Double bell | `doubleBell` |
+| `confirmation` | “My action registered.” | Soft knock | `softKnock` |
+| `softSignal` | “I stopped. I’m free.” | Curtain | `curtainClose` |
+| `emergencyStop` | “Emergency stop registered.” | Firm anchor+edge | `emergencyFirm` |
 
-### 5.2 Consent exchange (device)
+### 5.2 Consent exchange (local honesty)
 
-These acknowledge **local** protocol steps only. They must never imply the peer agreed.
-
-| Event | When | Feel | Must not mean |
+| Event | When | Pattern | Emotional contract |
 | --- | --- | --- | --- |
-| `consentInvite` | Local user opens Consent Snapshot review | `attention` family, slightly warmer | Peer is ready |
-| `consentLocalAffirm` | Local user affirms their side | `confirmation` + tiny breath | Mutual consent complete |
-| `consentMutualSealed` | **Both** sides affirmed and snapshot sealed in protocol | Distinct calm seal: softKnock + short breathOut | “You are safe with this person” |
-| `consentRevokedLocal` | Local withdraws before/during | Soft descending curtain (shorter Soft Signal family) | Blame or error |
+| `consentInvite` | Opens Consent Snapshot | `doubleBell` slightly warmer (VCA +5%) | Invite care, not pressure |
+| `consentLocalAffirm` | Local affirm only | `softKnock` + tiny `breathOut` | **Only you** said yes so far |
+| `consentMutualSealed` | Engine: mutual seal true | `warmSeal` | Shared map exists — **not** “they are safe” |
+| `consentRevokedLocal` | Local withdraw | `curtainSoft` | Dignity; no error blare |
 
-**Rule:** `consentMutualSealed` may play only after the consent engine reports mutual seal. If network is ambiguous, play nothing or `attention` to re-check UI — never fake mutual.
+**Fail closed:** ambiguous network → silence or `thorn` + UI. Never `warmSeal` without seal.
 
-### 5.3 Connection notifications
+### 5.3 Connection (opt-in radio)
 
-Proximity / NFC / Multipeer — opt-in radio only.
-
-| Event | When | Feel | Constraints |
+| Event | When | Pattern | Emotional contract |
 | --- | --- | --- | --- |
-| `nearbyAware` | First anonymous nearby match (opt-in radar) | Single soft breath (L1–L2) | Max 1 per 30 s; never while Soft Signal active |
-| `carefulTapPrompt` | NFC/QR invite received needing explicit accept | `attention` | No auto-accept |
-| `linkEstablishedLocal` | Local radio channel up (not identity reveal) | Soft knock | Not “friend found” romance cue |
-| `identityRevealedMutual` | Both chose reveal | Soft double breath | Not consent to touch |
-| `linkEnded` | Channel closed cleanly | Anchor soft | — |
-| `linkFailed` | Fail closed | Single muted tick, no alarm | Visible error required |
+| `nearbyAware` | First anonymous nearby (opt-in) | `breathIn` L1–L2 | Bare notice; 1 / 30 s max |
+| `carefulTapPrompt` | NFC/QR needs explicit accept | `doubleBell` | Choice required |
+| `linkEstablishedLocal` | Local channel up | `softKnock` | Plumbing, not romance |
+| `identityRevealedMutual` | Both chose reveal | two `breathIn` soft | Still **not** touch consent |
+| `linkEnded` | Clean close | `anchorDown` soft | Settled |
+| `linkFailed` | Fail closed | `thorn` | No alarm |
 
-### 5.4 Explicitly unused
+### 5.4 Device-only helper events (optional)
 
-- Heartbeat / continuous presence buzz while nearby  
-- “They are typing” style social haptics  
-- Intensity escalating to force response  
-- Haptic Morse or secret codes  
+| Event | Use |
+| --- | --- |
+| `softSignalRemoteEnded` | Peer session ended — `curtainSoft` L3 max; never blame |
+| `settingsSelfTest` | User-initiated Soft Signal feel test in settings only |
+| `hapticsEnabledAck` | When turning haptics **on** only — single softKnock |
+
+### 5.5 Vocabulary that must never exist
+
+- `partnerThinking`, `partnerNearbyPulse`, `matchCelebration`, `streak`, `nudgeAgain`, `heartbeat`, `purr`, `flirt`.
 
 ---
 
-## 6. Soft Signal — primary safety haptic
+## 6. Soft Signal — emotionally safe stop
 
 ### 6.1 Product requirements
 
 | Requirement | Spec |
 | --- | --- |
-| Instant | Motion start ≤ 30 ms after firmware accepts Soft Signal input |
-| Unmistakable | User study: ≥ 95% identify as “stop/exit” vs confirm/attention after training |
-| Emotionally safe | Not a panic alarm; firm and complete — “curtain closed,” not “danger siren” |
-| Non-blocking | Session stop commits **before or concurrent with** haptic start; never `await haptic` before state transition |
-| Idempotent | Extra presses within 800 ms do not stack vibration; may reinforce once if first failed to start |
-| Discoverable by touch | Physical Soft Signal control placement + LRA near control for finger-local edge |
-| Works haptics-off | Full visual + optional audio; stop still works |
+| Instant | ≤ 30 ms first motion after accept |
+| Unmistakable | ≥ 95% label as stop/exit after brief training |
+| Emotionally safe | “Curtain closed / I’m free” — **not** danger, shame, or anger |
+| Kind under stress | Works for activated, overloaded, or non-verbal users; no long-press prison |
+| Non-blocking | State commit **before** or concurrent with haptic; never await haptic for stop |
+| Idempotent | Extra presses ≤ 800 ms do not stack chaos |
+| Hands find it | Physical control + LRA near control |
+| Haptics off | Stop still 100% works |
 
-### 6.2 Waveform: `softSignal` (`curtainClose`)
+### 6.2 Waveform `curtainClose` (v1.1)
 
 ```text
-t=0 ms     Preempt any playing pattern; open VCA + LRA drive
-t=0–25     LRA sharp firm tick (int ~0.85, sharp ~0.55)  // “edge”
-t=0–160    VCA warm body (≈65–80 Hz, attack 15, release 90, int ~0.70)
-t=160–200  Silence (perceptual gap)
-t=200–230  LRA softer second tick (int ~0.50)           // “closed”
-t=230–280  VCA residual release only if needed; then hard stop
+Intent:  Beat 1 = “I asked to stop.”  Beat 2 = “It stopped.”  Then silence = freedom.
+
+t=0        Preempt all patterns; open BOTH actuators
+t=0–22     LRA firm edge  int 0.82  sharp 0.50  dur 20   // rounded, not needle
+t=0–165    VCA warm body  ~68 Hz  attack 18  sustain 55  release 95  int 0.68  soft
+t=165–205  Silence                                        // perceptual breath
+t=205–232  LRA close tick int 0.48  sharp 0.35  dur 16  // softer “closed”
+t=205–280  Optional VCA residual release only; hard mute by 280
 ```
 
-**Emotional intent:** two beats = *I asked to stop* / *it stopped*. Not three-alarm, not buzzsaw.
+**Design notes:**
 
-### 6.3 Optional peer device behavior
+- Second beat **softer** than first → completion, not escalation.
+- No third beat (three feels like alarm).
+- No continuous hold after.
+- If user study says “alarm,” **lower sharpness and raise VCA warmth** — do not “fix” by getting louder.
 
-If the peer is also on Litmo hardware and the session is active:
+### 6.3 Peer device
 
-- Peer may receive a **different** pattern `softSignalRemoteEnded` (single soft curtain, L3) **only** as “session ended” UI, never as “you did something wrong.”
-- Peer pattern must not be stronger than local Soft Signal.
-- If connectivity is lost, peer relies on timeout UI; do not invent fake Soft Signal haptics.
+- `softSignalRemoteEnded` = `curtainSoft` only: “the session ended,” not “you failed.”
+- Never stronger than local Soft Signal.
+- No peer haptic if link state is ambiguous.
 
 ### 6.4 Practice vs real
 
-| Mode | Haptic |
-| --- | --- |
-| Learning / fictional Soft Signal practice | Full `softSignal` at L3–L4 |
-| Active session Soft Signal | Full `softSignal` at L4 (or user Soft Signal floor) |
-| Demo with haptics disabled | Silent; visible Soft Signal state only |
+Same pattern family; practice may use L3–L4. Real Soft Signal uses L4 (or user floor). Disabled → pure visual Soft Signal.
+
+### 6.5 Soft Signal emotional copy (for UI pairing)
+
+Haptics reinforce, never replace, language like:
+
+- “Soft Signal sent. You can stop. You don’t need a reason.”
+- Never: “Warning,” “Abort,” “Error,” “Violation.”
 
 ---
 
-## 7. Consent exchange patterns (timeline)
-
-Ideal mutual path (local device only shown):
+## 7. Consent exchange — full emotional timeline
 
 ```text
-User opens snapshot     → consentInvite      (attention / doubleBell)
-User scrolls / reviews  → (no haptic)
-User affirms locally    → consentLocalAffirm (confirmation)
-Waiting for peer        → (no haptic; optional subtle UI only)
-Mutual seal             → consentMutualSealed
-Session becomes active  → optional presence (once)
-Either Soft Signal      → softSignal (preempt)
+Open snapshot     → consentInvite        (careful attention)
+Review            → silence              (thinking is quiet)
+Local affirm      → consentLocalAffirm   (only my yes)
+Waiting           → silence              (no anxious pulse)
+Mutual seal       → consentMutualSealed  (warmSeal — only if sealed)
+Active session    → optional presence once
+Soft Signal       → softSignal           (preempt, free)
+Local revoke      → consentRevokedLocal
 ```
 
-**Fail closed:** if seal fails, play nothing or a single muted `linkFailed` tick + clear visual — never `confirmation`.
+### 7.1 Confusion matrix (study must pass)
 
-### 7.1 Confusion matrix (must pass in user testing)
-
-| Pair | Must remain distinct |
+| Pair | Soft Edge distinction |
 | --- | --- |
-| `confirmation` vs `softSignal` | Soft Signal longer dual-actuator curtain |
-| `attention` vs `softSignal` | Attention lighter, no “closed” second beat |
-| `consentMutualSealed` vs `softSignal` | Seal is warm/soft; Soft Signal is firm/closed |
-| `nearbyAware` vs `softSignal` | Nearby is whisper breath only |
+| confirm vs Soft Signal | Length, dual-actuator curtain, second beat |
+| attention vs Soft Signal | Lighter, no close beat |
+| warmSeal vs Soft Signal | Seal soft/warm; Soft Signal firm/complete |
+| nearby vs Soft Signal | Whisper only |
+| thorn vs Soft Signal | Thorn tiny; Soft Signal whole-hand |
+
+### 7.2 Emotional failure modes
+
+| Failure | Wrong feel | Correct |
+| --- | --- | --- |
+| Seal when only one affirmed | Celebration | Silence / wait UI |
+| Soft Signal as error buzz | Shame | Curtain freedom |
+| Waiting pulse while peer decides | Anxiety / coercion | Silence |
 
 ---
 
-## 8. Accessibility, ND, trauma-informed rules
+## 8. Connection notifications — careful social field
 
-Aligned with phone ADR 0039 and Neurodivergent Mode:
+Connection haptics answer: **“something needs your optional attention,”** never **“someone wants something from you right now.”**
 
-1. **Master toggle** — off silences all haptics including Soft Signal acknowledgement; **stop still works**.
-2. **Intensity scale** — Off / Quiet / Default / Strong (maps to L0–L4 UI; Soft Signal floor configurable).
-3. **Soft Signal floor** — default “always at least Clear when haptics on”; user may set Soft Signal to match Quiet if needed.
-4. **ND quiet profile** — shortens sustain, lowers VCA, prefers LRA ticks; Soft Signal remains dual-actuator but reduced int.
-5. **Reduced motion** — does **not** auto-disable haptics; explicit toggle wins.
-6. **No surprise on wake** — no haptic on boot or unlock without user action (except optional one-time Soft Signal hardware self-test in settings).
-7. **Visible + spoken parity** — every event has UI copy / VoiceOver equivalent.
-8. **Sensory safety** — ban patterns > 450 ms; ban repeating; ban rising alarm for Soft Signal.
-9. **Hold-to-confirm vs Soft Signal** — Soft Signal must never require long press that blocks release under panic; prefer dedicated control with short press.
+Rules:
+
+1. Radio off → zero connection haptics.  
+2. Rate-limit `nearbyAware` (30 s).  
+3. Never haptic-stack with Soft Signal.  
+4. Identity reveal ≠ consent (breath only).  
+5. Failures are `thorn` + honest UI, not alarms.
 
 ---
 
-## 9. Software architecture (firmware + client)
+## 9. Profiles — one personality, several nervous systems
 
-### 9.1 Layers
+| Profile ID | Who | Adjustments |
+| --- | --- | --- |
+| `soft_edge_default` | Most users | Full palette as written |
+| `quiet_hearth` | ND / sensory sensitive | −25% VCA, shorter sustain, LRA preferred for UI, Soft Signal still dual but −20% int |
+| `clear_edge` | Low tactile sensitivity | +15% int, Soft Signal sharpness up to 0.55 max |
+| `crisp_only` | Optional accessibility | LRA-weighted; still ban sharp > 0.55 on Soft Signal |
+| `off` | Explicit | Silence; full visual/audio parity |
+
+**Neurodivergent Mode** on device should **offer** `quiet_hearth` default (not force forever). User can re-enable fuller Soft Edge.
+
+---
+
+## 10. Accessibility, trauma-informed, sensory safety
+
+1. Master toggle off → silence including Soft Signal ack; **stop works**.  
+2. Intensity Off / Quiet / Default / Strong.  
+3. Soft Signal floor configurable.  
+4. Reduced motion ≠ auto-off haptics; toggle wins.  
+5. No haptic on boot/unlock without intentional action.  
+6. VoiceOver / large type / visible Soft Signal always sufficient alone.  
+7. Soft Signal: short press preferred; never long-press trap.  
+8. Ban > 450 ms patterns, repeats, escalating alarms.  
+9. User study flags: alarming, ticklish, sexualized, angry, punishing → redesign.  
+10. Preferences **local only** — partner cannot remotely enable haptics.
+
+---
+
+## 11. Software architecture
+
+### 11.1 Layers
 
 ```text
-App / session state machine
-    → HapticSemantic.play(event, { source, intensity? })
-        → Priority queue (Soft Signal / emergency preempt)
-            → Pattern library (JSON / const tables)
-                → DualActuatorMixer
-                    → Drivers (VCA stream, LRA envelope)
+Session / consent / proximity state machines
+  → HapticSemantic.play(event, opts)
+      → EmotionalGuard (bans illegal transitions; e.g. warmSeal without seal)
+          → Priority queue (safety preempt)
+              → ProfileMixer (quiet_hearth / default / …)
+                  → Pattern library soft_edge_v1
+                      → DualActuatorMixer
+                          → VCA stream + LRA envelopes
 ```
 
-### 9.2 TypeScript-shaped interface (shared domain)
+### 11.2 Interface (shared domain)
 
 ```ts
-/** Stable across phone + device. Device may implement a superset. */
 export type HapticEvent =
   | "presence"
   | "attention"
   | "confirmation"
   | "softSignal"
   | "emergencyStop"
-  // device / rich clients
   | "consentInvite"
   | "consentLocalAffirm"
   | "consentMutualSealed"
@@ -348,15 +490,24 @@ export type HapticEvent =
   | "linkEstablishedLocal"
   | "identityRevealedMutual"
   | "linkEnded"
-  | "linkFailed";
+  | "linkFailed"
+  | "softSignalRemoteEnded"
+  | "settingsSelfTest"
+  | "hapticsEnabledAck";
+
+export type HapticProfileId =
+  | "soft_edge_default"
+  | "quiet_hearth"
+  | "clear_edge"
+  | "crisp_only"
+  | "off";
 
 export type HapticPriority = "low" | "normal" | "safety";
 
 export interface HapticPlayOptions {
-  /** Never block safety transitions on playback. */
-  awaitPlayback?: boolean; // default false for safety events
-  intensityOverride?: number; // 0..1, clamped by profile
-  source: string; // non-sensitive debug tag only
+  awaitPlayback?: boolean; // false for safety events
+  intensityOverride?: number;
+  source: string; // non-sensitive
 }
 
 export interface HapticService {
@@ -364,140 +515,147 @@ export interface HapticService {
   cancelAll(): void;
   isEnabled(): boolean;
   setEnabled(enabled: boolean): void;
-  getProfile(): HapticProfile;
-  setProfile(profile: HapticProfile): void;
+  getProfile(): HapticProfileId;
+  setProfile(profile: HapticProfileId): void;
 }
 ```
 
-### 9.3 Priority rules
+### 11.3 EmotionalGuard (required)
+
+Firmware/app layer must refuse:
+
+- `consentMutualSealed` unless consent engine state is mutually sealed  
+- `identityRevealedMutual` unless both revealed  
+- `softSignalRemoteEnded` unless session ended by peer Soft Signal / end protocol  
+- any play while profile is `off`  
+- stacking safety patterns
+
+### 11.4 Priority
 
 | Priority | Events | Behavior |
 | --- | --- | --- |
-| safety | `softSignal`, `emergencyStop`, `consentRevokedLocal` | Cancel current; play immediately |
-| normal | confirmations, consent, link | Queue up to 1; drop if safety arrives |
-| low | `nearbyAware`, presence | Drop if anything else playing or cooldown |
+| safety | softSignal, emergencyStop, consentRevokedLocal | Preempt immediately |
+| normal | confirmations, consent, links | Queue ≤ 1 |
+| low | nearbyAware, presence | Drop if busy |
 
-### 9.4 Safety ordering (mandatory)
+### 11.5 Soft Signal ordering
 
 ```text
 1. Accept Soft Signal input
-2. Commit session → ended_soft_signal (or equivalent)
-3. Update UI / peers / radio teardown per product rules
-4. HapticSemantic.play("softSignal")  // fire-and-forget
+2. Commit session ended_soft_signal
+3. UI / peer / radio teardown
+4. play("softSignal") fire-and-forget
 ```
 
-Playback failure is logged only in dev builds without PII.
+### 11.6 Pattern pack
 
-### 9.5 Pattern library file (device firmware)
-
-Suggested `patterns/soft_edge_v1.json`:
-
-```json
-{
-  "version": 1,
-  "personality": "soft_edge",
-  "events": {
-    "softSignal": { "ref": "curtainClose", "priority": "safety" },
-    "confirmation": { "ref": "softKnock", "priority": "normal" }
-  }
-}
-```
-
-Cal tables live outside app binary for factory tuning without resubmitting app logic when possible.
+`patterns/soft_edge_v1.json` — personality, event→pattern map, per-profile multipliers. Factory cal outside app binary when possible.
 
 ---
 
-## 10. Validation and test plan
+## 12. Authoring guide (for future designers)
 
-### 10.1 Bench (engineering)
+1. Start from **silence**. Justify every event in one sentence of user language.  
+2. Prefer VCA warmth before adding LRA edge.  
+3. Soft Signal must remain the most distinctive word.  
+4. Never design a “fun” version of Soft Signal.  
+5. If a pattern could mean two things, split or delete.  
+6. Read the waveform with the question: *Would I want this on my worst day?*  
+7. Prototype with hand on soft material; reject shell chatter.  
+8. Log only non-sensitive debug IDs in dev builds.
 
-| Test | Pass criteria |
+---
+
+## 13. Validation
+
+### 13.1 Bench
+
+| Test | Pass |
 | --- | --- |
-| Soft Signal latency | p95 ≤ 30 ms first motion |
-| Preempt | Soft Signal cancels confirmation mid-play within 10 ms command |
-| Thermal | 50 Soft Signals / 5 min no fault; intensity within ±15% |
-| Power | Average Soft Signal energy within budget |
-| Mount ring | Spectrogram decay OK; no > 100 ms audible buzz |
+| Soft Signal latency | p95 ≤ 30 ms |
+| Preempt | ≤ 10 ms cancel of lower patterns |
+| Thermal / power | Within §3.4 budgets |
+| Ring decay | ≤ 40 ms after Soft Signal |
+| Sharpness audit | No shipping pattern sharpness > 0.55 except emergency ≤ 0.70 |
 
-### 10.2 Perceptual (human)
+### 13.2 Perceptual & emotional (human)
 
-Minimum 8 adults including sensory-sensitive / ND self-ID if available (ethics: informed, stop anytime):
+≥ 8 adults; include sensory-sensitive / trauma-informed opt-in participants; stop anytime; no deception about recording.
 
-1. Forced-choice labeling of 5 core events after one training pass  
-2. Comfort Likert; flag “alarming,” “ticklish,” “sexualized,” “angry”  
-3. Soft Signal eyes-closed recognizability  
-4. Quiet profile acceptability  
-5. Confusion Soft Signal vs mutual seal  
+1. Forced-choice labels for core 5 events  
+2. Soft Signal open labels (want “stopped / free / done,” not “danger / error”)  
+3. Comfort + flags: alarming, ticklish, sexualized, angry, punishing, cold  
+4. quiet_hearth acceptability  
+5. warmSeal vs Soft Signal confusion  
+6. “Would you disable this after a week?” (target: low disable for Soft Signal path)
 
-**Fail** if Soft Signal is reported as “alarm/danger” by majority — redesign toward firmer-but-warmer curtain, not louder buzz.
+**Hard fail:** majority call Soft Signal “alarm/danger” → redesign warmer, not louder.
 
-### 10.3 Safety regression
+### 13.3 Safety regression
 
-- Soft Signal with haptics off  
-- Soft Signal with actuator fault injection  
-- Rapid multi-press  
-- Soft Signal during nearbyAware cooldown  
-- Mutual seal blocked + no false seal haptic  
+Haptics off · actuator fault · multi-press · nearby during Soft Signal · false seal blocked · EmotionalGuard unit tests.
 
-### 10.4 Phone parity
+### 13.4 Phone parity
 
-Phone Expo mapping remains the degraded subset; do not require VCA on iPhone. Device patterns should remain *recognizable* when simplified to phone impacts.
+Phone remains Expo subset; meaning stable; feel simplified.
 
 ---
 
-## 11. Implementation phases
+## 14. Implementation phases
 
 | Phase | Deliverable | Gate |
 | --- | --- | --- |
-| **H0** | This design + ADR 0057 | Docs accepted |
-| **H1** | Phone semantic service already in progress (HAPTIC-001) | Five events live |
-| **H2** | Desktop simulator: waveform graphs + audio proxy of VCA/LRA | Design review |
-| **H3** | Dev board: dual actuator + Soft Signal button latency | Bench pass |
-| **H4** | Soft Edge v1 pattern pack + user study | Perceptual pass |
-| **H5** | Integrate with device session FSM / NFC / proximity | Fail-closed review |
-| **H6** | Factory cal + profile storage | Production readiness (future) |
+| **H0** | This design + ADR 0057 | Docs |
+| **H1** | Phone HAPTIC-001 | Five events live |
+| **H2** | Soft Edge simulator (waveforms + audio proxy) | Design review |
+| **H3** | Dual-actuator bench + Soft Signal button | Latency pass |
+| **H4** | soft_edge_v1 + emotional user study | Perceptual pass |
+| **H5** | Session / NFC / proximity EmotionalGuard | Fail-closed review |
+| **H6** | Factory cal + profiles | Future production |
 
-Hardware manufacturing is **out of current private-alpha critical path**. Phone demo remains the real shipping surface.
+Not on private-alpha critical path. Phone remains real surface.
 
 ---
 
-## 12. Abuse, limits, unresolved risks
+## 15. Abuse, limits, risks
 
 | Risk | Mitigation |
 | --- | --- |
-| Soft Signal feels like alarm → panic | Curtain metaphor; study gate; no escalating siren |
-| Mutual seal haptic over-trusted as “safe person” | Copy + intensity; never “success fanfare” |
-| NearbyAware used for stalking pressure | Rate limit; opt-in radio; easy off |
-| Partner forces “haptics on” | Local-only preference; not remotely settable |
-| Sexualized interpretation of warm bloom | Avoid low-frequency long rumbles; keep short; user study language check |
-| Actuator failure | Fail silent; stop still works |
+| Soft Signal as alarm | Curtain design; study gate; no third beat |
+| warmSeal over-trusted | Copy + modest intensity; no fanfare |
+| Nearby pressure | Rate limit; opt-in; silence default |
+| Remote haptic control | Impossible by design |
+| Sexualized warm bloom | Short low-mid band; study language; ban purr |
+| Actuator death | Silent fail; stop works |
+| Cold tech regression | Sharpness caps; VCA body requirement in default profile |
 
 ---
 
-## 13. Documentation ownership
+## 16. Documentation ownership
 
 | Doc | Role |
 | --- | --- |
-| **This file** | Device haptic system authority |
-| `adr/0057-…` | Actuator architecture decision |
-| `adr/0039-…` + phone plan | Mobile semantic haptics |
-| `CONSENT_FLOW.md` | When consent events may fire |
-| `PROXIMITY_LAYER.md` / `NFC_FEATURES.md` | Connection event gates |
-| Website `/litmo#hardware` | Product vision language only |
+| **This file** | Device Soft Edge authority |
+| ADR 0057 | Dual VCA+LRA decision |
+| ADR 0039 + phone plan | Mobile semantics |
+| CONSENT_FLOW / PROXIMITY / NFC | When events may fire |
+| Website `/litmo#hardware` | Vision language only |
 
 ---
 
-## 14. Quick reference card
+## 17. Quick reference
 
 ```text
-Soft Signal:     BOTH · curtainClose · ≤280 ms · preempt · after state commit
-Local confirm:   LRA softKnock
-Attention:       doubleBell
-Mutual seal:     softKnock + breath — only if engine says mutual
-Nearby:          whisper breath · rate limited · never consent
-Emergency:       L5 firm · still not a siren · after state commit
-Off:             silence; safety UI remains complete
+Personality:   Soft Edge — warm, sparse, free, never cold-tech
+Soft Signal:   curtainClose · BOTH · ≤280 ms · ≤30 ms start · after commit
+Confirm:       softKnock (polite wood)
+Attention:     doubleBell
+Mutual seal:   warmSeal · only if sealed · not safety
+Nearby:        breath whisper · rate limited
+Fail:          thorn · look at UI
+Emergency:     emergencyFirm · decisive · not cruel
+Off:           silence; meaning lives in UI
 ```
 
-**Tagline for the tactile system:**  
-*Warm enough to invite presence. Clear enough to end it.*
+**Tagline:**  
+*Warm enough to invite presence. Clear enough to end it. Quiet enough to leave room for humans.*
