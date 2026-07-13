@@ -267,11 +267,11 @@ export default function HomeTabScreen() {
         variant="secondary"
         label={
           status === "demo"
-            ? "Guided Learning (lived lessons · demo)"
-            : "Guided Learning"
+            ? "Guided Learning (paths · lived · foundations · demo)"
+            : "Guided Learning (paths · lived · foundations)"
         }
         onPress={() => router.push("/(tabs)/learn" as never)}
-        accessibilityHint="Opens private short modules on consent language, boundaries, recovery, and more. Never a safety score."
+        accessibilityHint="Opens the full private curriculum: learning paths, six lived lessons, six foundations, interactive scenarios, optional Soft Signal and Consent Snapshot practice. Never a safety score."
       />
       <Button
         variant="secondary"

@@ -1,12 +1,18 @@
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
-import { findLearningModule } from "../../data/learningModules";
+import {
+  findLearningModule,
+  learningPaths,
+  nextModuleInPath,
+  recommendedNextModule,
+} from "../../data/learningModules";
 import { getQuizEntry } from "../../data/quizCatalog";
 import { useNeurodivergent } from "../../context/NeurodivergentContext";
 import { clearLanguage } from "../../lib/clearLanguage";
 import { hapticService } from "../../services/hapticService";
 import { learningProgressService } from "../../services/learningProgress";
+import type { LearningProgress } from "../../services/learningProgressCore";
 import { speechService } from "../../services/speechService";
 import { fonts, radius, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
@@ -31,6 +37,7 @@ export default function LearningModuleScreen() {
   const [jumpOpen, setJumpOpen] = useState(false);
   const [voiceDraft, setVoiceDraft] = useState("");
   const [showBodyMore, setShowBodyMore] = useState(false);
+  const [allProgress, setAllProgress] = useState<LearningProgress>({});
   const presencePlayedRef = useRef(false);
   const attentionStepRef = useRef<number | null>(null);
 
@@ -41,6 +48,7 @@ export default function LearningModuleScreen() {
     attentionStepRef.current = null;
     void learningProgressService.load().then((progress) => {
       if (!active) return;
+      setAllProgress(progress);
       const saved = progress[module.id];
       setStepIndex(saved?.completed ? 0 : (saved?.stepIndex ?? 0));
       setLoaded(true);
@@ -99,9 +107,13 @@ export default function LearningModuleScreen() {
     }
     const isLast = stepIndex === current.steps.length - 1;
     if (isLast) {
-      await learningProgressService.complete(current.id, current.steps.length);
+      const nextProgress = await learningProgressService.complete(
+        current.id,
+        current.steps.length,
+      );
+      setAllProgress(nextProgress);
       void hapticService.play("confirmation");
-      // Stay on screen so optional related quiz is one calm tap away.
+      // Stay on screen so optional practice / quiz is one calm tap away.
       setStepIndex(current.steps.length);
       return;
     }
@@ -140,6 +152,26 @@ export default function LearningModuleScreen() {
     const relatedQuiz = current.relatedQuizId
       ? getQuizEntry(current.relatedQuizId)
       : null;
+    const practices = current.relatedPractice ?? [];
+    // Prefer continuing the first path that includes this module.
+    const homePath = learningPaths.find((p) =>
+      p.moduleIds.includes(current.id),
+    );
+    const nextInPath = homePath
+      ? nextModuleInPath(homePath.id, current.id, {
+          ...allProgress,
+          [current.id]: { completed: true },
+        })
+      : undefined;
+    const nextAny =
+      nextInPath ??
+      recommendedNextModule({
+        ...allProgress,
+        [current.id]: { completed: true },
+      });
+    const nextModule =
+      nextAny && nextAny.id !== current.id ? nextAny : undefined;
+
     return (
       <>
         <Stack.Screen
@@ -162,6 +194,29 @@ export default function LearningModuleScreen() {
               real, current mutual consent.
             </Text>
           </View>
+
+          {practices.length > 0 ? (
+            <View style={styles.practiceBlock}>
+              <Text style={styles.relatedTitle}>Optional product practice</Text>
+              <Text style={styles.relatedBody}>
+                Turn the lesson into muscle memory in Litmo — never required,
+                never scored.
+              </Text>
+              {practices.map((link) => (
+                <Pressable
+                  key={link.id}
+                  accessibilityRole="button"
+                  accessibilityHint={link.hint}
+                  onPress={() => router.push(link.href as never)}
+                  style={styles.practiceBtn}
+                >
+                  <Text style={styles.practiceBtnTitle}>{link.label}</Text>
+                  <Text style={styles.practiceBtnHint}>{link.hint}</Text>
+                </Pressable>
+              ))}
+            </View>
+          ) : null}
+
           {relatedQuiz ? (
             <View style={styles.relatedCard}>
               <Text style={styles.relatedTitle}>Optional private quiz</Text>
@@ -190,6 +245,32 @@ export default function LearningModuleScreen() {
               </Pressable>
             </View>
           ) : null}
+
+          {nextModule ? (
+            <View style={styles.nextCard}>
+              <Text style={styles.relatedTitle}>Continue learning</Text>
+              <Text style={styles.relatedBody}>
+                Next: {nextModule.title} · ~{nextModule.minutes} min. Optional —
+                rest is also curriculum.
+              </Text>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Start ${nextModule.title}`}
+                onPress={() =>
+                  router.replace({
+                    pathname: "/learning/[id]",
+                    params: { id: nextModule.id },
+                  } as never)
+                }
+                style={styles.primaryButton}
+              >
+                <Text style={styles.primaryButtonText}>
+                  Open {nextModule.title}
+                </Text>
+              </Pressable>
+            </View>
+          ) : null}
+
           <View style={styles.actions}>
             <Pressable
               onPress={() => void goBackStep()}
@@ -410,6 +491,16 @@ export default function LearningModuleScreen() {
             <Text style={styles.takeawayText}>{step.takeaway}</Text>
           </View>
         )}
+
+        {step.reflection ? (
+          <View style={styles.reflection} accessible>
+            <Text style={styles.reflectionLabel}>PRIVATE REFLECTION</Text>
+            <Text style={styles.reflectionText}>{step.reflection}</Text>
+            <Text style={styles.reflectionNote}>
+              Stays on screen only — Litmo never stores this answer.
+            </Text>
+          </View>
+        ) : null}
 
         {step.scenario ? (
           <View style={styles.scenario}>
@@ -727,11 +818,71 @@ function makeStyles(colors: AppColors) {
       fontWeight: "600",
       textAlign: "center",
     },
+    reflection: {
+      backgroundColor: colors.paper,
+      borderRadius: radius.md,
+      borderWidth: 1,
+      borderColor: colors.line,
+      padding: 16,
+      gap: 8,
+    },
+    reflectionLabel: {
+      color: colors.muted,
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1.1,
+    },
+    reflectionText: {
+      color: colors.ink,
+      fontSize: 16,
+      lineHeight: 24,
+      fontStyle: "italic" as const,
+    },
+    reflectionNote: {
+      color: colors.muted,
+      fontSize: 12,
+      lineHeight: 17,
+    },
     relatedCard: {
       backgroundColor: colors.paper,
       borderRadius: radius.md,
       borderWidth: 1,
       borderColor: colors.plum,
+      padding: 18,
+      gap: 10,
+    },
+    practiceBlock: {
+      backgroundColor: colors.paper,
+      borderRadius: radius.md,
+      borderWidth: 1,
+      borderColor: colors.moss,
+      padding: 18,
+      gap: 12,
+    },
+    practiceBtn: {
+      borderWidth: 1,
+      borderColor: colors.line,
+      borderRadius: radius.md,
+      padding: 14,
+      gap: 4,
+      minHeight: 56,
+      backgroundColor: colors.mossSoft,
+    },
+    practiceBtnTitle: {
+      color: colors.moss,
+      fontSize: 16,
+      fontWeight: "700",
+    },
+    practiceBtnHint: {
+      color: colors.moss,
+      fontSize: 13,
+      lineHeight: 18,
+    },
+    nextCard: {
+      backgroundColor: colors.paper,
+      borderRadius: radius.md,
+      borderWidth: 1,
+      borderColor: colors.line,
       padding: 18,
       gap: 10,
     },

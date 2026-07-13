@@ -5,7 +5,11 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import {
   learningModules,
   learningModulesForTrack,
+  learningPaths,
+  pathCompletion,
+  recommendedNextModule,
   type LearningModule,
+  type LearningPath,
 } from "../../data/learningModules";
 import { useNeurodivergent } from "../../context/NeurodivergentContext";
 import { clearLanguage } from "../../lib/clearLanguage";
@@ -24,44 +28,122 @@ function ModuleCard({
   onPress,
   styles,
   colors,
+  featured,
 }: {
   module: LearningModule;
   progress: LearningProgress;
   onPress: () => void;
   styles: ReturnType<typeof makeStyles>;
   colors: AppColors;
+  featured?: boolean;
 }) {
   const state = progress[module.id];
   const status = state?.completed ? "Completed" : state ? "Continue" : "Start";
+  const scenarioCount = module.steps.filter((s) => s.scenario).length;
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={`${status} ${module.title}, about ${module.minutes} minutes. ${module.summary}`}
       onPress={onPress}
-      style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+      style={({ pressed }) => [
+        styles.card,
+        featured && styles.cardFeatured,
+        pressed && styles.pressed,
+      ]}
     >
       <View style={styles.cardTop}>
-        <View style={styles.iconWrap}>
+        <View style={[styles.iconWrap, featured && styles.iconWrapFeatured]}>
           <Ionicons
-            name={state?.completed ? "checkmark" : "book-outline"}
+            name={
+              state?.completed
+                ? "checkmark"
+                : featured
+                  ? "sparkles-outline"
+                  : "book-outline"
+            }
             size={20}
-            color={colors.moss}
+            color={featured ? colors.plum : colors.moss}
           />
         </View>
         <View style={styles.cardCopy}>
+          {featured ? (
+            <Text style={styles.featuredLabel}>RECOMMENDED NEXT</Text>
+          ) : null}
           <Text style={styles.cardTitle}>{module.title}</Text>
           <Text style={styles.cardSummary}>{module.summary}</Text>
         </View>
       </View>
       <View style={styles.metaRow}>
         <Text style={styles.meta}>{module.minutes} min</Text>
+        <Text style={styles.meta}>
+          {module.steps.length} steps
+          {scenarioCount > 0 ? ` · ${scenarioCount} practice` : ""}
+        </Text>
         {module.requiredBeforeFirstSession ? (
           <Text style={styles.required}>Recommended before first session</Text>
         ) : null}
         {module.relatedQuizId ? (
           <Text style={styles.quizLink}>Pairs with a private quiz</Text>
         ) : null}
+        {module.relatedPractice && module.relatedPractice.length > 0 ? (
+          <Text style={styles.practiceLink}>Product practice</Text>
+        ) : null}
         <Text style={styles.action}>{status} →</Text>
+      </View>
+    </Pressable>
+  );
+}
+
+function PathCard({
+  path,
+  progress,
+  onOpenFirst,
+  styles,
+  colors,
+}: {
+  path: LearningPath;
+  progress: LearningProgress;
+  onOpenFirst: () => void;
+  styles: ReturnType<typeof makeStyles>;
+  colors: AppColors;
+}) {
+  const { done, total } = pathCompletion(path, progress);
+  const complete = done === total && total > 0;
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`${path.title}. ${done} of ${total} modules complete. About ${path.minutes} minutes. ${path.summary}`}
+      onPress={onOpenFirst}
+      style={({ pressed }) => [styles.pathCard, pressed && styles.pressed]}
+    >
+      <View style={styles.pathTop}>
+        <View style={styles.pathIcon}>
+          <Ionicons
+            name={complete ? "checkmark-circle" : "map-outline"}
+            size={22}
+            color={colors.moss}
+          />
+        </View>
+        <View style={styles.cardCopy}>
+          <Text style={styles.pathTitle}>{path.title}</Text>
+          <Text style={styles.cardSummary}>{path.summary}</Text>
+        </View>
+      </View>
+      <View style={styles.metaRow}>
+        <Text style={styles.meta}>
+          {done}/{total} modules · ~{path.minutes} min
+        </Text>
+        <Text style={styles.action}>
+          {complete ? "Review →" : done > 0 ? "Continue path →" : "Start path →"}
+        </Text>
+      </View>
+      <View style={styles.pathTrack}>
+        <View
+          style={[
+            styles.pathFill,
+            { width: `${total ? (done / total) * 100 : 0}%` },
+          ]}
+        />
       </View>
     </Pressable>
   );
@@ -89,12 +171,26 @@ export default function LearningHomeScreen() {
   const completed = completionCount(progress);
   const foundations = learningModulesForTrack("foundations");
   const lived = learningModulesForTrack("lived-lessons");
+  const foundationsDone = foundations.filter(
+    (m) => progress[m.id]?.completed,
+  ).length;
+  const livedDone = lived.filter((m) => progress[m.id]?.completed).length;
+  const next = recommendedNextModule(progress);
 
   const openModule = (module: LearningModule) => {
     router.push({
       pathname: "/learning/[id]",
       params: { id: module.id },
     });
+  };
+
+  const openPath = (path: LearningPath) => {
+    const firstIncomplete =
+      path.moduleIds
+        .map((id) => learningModules.find((m) => m.id === id))
+        .find((m) => m && !progress[m.id]?.completed) ??
+      learningModules.find((m) => m.id === path.moduleIds[0]);
+    if (firstIncomplete) openModule(firstIncomplete);
   };
 
   return (
@@ -104,9 +200,10 @@ export default function LearningHomeScreen() {
         Learn the language before you need it.
       </Text>
       <Text style={styles.intro}>
-        A full private section: hard-earned lived lessons plus Litmo
-        foundations. Short interactive steps, trauma-informed, never scored.
-        Completing a module never proves anyone is safe.
+        A full private section: six lived lessons from hard-earned practice, six
+        Litmo foundations, and curated paths. Short interactive steps, scenarios
+        with feedback, optional product practice and quizzes. Completing a
+        module never proves anyone is safe.
       </Text>
 
       {prefs.enabled ? (
@@ -135,11 +232,41 @@ export default function LearningHomeScreen() {
         }}
         accessibilityLabel={`${completed} of ${learningModules.length} modules completed`}
       >
-        <Text style={styles.progressNumber}>
-          {completed}/{learningModules.length}
-        </Text>
-        <Text style={styles.progressLabel}>modules completed privately</Text>
+        <View style={styles.progressMain}>
+          <Text style={styles.progressNumber}>
+            {completed}/{learningModules.length}
+          </Text>
+          <Text style={styles.progressLabel}>modules completed privately</Text>
+        </View>
+        <View style={styles.progressSplit}>
+          <Text style={styles.progressSplitText}>
+            Lived {livedDone}/{lived.length}
+          </Text>
+          <Text style={styles.progressSplitText}>
+            Foundations {foundationsDone}/{foundations.length}
+          </Text>
+        </View>
       </View>
+
+      {next ? (
+        <ModuleCard
+          module={next}
+          progress={progress}
+          styles={styles}
+          colors={colors}
+          featured
+          onPress={() => openModule(next)}
+        />
+      ) : (
+        <View style={styles.allDoneCard} accessible>
+          <Text style={styles.allDoneTitle}>Private curriculum complete</Text>
+          <Text style={styles.cardSummary}>
+            You can revisit any module. Completing everything still never
+            certifies safety — real sessions still need real, current mutual
+            consent.
+          </Text>
+        </View>
+      )}
 
       <Pressable
         accessibilityRole="button"
@@ -188,14 +315,34 @@ export default function LearningHomeScreen() {
 
       <View style={styles.sectionHeader}>
         <Text style={styles.section} accessibilityRole="header">
+          Learning paths
+        </Text>
+        <Text style={styles.sectionHint}>
+          Curated sequences — start or resume at the first incomplete module.
+          Paths never gate sessions and never certify readiness.
+        </Text>
+      </View>
+
+      {learningPaths.map((path) => (
+        <PathCard
+          key={path.id}
+          path={path}
+          progress={progress}
+          styles={styles}
+          colors={colors}
+          onOpenFirst={() => openPath(path)}
+        />
+      ))}
+
+      <View style={styles.sectionHeader}>
+        <Text style={styles.section} accessibilityRole="header">
           Lived lessons
         </Text>
         <Text style={styles.sectionHint}>
           Six hard-learned modules: Consent as Language, Nervous System Safety,
           Boundaries, Recovering from Violation, Partner Communication, and
-          Self-Compassion. Short sections, interactive practice, private
-          progress. Several pair with a Vibe or self quiz — optional, never a
-          grade. Leave anytime.
+          Self-Compassion. Interactive practice, optional product links and
+          quizzes. Leave anytime.
         </Text>
       </View>
 
@@ -215,8 +362,8 @@ export default function LearningHomeScreen() {
           Litmo foundations
         </Text>
         <Text style={styles.sectionHint}>
-          How Consent Snapshots, Soft Signal, Touch Language, and safety tools
-          work in the product.
+          How Consent Snapshots, Soft Signal, Touch Language, full session flow,
+          blocking/reporting, and trust signals work in the product.
         </Text>
       </View>
 
@@ -230,6 +377,14 @@ export default function LearningHomeScreen() {
           onPress={() => openModule(module)}
         />
       ))}
+
+      <View style={styles.footerNote} accessible>
+        <Text style={styles.footerNoteText}>
+          Progress stays on this device. No public badges, streaks, or safety
+          rankings. A match, quiz result, or completed module never constitutes
+          consent.
+        </Text>
+      </View>
     </ScrollView>
   );
 }
@@ -279,6 +434,9 @@ function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
       backgroundColor: colors.mossSoft,
       borderRadius: radius.md,
       padding: 18,
+      gap: 12,
+    },
+    progressMain: {
       flexDirection: "row" as const,
       alignItems: "baseline" as const,
       gap: 8,
@@ -289,6 +447,16 @@ function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
       fontWeight: "700" as const,
     },
     progressLabel: { color: colors.moss, fontSize: 14 },
+    progressSplit: {
+      flexDirection: "row" as const,
+      flexWrap: "wrap" as const,
+      gap: 12,
+    },
+    progressSplitText: {
+      color: colors.moss,
+      fontSize: 13,
+      fontWeight: "600" as const,
+    },
     sectionHeader: { marginTop: 8, gap: 6 },
     section: {
       color: colors.ink,
@@ -336,6 +504,56 @@ function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
       gap: 16,
       ...shadow,
     },
+    cardFeatured: {
+      borderWidth: 1.5,
+      borderColor: colors.plum,
+      backgroundColor: colors.paper,
+    },
+    allDoneCard: {
+      backgroundColor: colors.mossSoft,
+      borderRadius: radius.md,
+      padding: 18,
+      gap: 8,
+    },
+    allDoneTitle: {
+      color: colors.moss,
+      fontSize: 18,
+      fontWeight: "700" as const,
+    },
+    pathCard: {
+      backgroundColor: colors.paper,
+      borderRadius: radius.md,
+      padding: 16,
+      gap: 12,
+      borderWidth: 1,
+      borderColor: colors.line,
+      ...shadow,
+    },
+    pathTop: { flexDirection: "row" as const, gap: 12 },
+    pathIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.mossSoft,
+      justifyContent: "center" as const,
+      alignItems: "center" as const,
+    },
+    pathTitle: {
+      color: colors.ink,
+      fontSize: 18,
+      fontWeight: "700" as const,
+    },
+    pathTrack: {
+      height: 6,
+      borderRadius: radius.pill,
+      backgroundColor: colors.line,
+      overflow: "hidden" as const,
+    },
+    pathFill: {
+      height: "100%" as const,
+      backgroundColor: colors.moss,
+      borderRadius: radius.pill,
+    },
     pressed: { opacity: 0.78 },
     cardTop: { flexDirection: "row" as const, gap: 13 },
     iconWrap: {
@@ -346,6 +564,9 @@ function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
       justifyContent: "center" as const,
       alignItems: "center" as const,
     },
+    iconWrapFeatured: {
+      backgroundColor: colors.plumSoft,
+    },
     iconWrapPlum: {
       width: 40,
       height: 40,
@@ -355,6 +576,12 @@ function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
       alignItems: "center" as const,
     },
     cardCopy: { flex: 1, gap: 5 },
+    featuredLabel: {
+      color: colors.plum,
+      fontSize: 11,
+      fontWeight: "800" as const,
+      letterSpacing: 0.8,
+    },
     cardTitle: {
       color: colors.ink,
       fontSize: 20,
@@ -385,10 +612,32 @@ function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
       fontSize: 11,
       fontWeight: "600" as const,
     },
+    practiceLink: {
+      color: colors.ink,
+      backgroundColor: colors.line,
+      borderRadius: radius.pill,
+      paddingHorizontal: 9,
+      paddingVertical: 4,
+      fontSize: 11,
+      fontWeight: "600" as const,
+    },
     action: {
       color: colors.moss,
       fontWeight: "700" as const,
       marginLeft: "auto" as const,
+    },
+    footerNote: {
+      marginTop: 8,
+      padding: 16,
+      borderRadius: radius.md,
+      backgroundColor: colors.paper,
+      borderWidth: 1,
+      borderColor: colors.line,
+    },
+    footerNoteText: {
+      color: colors.muted,
+      fontSize: 13,
+      lineHeight: 19,
     },
   };
 }

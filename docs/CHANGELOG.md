@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-07-13 — Full Guided Learning / lived-lessons experience
+
+### Summary
+
+Expanded the **Guided Learning** section into a full private curriculum: six
+lived-lesson modules (consent as language, nervous system, boundaries,
+recovery, partner communication, self-compassion) with multiple interactive
+scenarios each, ephemeral reflection prompts, product practice links (Soft
+Signal, Consent Snapshot, Touch Language, Campfire, dual-consent share), six
+learning paths, recommended-next, and a richer Learn hub + soft-close player.
+
+### User-visible impact
+
+- Learn hub: progress split (lived / foundations), recommended next, paths with
+  progress bars, step/scenario counts, product-practice chips
+- Module player: private reflection (never stored), soft close with practice +
+  optional quiz + continue learning
+- Foundations gain scenarios and practice links where they were thin
+
+### Developer impact
+
+- `app/data/learningModules.ts` — themes, practice links, paths, recommend helpers
+- `app/app/(tabs)/learn.tsx`, `app/app/learning/[id].tsx`
+- `docs/LEARNING_SYSTEM.md` rewritten for full experience
+
 ## 2026-07-13 — Full Proximity Layer hub + TL compatibility %
 
 ### Summary

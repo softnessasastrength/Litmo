@@ -154,15 +154,21 @@
 - Enabling ND mode turns haptics off by default; users can re-enable haptics
   without leaving ND mode.
 
-## Guided learning lived lessons
+## Guided Learning (full curriculum)
 
-- Six **lived-lesson** modules (consent language, nervous system safety,
-  boundaries, recovering from violation, partner communication, self-compassion)
-  are short, private, device-local content. They are **not therapy**, not crisis
-  care, and not safety certification. Recovering-from-violation is non-graphic
-  and tool-focused (Soft Signal, block, report); it does not force processing.
-- Optional quiz pairings after soft-close never require completion and never
-  treat weather as consent. Progress stays on-device (no server learning table).
+- Twelve modules (six **lived lessons** + six **foundations**) plus curated
+  **paths** and recommended-next. Content is short, private, and device-local.
+  Completing modules or paths is **not therapy**, not crisis care, not a safety
+  certificate, and does **not** gate session creation.
+- Recovering-from-violation is non-graphic and tool-focused (Soft Signal, block,
+  report); it does not force processing. Leave-anytime is first-class.
+- Private **reflection** prompts are on-screen only and **never persisted**.
+- Soft-close **product practice** links (Soft Signal, Consent Snapshot, Touch
+  Language, Campfire, dual-consent share) are optional muscle memory — never
+  scored. Optional quiz pairings never treat weather as consent.
+- Progress stays on-device (no server learning table). No public badges, streaks,
+  or rankings. Plain-language / clinical editorial review of lived lessons is
+  still outstanding.
 
 ## Partner invite & shared comparison (demo + real)
 
