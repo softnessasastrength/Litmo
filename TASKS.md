@@ -36,12 +36,29 @@ Only one implementation task should normally be `active`. Every status change mu
 - **Goal:** Treat documentation as part of each implementation unit.
 - **Acceptance criteria:** update current state, task ledger, changelog, known limitations, architecture, ADRs, and release docs whenever behavior changes.
 - **Progress 2026-07-13:** founder selected MPL-2.0. ADR 0044, the canonical `LICENSE`, package metadata, and public license copy record the file-level copyleft decision. Contributor attestation, trademark policy, third-party notice audit, and qualified legal review remain follow-up governance work.
+- **Progress 2026-07-13 (quizzes docs):** ADR 0050 strengthened (short/deep, local-first vs partner-local, four consent gates, Face ID, seal posture, hub non-disclosure). Living docs aligned with ADR 0051 optional owner-only backup. `docs/KNOWN_LIMITATIONS.md`, `docs/ARCHITECTURE.md`, `docs/CHANGELOG.md`, `CURRENT_STATE.md`, and `project-state.json` updated.
 
 ## Blocked
 
 None recorded. External credentials, signing, App Store configuration, or policy review may block specific tasks and must be documented when encountered.
 
 ## Completed
+
+### QUIZ-001 — Quizzes section (short/deep + partner consent)
+
+- **Status:** completed
+- **Result:** Quizzes tab with vibe short/deep and four self quizzes; local-first
+  results; Face ID step-up on private result/share; partner invites with four
+  consent gates and lightweight seal; hard non-authority copy. Optional
+  owner-only summary backup added under ADR 0051. ADR 0050.
+- **Verification:** unit tests for `quizShareCore` (seal fail-closed, dual
+  share+compare, export omission), path/scoring, and repository core tests.
+  Full suite and migration 037 pgTAP should be re-run on the implementation PR
+  before merge.
+- **Boundary:** never consent/safety/matching authority; seal is not production
+  E2E; partner path has no server API; own summaries may use owner-RLS backup;
+  macOS has no Quizzes surface.
+- **Related decision:** ADR 0050, ADR 0051.
 
 ### MACOS-004 — macOS session-requests read (read-only)
 
@@ -83,7 +100,6 @@ None recorded. External credentials, signing, App Store configuration, or policy
 - **Verification:** macOS Native Build run #2 passed on `macos-26` with Xcode 26.5; four Campfire invariant tests passed, both arm64 apps compiled unsigned, and the workflow uploaded both `.app` bundles and Xcode logs.
 - **Boundary:** active physical sessions and Soft Signal remain phone-first; consent and staff authority remain server-side; no participant data is fabricated; the two apps share no App Group or Keychain group; unsigned CI artifacts are not distributable releases.
 - **Related decision:** ADR 0045.
-
 
 ### IOS-CI-001 — Hosted unsigned native iOS build
 

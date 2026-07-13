@@ -1,36 +1,37 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T15:45:00-04:00",
+  "updatedAt": "2026-07-13T18:30:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
     "status": "active"
   },
   "git": {
-    "branch": "agent/macos-session-requests-read",
-    "latestCoherentCommit": "e01ba40",
-    "workingTreeExpectedClean": true
+    "branch": "agent/quizzes-section",
+    "latestCoherentCommit": "pending-docs",
+    "workingTreeExpectedClean": false
   },
   "verification": {
-    "status": "passed",
+    "status": "partial",
     "commands": [
-      "xcodegen generate \u2014 success",
-      "xcodebuild -scheme Litmo test \u2014 28/28 (Campfire+Trust+Profile+Requests)",
-      "xcodebuild -scheme LitmoOps build unsigned \u2014 BUILD SUCCEEDED",
-      "npm run state:check \u2014 pass",
-      "Hosted macOS Native Build \u2014 pending on PR"
+      "Documentation update for ADR 0050 / Quizzes section \u2014 docs only this pass",
+      "Quiz unit tests exist (quizShareCore, quizPaths, quizScoring) \u2014 re-run full suite on PR",
+      "npm run state:check \u2014 pending after commit"
     ],
     "failures": []
   },
-  "nextAction": "Review/merge MACOS-004 PR after hosted green. Also merge PR #81 vibe quiz when green. Ops stays locked.",
+  "nextAction": "Commit Quizzes docs with implementation; run npm test and state:check; land PR when green. SAFETY-OPS external blockers remain.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
     "Named independent backup reviewer before external alpha and two-person permanent bans",
-    "Apple signing credentials and reviewed staging configuration for a signed device/TestFlight build"
+    "Apple signing credentials and reviewed staging configuration for a signed device/TestFlight build",
+    "Optional: security review of quiz partner seal before external beta"
   ],
   "risks": [
+    "Quiz partner seal is lightweight and packages include seal key; not production E2E.",
+    "Partner quiz path is device-local; own summaries may restore via ADR 0051 when authenticated.",
     "macOS participant reads use developer env tokens; not production passkey sign-in.",
     "A listed session request is never consent.",
     "Litmo Ops remains non-operational until real staff authentication and authorization exist.",
@@ -38,7 +39,9 @@
   ],
   "notes": [
     "PRs #72\u2013#80 are merged on main.",
-    "MACOS-004 adds read-only session request lists (ADR 0048).",
-    "PR #81 holds light vibe quiz expansion + flow polish."
+    "ADR 0050 documents Quizzes tab, short/deep paths, local-first storage, four consent gates, Face ID, and seal limits.",
+    "ADR 0051 documents optional owner-only quiz_result_summaries backup; partner path stays local.",
+    "KNOWN_LIMITATIONS, ARCHITECTURE, CHANGELOG, CURRENT_STATE, TASKS updated for Quizzes.",
+    "QUIZ-001 completed in TASKS.md; seal crypto upgrade remains a follow-up, not a blocker for private phone demo."
   ]
 }

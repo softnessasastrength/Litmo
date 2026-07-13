@@ -7,7 +7,7 @@
 
 `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md` requires session requests to
 define expiration behavior, show visible expiration timestamps, and fail safely
- when a stale request is acted on. After ADR 0015 landed, requests could be
+when a stale request is acted on. After ADR 0015 landed, requests could be
 created, listed, and responded to, but no expiry policy existed at all:
 
 - a stale `requested` session could sit indefinitely

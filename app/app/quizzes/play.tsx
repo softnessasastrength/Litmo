@@ -1,12 +1,12 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { Choice, FadeIn, Progress, Screen } from "../../components/ui";
 import { getQuizEntry } from "../../data/quizCatalog";
 import type { QuizAnswer } from "../../data/quiz";
 import type { AnswerScores } from "../../lib/quizScoring";
 import { runQuizModel, topInsights } from "../../lib/quizScoring";
-import { quizResultsStore } from "../../services/quizResultsStore";
+import { quizResultsRepository } from "../../services/quizResultsRepository";
 import { fonts, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
@@ -21,11 +21,27 @@ export default function QuizPlayScreen() {
   const questions = useMemo(() => entry?.questions() ?? [], [entry]);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<AnswerScores[]>([]);
+  const advancing = useRef(false);
 
   if (!entry || questions.length === 0) {
     return (
       <Screen>
-        <Text style={styles.prompt}>That quiz could not be found.</Text>
+        <Text style={styles.prompt} accessibilityRole="header">
+          That quiz could not be found.
+        </Text>
+        <Text style={styles.note}>
+          Return to Quizzes and choose a short or deep Vibe path, or another
+          self-understanding quiz.
+        </Text>
+        <Pressable
+          onPress={() => router.replace("/(tabs)/quizzes" as never)}
+          accessibilityRole="button"
+          accessibilityLabel="Back to Quizzes"
+          hitSlop={12}
+          style={({ pressed }) => [styles.exitLink, pressed && styles.pressed]}
+        >
+          <Text style={styles.back}>← Back to Quizzes</Text>
+        </Pressable>
       </Screen>
     );
   }
@@ -34,7 +50,19 @@ export default function QuizPlayScreen() {
   const selected = answers.find((a) => a.questionId === question.id)?.answerId;
   const total = questions.length;
 
+  const goBack = () => {
+    if (advancing.current) return;
+    if (index > 0) {
+      setIndex((v) => Math.max(0, v - 1));
+      return;
+    }
+    router.back();
+  };
+
   const choose = (answer: QuizAnswer) => {
+    if (advancing.current) return;
+    advancing.current = true;
+
     const selectedAnswer: AnswerScores = {
       questionId: question.id,
       answerId: answer.id,
@@ -46,16 +74,20 @@ export default function QuizPlayScreen() {
     ];
     setAnswers(updated);
     void hapticService.play("presence");
+
     const isLast = index === total - 1;
+    // Reduced motion: advance immediately — no artificial pause.
     const delay = reducedMotion ? 0 : 140;
-    setTimeout(() => {
+
+    const advance = () => {
       if (!isLast) {
         setIndex((v) => v + 1);
+        advancing.current = false;
         return;
       }
       const model = runQuizModel(updated);
       const notes = topInsights(model, 5).map((i) => i.text);
-      void quizResultsStore
+      void quizResultsRepository
         .saveResult({
           quizId: entry.id,
           primary: model.primary,
@@ -70,33 +102,49 @@ export default function QuizPlayScreen() {
             pathname: "/quizzes/result",
             params: { quizId: entry.id },
           } as never);
+        })
+        .finally(() => {
+          advancing.current = false;
         });
-    }, delay);
+    };
+
+    if (delay === 0) {
+      advance();
+    } else {
+      setTimeout(advance, delay);
+    }
   };
 
   return (
     <Screen>
       <View style={styles.topRow}>
-        {index > 0 ? (
-          <Pressable
-            onPress={() => setIndex((v) => Math.max(0, v - 1))}
-            accessibilityRole="button"
-            accessibilityLabel="Previous question"
-            hitSlop={10}
-          >
-            <Text style={styles.back}>← Back</Text>
-          </Pressable>
-        ) : (
-          <View />
-        )}
-        <Text style={styles.count}>
+        <Pressable
+          onPress={goBack}
+          accessibilityRole="button"
+          accessibilityLabel={
+            index > 0 ? "Previous question" : "Leave quiz and go back"
+          }
+          hitSlop={12}
+          style={({ pressed }) => pressed && styles.pressed}
+        >
+          <Text style={styles.back}>{index > 0 ? "← Back" : "← Leave"}</Text>
+        </Pressable>
+        <Text
+          style={styles.count}
+          accessibilityLabel={`Question ${index + 1} of ${total}`}
+        >
           {index + 1} / {total}
         </Text>
       </View>
+
       <Progress current={index + 1} total={total} />
+
       <Text style={styles.kicker}>{entry.title}</Text>
+
       <FadeIn key={question.id}>
-        <Text style={styles.scene}>{question.kicker}</Text>
+        {question.kicker ? (
+          <Text style={styles.scene}>{question.kicker}</Text>
+        ) : null}
         <Text style={styles.prompt} accessibilityRole="header">
           {question.prompt}
         </Text>
@@ -104,14 +152,20 @@ export default function QuizPlayScreen() {
           {question.answers.map((answer) => (
             <Choice
               key={answer.id}
-              {...answer}
+              label={answer.label}
+              detail={answer.detail}
+              glyph={answer.glyph}
               selected={selected === answer.id}
               onPress={() => choose(answer)}
             />
           ))}
         </View>
       </FadeIn>
-      <Text style={styles.note}>{entry.disclaimer}</Text>
+
+      <View style={styles.disclaimerBlock} accessible>
+        <Text style={styles.disclaimerTitle}>Soft reminder</Text>
+        <Text style={styles.note}>{entry.disclaimer}</Text>
+      </View>
     </Screen>
   );
 }
@@ -122,9 +176,21 @@ function makeStyles(colors: AppColors) {
       flexDirection: "row" as const,
       justifyContent: "space-between" as const,
       alignItems: "center" as const,
+      minHeight: 44,
     },
-    back: { color: colors.moss, fontWeight: "700" as const, fontSize: 15 },
-    count: { color: colors.muted, fontWeight: "700" as const, fontSize: 12 },
+    back: {
+      color: colors.moss,
+      fontWeight: "700" as const,
+      fontSize: 16,
+      minHeight: 24,
+    },
+    exitLink: { marginTop: 16, alignSelf: "flex-start" as const },
+    pressed: { opacity: 0.7 },
+    count: {
+      color: colors.muted,
+      fontWeight: "700" as const,
+      fontSize: 13,
+    },
     kicker: {
       color: colors.plum,
       fontSize: 13,
@@ -133,7 +199,7 @@ function makeStyles(colors: AppColors) {
       textTransform: "uppercase" as const,
       letterSpacing: 0.6,
     },
-    scene: { color: colors.muted, fontSize: 14, marginTop: 10 },
+    scene: { color: colors.muted, fontSize: 14, marginTop: 10, lineHeight: 20 },
     prompt: {
       color: colors.ink,
       fontFamily: fonts.headline,
@@ -143,12 +209,24 @@ function makeStyles(colors: AppColors) {
       marginBottom: 18,
     },
     options: { gap: 10 },
+    disclaimerBlock: {
+      marginTop: "auto" as const,
+      paddingTop: 16,
+      gap: 4,
+      alignItems: "center" as const,
+    },
+    disclaimerTitle: {
+      color: colors.moss,
+      fontSize: 12,
+      fontWeight: "800" as const,
+      letterSpacing: 0.5,
+      textTransform: "uppercase" as const,
+    },
     note: {
       color: colors.muted,
       fontSize: 12,
       lineHeight: 18,
       textAlign: "center" as const,
-      marginTop: "auto" as const,
     },
   };
 }

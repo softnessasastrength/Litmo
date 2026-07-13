@@ -66,20 +66,20 @@ Chapter 2 closed with Supabase auth, session restoration, versioned touch/consen
 
 ## 8. Known limitations and acceptance criteria
 
-| Acceptance criterion (from `docs/roadmap/CHAPTER_3_CONSENT_ENGINE.md`) | Status |
-| --- | --- |
-| Consent rules live in a framework-independent domain module | Implemented (prior session) |
-| Compatibility output is deterministic and explainable | Implemented (prior session); property-based proof added this session |
-| More restrictive preferences always win | Implemented (prior session); property-based proof added this session |
-| A match never activates consent | Implemented; `consentGranted` is always `false` |
-| Consent Snapshots reference immutable profile versions | Implemented (prior session) |
-| Material changes invalidate previous confirmations | Implemented (prior session) |
-| Sensitive data remains private by default | Implemented; asserted by tests in both the engine and the adapter |
-| Safety-critical edge cases have automated tests | Implemented, including the previously-missing property-based coverage |
-| Architecture, threat model, and limitations are documented | Implemented; `ARCHITECTURE.md`, `KNOWN_LIMITATIONS.md`, ADR 0001, ADR 0002 |
-| Users can preview the practical effect of changes before saving | Implemented this session (`previewProfileChange`); not yet wired to a profile-edit UI |
-| Legacy Express route replaced or bridged | Bridged this session: canonical route added, legacy route deprecated but retained (no client migration performed) |
-| Mobile Consent Snapshot uses the canonical engine | Implemented this session, against mock fixtures; not yet against live per-user profile data (depends on Chapter 4 discovery/session wiring) |
+| Acceptance criterion (from `docs/roadmap/CHAPTER_3_CONSENT_ENGINE.md`) | Status                                                                                                                                      |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Consent rules live in a framework-independent domain module            | Implemented (prior session)                                                                                                                 |
+| Compatibility output is deterministic and explainable                  | Implemented (prior session); property-based proof added this session                                                                        |
+| More restrictive preferences always win                                | Implemented (prior session); property-based proof added this session                                                                        |
+| A match never activates consent                                        | Implemented; `consentGranted` is always `false`                                                                                             |
+| Consent Snapshots reference immutable profile versions                 | Implemented (prior session)                                                                                                                 |
+| Material changes invalidate previous confirmations                     | Implemented (prior session)                                                                                                                 |
+| Sensitive data remains private by default                              | Implemented; asserted by tests in both the engine and the adapter                                                                           |
+| Safety-critical edge cases have automated tests                        | Implemented, including the previously-missing property-based coverage                                                                       |
+| Architecture, threat model, and limitations are documented             | Implemented; `ARCHITECTURE.md`, `KNOWN_LIMITATIONS.md`, ADR 0001, ADR 0002                                                                  |
+| Users can preview the practical effect of changes before saving        | Implemented this session (`previewProfileChange`); not yet wired to a profile-edit UI                                                       |
+| Legacy Express route replaced or bridged                               | Bridged this session: canonical route added, legacy route deprecated but retained (no client migration performed)                           |
+| Mobile Consent Snapshot uses the canonical engine                      | Implemented this session, against mock fixtures; not yet against live per-user profile data (depends on Chapter 4 discovery/session wiring) |
 
 Remaining, explicitly documented limitations (see `docs/KNOWN_LIMITATIONS.md` for full detail): the adapter assumes symmetric receive/offer capability for anything mapped from legacy data; it throws if touch and consent versions diverge rather than resolving the divergence; the legacy `/overlap` route still exists pending a client migration; snapshot fingerprints are deterministic identifiers, not cryptographic signatures; consent explanations have not received independent trauma-informed, safeguarding, or legal review; Docker/RLS integration tests remain unverified on this machine (unchanged from Chapter 2, unaffected by this chapter's work).
 

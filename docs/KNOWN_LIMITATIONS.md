@@ -9,7 +9,6 @@
 - The participant and Ops targets intentionally share no App Group or Keychain group. Signing, notarization, hardened-runtime distribution validation, and physical accessibility review remain outstanding.
 - Hosted CI artifacts are unsigned arm64 inspection builds. They are not notarized, installable distribution releases, or evidence of production entitlements.
 
-
 ## Licensing and governance
 
 - Litmo is licensed under MPL-2.0, but contributor attestation, a trademark
@@ -62,6 +61,61 @@
   holds, destructive retention, jurisdiction policy, external-referral policy,
   backup reviewer staffing, and two-person permanent-ban approval remain
   blocked.
+
+## Quizzes section, partner seal, and optional own-summary backup
+
+- The Quizzes tab (ADR 0050) is **local-first self-understanding**. Results live
+  in AsyncStorage (`quizResultsStore`); callers use `quizResultsRepository`.
+  Invites and seal keys live in Secure Store (`quizInviteStore`) only.
+- Optional **owner-only** server backup of own result summaries
+  (`quiz_result_summaries`, ADR 0051) runs when Supabase is configured and the
+  user is authenticated. Demo/unauthenticated use stays local-only. Backup
+  failure never blocks local save and never invents results. Partner
+  comparison, seal keys, and invite packages are **not** stored on the server.
+- Without authentication/config, reinstall or storage clear drops local results
+  and all invites. With authentication, own summaries may restore; invites and
+  peer packages do not. Multi-device partner-compare sync remains absent.
+- Short (~10) and deep (100) Vibe paths plus Soft Capacity, Boundary Voice,
+  Comfort & Care, and Connection Pace are playful weather/self quizzes only.
+  They are never diagnosis, a safety rating, matching eligibility, trust
+  signals, or consent to touch. Impact: users may still over-read similarity.
+  Mitigation: catalog, hub, result, and comparison copy always remind that
+  weather is conversation-only and never replaces a Consent Snapshot.
+- Partner comparison requires **four consents** (host share, host compare, peer
+  share, peer compare) plus both sealed payloads. Host share consent is
+  effective only with a non-null sealed payload. Missing any gate fails closed.
+  Packages are exchanged out-of-band (copy/paste JSON), not via Litmo messaging.
+- Peer share/compare flags in portable packages are **self-asserted**, not
+  server-attested dual opt-in. Impact: a forged or forwarded package can claim
+  peer consents the peer never gave in-app. Mitigation: out-of-band trust and
+  fail-closed open on wrong seal; product frames packages as password-like.
+  Removal criterion: bind consents into a sealed envelope or move to
+  server-mediated mutual opt-in before multi-device external beta.
+- Results persist in **AsyncStorage** (unencrypted at rest); invites/seal keys
+  use Secure Store. Impact: device backup or local forensic access may expose
+  saved weather even when result screens are Face ID gated. Mitigation: step-up
+  gate for on-screen private result/share; hub shows only “saved privately,”
+  not archetype. Removal criterion: Secure Store or device-bound encryption for
+  real-account results if privacy review requires it.
+- Seal crypto in `quizShareCore` is a **lightweight** XOR stream + derived MAC
+  for casual out-of-band packages. It is not AES-GCM, not CryptoKit, not
+  audited production E2E, and not forward-secret. Portable packages currently
+  include the invite `sealKey`, so confidentiality depends on treating the
+  package like a password and using a private channel. Wrong keys / MAC
+  mismatch fail closed. Impact: package leakage or insecure paste channels can
+  expose sealed quiz weather. Mitigation: product copy (“treat the package like
+  a password”); unit tests for wrong-key and dual-consent gates. Removal
+  criterion: qualified security review and, if required, AEAD with non-exported
+  keys and a reviewed key-exchange channel before external beta.
+- Face ID step-up (`SensitiveAccessGate`) protects private **result** and
+  **partner share** screens on real account sessions only. The catalog hub and
+  play flow are not gated; demo mode skips biometrics so Expo Go can walk the
+  path. Hub/list screens never show archetype labels outside that gate.
+- Server-backed own summaries appear in `export_my_data()` under
+  `quiz_result_summaries`. Local-only invites/comparisons and a dedicated
+  account-deletion wipe UX remain incomplete. Production retention beyond
+  cascade-on-user-delete is undecided. Server insight notes are soft model
+  lines under owner RLS, not application-encrypted diary text.
 
 ## Appearance
 

@@ -25,7 +25,7 @@ export const quizCatalog: QuizCatalogEntry[] = [
     family: "vibe",
     title: "Vibe Quiz — Short",
     summary:
-      "About nine calm scenes across social weather themes. A soft first pass.",
+      "About ten calm scenes — one soft pass across social weather themes, including mends.",
     minutes: 5,
     shareable: true,
     disclaimer: sharedDisclaimer,

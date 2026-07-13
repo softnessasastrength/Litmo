@@ -83,3 +83,16 @@ test("export package omits sealed result without share consent", () => {
   assert.equal(pack.sealed, null);
   assert.equal(pack.consentToShare, false);
 });
+
+test("share consent fails closed without a sealed payload", () => {
+  const invite = createInvite(
+    "vibe-short",
+    "inv1",
+    "seal",
+    "2026-07-13T00:00:00.000Z",
+  );
+  const attempted = withHostShareConsent(invite, true, null);
+  assert.equal(attempted.hostConsentToShare, false);
+  assert.equal(attempted.hostSealed, null);
+  assert.equal(canCompare(attempted), false);
+});

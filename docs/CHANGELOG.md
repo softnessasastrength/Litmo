@@ -1,30 +1,90 @@
 # Changelog
 
+## 2026-07-13 — Optional owner-only quiz result backup
+
+### Summary
+
+Authenticated users can optionally back up **own** quiz result summaries to
+Supabase under owner-only RLS. Partner comparison, invites, and seal keys remain
+device-local. Demo and unauthenticated use stay AsyncStorage-only.
+
+### User-visible impact
+
+- Completing a quiz still always saves on device.
+- Signed-in sessions best-effort sync own summaries for restore after reinstall.
+- Result copy notes optional account backup; share/compare still needs dual consent.
+
+### Developer impact
+
+- Migration `037_quiz_result_summaries.sql` + `upsert_own_quiz_result_summary`.
+- `quizResultsRepository` / `quizResultsRepositoryCore` with pure unit tests.
+- `export_my_data()` includes `quiz_result_summaries`.
+- ADR 0051.
+
+### Related work
+
+- Builds on ADR 0050 quizzes section.
+
 ## 2026-07-13 — Quizzes section (short/deep vibe + partner consent)
 
 ### Summary
 
 Added a full **Quizzes** tab: Vibe short/deep paths, four self-understanding
 quizzes, private results behind Face ID step-up, and partner invites that require
-explicit mutual consent before any comparison.
+explicit mutual consent before any comparison. Results are local-first; optional
+owner-only own-summary backup is ADR 0051. Invites/compare stay device-local.
 
 ### User-visible impact
 
-- New tab: calm catalog of self quizzes.
-- Vibe Quiz short (~9) and deep (100) from the social-weather bank.
+- New tab: calm catalog of self quizzes (`/(tabs)/quizzes`).
+- Vibe Quiz short (~10 representative scenes) and deep (100) from the
+  social-weather bank.
 - Soft Capacity, Boundary Voice, Comfort & Care, Connection Pace.
-- Partner invites seal results; compare stays closed until both share and both
-  consent to compare.
-- Hard safety copy: quiz weather is never consent to touch.
+- Private result and partner-share screens use `SensitiveAccessGate` (Face ID
+  step-up on real accounts; demo ungated for Expo Go). Hub shows only
+  non-sensitive “saved privately” status.
+- Partner invites seal results; comparison stays closed until **four consents**
+  (host share, host compare, peer share, peer compare) and both sealed payloads
+  are present. Out-of-band JSON package exchange only.
+- Hard safety copy: quiz weather is never consent to touch, proof of safety, or
+  a Consent Snapshot substitute.
 
 ### Developer impact
 
-- `quizCatalog`, `quizPaths`, `selfQuizzes`, `quizShareCore`, invite/results stores.
-- Comparison and seal logic covered by unit tests.
+- Catalog: `app/data/quizCatalog.ts`, `app/data/selfQuizzes.ts`.
+- Paths: `app/lib/quizPaths.ts` (short vs deep).
+- Routes: `app/app/quizzes/play.tsx`, `result.tsx`, `share.tsx`.
+- Stores: `quizResultsStore` (AsyncStorage), `quizInviteStore` (Secure Store).
+- Repository: `quizResultsRepository` (+ core) local-first with optional remote
+  own-summary merge (ADR 0051).
+- Pure logic: `app/services/quizShareCore.ts` (seal, four-gate compare, export).
+- Unit tests: seal fail-closed, dual share+compare gates, export omission
+  without share consent, safety copy (`quizShareCore.test.ts`); path/scoring
+  and repository-core tests.
+
+### Safety and data impact
+
+- No quiz results on discovery, trust ledger, or session activation.
+- Hub does not display private archetype outside Face ID; result/share are gated.
+- Four-gate compare; share consent requires a sealed payload; UI clears compare
+  when gates drop.
+- Lightweight seal is not production E2E; packages include the seal key — treat
+  like a password. Peer package consents are self-asserted (OOB trust).
+- Results use AsyncStorage; invites use Secure Store. Partner path stays fully
+  local. Optional own-summary backup is ADR 0051 / migration 037.
+- Documented in `docs/KNOWN_LIMITATIONS.md`.
+
+### Migration or setup impact
+
+- Quizzes section itself is local-first. Optional owner backup uses migration
+  `037_quiz_result_summaries.sql` (see separate changelog entry / ADR 0051).
 
 ### Related work
 
-- Builds on vibe-mix model / 100-scene bank patterns.
+- ADR 0050 — Quizzes section and partner comparison consent
+- ADR 0051 — optional owner-only quiz result summary backup
+- Builds on vibe-mix model / 100-scene bank patterns
+- ADR 0007 — Face ID for real sessions (SensitiveAccessGate reuse)
 
 ## 2026-07-13 — macOS session-requests read (read-only)
 
@@ -135,7 +195,6 @@ binary toggle.
 
 - `TASKS.md` ACCESS-001 (still pending physical founder VoiceOver smoke)
 
-
 ## 2026-07-13 — Native macOS participant and Ops foundations
 
 ### Summary
@@ -160,7 +219,6 @@ Added two native SwiftUI macOS targets generated from one reviewable XcodeGen sp
 - MACOS-001
 - ADR 0045
 - PR #76
-
 
 ## 2026-07-13 — Hosted native iOS compile gate
 

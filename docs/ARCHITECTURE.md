@@ -15,6 +15,8 @@ UI/API adapters
 
 `shared/` owns framework-independent types, enum values, runtime schemas, and validated serialization. UI components do not call Supabase directly. `profileRepository` owns profile persistence, timeouts, boundary parsing, and safe error translation.
 
+Quizzes are local-first: `quizResultsStore` holds AsyncStorage summaries and partner invites stay in SecureStore. `quizResultsRepository` optionally backs up **own** result summaries through owner-only `quiz_result_summaries` / `upsert_own_quiz_result_summary` when authenticated (ADR 0051). Partner comparison is never server-mediated in this slice. Failures fall back to local data and never invent results.
+
 Chapter 3 adds the canonical pure consent engine to `shared/`. It models receive/offer direction, produces deterministic conservative overlap and explanations, and creates exact-version snapshot records. Compatibility and consent remain different states: engine output cannot activate consent. `previewProfileChange` reuses the same engine to diff a not-yet-saved profile version against the saved one, both against the same counterpart, so a user can see the practical effect of an edit before it becomes a new immutable version. The preview never persists a version and never grants consent.
 
 `toConsentProfileVersion` (`docs/adr/0002-legacy-profile-adapter.md`) is a read-time adapter that maps Chapter 2's persisted touch/consent shapes onto the canonical `ConsentProfileVersion` the engine expects. `backend/routes/compatibility.js` exposes it as `POST /api/consent/compatibility`, the canonical replacement for the deprecated `/api/consent/overlap` POC route. The mobile `app/app/match/consent-snapshot.tsx` screen calls the same adapter and `computeCompatibility` directly against fixed mock fixtures (`app/data/mockConsentProfiles.ts`) and formats the result with the pure, unit-tested `app/lib/consentSnapshotView.ts`. This proves the real engine end-to-end in the UI while both participants remain mock until Chapter 4 wires live discovery and sessions.
@@ -55,6 +57,33 @@ Material touch/consent changes call `save_profile_versions` transactionally. An 
 
 The Express consent-overlap service and early session/trust migrations remain intact. Chapter 2 does not expand the consent engine or session lifecycle; those are Chapter 3 and Chapter 4.
 
+## Quizzes tab (local-first)
+
+The **Quizzes** tab is a phone-first self-understanding surface (ADR 0050), separate from onboarding’s profile vibe write and from Consent Snapshot / session authority. Partner comparison stays device-local; own summaries may optionally back up when authenticated (ADR 0051).
+
+```text
+Quizzes tab catalog (quizCatalog)
+  → play short/deep vibe or self quizzes (quizPaths / selfQuizzes)
+  → score locally (quizScoring / quizModel)
+  → save local-first (quizResultsStore / AsyncStorage via quizResultsRepository)
+  → optional owner-only summary backup (quiz_result_summaries + upsert RPC; ADR 0051)
+  → optional private result view (SensitiveAccessGate on real accounts)
+  → optional partner invite (quizInviteStore / Secure Store)
+       → seal result (quizShareCore) only after host share consent
+       → out-of-band JSON package exchange
+       → compare only after four consents (host/peer × share/compare)
+```
+
+Boundaries:
+
+- Partner invites, seal keys, sealed packages, and comparisons never go to the server.
+- Own result summaries may leave the device only as owner-RLS backup rows (never peer-readable, never discovery/trust inputs).
+- Hub shows only non-sensitive “saved privately” status; private archetype/mix stay behind Face ID step-up on real accounts.
+- Quiz weather is never an input to discovery ranking, trust signals, matching eligibility, or session activation.
+- Comparison always carries the non-authority reminder that shared weather is not consent to touch and does not replace a Consent Snapshot.
+- Seal crypto is a lightweight package seal, not the ADR 0011 CryptoKit vault.
+
+macOS has no Quizzes surface in this milestone; Campfire and participant reads remain the desktop scope.
 
 ## Native macOS boundary
 

@@ -4,7 +4,7 @@ import {
   type QuizQuestion,
 } from "../data/quiz.ts";
 
-/** One representative scene per theme for a short, calm pass. */
+/** One representative scene per major theme for a short, calm pass. */
 const SHORT_VIBE_IDS = [
   "q001_environment_1",
   "q011_regulation_1",
@@ -15,6 +15,7 @@ const SHORT_VIBE_IDS = [
   "q061_initiation_1",
   "q071_closeness_1",
   "q081_play_1",
+  "q091_repair_1",
 ] as const;
 
 /**
@@ -41,5 +42,5 @@ export function vibeQuestionsForMode(mode: "short" | "deep"): QuizQuestion[] {
 }
 
 export function vibeModeLabel(mode: "short" | "deep"): string {
-  return mode === "short" ? "Short (about 9 scenes)" : "Deep (100 scenes)";
+  return mode === "short" ? "Short (about 10 scenes)" : "Deep (100 scenes)";
 }

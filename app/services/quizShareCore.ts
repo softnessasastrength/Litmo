@@ -165,10 +165,12 @@ export function withHostShareConsent(
   consent: boolean,
   sealed: SealedQuizResult | null,
 ): QuizInvite {
+  // Fail closed: share consent cannot stick without a sealed payload.
+  const effectiveConsent = consent && sealed !== null;
   return {
     ...invite,
-    hostConsentToShare: consent,
-    hostSealed: consent ? sealed : null,
+    hostConsentToShare: effectiveConsent,
+    hostSealed: effectiveConsent ? sealed : null,
   };
 }
 

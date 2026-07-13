@@ -8,22 +8,22 @@ Structured Consent Snapshots remain server-readable because both participants mu
 
 ## Classification
 
-| Data | Class | Storage and exposure |
-| --- | --- | --- |
-| Identity/profile fields | private or discovery-selected | PostgreSQL + RLS; only explicitly selected fields enter discovery |
-| Passkeys | authentication secret | private key/biometric data remain with Apple; public ceremony material handled by Supabase |
-| Session tokens/device secrets | authentication secret | this-device-only, passcode-required Keychain; server stores only device-secret digest |
-| Session identifiers/states/timestamps | shared sensitive metadata | participant-only RLS; minimal append-only audit |
-| Touch Language and consent rules | sensitive consent | immutable owner rows; canonical overlap disclosed only for a specific participant session |
-| Consent Snapshots/confirmations | shared consent / private decision | immutable participant snapshot; confirmation owner-only; never analytics/log payload |
-| Private notes and private wrap-up notes | highly sensitive | AES-256-GCM application envelope before database persistence; plaintext rejected by migration 013 |
-| Rejection/withdrawal/safety reasons | highly sensitive | not collected in general flows; never shared audit, logs, notifications, or analytics |
-| Audit records | restricted operational | actor, timestamp, states, idempotency key, enumerated metadata only |
-| Notifications | lock-screen exposed | fixed generic content only; private detail requires app unlock |
-| Local cache/decrypted runtime state | highly sensitive | no plaintext persistence; access disabled immediately on background/lock/sign-out/revocation |
-| Exports | highly sensitive | not implemented; production export requires authenticated encrypted generation and expiry |
-| Analytics/crash/diagnostics | restricted | no provider configured; recursive redaction boundary applies before any future sink |
-| Test fixtures/snapshots | synthetic only | no real user data or production ciphertext/keys |
+| Data                                    | Class                             | Storage and exposure                                                                              |
+| --------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Identity/profile fields                 | private or discovery-selected     | PostgreSQL + RLS; only explicitly selected fields enter discovery                                 |
+| Passkeys                                | authentication secret             | private key/biometric data remain with Apple; public ceremony material handled by Supabase        |
+| Session tokens/device secrets           | authentication secret             | this-device-only, passcode-required Keychain; server stores only device-secret digest             |
+| Session identifiers/states/timestamps   | shared sensitive metadata         | participant-only RLS; minimal append-only audit                                                   |
+| Touch Language and consent rules        | sensitive consent                 | immutable owner rows; canonical overlap disclosed only for a specific participant session         |
+| Consent Snapshots/confirmations         | shared consent / private decision | immutable participant snapshot; confirmation owner-only; never analytics/log payload              |
+| Private notes and private wrap-up notes | highly sensitive                  | AES-256-GCM application envelope before database persistence; plaintext rejected by migration 013 |
+| Rejection/withdrawal/safety reasons     | highly sensitive                  | not collected in general flows; never shared audit, logs, notifications, or analytics             |
+| Audit records                           | restricted operational            | actor, timestamp, states, idempotency key, enumerated metadata only                               |
+| Notifications                           | lock-screen exposed               | fixed generic content only; private detail requires app unlock                                    |
+| Local cache/decrypted runtime state     | highly sensitive                  | no plaintext persistence; access disabled immediately on background/lock/sign-out/revocation      |
+| Exports                                 | highly sensitive                  | not implemented; production export requires authenticated encrypted generation and expiry         |
+| Analytics/crash/diagnostics             | restricted                        | no provider configured; recursive redaction boundary applies before any future sink               |
+| Test fixtures/snapshots                 | synthetic only                    | no real user data or production ciphertext/keys                                                   |
 
 ## Envelope and key hierarchy
 
