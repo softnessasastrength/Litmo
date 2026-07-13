@@ -227,6 +227,12 @@ function SettingsContent() {
         onPress={() => router.push("/nfc/connect" as never)}
         accessibilityHint="Write or scan NFC invites, or fall back to QR and manual codes. Accept required after every tap."
       />
+      <Button
+        variant="secondary"
+        label="Touch Language (full map)"
+        onPress={() => router.push("/touch-language" as never)}
+        accessibilityHint="Pressure, speed, duration, body map, hard and soft limits. Local save and secure partner share."
+      />
 
       <Body>Privacy & data protection</Body>
       <Body muted>

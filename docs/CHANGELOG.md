@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-07-13 — Full Touch Language system (local + secure share)
+
+### Summary
+
+Built the full **Touch Language** product surface: pressure, speed, duration,
+environments, hold types, 12-zone body map (welcomed / ask-first / soft limit /
+off limits), hard limits, soft limits, private notes. Visual body map,
+multi-step editor, Secure Store persistence, and AES-GCM partner share with
+unlock code (private notes stripped; review-only accept gate).
+
+### User-visible impact
+
+- Home / Settings / Vibe profile → **Touch Language**
+- `/touch-language` hub, `/edit`, `/share`
+- Onboarding saves into the same local document
+
+### Developer impact
+
+- `app/data/touchLanguageCatalog.ts`, `app/lib/touchLanguageCore.ts` (+ tests)
+- `touchLanguageStore`, `touchLanguageShareCore`
+- `docs/TOUCH_LANGUAGE.md`
+
 ## 2026-07-13 — Expanded boundaries onboarding
 
 ### Summary

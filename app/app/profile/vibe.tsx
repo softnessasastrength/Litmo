@@ -49,7 +49,13 @@ export default function VibeProfileScreen() {
         {selfCount} self quizzes. Open the hub anytime.
       </Body>
       <Button
-        label="Name my touch language"
+        label="Open full Touch Language"
+        onPress={() => router.push("/touch-language" as never)}
+        accessibilityHint="Pressure, speed, duration, body map, hard and soft limits"
+      />
+      <Button
+        label="Quick touch preferences (onboarding)"
+        variant="secondary"
         onPress={() => router.push("/onboarding/touch-language")}
       />
       <Button

@@ -242,6 +242,11 @@ export default function HomeTabScreen() {
       </Card>
 
       <Button
+        label="Touch Language (full body map)"
+        onPress={() => router.push("/touch-language" as never)}
+        accessibilityHint="Opens your full Touch Language map: pressure, speed, duration, zones, hard and soft limits. Local save and secure partner share. Never consent to touch."
+      />
+      <Button
         variant="secondary"
         label="Proximity (anonymous nearby radar)"
         onPress={() => router.push("/proximity/radar" as never)}
