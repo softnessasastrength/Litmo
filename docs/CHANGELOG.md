@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-07-13 — Campfire Mode local practice hub
+
+### Summary
+
+Added one phone-visible Campfire hub with three device-local practices: a
+consent-gated group circle, open-ended quiet co-regulation, and a timed digital
+focus fire.
+
+### User-visible impact
+
+- Guided Practice links to Campfire Mode.
+- Circle campfire supports two to eight people, requires each seat to opt in,
+  and gives anyone an immediate reason-free pause control.
+- Quiet co-regulation provides a non-goal orientation timer.
+- Digital campfire provides five-, ten-, and twenty-minute visible focus
+  periods without tasks, scores, streaks, or saved completion.
+
+### Developer and data impact
+
+- Campfire state exists only in React component memory and clears on exit.
+- No database, account, analytics, location, contacts, camera, microphone,
+  notification, or HealthKit access is added.
+- Pure circle/timer behavior is covered in `app/lib/campfireCore.test.ts`.
+
+### Related decision
+
+- ADR 0043
+- CAMPFIRE-001
+
 ## 2026-07-13 — Recommended private-alpha safety-operations foundation
 
 ### Summary
