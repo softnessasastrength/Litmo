@@ -25,7 +25,7 @@
 - Private-alpha safety foundation and mobile controls are integrated on `main` through PR #72.
 - Campfire Mode's three device-local practices are integrated on `main` through PR #73.
 - MPL-2.0 licensing and ADR 0044 are integrated on `main` through PR #74.
-- A hosted unsigned Xcode 26.5 simulator build passed on PR #75 and produced a compiled `.app` plus build log; final locked-pod verification runs on the same PR.
+- A hosted unsigned Xcode 26.5 simulator build passed in strict CocoaPods deployment mode on PR #75 and produced a compiled `.app` plus full build log.
 
 ## Work in progress
 
@@ -33,7 +33,7 @@ SAFETY-OPS-001 is active. ADR 0042 and migration 036 implement the engineering-s
 
 ## Priority next work
 
-1. Review and merge PR #75 after the final strict CocoaPods/Xcode lane passes; then create contributor and trademark policies as separate governance decisions.
+1. Review and merge green PR #75; then create contributor and trademark policies as separate governance decisions.
 2. Keep Campfire Mode interpreted only as a local practice tool, never real group matching or group consent.
 3. Keep destructive retention and account deletion blocked until legal/privacy/security review names the permissible data categories, holds, and timing.
 4. Name and train an independent backup reviewer before external alpha; implement two-person permanent-ban approval only when that role exists.
@@ -80,7 +80,7 @@ Do not claim the current integrated `main` has passed every command unless the e
 
 ## Exact next action
 
-PRs #72–#74 are merged on `main`; private-alpha mobile controls, all three local Campfire practices, and MPL-2.0 licensing are integrated. PR #75 has produced the first successful hosted native Xcode build. Next: merge #75 after its final strict locked-pod run is green, then continue only governance or operational work with real named owners. SAFETY-OPS-001 remains externally blocked on named qualified review and an independent backup reviewer.
+PRs #72–#74 are merged on `main`; private-alpha mobile controls, all three local Campfire practices, and MPL-2.0 licensing are integrated. PR #75 has produced the first successful hosted native Xcode build. Next: merge green PR #75, then continue only governance or operational work with real named owners. SAFETY-OPS-001 remains externally blocked on named qualified review and an independent backup reviewer.
 
 ## Resume checklist
 
