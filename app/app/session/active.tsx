@@ -70,7 +70,39 @@ function ActiveSessionContent() {
   const timeoutFiredRef = useRef(false);
 
   useEffect(() => {
-    void traumaSafetyService.loadPrefs().then(setSafetyPrefs);
+    void traumaSafetyService.loadPrefs().then(async (prefs) => {
+      // Dual-agreed time from sealed local mutual snapshot (strictest of both).
+      try {
+        const {
+          sessionConsentSnapshotStore,
+        } = await import("../../services/sessionConsentSnapshotStore");
+        const mutual = await sessionConsentSnapshotStore.loadMutual();
+        const mins = mutual?.intersection?.maxDurationMinutes;
+        if (
+          mutual &&
+          !mutual.withdrawnAt &&
+          typeof mins === "number" &&
+          mins >= 5
+        ) {
+          setSafetyPrefs({
+            ...prefs,
+            timeout: {
+              ...prefs.timeout,
+              enabled: true,
+              maxMinutes: mins,
+              warnBeforeMinutes: Math.min(
+                prefs.timeout.warnBeforeMinutes,
+                Math.max(1, Math.floor(mins / 6)),
+              ),
+            },
+          });
+          return;
+        }
+      } catch {
+        // ignore — local prefs still apply
+      }
+      setSafetyPrefs(prefs);
+    });
   }, []);
 
   useEffect(() => {

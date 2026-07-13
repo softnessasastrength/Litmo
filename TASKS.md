@@ -12,7 +12,7 @@ Only one implementation task should normally be `active`. Every status change mu
 - **Owner:** multi-agent swarm + orchestrator
 - **Result:** Living Constitution machine invariants; TL hard-limit enforcement; sacred Soft Signal copy; Living Constitution learning module; Device Soft Signal matrix; docs/NUCLEAR_SWARM.md + CONSTITUTION_ENFORCEMENT.md.
 - **Verification:** shared constitution tests + app typecheck + TL/learning unit tests.
-- **Residual:** physical smokes, crypto review, dual-agreed timeout, engine-native soft_limit — see NUCLEAR_SWARM residual war path.
+- **Continue 2026-07-14:** Soft Signal DI offline unit matrix; engine-native soft_limit; dual-agreed local snapshot duration + active session honor; PHYSICAL_SOFT_SIGNAL_CHAOS checklist. Residual: human chaos fill, server duration, sacred dual-path presenter, crypto review.
 
 ### SWARM-001 — Five-stream feature swarm (tracking)
 

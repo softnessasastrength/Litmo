@@ -56,16 +56,8 @@ export function toConsentProfileVersion(input: {
     maxDurationMinutes: null,
   });
   for (const zone of consent.bodyZones) {
-    // soft_limit is a client-only status; map conservatively to ask_first so it
-    // never widens to welcomed (Living Constitution Article I.6).
-    const status =
-      (zone.status as string) === "soft_limit" ? "ask_first" : zone.status;
-    rules.push(
-      bodyZoneRule({
-        ...zone,
-        status: status as BodyZonePreference["status"],
-      }),
-    );
+    // soft_limit is first-class on the engine (care zone, not full exclusion).
+    rules.push(bodyZoneRule(zone));
   }
   for (const hardStop of consent.hardStops)
     rules.push({

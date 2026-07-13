@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-07-14 — Continue: Soft Signal offline matrix + soft_limit engine + time boundary
+
+### Summary
+
+Nuclear residual P1 shipment: injectable Soft Signal core with offline unit
+proofs; `soft_limit` first-class on consent engine (softLimit overlap bucket);
+dual-agreed optional max duration on local Consent Snapshot prepare/mutual;
+active session applies sealed mutual time boundary; physical Soft Signal chaos
+checklist documented for human evidence.
+
+### Developer impact
+
+- `app/services/softSignalServiceCore.ts` + tests
+- `shared/src/consentEngine.ts` soft_limit state + softLimit[]
+- `sessionConsentSnapshotCore` softLimit zones + maxDurationMinutes
+- Prepare step “Time boundary for this moment”
+- `docs/PHYSICAL_SOFT_SIGNAL_CHAOS.md`
+
 ## 2026-07-13 — Nuclear swarm: Living Constitution + EmotionalOS hardening
 
 ### Summary

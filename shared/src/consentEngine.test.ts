@@ -51,12 +51,16 @@ for (const left of consentStates)
           result.excluded.every((item) => item.reason === "off_limits"),
           true,
         );
-      else
-        assert.equal(
-          (expected === "ask_first" ? result.askFirst : result.permitted)
-            .length,
-          2,
-        );
+      else {
+        const bucket =
+          expected === "soft_limit"
+            ? result.softLimit
+            : expected === "ask_first"
+              ? result.askFirst
+              : result.permitted;
+        assert.equal(bucket.length, 2);
+        assert.ok(bucket.every((item) => item.state === expected));
+      }
       assert.equal(result.consentGranted, false);
     });
 test("receive and offer asymmetry is directional and fail closed", () => {
@@ -118,9 +122,14 @@ test("adding any state restriction never broadens overlap", () => {
       profile("b", [rule("welcomed")]),
       now,
     );
-    return result.permitted.length + result.askFirst.length;
+    return (
+      result.permitted.length +
+      result.askFirst.length +
+      result.softLimit.length
+    );
   });
-  assert.deepEqual(counts, [0, 2, 2]);
+  // off_limits excludes; soft_limit, ask_first, welcomed all allow two directions.
+  assert.deepEqual(counts, [0, 2, 2, 2]);
   assert.equal(
     (counts[0] ?? 0) <= (counts[1] ?? 0) &&
       (counts[1] ?? 0) <= (counts[2] ?? 0),

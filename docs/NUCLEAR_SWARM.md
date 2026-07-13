@@ -50,16 +50,27 @@
 9. Litmo is not emergency services.  
 10. Completing modules never certifies safety.
 
+## Continue shipment (2026-07-14)
+
+| Item | Status |
+| ---- | ------ |
+| Soft Signal DI core + offline unit matrix | **shipped** `softSignalServiceCore` |
+| Engine-native `soft_limit` + softLimit overlap bucket | **shipped** `@litmo/domain` consentEngine |
+| Dual-agreed time boundary on local mutual seal | **shipped** declaration + intersection + prepare UI |
+| Active session honors sealed mutual max minutes | **shipped** |
+| Physical Soft Signal chaos checklist | **doc** `PHYSICAL_SOFT_SIGNAL_CHAOS.md` (human evidence still open) |
+
 ## Residual war path (still open)
 
 | Priority | Work | Owner type |
 | -------- | ---- | ---------- |
-| P0 | Physical Soft Signal offline chaos + VoiceOver | human + device |
+| P0 | Physical Soft Signal offline chaos + VoiceOver (fill checklist) | human + device |
 | P0 | Independent crypto review (proximity/share/E2E) | named external |
-| P1 | Dual-agreed session duration on server snapshot | engineering |
-| P1 | Full soft_limit as first-class engine state (not only ask_first map) | engineering |
+| P1 | Dual-agreed session duration on **server** snapshot (not only local mutual) | engineering |
+| P1 | Sacred dual-path Consent Snapshot presenter (engine + local ritual) | engineering |
 | P2 | Device firmware Soft Signal bridge prototype | hardware later |
-| P2 | TL deep-link share intake | engineering |
+| P2 | TL deep-link share intake + relational axes | engineering |
+| P2 | Proximity post-reveal Multipeer handoff + beacon rotation | engineering |
 | Blocked | SAFETY-OPS legal/staffing | named reviewers only |
 
 ## How agents continue

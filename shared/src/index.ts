@@ -12,19 +12,17 @@ export const environmentValues = [
   "hosted_community",
 ] as const;
 /**
- * Server/engine zone statuses (strict subset).
- * Full mobile Touch Language also has `soft_limit`, which maps to `ask_first`
- * at the engine boundary so uncertainty never becomes welcomed (ADR 0002 +
- * constitution Article I.6).
+ * Server/engine zone statuses — includes soft_limit as first-class care zone
+ * (stricter than ask_first, looser than off_limits). Living Constitution I.6.
  */
-export const boundaryValues = ["off_limits", "ask_first", "welcomed"] as const;
-/** Full client Touch Language statuses including soft_limit. */
-export const touchLanguageBoundaryValues = [
+export const boundaryValues = [
   "off_limits",
   "soft_limit",
   "ask_first",
   "welcomed",
 ] as const;
+/** Alias for full client Touch Language statuses (same set as engine). */
+export const touchLanguageBoundaryValues = boundaryValues;
 export const sessionStatusValues = [
   "requested",
   "consent_pending",

@@ -91,6 +91,11 @@ export type PreSessionDeclaration = {
   aftercare: AftercareId[];
   aftercareNote: string | null;
   softSignal: SoftSignalAcknowledgment;
+  /**
+   * Optional personal max session length (minutes). Intersection takes the
+   * stricter (smaller) value. Soft Signal still ends anytime before this.
+   */
+  maxDurationMinutes: number | null;
   /** Explicit: this declaration alone is not consent. */
   notConsentAlone: true;
   /** Session-specific intent language. */
@@ -108,10 +113,14 @@ export type MutualConsentSnapshot = {
   intersection: {
     welcomed: string[];
     askFirst: string[];
+    /** Mutual soft limits — extra care, easy Soft Signal (not full exclusion). */
+    softLimit: string[];
     excluded: string[];
     hardLimitsUnion: string[];
     softLimitsUnion: string[];
     aftercareShared: string[];
+    /** Optional dual-agreed max minutes (strictest of both sides). */
+    maxDurationMinutes: number | null;
     safewords: {
       partyA: SafewordSet;
       partyB: SafewordSet;
@@ -215,6 +224,7 @@ export function createEmptyDeclaration(
       understandsMutualAvailability: true,
       affirmedAt: now,
     },
+    maxDurationMinutes: null,
     notConsentAlone: true,
     forThisMomentOnly: true,
   };
@@ -222,6 +232,13 @@ export function createEmptyDeclaration(
     ...base,
     ...partial,
     version: 1,
+    maxDurationMinutes: (() => {
+      const n = partial?.maxDurationMinutes;
+      if (n == null) return null;
+      if (typeof n !== "number" || !Number.isFinite(n)) return null;
+      const m = Math.floor(n);
+      return m >= 5 && m <= 180 ? m : null;
+    })(),
     notConsentAlone: true,
     forThisMomentOnly: true,
     softSignal: {
@@ -301,6 +318,7 @@ export function computeIntersection(
 
   const welcomed: string[] = [];
   const askFirst: string[] = [];
+  const softLimit: string[] = [];
   const excluded: string[] = [];
 
   for (const id of zoneIds) {
@@ -312,6 +330,7 @@ export function computeIntersection(
     const joint = stricter(statusA, statusB);
     if (joint === "welcomed") welcomed.push(label);
     else if (joint === "ask_first") askFirst.push(label);
+    else if (joint === "soft_limit") softLimit.push(label);
     else excluded.push(label);
   }
 
@@ -323,13 +342,24 @@ export function computeIntersection(
   ];
   const aftercareShared = a.aftercare.filter((id) => b.aftercare.includes(id));
 
+  const maxDurationMinutes = (() => {
+    const ma = a.maxDurationMinutes;
+    const mb = b.maxDurationMinutes;
+    if (ma == null && mb == null) return null;
+    if (ma == null) return mb;
+    if (mb == null) return ma;
+    return Math.min(ma, mb);
+  })();
+
   return {
     welcomed,
     askFirst,
+    softLimit,
     excluded,
     hardLimitsUnion,
     softLimitsUnion,
     aftercareShared,
+    maxDurationMinutes,
     safewords: { partyA: a.safewords, partyB: b.safewords },
     softSignal: {
       eitherPersonMayStopImmediately: true,
@@ -517,6 +547,13 @@ export function parseDeclaration(raw: unknown): PreSessionDeclaration | null {
           ? ss.affirmedAt
           : new Date().toISOString(),
     },
+    maxDurationMinutes: (() => {
+      if (o.maxDurationMinutes == null) return null;
+      const n = Number(o.maxDurationMinutes);
+      if (!Number.isFinite(n)) return null;
+      const m = Math.floor(n);
+      return m >= 5 && m <= 180 ? m : null;
+    })(),
     notConsentAlone: true,
     forThisMomentOnly: true,
   };
@@ -605,16 +642,26 @@ export function mutualSnapshotRows(
       value: `${moodLabel(snap.partyB.mood)} · ${energyLabel(snap.partyB.energy)}`,
     },
     {
-      label: "Intersection — welcomed",
+      label: "Together we can (welcomed)",
       value: i.welcomed.join(", ") || "None",
     },
     {
-      label: "Intersection — ask each time",
+      label: "Ask each time",
       value: i.askFirst.join(", ") || "None",
     },
     {
-      label: "Excluded / off limits",
+      label: "Soft limit (extra care)",
+      value: (i.softLimit ?? []).join(", ") || "None",
+    },
+    {
+      label: "Not included / off limits",
       value: i.excluded.slice(0, 12).join(", ") + (i.excluded.length > 12 ? "…" : "") || "—",
+    },
+    {
+      label: "Agreed time boundary",
+      value: i.maxDurationMinutes
+        ? `Up to ${i.maxDurationMinutes} minutes (Soft Signal anytime sooner)`
+        : "No fixed clock — Soft Signal anytime",
     },
     {
       label: "Hard limits (either person)",

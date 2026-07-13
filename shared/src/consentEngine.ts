@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const consentStates = ["off_limits", "ask_first", "welcomed"] as const;
+export const consentStates = ["off_limits", "soft_limit", "ask_first", "welcomed"] as const;
 export const consentDimensions = [
   "body_zone",
   "contact_type",
@@ -44,7 +44,7 @@ export type OverlapItem = {
   dimension: ConsentRule["dimension"];
   value: string;
   direction: Direction;
-  state: "welcomed" | "ask_first";
+  state: "welcomed" | "ask_first" | "soft_limit";
   pressure: ConsentRule["pressure"];
   maxDurationMinutes: number | null;
   explanation: string;
@@ -71,11 +71,13 @@ export type CompatibilityResult = {
   profileB: { id: string; version: number } | null;
   permitted: OverlapItem[];
   askFirst: OverlapItem[];
+  /** Soft limits — mutual care zones; stricter than ask_first, not full exclusion. */
+  softLimit: OverlapItem[];
   excluded: ExcludedItem[];
   explanations: string[];
 };
 
-const stateRank = { off_limits: 0, ask_first: 1, welcomed: 2 } as const;
+const stateRank = { off_limits: 0, soft_limit: 1, ask_first: 2, welcomed: 3 } as const;
 const pressureRank = { light: 0, medium: 1, firm: 2 } as const;
 const keyOf = (rule: ConsentRule) =>
   `${rule.dimension}\u0000${rule.value.toLocaleLowerCase("en-US")}`;
@@ -144,6 +146,7 @@ export function computeCompatibility(
     profileB: pb.success ? { id: pb.data.id, version: pb.data.version } : null,
     permitted: [],
     askFirst: [],
+    softLimit: [],
     excluded: [{ dimension: "profile", value: "profile", reason, explanation }],
     explanations: [explanation],
   });
@@ -162,6 +165,7 @@ export function computeCompatibility(
   const keys = [...new Set([...a.values.keys(), ...b.values.keys()])].sort();
   const permitted: OverlapItem[] = [];
   const askFirst: OverlapItem[] = [];
+  const softLimit: OverlapItem[] = [];
   const excluded: ExcludedItem[] = [];
   for (const key of keys)
     for (const direction of directions) {
@@ -222,7 +226,13 @@ export function computeCompatibility(
         receiver.maxDurationMinutes,
         offerer.maxDurationMinutes,
       );
-      const explanation = `${readable(base.value)} ${state === "ask_first" ? "requires a fresh verbal ask" : "is mutually permitted in this direction"}${chosenPressure ? ` with ${chosenPressure} pressure` : ""}${chosenDuration ? ` for up to ${chosenDuration} minutes` : ""}.`;
+      const tone =
+        state === "soft_limit"
+          ? "is a shared soft limit — extra care, easy Soft Signal"
+          : state === "ask_first"
+            ? "requires a fresh verbal ask"
+            : "is mutually permitted in this direction";
+      const explanation = `${readable(base.value)} ${tone}${chosenPressure ? ` with ${chosenPressure} pressure` : ""}${chosenDuration ? ` for up to ${chosenDuration} minutes` : ""}.`;
       const item: OverlapItem = {
         dimension: base.dimension,
         value: base.value,
@@ -232,20 +242,24 @@ export function computeCompatibility(
         maxDurationMinutes: chosenDuration,
         explanation,
       };
-      (state === "ask_first" ? askFirst : permitted).push(item);
+      if (state === "soft_limit") softLimit.push(item);
+      else if (state === "ask_first") askFirst.push(item);
+      else permitted.push(item);
     }
   permitted.sort(compare);
   askFirst.sort(compare);
+  softLimit.sort(compare);
   excluded.sort(compare);
   return {
-    eligible: permitted.length + askFirst.length > 0,
+    eligible: permitted.length + askFirst.length + softLimit.length > 0,
     consentGranted: false,
     profileA: { id: pa.data.id, version: pa.data.version },
     profileB: { id: pb.data.id, version: pb.data.version },
     permitted,
     askFirst,
+    softLimit,
     excluded,
-    explanations: [...permitted, ...askFirst]
+    explanations: [...permitted, ...askFirst, ...softLimit]
       .map((item) => item.explanation)
       .concat(excluded.map((item) => item.explanation)),
   };

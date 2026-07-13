@@ -27,16 +27,33 @@ import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 import { hapticService } from "../../services/hapticService";
 
-type Step = "intro" | "state" | "boundaries" | "safewords" | "aftercare" | "soft_signal" | "save";
+type Step =
+  | "intro"
+  | "state"
+  | "duration"
+  | "boundaries"
+  | "safewords"
+  | "aftercare"
+  | "soft_signal"
+  | "save";
 
 const STEPS: Step[] = [
   "intro",
   "state",
+  "duration",
   "boundaries",
   "safewords",
   "aftercare",
   "soft_signal",
   "save",
+];
+
+const DURATION_CHOICES: Array<{ minutes: number | null; label: string; detail: string }> = [
+  { minutes: null, label: "No fixed clock", detail: "Soft Signal anytime — no agreed max" },
+  { minutes: 15, label: "About 15 minutes", detail: "Short, clear boundary" },
+  { minutes: 30, label: "About 30 minutes", detail: "Common default" },
+  { minutes: 45, label: "About 45 minutes", detail: "Longer held presence" },
+  { minutes: 60, label: "About 60 minutes", detail: "Still Soft Signal anytime sooner" },
 ];
 
 /**
@@ -175,6 +192,30 @@ export default function ConsentSnapshotPrepareScreen() {
                 selected={decl.energy === opt.id}
                 onPress={() =>
                   patch((d) => ({ ...d, energy: opt.id as EnergyId }))
+                }
+              />
+            ))}
+          </View>
+        </>
+      ) : null}
+
+      {step === "duration" ? (
+        <>
+          <Title>Time boundary for this moment</Title>
+          <Body muted>
+            Optional agreed max. Mutual seal will take the stricter (shorter)
+            time if both people set one. Soft Signal still ends anytime sooner —
+            a clock is never a cage.
+          </Body>
+          <View accessibilityRole="radiogroup" style={styles.choices}>
+            {DURATION_CHOICES.map((opt) => (
+              <Choice
+                key={String(opt.minutes)}
+                label={opt.label}
+                detail={opt.detail}
+                selected={decl.maxDurationMinutes === opt.minutes}
+                onPress={() =>
+                  patch((d) => ({ ...d, maxDurationMinutes: opt.minutes }))
                 }
               />
             ))}
