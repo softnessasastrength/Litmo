@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-07-13 — Comprehensive vibe personality quiz
+
+### Summary
+
+Expanded the onboarding vibe quiz from a short six-question path into a
+sixteen-question social-weather set covering environment, regulation, comfort,
+conversation, sensory preference, pacing, initiation, closeness, play, and
+repair—still playful and non-clinical.
+
+### User-visible impact
+
+- More scenarios and four-option answers on many items for finer preference
+  texture.
+- Result screen shows primary archetype, optional close blend, “how you might
+  show up,” answer-derived insights, and playful score weather.
+- Stronger copy that a vibe is not diagnosis, ranking, or consent.
+
+### Developer impact
+
+- `app/data/quiz.ts` gains dimensions, insights, and richer archetype copy.
+- `scoreQuizDetailed` / `topInsights` in `app/lib/quizScoring.ts` power the
+  fuller reveal while `scoreQuiz` remains the primary-id helper.
+- Quiz scoring tests cover content coverage, blends, and lantern-path
+  determinism.
+
+### Related work
+
+- Onboarding Vibe Profile (not Touch Language, not Consent Snapshot)
+
 ## 2026-07-13 — macOS self-only trust history read
 
 ### Summary

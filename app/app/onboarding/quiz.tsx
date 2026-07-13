@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { Text, View } from "react-native";
 import { Choice, FadeIn, Progress, Screen } from "../../components/ui";
-import { quizQuestions, type QuizAnswer } from "../../data/quiz";
+import {
+  quizDimensionLabels,
+  quizQuestions,
+  type QuizAnswer,
+} from "../../data/quiz";
 import { usePrototype } from "../../context/PrototypeContext";
 import { fonts, type AppColors } from "../../theme";
 import { useAuth } from "../../context/AuthContext";
@@ -67,7 +71,13 @@ export default function QuizScreen() {
     <Screen>
       <Progress current={index + 1} total={quizQuestions.length} />
       <Text style={styles.count}>
-        A LITTLE QUESTION · {index + 1} OF {quizQuestions.length}
+        VIBE WEATHER · {index + 1} OF {quizQuestions.length}
+      </Text>
+      <Text
+        style={styles.dimension}
+        accessibilityLabel={`Theme: ${quizDimensionLabels[question.dimension]}`}
+      >
+        {quizDimensionLabels[question.dimension]}
       </Text>
       <FadeIn key={question.id}>
         <View style={styles.header}>
@@ -89,6 +99,8 @@ export default function QuizScreen() {
       </FadeIn>
       <Text style={styles.note}>
         No answer is more evolved than another. Pick what feels nicest today.
+        This is a playful social-weather quiz—not a diagnosis, ranking, or
+        consent tool.
       </Text>
     </Screen>
   );
@@ -101,7 +113,13 @@ function makeStyles(colors: AppColors) {
       fontWeight: "700",
       letterSpacing: 1.1,
     },
-    header: { gap: 10, marginTop: 16, marginBottom: 28 },
+    dimension: {
+      color: colors.muted,
+      fontSize: 12,
+      fontWeight: "600",
+      marginTop: 6,
+    },
+    header: { gap: 10, marginTop: 12, marginBottom: 28 },
     kicker: { color: colors.plum, fontSize: 15, fontWeight: "700" },
     prompt: {
       color: colors.ink,
