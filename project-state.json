@@ -1,42 +1,47 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T10:30:00-04:00",
+  "updatedAt": "2026-07-13T13:00:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
-    "name": "Moderation and beta-operations design",
-    "status": "pending"
+    "name": "Recommended private-alpha safety-operations foundation",
+    "status": "active"
   },
   "git": {
-    "branch": "agent/continuity-safety-ops-decisions",
-    "latestCoherentCommit": "42a1eed65b182c9880238eca26f3a53032ad5c43",
+    "branch": "agent/safety-ops-recommended-foundation",
+    "latestCoherentCommit": "44d27eb1ca7040f949b35be7a0cb46179115ec2b",
     "workingTreeExpectedClean": true
   },
   "verification": {
-    "status": "partial",
+    "status": "passed",
     "commands": [
-      "Documentation-only change; no runtime behavior changed",
-      "Baseline BETA-001 evidence remains: integration 5/5, lint/typecheck/state:check pass, physical B1-B26 Pass",
-      "Current branch state validator pending GitHub PR checks"
+      "npm run state:check — pass (GitHub Project State)",
+      "npm run lint — pass",
+      "npm run typecheck — pass",
+      "npm test — pass",
+      "npm run build — pass",
+      "npm run db:start / db:reset / db:lint — pass",
+      "npx supabase test db — pass, including private_alpha_safety_ops.test.sql 17/17",
+      "npm run test:integration — 5/5 pass"
     ],
     "failures": []
   },
-  "nextAction": "Founder reviews docs/SAFETY_OPS_FOUNDER_DECISIONS.md and records S1-S10 dispositions; Chapter 6 remains unauthorized until separately promoted.",
+  "nextAction": "Review and merge PR #66, then PR #67. SAFETY-OPS-001 remains active and externally blocked on qualified review and a named independent backup reviewer.",
   "blockedBy": [
-    "Founder decisions S1-S10",
-    "Legal/privacy review for eligibility, retention, deletion/export, and escalation",
-    "Named independent safety reviewer before external alpha"
+    "Legal/privacy/security review for destructive retention and deletion",
+    "Qualified safeguarding/legal review for external escalation",
+    "Named independent backup reviewer before external alpha and two-person permanent bans"
   ],
   "risks": [
-    "SAFETY-OPS-001 is a pending design task, not approved policy or implementation authorization.",
-    "External TestFlight remains blocked by deletion/export, hosted staging, AASA, disclosures, independent review, and signed-release evidence.",
-    "Moderation currently has a founder-only operational single point of failure.",
-    "Physical VoiceOver validation remains pending under ACCESS-001."
+    "Invitation membership is admission control, not identity verification, proof of safety, or consent.",
+    "The routine kill-switch pauses discovery and new requests but intentionally preserves participant safety controls and does not force-end active sessions.",
+    "Self export is an engineering portability primitive, not a claim of legally complete data access.",
+    "External TestFlight remains blocked by deletion, hosted staging, AASA, disclosures, independent review, and signed-release evidence."
   ],
   "notes": [
-    "Repository artifacts are the source of truth.",
-    "BETA-001 completed 2026-07-13 with Track A/B/C Pass and no Fail items.",
-    "Main baseline for this decision-preparation branch is 42a1eed65b182c9880238eca26f3a53032ad5c43.",
-    "docs/SAFETY_OPS_FOUNDER_DECISIONS.md is a worksheet; selections must be promoted into ADRs before implementation."
+    "Founder selected the recommended S1-S10 directions on 2026-07-13.",
+    "ADR 0042 distinguishes implemented engineering defaults from external-review-dependent policy.",
+    "Migration 036 adds invitations, membership gates, matching pause, tombstones, cleanup, and self export.",
+    "Destructive report/case/trust retention and account deletion are deliberately unimplemented pending review."
   ]
 }
