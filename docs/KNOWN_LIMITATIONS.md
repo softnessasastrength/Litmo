@@ -1,5 +1,23 @@
 # Known limitations
 
+## Campfire Mode
+
+- Campfire is a local practice surface, not a real multi-person Litmo session.
+  Circle readiness means only “join this gathering”; it does not grant touch,
+  disclosure, advice, duration, or any other consent. No participant identity
+  or readiness is persisted.
+- Circle campfire uses one shared phone and cannot prove who tapped a seat,
+  prevent social pressure, or independently deliver a stop request to remote
+  participants. Current mitigation: explicit copy, unanimous start, and one
+  prominent reason-free pause control. Removal criterion for real group
+  sessions: a reviewed group-consent, authorization, withdrawal, blocking,
+  reporting, retention, and moderation design.
+- Quiet and digital timers are best-effort while the screen is open. They do
+  not schedule background notifications or recover after the screen/app closes.
+- The animated flame honors the OS reduced-motion preference. Physical
+  VoiceOver, large-text, switch-control, and sensory-comfort review remain
+  pending under ACCESS-001.
+
 ## Private-alpha safety operations
 
 - Migration 036 adds hashed, single-use, seven-day staff invitations and
