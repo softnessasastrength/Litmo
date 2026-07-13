@@ -46,9 +46,7 @@ export const safetyOpsService = {
 
   async issuePrivateAlphaInvite(): Promise<string> {
     try {
-      const { data, error } = await supabase.rpc(
-        "issue_private_alpha_invite",
-      );
+      const { data, error } = await supabase.rpc("issue_private_alpha_invite");
       if (error) throw error;
       if (typeof data !== "string" || !isValidInviteCode(data)) {
         throw new Error("Invitation code was not returned.");
@@ -94,4 +92,3 @@ export const safetyOpsService = {
     }
   },
 };
-
