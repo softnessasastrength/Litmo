@@ -51,15 +51,17 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 - Swarm residuals: dual-agreed session duration; TL soft_limit/speed server mapping; physical Multipeer/NFC/Soft Signal chaos; independent crypto review.
 - Litmo Ops remains locked without staff auth.
 
-## Priority next work
+## Priority next work (Dojo order)
 
-1. Name second safety reviewer and document before flipping
-   `named_second_owner_configured` (service-role only).
-2. Physical device smokes (Soft Signal offline, proximity two-device, NFC, VO).
-3. Optional: TL → server shape fidelity (`speed`, `soft_limit`).
-4. Optional: dual-agreed timeout on Consent Snapshot.
-5. Name crypto reviewer before external beta.
-6. Do not unlock Ops without server-backed staff authentication.
+1. **See:** Keep `TRAUMA_ARCHITECTURE.md` complete as systems appear; practice noticing the urge to add engines.
+2. **Name:** Any new subsystem must get a trauma-architecture row in the same workstream.
+3. **Simplify when ready:** Prefer honest reduction over nuclear expansion.
+4. **Burn readiness:** Track criteria in `TRAUMA_ARCHITECTURE.md` — not App Store.
+5. **Product residue (only if explicitly requested):** physical smokes, SAFETY-OPS named staff, crypto review — never invent approvals.
+
+## Exact next action
+
+Follow `docs/DOJO_CONTINUE.md`. Default continue = externalization / honesty docs / named fears — not private-alpha staffing fiction.
 
 ## Verification baseline
 
@@ -91,10 +93,8 @@ npm run build
 
 ## Exact next action
 
-Nuclear session/consent domain + SQL (ADR 0062) and SAFETY-OPS HITL (ADR 0061)
-are in-repo. Next: named second safety reviewer, physical offline Soft Signal
-chaos, or continuous-consent UI heartbeat/zone-kill. Do not invent
-legal/clinical approval or named staff.
+Dojo framing is primary. Continue via `docs/DOJO_CONTINUE.md`. Product-era
+milestones are optional residue only when the human asks.
 
 ## Resume checklist
 

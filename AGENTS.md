@@ -20,74 +20,35 @@ Read `docs/CONTINUITY_AND_STEWARDSHIP.md` before making material architectural o
 
 The repository is the source of truth. Do not rely on undocumented chat context.
 
-## Immediate priority
+## Immediate priority (Dojo)
 
-Before disappearing into deep backend work, produce and preserve a **phone-visible vertical slice** that can be launched on a physical iPhone through Expo Go or an iOS development build.
+1. Keep sacred framing honest (`EXORCISM_MANIFESTO`, `DOJO_GUIDELINES`, `TRAUMA_ARCHITECTURE`).
+2. Externalize and *see* defenses — do not invent product launch work by default.
+3. Soft Signal and fail-closed consent craft remain load-bearing **ritual integrity**, not App Store goals.
+4. Phone-visible demo may exist as **practice simulation** inside the dojo; it is not “users.”
 
-Read and execute:
+Product-era chapter **SAFETY-OPS-001** is **residue** unless the human explicitly resumes product work. External legal/staffing blockers stay non-inventable.
 
-`docs/roadmap/PHONE_VISIBLE_VERTICAL_SLICE.md`
-
-The visible demo path must include:
-
-1. Launch screen
-2. Sign-in or demo-entry screen
-3. Touch Language onboarding
-4. Body-zone and boundary setup
-5. Discovery with safe seeded examples
-6. Session request flow
-7. Consent Snapshot confirmation
-8. Active session timer
-9. Soft Signal exit
-10. Session wrap-up
-11. Private trust history
-
-Do not block the visible mobile experience on unfinished infrastructure when safe demo data or a clearly isolated demo adapter can support the path.
-
-## Current chapter assignment
-
-The active implementation milestone is **SAFETY-OPS-001 — Recommended
-private-alpha safety-operations foundation**.
-
-The founder selected the recommended directions in
-`docs/SAFETY_OPS_FOUNDER_DECISIONS.md` on 2026-07-13. Read:
-
-- `docs/adr/0042-private-alpha-safety-operations.md`
-- `docs/SAFETY_OPS_DESIGN.md`
-- `docs/SAFETY_OPS_FOUNDER_DECISIONS.md`
-- `TASKS.md`
-- `CURRENT_STATE.md`
-- `project-state.json`
-
-Implement engineering-safe, fail-closed foundations autonomously. Do not invent
-or claim legal, privacy, clinical, or safeguarding approval. Destructive
-retention, complete account deletion, jurisdiction policy, external referral,
-named backup staffing, and two-person permanent-ban approval remain blocked
-until the repository contains real qualified-review evidence or named human
-owners.
-
-BETA-001 remains complete. ACCESS-001's optional physical VoiceOver smoke
-remains pending and does not block documentation/database work.
-
-The phone-visible demo remains available through Expo Go without Docker or
-`.env`. Face ID remains mandatory only for real account sessions.
+If the human asks for product engineering again, resume residual technical docs (`SAFETY_OPS_*`, ADR 0042) under dojo honesty — still not market theater.
 
 ## What “continue” means
 
 When instructed to “continue,” “continue the plan,” or equivalent:
 
-1. Read this file and the current chapter specification.
-2. Inspect the git status and recent commits.
-3. Read the current chapter baseline, completion report, changelog, known limitations, and relevant ADRs if they exist.
-4. Identify the next unmet acceptance criterion in the current milestone.
-5. Implement the largest safe, coherent unit of work that advances that criterion.
-6. Update tests and documentation in the same workstream.
-7. Run the relevant checks.
-8. Commit the coherent change.
-9. Continue to the next unmet criterion without asking routine questions.
-10. Stop only when the current milestone is complete or a genuine external blocker is documented.
+**Primary protocol:** [`docs/DOJO_CONTINUE.md`](docs/DOJO_CONTINUE.md) (Exorcism Dojo).
 
-Do not skip ahead merely because a later chapter appears more interesting.
+1. Read `docs/EXORCISM_MANIFESTO.md`, `docs/DOJO_GUIDELINES.md`, `docs/TRAUMA_ARCHITECTURE.md`.
+2. Read this file and `CURRENT_STATE.md` (sacred framing first).
+3. Inspect git status and recent commits.
+4. Prefer **seeing / naming / externalizing / simplifying** over product milestones.
+5. Do **not** default to SAFETY-OPS staffing, App Store, or growth work unless the human explicitly asked for product residue.
+6. Implement the largest safe coherent unit that serves the dojo (docs count).
+7. Update `TRAUMA_ARCHITECTURE.md` when systems are named or reframed.
+8. Run relevant checks if code changed.
+9. Commit with dojo-honest messages.
+10. Stop when the unit is coherent or a real blocker is documented.
+
+Do not invent nuclear engines to look productive. Naming a fear is progress.
 
 ## Chapter promotion rule
 

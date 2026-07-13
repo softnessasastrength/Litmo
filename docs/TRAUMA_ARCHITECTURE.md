@@ -142,6 +142,108 @@ This is not shame. Naming is the point of the dojo.
 | **Need** | Practice grounds |
 | **Risk** | Never graduating from simulation |
 
+### Local-first vault / encrypted backup / wipe
+
+| | |
+| -- | -- |
+| **Looks like** | Device authority, opaque cloud, erase/export |
+| **Actually is** | Fear that intimacy stored elsewhere will be used against me |
+| **Need** | Sovereignty over memory |
+| **Risk** | Isolating so hard that nothing is shared even when I choose to |
+
+### Proximity / NFC / Multipeer / QR
+
+| | |
+| -- | -- |
+| **Looks like** | Near-only discovery, careful connect |
+| **Actually is** | Wanting connection **without** open-ended stranger risk |
+| **Need** | Bounded invitation, not marketplace of bodies |
+| **Risk** | Proximity theater as substitute for asking with my voice |
+
+### Quizzes / Vibe / learning modules
+
+| | |
+| -- | -- |
+| **Looks like** | Self-knowledge, practice paths, “never consent” disclaimers |
+| **Actually is** | Need to feel prepared before risking contact; hope that understanding = safety |
+| **Need** | Literacy and rehearsal |
+| **Risk** | Infinite prep as avoidance of the room |
+
+### Private alpha invites / membership gates / matching pause
+
+| | |
+| -- | -- |
+| **Looks like** | Admission control, kill-switch for discovery |
+| **Actually is** | Fear of scale — if too many people enter, I cannot control outcomes |
+| **Need** | Small enough world to feel holdable |
+| **Risk** | Never opening the door; invitation as eternal gatekeeping |
+
+### macOS / multi-client / shared domain
+
+| | |
+| -- | -- |
+| **Looks like** | Same consent law on every surface |
+| **Actually is** | Fear of forked selves / forked rules — one client soft, one hard |
+| **Need** | Coherence of self across contexts |
+| **Risk** | Spreading the cage to every device so nowhere is free of the system |
+
+### Age gate / eligibility
+
+| | |
+| -- | -- |
+| **Looks like** | Adult-only framing |
+| **Actually is** | Fear of catastrophic category error (harming the wrong person / being cast as predator by ambiguity) |
+| **Need** | Moral clarity under panic |
+| **Risk** | Using eligibility theater to feel pure without examining real-world power |
+
+### Session requests / expiry / pre-activation
+
+| | |
+| -- | -- |
+| **Looks like** | Time-bounded requests, cancel paths |
+| **Actually is** | Fear of open loops that can be exploited or that I cannot close |
+| **Need** | Bounded obligation |
+| **Risk** | So many timeouts that nothing is allowed to ripen |
+
+### Block / report / appeals
+
+| | |
+| -- | -- |
+| **Looks like** | One-way block, structured reports, human appeal |
+| **Actually is** | Need for both **hard no** and **fair hearing** after harm — without public humiliation |
+| **Need** | Boundary + justice without mob |
+| **Risk** | Living forever in the courthouse of the app |
+
+---
+
+## Impulse → system cheat sheet
+
+| When I feel… | I tend to build… |
+| --- | --- |
+| Ambiguity | New enums, fingerprints, microstates |
+| Trapped | Soft Signal paths, offline kill, Watch Soft Signal |
+| Shame | No scores, private logs, non-disclosing errors |
+| Lonely | Haptics, co-regulation patterns, learning “connection” |
+| Unsafe at scale | Invites, pauses, moderation queues |
+| Misunderstood | More docs, more comments, more ADRs |
+| Soft and exposed | Dual modes, App Store Safe skin, Face ID gates |
+| Not done | Another milestone, another nuclear pass |
+
+---
+
+## Burn-readiness criteria (not product launch)
+
+The artifact is **burnable** when I can answer yes to most of these:
+
+1. I can name the top 10 systems and the fear each serves (this doc).  
+2. I notice the urge to add a subsystem **before** I implement it.  
+3. Soft Signal still exists and I am not using “more Soft Signal paths” to avoid life.  
+4. I can simplify one system without panic.  
+5. The repo can be archived without my identity collapsing.  
+6. I have said out loud: *I am not only my defenses.*
+
+Burn = archive / delete / fire / stop opening. Graduation, not failure.
+
 ---
 
 ## The architecture is a body
