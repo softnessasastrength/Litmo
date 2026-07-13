@@ -3,11 +3,14 @@
 **Status:** design vision grounded in the current phone app (not a shipping hardware program)  
 **Soul source:** Founding Thesis, Constitution, Consent Flow, UX/UI Philosophy, Soft Signal, Touch Language  
 **Companion app:** the existing iOS Litmo client remains the place for deep editing, learning modules, and account admin  
+**Device OS (shell, power lifecycle, mode kernel):** [`HARDWARE/DEVICE_OS.md`](HARDWARE/DEVICE_OS.md) — canonical OS design from cold power-on to shutdown  
 
 > Touch is not a transaction — it is a language.  
 > The device is not a phone with an app. It is a room for presence.
 
-This document maps the **complete experience** of a dedicated Litmo hardware device: warm, inviting, single-purpose, optimized for human connection. It reuses the app’s consent architecture and intentionally **removes** general-purpose phone behaviors (infinite scroll, app-switcher, notification junk drawer).
+This document maps the **complete product experience** of a dedicated Litmo hardware device: warm, inviting, single-purpose, optimized for human connection. It reuses the app’s consent architecture and intentionally **removes** general-purpose phone behaviors (infinite scroll, app-switcher, notification junk drawer).
+
+For the **operating-system surface** (mode machine, global chrome, Soft Signal interrupt path, sleep/shutdown, OS bans, fail recovery), read **[Litmo Device OS](HARDWARE/DEVICE_OS.md)** first.
 
 ---
 
@@ -549,6 +552,8 @@ The hardware experience is right if:
 
 ## Related
 
+- [**Litmo Device OS**](HARDWARE/DEVICE_OS.md) — power-on → shutdown OS shell  
+- [Haptics (Soft Edge)](HARDWARE/HAPTICS.md)  
 - [Founding Thesis](philosophy/00_Founding_Thesis.md)  
 - [Concept](CONCEPT.md)  
 - [Consent Flow](CONSENT_FLOW.md)  

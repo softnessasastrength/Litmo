@@ -3,7 +3,7 @@
 **Status:** design specification (hardware vision — not a shipping SKU)  
 **Version:** 4.0 · 2026-07-13  
 **Canonical path:** `docs/HARDWARE/HAPTICS.md`  
-**Related:** [ADR 0057](../adr/0057-device-haptic-vca-lra-architecture.md) · [Phone haptics](../roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md) · [ADR 0039](../adr/0039-semantic-haptic-language.md) · [Consent flow](../CONSENT_FLOW.md) · [Neurodivergent mode](../NEURODIVERGENT_MODE.md) · [Data classification](../DATA_CLASSIFICATION.md)
+**Related:** [Device OS](DEVICE_OS.md) · [Device experience](../HARDWARE_DEVICE_EXPERIENCE.md) · [ADR 0057](../adr/0057-device-haptic-vca-lra-architecture.md) · [Phone haptics](../roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md) · [ADR 0039](../adr/0039-semantic-haptic-language.md) · [Consent flow](../CONSENT_FLOW.md) · [Neurodivergent mode](../NEURODIVERGENT_MODE.md) · [Data classification](../DATA_CLASSIFICATION.md)
 
 > Litmo does not buzz at people.  
 > It **answers** them — warmly, sparsely, and in a way a sensitive nervous system can refuse, reduce, or replace with vision at any moment.  

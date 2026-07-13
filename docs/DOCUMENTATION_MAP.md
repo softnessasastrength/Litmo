@@ -72,7 +72,9 @@ Completion reports are evidence, not current task assignments. Do not use their 
 
 ## Roadmaps and future intent
 
-- [`HARDWARE_DEVICE_EXPERIENCE.md`](HARDWARE_DEVICE_EXPERIENCE.md) — design vision for a dedicated Litmo hardware device (not a shipping program)
+- [`HARDWARE/DEVICE_OS.md`](HARDWARE/DEVICE_OS.md) — **Litmo Device OS**: single-purpose OS from power-on to shutdown (not a shipping OS)
+- [`HARDWARE_DEVICE_EXPERIENCE.md`](HARDWARE_DEVICE_EXPERIENCE.md) — product experience narrative for a dedicated Litmo hardware device (not a shipping program)
+- [`HARDWARE/HAPTICS.md`](HARDWARE/HAPTICS.md) — Soft Edge multi-modal haptics for dedicated hardware
 - [`../ROADMAP.md`](../ROADMAP.md) — concise current status and explicitly deferred work.
 - [`roadmap/README.md`](roadmap/README.md) — detailed chapter sequence and planning documents.
 - [`TODO.md`](TODO.md) — future work not necessarily authorized.

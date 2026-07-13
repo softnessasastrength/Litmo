@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-07-13 — Litmo Device OS design (power-on → shutdown)
+
+### Summary
+
+Canonical **Litmo Device OS** design: a single-purpose presence operating surface
+that only rests, carefully meets, mutually consents, stays together, stops freely,
+and quiets — with zero phone-style distraction. Full lifecycle from cold boot to
+shutdown; Soft Signal as highest interrupt; Nearby off by default.
+
+### Impact
+
+- New: `docs/HARDWARE/DEVICE_OS.md` (v1.0)
+- Cross-linked from `HARDWARE_DEVICE_EXPERIENCE.md` and `DOCUMENTATION_MAP.md`
+- Design vision only — not a shipping OS or manufacturing authorization
+
 ## 2026-07-13 — Full Guided Learning / lived-lessons experience
 
 ### Summary
