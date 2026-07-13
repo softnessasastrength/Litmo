@@ -1,5 +1,13 @@
 # Known limitations
 
+## Native macOS foundation
+
+- The native participant app currently provides functional device-local Campfire and a read-only information shell. It has no server connection, does not fabricate participant records, and cannot control active physical sessions or Soft Signal.
+- Litmo Ops is a separately bundled, fail-closed shell. Staff authentication, authorization, review data, mutations, audit logging, and operational readiness are not implemented.
+- The participant and Ops targets intentionally share no App Group or Keychain group. Signing, notarization, hardened-runtime distribution validation, and physical accessibility review remain outstanding.
+- Hosted CI artifacts are unsigned arm64 inspection builds. They are not notarized, installable distribution releases, or evidence of production entitlements.
+
+
 ## Licensing and governance
 
 - Litmo is licensed under MPL-2.0, but contributor attestation, a trademark
