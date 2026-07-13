@@ -81,11 +81,23 @@ export default function QuizzesHubScreen() {
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
-      <Text style={styles.eyebrow}>SELF-UNDERSTANDING</Text>
-      <Text style={styles.title} accessibilityRole="header">
+      <Text style={styles.eyebrow} accessibilityRole="text">
+        SELF-UNDERSTANDING
+      </Text>
+      <Text
+        style={styles.title}
+        accessibilityRole="header"
+        allowFontScaling
+        maxFontSizeMultiplier={2}
+      >
         Quizzes that stay soft.
       </Text>
-      <Text style={styles.intro}>
+      <Text
+        style={styles.intro}
+        allowFontScaling
+        maxFontSizeMultiplier={2}
+        accessibilityRole="text"
+      >
         Explore your social weather privately. Results are conversation starters
         — never a diagnosis, safety score, or consent to touch.
       </Text>

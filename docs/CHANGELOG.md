@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-07-13 — Accessibility audit (Vibe Quiz + app)
+
+### Summary
+
+Published `docs/ACCESSIBILITY.md` checklist and audit. Started P0/P1 fixes for
+screen readers and neurodivergent support on the Vibe Quiz path.
+
+### Implemented this pass
+
+- Announce each quiz question to VoiceOver/TalkBack on change.
+- Progress bar: ND reduced motion, percent value text.
+- Fewer competing headers (Eyebrow demoted); Choice “option N of M”.
+- Dynamic Type on Title/Body/prompts; keyboard persist for dictation fields.
+- Result notes labeled for assistive tech.
+
 ## 2026-07-13 — Inclusive Neurodivergent Mode patterns
 
 ### Summary

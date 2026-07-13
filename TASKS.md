@@ -28,6 +28,7 @@ Only one implementation task should normally be `active`. Every status change mu
 - **Goal:** Validate VoiceOver, Dynamic Type, reduced motion, focus order, contrast, large touch targets, and non-color-only meaning.
 - **Acceptance criteria:** screen-by-screen findings; severity; reproducible steps; fixes and regression tests for material failures.
 - **Notes:** BETA-001 Track C covered engineering-level accessibility criteria (Pass); the optional founder VoiceOver smoke (`docs/ACCESSIBILITY_TRACK_C.md`) is the only physical-device item still outstanding. **Progress 2026-07-13 (agent, PR #61):** static-analysis-only audit of screens Track C didn't cover, fixing a VoiceOver bug in `boundaries.tsx` (radiogroup collapsed under a stray `accessible` prop) and a dark-mode contrast bug across auth/profile screens. **Progress 2026-07-13 (agent):** standardized the remaining deferred semantics fixes: moderation-queue filters now expose selected state, and Settings haptics uses a real switch instead of a button. Physical VoiceOver smoke remains pending.
+- **Progress 2026-07-13 (agent):** full checklist + Vibe Quiz audit in `docs/ACCESSIBILITY.md` (root pointer `ACCESSIBILITY.md`). Implemented P0/P1: question-change VoiceOver announces, Progress ND motion + value text, Eyebrow demoted from header, Choice option position labels, Screen keyboard persist for dictation, Dynamic Type on Title/Body/quiz prompts, result note labels. Remaining: physical VoiceOver smoke on device.
 
 ### DOCS-002 — Keep documentation synchronized
 

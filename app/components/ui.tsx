@@ -159,6 +159,8 @@ export function Screen({
         <ScrollView
           contentContainerStyle={styles.scroll}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
         >
           {content}
         </ScrollView>
@@ -205,11 +207,8 @@ export function FadeIn({ children }: PropsWithChildren) {
 }
 export function Eyebrow({ children }: PropsWithChildren) {
   const styles = useUiStyles();
-  return (
-    <Text accessibilityRole="header" style={styles.eyebrow}>
-      {children}
-    </Text>
-  );
+  // Not a header — keeps a single primary header (Title) for screen readers.
+  return <Text style={styles.eyebrow}>{children}</Text>;
 }
 export function Title({
   children,
@@ -219,6 +218,8 @@ export function Title({
   return (
     <Text
       accessibilityRole="header"
+      allowFontScaling
+      maxFontSizeMultiplier={2.2}
       style={[styles.title, center && styles.center]}
     >
       {children}
@@ -232,7 +233,11 @@ export function Body({
 }: PropsWithChildren<{ center?: boolean; muted?: boolean }>) {
   const styles = useUiStyles();
   return (
-    <Text style={[styles.body, center && styles.center, muted && styles.muted]}>
+    <Text
+      allowFontScaling
+      maxFontSizeMultiplier={2.2}
+      style={[styles.body, center && styles.center, muted && styles.muted]}
+    >
       {children}
     </Text>
   );
@@ -301,24 +306,38 @@ export function Choice({
   glyph,
   selected,
   onPress,
+  index,
+  count,
 }: {
   label: string;
   detail?: string;
   glyph?: string;
   selected: boolean;
   onPress: () => void;
+  /** 1-based index for screen readers (option 2 of 4). */
+  index?: number;
+  count?: number;
 }) {
   const styles = useUiStyles();
-  const a11yLabel = [label, detail, selected ? "Selected" : "Not selected"]
+  const position =
+    typeof index === "number" && typeof count === "number"
+      ? `Option ${index} of ${count}. `
+      : "";
+  const a11yLabel = [
+    position + label,
+    detail,
+    selected ? "Selected" : "Not selected",
+  ]
     .filter(Boolean)
     .join(". ");
   return (
     <Pressable
       accessibilityRole="radio"
       accessibilityLabel={a11yLabel}
+      accessibilityHint="Double tap to choose this answer"
       accessibilityState={{ selected }}
       onPress={onPress}
-      hitSlop={4}
+      hitSlop={6}
       style={({ pressed }) => [
         styles.choice,
         selected && styles.choiceSelected,
@@ -380,39 +399,66 @@ export function SectionTitle({
 export function Progress({
   current,
   total,
+  labelPrefix = "Question",
 }: {
   current: number;
   total: number;
+  /** e.g. "Question" or "Step" for learning reuse */
+  labelPrefix?: string;
 }) {
   const styles = useUiStyles();
-  const reduced = useReducedMotion();
-  const width = useRef(new Animated.Value(current / total)).current;
+  const systemReduced = useReducedMotion();
+  const { reducedStimulation: ndReduced } = useNeurodivergent();
+  const reduced = systemReduced || ndReduced;
+  const safeTotal = Math.max(total, 1);
+  const safeCurrent = Math.min(Math.max(current, 0), safeTotal);
+  const pct = Math.round((safeCurrent / safeTotal) * 100);
+  const width = useRef(new Animated.Value(safeCurrent / safeTotal)).current;
   useEffect(() => {
+    if (reduced) {
+      width.setValue(safeCurrent / safeTotal);
+      return;
+    }
     Animated.timing(width, {
-      toValue: current / total,
-      duration: reduced ? 0 : 280,
+      toValue: safeCurrent / safeTotal,
+      duration: 280,
       useNativeDriver: false,
     }).start();
-  }, [current, reduced, total, width]);
+  }, [safeCurrent, reduced, safeTotal, width]);
+  const label = `${labelPrefix} ${safeCurrent} of ${safeTotal}, ${pct} percent complete`;
   return (
     <View
       accessible
       accessibilityRole="progressbar"
-      accessibilityValue={{ min: 1, max: total, now: current }}
-      accessibilityLabel={`Question ${current} of ${total}`}
+      accessibilityValue={{
+        min: 0,
+        max: 100,
+        now: pct,
+        text: label,
+      }}
+      accessibilityLabel={label}
       style={styles.progressTrack}
     >
-      <Animated.View
-        style={[
-          styles.progressFill,
-          {
-            width: width.interpolate({
-              inputRange: [0, 1],
-              outputRange: ["0%", "100%"],
-            }),
-          },
-        ]}
-      />
+      {reduced ? (
+        <View
+          style={[
+            styles.progressFill,
+            { width: `${pct}%` },
+          ]}
+        />
+      ) : (
+        <Animated.View
+          style={[
+            styles.progressFill,
+            {
+              width: width.interpolate({
+                inputRange: [0, 1],
+                outputRange: ["0%", "100%"],
+              }),
+            },
+          ]}
+        />
+      )}
     </View>
   );
 }

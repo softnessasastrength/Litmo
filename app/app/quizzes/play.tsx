@@ -1,6 +1,12 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import {
+  AccessibilityInfo,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { Choice, FadeIn, Progress, Screen } from "../../components/ui";
 import { useNeurodivergent } from "../../context/NeurodivergentContext";
 import { getQuizEntry } from "../../data/quizCatalog";
@@ -72,6 +78,20 @@ export default function QuizPlayScreen() {
       updatedAt: new Date().toISOString(),
     });
   }, [answers, entry, index, loadedProgress]);
+
+  // Screen reader: announce each new question (VoiceOver / TalkBack).
+  useEffect(() => {
+    if (!entry || questions.length === 0 || resumeOffer) return;
+    const q = questions[index];
+    if (!q) return;
+    const totalQ = questions.length;
+    const pct = Math.round(((index + 1) / totalQ) * 100);
+    const announcement = `Question ${index + 1} of ${totalQ}, ${pct} percent. ${q.prompt}`;
+    const t = setTimeout(() => {
+      AccessibilityInfo.announceForAccessibility(announcement);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [index, entry, questions, resumeOffer]);
 
   if (!entry || questions.length === 0) {
     return (
@@ -261,6 +281,9 @@ export default function QuizPlayScreen() {
         style={styles.clearProgress}
         accessibilityRole="text"
         accessibilityLabel={progressLabel}
+        accessibilityLiveRegion="polite"
+        allowFontScaling
+        maxFontSizeMultiplier={2}
       >
         {progressLabel}
       </Text>
@@ -296,10 +319,19 @@ export default function QuizPlayScreen() {
         </Pressable>
       ) : null}
 
-      <Text style={styles.prompt} accessibilityRole="header">
+      <Text
+        style={styles.prompt}
+        accessibilityRole="header"
+        allowFontScaling
+        maxFontSizeMultiplier={2.2}
+      >
         {question.prompt}
       </Text>
-      <View accessibilityRole="radiogroup" style={styles.options}>
+      <View
+        accessibilityRole="radiogroup"
+        accessibilityLabel={`Answers for question ${index + 1}`}
+        style={styles.options}
+      >
         {question.answers.map((answer, i) => (
           <Choice
             key={answer.id}
@@ -317,14 +349,26 @@ export default function QuizPlayScreen() {
             }
             glyph={reducedStimulation ? undefined : answer.glyph}
             selected={selected === answer.id}
+            index={i + 1}
+            count={question.answers.length}
             onPress={() => choose(answer)}
           />
         ))}
       </View>
 
       {awaitingContinue && selected ? (
-        <View style={styles.paceCard} accessible>
-          <Text style={styles.paceText}>
+        <View
+          style={styles.paceCard}
+          accessible
+          accessibilityRole="summary"
+          accessibilityLiveRegion="polite"
+          accessibilityLabel={
+            plain
+              ? clearLanguage.paceConfirm
+              : "Answer saved. Continue when you are ready."
+          }
+        >
+          <Text style={styles.paceText} allowFontScaling maxFontSizeMultiplier={2}>
             {plain
               ? clearLanguage.paceConfirm
               : "Answer saved. Continue when you are ready — no rush."}

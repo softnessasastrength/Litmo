@@ -171,7 +171,15 @@ function ResultBody() {
               Gentle observations from your answers — not instructions.
             </Text>
             {result.notes.map((note) => (
-              <Text key={note} style={styles.note}>
+              <Text
+                key={note}
+                style={styles.note}
+                accessible
+                accessibilityRole="text"
+                accessibilityLabel={note}
+                allowFontScaling
+                maxFontSizeMultiplier={2}
+              >
                 · {note}
               </Text>
             ))}
