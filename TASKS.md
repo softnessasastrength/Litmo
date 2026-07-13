@@ -43,6 +43,13 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 ## Completed
 
+### IOS-CI-001 — Hosted unsigned native iOS build
+
+- **Status:** completed
+- **Result:** PR #75 adds a credential-free `macos-26` workflow that installs locked npm and CocoaPods dependencies, compiles the checked-in Xcode workspace for a generic iOS Simulator with signing disabled, and uploads the compiled `.app` plus complete build log.
+- **Verification:** GitHub Actions iOS Native Build run #4 passed with Xcode 26.5 after synchronizing the stale pod lock; the final PR head restores strict `pod install --deployment`.
+- **Boundary:** This proves native compilation only. It does not produce a signed device IPA, validate entitlements on hardware, upload to TestFlight, or remove any release blocker.
+
 ### CAMPFIRE-001 — Local Campfire practice hub
 
 - **Status:** completed
