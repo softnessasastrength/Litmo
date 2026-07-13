@@ -1,0 +1,83 @@
+name: LitmoMac
+options:
+  bundleIdPrefix: com.litmo
+  deploymentTarget:
+    macOS: "15.0"
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "15.0"
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: FHZSE6U4R5
+targets:
+  LitmoMacCore:
+    type: framework
+    platform: macOS
+    sources: [Sources/LitmoMacCore]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.litmo.macos.core
+        DEFINES_MODULE: YES
+  Litmo:
+    type: application
+    platform: macOS
+    sources: [Sources/LitmoParticipantApp]
+    dependencies:
+      - target: LitmoMacCore
+    info:
+      path: Configs/Litmo-Info.plist
+      properties:
+        CFBundleDisplayName: Litmo
+        LSApplicationCategoryType: public.app-category.lifestyle
+    entitlements:
+      path: Configs/Litmo.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.network.client: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.litmo.macos
+        PRODUCT_NAME: Litmo
+  LitmoOps:
+    type: application
+    platform: macOS
+    sources: [Sources/LitmoOpsApp]
+    dependencies:
+      - target: LitmoMacCore
+    info:
+      path: Configs/LitmoOps-Info.plist
+      properties:
+        CFBundleDisplayName: Litmo Ops
+        LSApplicationCategoryType: public.app-category.business
+    entitlements:
+      path: Configs/LitmoOps.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.network.client: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.litmo.ops
+        PRODUCT_NAME: Litmo Ops
+  LitmoMacCoreTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources: [Tests/LitmoMacCoreTests]
+    dependencies:
+      - target: LitmoMacCore
+schemes:
+  Litmo:
+    build:
+      targets:
+        Litmo: all
+        LitmoMacCoreTests: [test]
+    test:
+      targets:
+        - LitmoMacCoreTests
+  LitmoOps:
+    build:
+      targets:
+        LitmoOps: all
+        LitmoMacCoreTests: [test]
+    test:
+      targets:
+        - LitmoMacCoreTests
