@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-07-13 — Partner invite guided flow (consent + E2E)
+
+### Summary
+
+Partner invite + shared comparison centered on a calm **next-step guide**:
+create → encrypt/share → dual compare consent → open comparison. Signal-style
+E2E packages; fail-closed mutual consent; empowering withdraw; design doc
+`docs/PARTNER_QUIZ_SHARE.md`.
+
+### User-visible impact
+
+- One primary CTA for the next safe action; advanced tools collapsed.
+- Package auto-shown after create; safety line always visible.
+- Demo practice still requires human share + compare consents.
+
 ## 2026-07-13 — Global Neurodivergent Mode (app-wide)
 
 ### Summary

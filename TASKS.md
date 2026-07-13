@@ -90,14 +90,16 @@ None recorded. External credentials, signing, App Store configuration, or policy
 ### QUIZ-003 — Partner invite & shared comparison flow
 
 - **Status:** completed
-- **Result:** Calm partner invite UX with mutual share+compare gates; E2E
-  packages; demo-only fictional partner practice (`quizDemoPartner`) that uses
-  real crypto and never auto-opens comparison; Home/Quizzes/entry demo copy;
-  Face ID gate on share screen for real accounts.
-- **Verification:** `quizDemoPartner` + `doubleRatchetCore` + `quizShareCore`
-  unit tests; app typecheck.
+- **Result:** Designed + implemented partner invite with **guided next-step UX**
+  (`quizPartnerFlowCore`), dual share+compare consent fail-closed, Signal-
+  inspired E2E (X3DH + Double Ratchet), package auto-show on create, demo
+  fictional peer with real crypto, withdraw anytime, Face ID on real accounts.
+  Design doc: `docs/PARTNER_QUIZ_SHARE.md`.
+- **Verification:** `quizPartnerFlowCore` + `quizDemoPartner` +
+  `doubleRatchetCore` + `quizShareCore` tests; app typecheck.
 - **Boundary:** fictional partner is demo-only; peer package consents remain
-  package-asserted; never consent/safety authority.
+  package-asserted; E2E is focused product path not full Signal audit; never
+  consent/safety authority.
 - **Related decision:** ADR 0050, 0052.
 
 ### QUIZ-002 — Partner quiz E2E (X3DH + Double Ratchet)
