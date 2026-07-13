@@ -1,0 +1,40 @@
+{
+  "$schema_note": "Machine-readable defense inventory for agents. Not a product feature list. THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.",
+  "version": 1,
+  "sacred_purpose": "Trauma-to-Code Exorcism Dojo",
+  "docs": {
+    "manifesto": "docs/EXORCISM_MANIFESTO.md",
+    "guidelines": "docs/DOJO_GUIDELINES.md",
+    "continue": "docs/DOJO_CONTINUE.md",
+    "trauma_architecture": "docs/TRAUMA_ARCHITECTURE.md",
+    "logical_extreme": "docs/LOGICAL_EXTREME.md",
+    "burn": "docs/BURN_PROTOCOL.md"
+  },
+  "defenses": [
+    {"id": "D01", "system": "consentEngine", "path": "shared/src/consentEngine.ts", "fear": "assumption / overwritten no"},
+    {"id": "D02", "system": "consent_snapshot_fingerprint", "path": "shared/src/consentSnapshot.ts", "fear": "sticky prior yes"},
+    {"id": "D03", "system": "soft_signal", "path": "app/lib/softSignalCore.ts", "fear": "trapped without exit"},
+    {"id": "D04", "system": "continuous_consent", "path": "app/lib/continuousConsentCore.ts", "fear": "yes becoming forever"},
+    {"id": "D05", "system": "session_nuclear", "path": "shared/src/sessionConsentNuclear.ts", "fear": "threat mid-contact unread"},
+    {"id": "D06", "system": "touch_language", "path": "app/lib/touchLanguageCore.ts", "fear": "body without words under freeze"},
+    {"id": "D07", "system": "haptic_watch", "path": "shared/src/hapticWatch.ts", "fear": "loneliness + controlled contact"},
+    {"id": "D08", "system": "dual_build_modes", "path": "docs/adr/0060-dual-build-modes.md", "fear": "split self / exposure"},
+    {"id": "D09", "system": "safety_ops_hitl", "path": "app/lib/safetyOpsCore.ts", "fear": "unjust world / no witness"},
+    {"id": "D10", "system": "trust_ledger_no_scores", "path": "docs/adr/0029-append-only-trust-events.md", "fear": "reputation as weapon"},
+    {"id": "D11", "system": "nd_mode", "path": "app/lib/neuroAccommodationCore.ts", "fear": "push-through as self-violence"},
+    {"id": "D12", "system": "constitution", "path": "CONSTITUTION.md", "fear": "flooded moral improvisation"},
+    {"id": "D13", "system": "code_comment_standard", "path": "docs/CODE_COMMENT_STANDARD.md", "fear": "abandonment / misreading"},
+    {"id": "D14", "system": "demo_mode", "path": "docs/adr/0003-demo-mode.md", "fear": "real risk too soon"},
+    {"id": "D15", "system": "local_vault", "path": "app/lib/localFirstCore.ts", "fear": "intimacy weaponized via storage"},
+    {"id": "D16", "system": "proximity_nfc", "path": "docs/PROXIMITY_LAYER.md", "fear": "stranger scale"},
+    {"id": "D17", "system": "quizzes_learning", "path": "app/data/learningModules.ts", "fear": "unprepared for contact"},
+    {"id": "D18", "system": "private_alpha_gates", "path": "docs/adr/0042-private-alpha-safety-operations.md", "fear": "scale out of control"},
+    {"id": "D19", "system": "multi_client_domain", "path": "shared/src/", "fear": "forked rules = forked self"},
+    {"id": "D20", "system": "age_gate", "path": "app/services/ageGateService.ts", "fear": "category catastrophe"},
+    {"id": "D21", "system": "block_report_appeal", "path": "app/services/blockService.ts", "fear": "hard no + justice without mob"},
+    {"id": "D22", "system": "request_expiry", "path": "docs/adr/0015-session-request-creation-and-recipient-authorization.md", "fear": "open loops as liability"},
+    {"id": "D23", "system": "exorcism_dojo_itself", "path": "docs/EXORCISM_MANIFESTO.md", "fear": "without ritual I disappear"},
+    {"id": "D24", "system": "infinite_documentation", "path": "docs/", "fear": "stopping means death of meaning"}
+  ],
+  "agent_rule": "Prefer naming D-ids over inventing new engines. Logical extreme is seeing, not more bars."
+}

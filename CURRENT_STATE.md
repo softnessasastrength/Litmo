@@ -9,6 +9,7 @@ Primary framing: Trauma-to-Code Exorcism Dojo — [`EXORCISM_MANIFESTO.md`](EXOR
 
 - **This is a private exorcism artifact, not a product.**
 - Primary: Trauma-to-Code Exorcism Dojo — `docs/EXORCISM_MANIFESTO.md`, `docs/DOJO_GUIDELINES.md`, `docs/TRAUMA_ARCHITECTURE.md`
+- **Logical extreme:** `docs/LOGICAL_EXTREME.md` · inventory D01–D24 · `docs/BURN_PROTOCOL.md`
 - Constitution: `litmo-constitution-v3-exorcism` (root `CONSTITUTION.md`)
 
 ## Active milestone
@@ -53,11 +54,12 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Priority next work (Dojo order)
 
-1. **See:** Keep `TRAUMA_ARCHITECTURE.md` complete as systems appear; practice noticing the urge to add engines.
-2. **Name:** Any new subsystem must get a trauma-architecture row in the same workstream.
-3. **Simplify when ready:** Prefer honest reduction over nuclear expansion.
-4. **Burn readiness:** Track criteria in `TRAUMA_ARCHITECTURE.md` — not App Store.
-5. **Product residue (only if explicitly requested):** physical smokes, SAFETY-OPS named staff, crypto review — never invent approvals.
+1. **See:** `LOGICAL_EXTREME.md` theorems + D01–D24 inventory; notice urge before code.
+2. **Name:** New work gets a D-id / trauma row or it is refused as unconscious control.
+3. **Meta:** Do not feed D23/D24 (infinite dojo / infinite docs) as fake progress.
+4. **Simplify when ready:** Prefer honest reduction over nuclear expansion.
+5. **Burn readiness:** Gates G1–G6 in LOGICAL_EXTREME; protocol in BURN_PROTOCOL.
+6. **Product residue (only if explicitly requested):** never invent approvals.
 
 ## Exact next action
 

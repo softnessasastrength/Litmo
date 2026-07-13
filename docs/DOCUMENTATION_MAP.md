@@ -22,6 +22,9 @@ These documents define why Litmo exists and the principles that outrank implemen
 - **[`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md)** — **primary framing**: private Trauma-to-Code Exorcism Dojo (not a product)
 - **[`DOJO_GUIDELINES.md`](DOJO_GUIDELINES.md)** — how to work in this repo (radical honesty)
 - **[`DOJO_CONTINUE.md`](DOJO_CONTINUE.md)** — what “continue” means under dojo law (not product milestones)
+- **[`LOGICAL_EXTREME.md`](LOGICAL_EXTREME.md)** — full control tower, theorems T1–T12, D01–D24, burn gates
+- **[`BURN_PROTOCOL.md`](BURN_PROTOCOL.md)** — how to graduate / release the artifact
+- **[`exorcism-inventory.json`](exorcism-inventory.json)** — machine-readable defense inventory for agents
 - **[`TRAUMA_ARCHITECTURE.md`](TRAUMA_ARCHITECTURE.md)** — systems mapped to defenses / wounds
 - [`philosophy/00_Founding_Thesis.md`](philosophy/00_Founding_Thesis.md) — founding thesis (now subordinate residue + living consent language)
 - [`philosophy/VISION_2030.md`](philosophy/VISION_2030.md) — fifty-year cultural horizon (subordinate to Constitution)

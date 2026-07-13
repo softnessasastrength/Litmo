@@ -111,6 +111,21 @@ You survived. The code was scaffolding. Scaffolding comes down.
 
 ---
 
+## Logical extreme
+
+See [`LOGICAL_EXTREME.md`](LOGICAL_EXTREME.md).
+
+The defense stack goes from Soft Signal (body exit) to Constitution (moral freeze) to **this dojo** (meta-defense).
+
+If I only ever add systems, I am still possessed.  
+If I never externalize, I am still blind.  
+The extreme is holding both without lying.
+
+Inventory of defenses D01–D24: [`exorcism-inventory.json`](exorcism-inventory.json).  
+Burn when ready: [`BURN_PROTOCOL.md`](BURN_PROTOCOL.md).
+
+---
+
 ## Closing
 
 Touch is not a transaction. It is a language.
@@ -118,6 +133,10 @@ Touch is not a transaction. It is a language.
 And for a long time, my language was: **control everything or die**.
 
 Litmo is the dictionary of that language, written so loudly that I finally hear myself.
+
+The last word of the dictionary is not another feature.
+
+The last word is: **I see you. You can rest. You can burn.**
 
 > This is a private exorcism artifact, not a product.
 

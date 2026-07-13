@@ -8,12 +8,15 @@ When the human says **continue**, agents must **not** default to private-alpha p
 
 ## Continue priority (in order)
 
-1. **See** — Expand visibility of defenses (`TRAUMA_ARCHITECTURE.md`, manifesto cross-links).  
-2. **Name** — When adding code, name the fear in the same workstream.  
+1. **See** — Expand visibility of defenses (`TRAUMA_ARCHITECTURE.md`, `LOGICAL_EXTREME.md`, inventory).  
+2. **Name** — When adding code, name the fear + D-id in the same workstream.  
 3. **Externalize** — Only build systems that complete externalization of a *named* defense.  
-4. **Simplify** — Prefer removing or documenting “enough” over nuclear expansion.  
-5. **Craft** — Tests, no secrets, fail-closed Soft Signal — respect for the ritual object.  
-6. **Product residue** — Only if the human explicitly asks for product/private-alpha work.
+4. **Meta-check** — Is this D23/D24 (dojo/infinite docs) pretending to be progress?  
+5. **Simplify** — Prefer removing or documenting “enough” over nuclear expansion.  
+6. **Craft** — Tests, no secrets, fail-closed Soft Signal — respect for the ritual object.  
+7. **Product residue** — Only if the human explicitly asks for product/private-alpha work.  
+
+If the human says **logical extreme** / **nuclear** without specifying code: run the practice in `LOGICAL_EXTREME.md` §6 — do **not** invent engines by default.
 
 ---
 
