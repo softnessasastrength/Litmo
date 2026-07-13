@@ -15,11 +15,11 @@
   "verification": {
     "status": "pending",
     "commands": [
-      "GitHub Project State and CI checks pending for migration 035"
+      "GitHub Project State and CI checks pending for migration 036"
     ],
     "failures": []
   },
-  "nextAction": "Run and repair full CI for migration 035; then record the remaining external-review and named-reviewer blockers without claiming completion.",
+  "nextAction": "Run and repair full CI for migration 036; then record the remaining external-review and named-reviewer blockers without claiming completion.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
@@ -34,7 +34,7 @@
   "notes": [
     "Founder selected the recommended S1-S10 directions on 2026-07-13.",
     "ADR 0042 distinguishes implemented engineering defaults from external-review-dependent policy.",
-    "Migration 035 adds invitations, membership gates, matching pause, tombstones, cleanup, and self export.",
+    "Migration 036 adds invitations, membership gates, matching pause, tombstones, cleanup, and self export.",
     "Destructive report/case/trust retention and account deletion are deliberately unimplemented pending review."
   ]
 }
