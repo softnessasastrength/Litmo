@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-07-14 — Dual build modes (Maximum vs App Store Safe)
+
+### Summary
+
+One monorepo, two compile-time product modes: **Maximum** (macOS/Linux/internal
+full autistic consent experience) and **App Store Safe** (iOS store-sanitized
+copy + gated proximity/NFC/hardware/demo). Safety core (Soft Signal stop, dual
+seal, age gate, fail-closed) never disabled. Mode via
+`EXPO_PUBLIC_LITMO_BUILD_MODE`, feature matrix, dual copy packs, EAS profiles.
+
+### Developer impact
+
+- `app/config/buildMode.ts`, `features.ts`, `copy/*`, `runtime.ts`
+- `app.config.ts` + `eas.json` profile pins (`production` → app_store)
+- Welcome/entry/Soft Signal/proximity/NFC wired to mode
+- `docs/BUILD_MODES.md`, ADR 0060
+- Tests: `config/buildMode.test.ts`
+
 ## 2026-07-14 — Code comment standard (maximum intentionality)
 
 ### Summary

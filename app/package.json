@@ -10,7 +10,9 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test lib/*.test.ts context/*.test.ts services/*.test.ts data/*.test.ts",
+    "test": "node --experimental-strip-types --test lib/*.test.ts context/*.test.ts services/*.test.ts data/*.test.ts config/*.test.ts",
+    "start:maximum": "EXPO_PUBLIC_LITMO_BUILD_MODE=maximum expo start",
+    "start:app-store": "EXPO_PUBLIC_LITMO_BUILD_MODE=app_store EXPO_PUBLIC_LITMO_PLATFORM=ios expo start",
     "build": "expo export --platform ios --output-dir dist",
     "format:check": "prettier --check \"**/*.{ts,tsx,json,md}\""
   },

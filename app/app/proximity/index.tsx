@@ -27,12 +27,31 @@ import { proximityService } from "../../services/proximityService";
 import { localShareService } from "../../services/localShareService";
 import { fonts, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
+import { runtimeConfig } from "../../config/runtime";
 
 /**
  * Proximity Layer hub — extreme consent gating before any radio path.
  * Radar · NFC · QR · AirDrop-style Multipeer share.
+ *
+ * App Store Safe Mode: proximityRadar feature is off — show honest unavailable
+ * screen instead of advertising RF. Maximum Mode keeps full stack.
+ * SEE: docs/BUILD_MODES.md
  */
 export default function ProximityHubScreen() {
+  // Compile-time feature gate — App Store binary does not offer RF radar UI.
+  if (!runtimeConfig.features.proximityRadar) {
+    return (
+      <Screen>
+        <Eyebrow>NEARBY</Eyebrow>
+        <Title>Nearby discovery is not available in this build.</Title>
+        <Body muted>
+          This App Store build focuses on accounts, preferences, boundaries, and
+          session consent without continuous nearby radio. The full Proximity
+          Layer remains in Maximum Mode builds (macOS / Linux / internal).
+        </Body>
+      </Screen>
+    );
+  }
   return (
     <SensitiveAccessGate>
       <ProximityHubContent />

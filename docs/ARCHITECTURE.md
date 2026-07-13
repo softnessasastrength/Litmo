@@ -15,6 +15,19 @@ UI/API adapters
   → @litmo/domain runtime schemas
 ```
 
+## Dual build modes (Maximum vs App Store Safe)
+
+Litmo ships **one monorepo** and **two compile-time product modes** (ADR 0060):
+
+| Mode | Hosts | Intent |
+| ---- | ----- | ------ |
+| **Maximum** | macOS, Linux, internal iOS | Full autistic consent experience |
+| **App Store Safe** | iOS staging/production store | Sanitized copy + RF/NFC/hardware gated |
+
+Orthogonal to `EXPO_PUBLIC_APP_ENV`. Mode is set by `EXPO_PUBLIC_LITMO_BUILD_MODE` and stamped in `app.config.ts` / `eas.json`. Feature matrix: `app/config/features.ts`. Copy packs: `app/config/copy/*`. Operator manual: [`BUILD_MODES.md`](BUILD_MODES.md).
+
+**Never disabled by mode:** Soft Signal stop, dual-seal fail-closed engine, age gate, profile≠consent.
+
 **Local-first personal data** (`docs/LOCAL_FIRST.md`, ADR 0058): Touch Language,
 Consent Snapshot local packages, Soft Signal log, private history, learning
 progress, and quiz summaries write to `localVault` (Secure Store preferred).

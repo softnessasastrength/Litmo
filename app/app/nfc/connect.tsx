@@ -25,8 +25,26 @@ import {
 import type { NfcIntent } from "../../services/nfcCore";
 import type { QrPrivacyMode } from "../../services/qrInviteCore";
 import { profileRepository } from "../../services/profileRepository";
+import { runtimeConfig } from "../../config/runtime";
 
+/**
+ * NFC careful-connect — Maximum Mode full stack; App Store Safe Mode unavailable.
+ * SEE: docs/BUILD_MODES.md features.nfcCarefulConnect
+ */
 export default function NfcConnectScreen() {
+  if (!runtimeConfig.features.nfcCarefulConnect) {
+    return (
+      <Screen>
+        <Eyebrow>NFC</Eyebrow>
+        <Title>NFC connect is not available in this build.</Title>
+        <Body muted>
+          This App Store build omits NFC careful-connect. The full NFC path
+          remains in Maximum Mode builds. Session consent still uses explicit
+          on-screen agreement — scan is never accept.
+        </Body>
+      </Screen>
+    );
+  }
   return (
     <SensitiveAccessGate>
       <NfcConnectContent />
