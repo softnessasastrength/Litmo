@@ -4,9 +4,9 @@
 
 ## Active milestone
 
-- **Name:** Private-beta validation (physical walkthrough)
-- **Status:** complete (BETA-001 closed 2026-07-13); no milestone is currently active
-- **Branch:** `main` is the current integrated baseline; use a feature branch for new work.
+- **Name:** No active implementation milestone
+- **Status:** BETA-001 is complete; SAFETY-OPS-001 is pending founder/reviewer decisions
+- **Branch:** `main` at `42a1eed65b182c9880238eca26f3a53032ad5c43` is the integrated baseline. Decision preparation is on `agent/continuity-safety-ops-decisions`.
 - **Latest known coherent milestone:** Chapters 1–5, LEARN-002, HAPTIC-001, matching-hold ends open sessions (ADR 0038), semantic haptics (ADR 0039), BETA-001 physical walkthrough (Track A/B/C all Pass, including physical B1–B26).
 
 ## Completed foundation
@@ -25,13 +25,14 @@
 
 ## Work in progress
 
-None recorded. BETA-001 closed 2026-07-13 with all tracks Pass and no outstanding Fail items. No task is currently `active` in `TASKS.md`.
+Documentation-only decision preparation is in progress for SAFETY-OPS-001. `docs/SAFETY_OPS_FOUNDER_DECISIONS.md` contains the founder worksheet. No implementation task is `active`, and no Chapter 6 code is authorized.
 
 ## Priority next work
 
-1. Optional founder VoiceOver smoke (`docs/ACCESSIBILITY_TRACK_C.md`, tracked under ACCESS-001).
-2. Select and mark `active` the next task in `TASKS.md` — candidates are SAFETY-OPS-001 (moderation/beta-operations design) and DOCS-002 (ongoing). Do not start new product chapters without an explicit human decision (per `AGENTS.md` chapter promotion rule).
-3. Clear external TestFlight blockers only when intentionally starting private alpha distribution.
+1. Founder reviews `docs/SAFETY_OPS_FOUNDER_DECISIONS.md` and records dispositions for S1–S10.
+2. Convert accepted decisions into focused ADRs; keep legal/privacy/safeguarding-dependent rows provisional until the named review exists.
+3. Separately decide whether to promote a Chapter 6 implementation milestone. Completing the worksheet alone is not implementation authorization.
+4. Optional founder VoiceOver smoke remains tracked under ACCESS-001.
 
 ## Verification baseline
 
@@ -73,7 +74,7 @@ Do not claim the current integrated `main` has passed every command unless the e
 
 ## Exact next action
 
-BETA-001 is closed with no Fail items. Next: a human should either run the optional VoiceOver smoke, or explicitly select and mark `active` the next task in `TASKS.md` (e.g. SAFETY-OPS-001).
+BETA-001 is closed with no Fail items. Next: the founder reviews `docs/SAFETY_OPS_FOUNDER_DECISIONS.md`, records S1–S10 dispositions, and identifies the required external reviewers. Do not implement Chapter 6 until a human separately promotes it.
 
 ## Resume checklist
 
