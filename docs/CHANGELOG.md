@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-07-14 — Consent micro-interactions (Apple-level granularity)
+
+### Summary
+
+Codified every consent surface as a typed interaction grammar: timings (grant
+slow / Soft Signal 0ms), visual weight hierarchy, phase machines, forbidden
+patterns, and a full `CONSENT_POINTS` catalog. Soft Signal sticky mode; dual
+seal arm dwell; ConsentAffirmRow; canonical doc
+`docs/CONSENT_MICROINTERACTIONS.md`.
+
+### Invariants enforced in tests
+
+- Soft Signal faster than grant arm  
+- Soft Signal never requires arming; works offline; weight ≥ 90  
+- Prepare ≠ mutual consent; learning scenarios ≠ real consent  
+- Forbidden labels rejected  
+
 ## 2026-07-14 — Continue: Soft Signal offline matrix + soft_limit engine + time boundary
 
 ### Summary

@@ -59,6 +59,7 @@
 | Dual-agreed time boundary on local mutual seal | **shipped** declaration + intersection + prepare UI |
 | Active session honors sealed mutual max minutes | **shipped** |
 | Physical Soft Signal chaos checklist | **doc** `PHYSICAL_SOFT_SIGNAL_CHAOS.md` (human evidence still open) |
+| **Consent micro-interaction grammar (max detail)** | **shipped** `consentInteractionCore` + `CONSENT_MICROINTERACTIONS.md` |
 
 ## Residual war path (still open)
 

@@ -527,6 +527,7 @@ function ActiveSessionContent() {
         <Text style={styles.stickyLabel}>{SOFT_SIGNAL_COPY.stickyLabel}</Text>
         <SoftSignalButton
           prominent
+          sticky
           state={softSignalState}
           disabled={ended}
           onPress={() =>

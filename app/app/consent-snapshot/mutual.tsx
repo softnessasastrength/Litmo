@@ -1,6 +1,6 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   Body,
   Button,
@@ -9,6 +9,7 @@ import {
   Screen,
   Title,
 } from "../../components/ui";
+import { ConsentAffirmRow } from "../../components/ConsentAffirmRow";
 import {
   affirmParty,
   createMutualSnapshot,
@@ -20,6 +21,11 @@ import {
   type MutualConsentSnapshot,
   type PreSessionDeclaration,
 } from "../../lib/sessionConsentSnapshotCore";
+import {
+  CONSENT_POINTS,
+  CONSENT_TIMING,
+  mayEnableGrantConfirm,
+} from "../../lib/consentInteractionCore";
 import { sessionConsentSnapshotStore } from "../../services/sessionConsentSnapshotStore";
 import { hapticService } from "../../services/hapticService";
 import { fonts, type AppColors } from "../../theme";
@@ -34,6 +40,39 @@ const EMPTY_CHECKS = {
   thisMomentOnly: false,
   notAGuaranteeOfSafety: false,
 };
+
+const SELF_ROWS = [
+  {
+    key: "reviewedBoundaries" as const,
+    pointId: "snapshot_mutual_self_affirm" as const,
+    label: "I read every boundary row for this moment",
+  },
+  {
+    key: "reviewedSafewords" as const,
+    pointId: "snapshot_mutual_self_affirm" as const,
+    label: "I know both sets of stop / slow words",
+  },
+  {
+    key: "reviewedAftercare" as const,
+    pointId: "snapshot_mutual_self_affirm" as const,
+    label: "I reviewed aftercare overlap carefully",
+  },
+  {
+    key: "affirmedSoftSignal" as const,
+    pointId: "snapshot_soft_signal_ack" as const,
+    label: CONSENT_POINTS.snapshot_soft_signal_ack.copy.primary,
+  },
+  {
+    key: "thisMomentOnly" as const,
+    pointId: "snapshot_mutual_self_affirm" as const,
+    label: "This yes is for this moment only",
+  },
+  {
+    key: "notAGuaranteeOfSafety" as const,
+    pointId: "snapshot_mutual_self_affirm" as const,
+    label: "This seal never proves anyone is safe forever",
+  },
+];
 
 /**
  * Mutual Consent Snapshot seal — both parties must affirm the same package.
@@ -50,6 +89,9 @@ export default function ConsentSnapshotMutualScreen() {
   const [checksA, setChecksA] = useState({ ...EMPTY_CHECKS });
   const [checksB, setChecksB] = useState({ ...EMPTY_CHECKS });
   const [error, setError] = useState("");
+  /** Dwell before dual seal arms — grant is deliberate; Soft Signal is not. */
+  const [dwellMs, setDwellMs] = useState(0);
+  const readyAt = useRef<number | null>(null);
 
   const rebuild = useCallback(
     (a: PreSessionDeclaration, b: PreSessionDeclaration) => {
@@ -57,6 +99,8 @@ export default function ConsentSnapshotMutualScreen() {
       setSnap(next);
       setChecksA({ ...EMPTY_CHECKS });
       setChecksB({ ...EMPTY_CHECKS });
+      readyAt.current = null;
+      setDwellMs(0);
       return next;
     },
     [],
@@ -91,19 +135,39 @@ export default function ConsentSnapshotMutualScreen() {
 
   const allA = Object.values(checksA).every(Boolean);
   const allB = Object.values(checksB).every(Boolean);
+  const contentReady = Boolean(snap && !snap.withdrawnAt && !isSealed(snap));
 
-  const toggle = (
-    side: "A" | "B",
-    key: keyof typeof EMPTY_CHECKS,
-  ) => {
-    if (side === "A") setChecksA((c) => ({ ...c, [key]: !c[key] }));
-    else setChecksB((c) => ({ ...c, [key]: !c[key] }));
-  };
+  // Apple-level dwell: seal cannot enable until min arm time after all toggles.
+  useEffect(() => {
+    if (!(allA && allB && contentReady)) {
+      readyAt.current = null;
+      setDwellMs(0);
+      return;
+    }
+    if (readyAt.current == null) readyAt.current = Date.now();
+    const tick = setInterval(() => {
+      if (readyAt.current == null) return;
+      setDwellMs(Date.now() - readyAt.current);
+    }, 50);
+    return () => clearInterval(tick);
+  }, [allA, allB, contentReady]);
+
+  const sealArmed = mayEnableGrantConfirm({
+    contentReady,
+    requiredTogglesAllOn: allA && allB,
+    dwellMs,
+    fingerprintCurrent: Boolean(snap?.fingerprint),
+    withdrawn: Boolean(snap?.withdrawnAt),
+  });
 
   const seal = async () => {
     if (!snap || !selfDecl || !partnerDecl) return;
-    if (!allA || !allB) {
-      setError("Every protective check must be affirmed by both sides.");
+    if (!sealArmed) {
+      setError(
+        allA && allB
+          ? "Hold a breath — seal arms after a short deliberate pause."
+          : "Every protective check must be affirmed by both sides.",
+      );
       return;
     }
     setError("");
@@ -177,19 +241,21 @@ export default function ConsentSnapshotMutualScreen() {
           : "Both people must agree — carefully."}
       </Title>
       <View style={styles.banner}>
-        <Text style={styles.bannerTitle}>Protective process</Text>
+        <Text style={styles.bannerTitle}>Slow yes · free no</Text>
         <Text style={styles.bannerBody}>
-          Read the full intersection. Affirm Soft Signal. Seal only if both of
-          you mean yes for now. Either person may withdraw without explanation.
+          Read every row. Affirm Soft Signal. Seal only if both of you mean yes
+          for now. Withdraw is always faster than sealing — no explanation.
         </Text>
       </View>
 
       {partnerDecl?.role === "partner_practice" ? (
-        <Body muted>
-          Demo mode uses a labeled practice partner so you can rehearse dual
-          affirmation on one phone. A real session requires two independent
-          people and devices.
-        </Body>
+        <View style={styles.demoBanner} accessible>
+          <Text style={styles.demoTitle}>DEMO · PRACTICE PARTNER</Text>
+          <Text style={styles.demoBody}>
+            Dual affirmation on one phone is rehearsal only. A real session
+            needs two independent people. Never forge a remote yes.
+          </Text>
+        </View>
       ) : null}
 
       <Card style={styles.snapshot}>
@@ -209,82 +275,72 @@ export default function ConsentSnapshotMutualScreen() {
 
       {!sealed && !snap?.withdrawnAt ? (
         <>
-          <Text style={styles.section}>
-            Your affirmations ({selfDecl.displayLabel})
-          </Text>
-          {(
-            [
-              ["reviewedBoundaries", "I reviewed the boundary intersection"],
-              ["reviewedSafewords", "I know both sets of safewords"],
-              ["reviewedAftercare", "I reviewed aftercare preferences"],
-              ["affirmedSoftSignal", "I affirm Soft Signal for both of us"],
-              ["thisMomentOnly", "This agreement is for this moment only"],
-              [
-                "notAGuaranteeOfSafety",
-                "I understand this does not prove anyone is safe forever",
-              ],
-            ] as const
-          ).map(([key, label]) => (
-            <Pressable
-              key={key}
-              accessibilityRole="checkbox"
-              accessibilityState={{ checked: checksA[key] }}
-              onPress={() => toggle("A", key)}
-              style={[styles.check, checksA[key] && styles.checkOn]}
-            >
-              <Text style={styles.checkText}>
-                {checksA[key] ? "☑" : "☐"} {label}
-              </Text>
-            </Pressable>
-          ))}
-
-          <Text style={styles.section}>
-            Partner affirmations ({partnerDecl?.displayLabel ?? "Partner"})
+          <Text style={styles.section} accessibilityRole="header">
+            Your yes ({selfDecl.displayLabel})
           </Text>
           <Body muted>
-            In demo, you record the partner side only after reviewing as if you
-            were them — practice dual consent, never forge a real remote yes.
+            Each toggle is intentional. Seal will not arm until every check is
+            on and a short deliberate pause passes (
+            {CONSENT_TIMING.grantArmDwellMs}ms). Soft Signal never waits.
           </Body>
-          {(
-            [
-              ["reviewedBoundaries", "Partner reviewed boundary intersection"],
-              ["reviewedSafewords", "Partner knows both safeword sets"],
-              ["reviewedAftercare", "Partner reviewed aftercare"],
-              ["affirmedSoftSignal", "Partner affirms Soft Signal"],
-              ["thisMomentOnly", "Partner agrees this moment only"],
-              [
-                "notAGuaranteeOfSafety",
-                "Partner understands this is not a safety guarantee",
-              ],
-            ] as const
-          ).map(([key, label]) => (
-            <Pressable
-              key={`b-${key}`}
-              accessibilityRole="checkbox"
-              accessibilityState={{ checked: checksB[key] }}
-              onPress={() => toggle("B", key)}
-              style={[styles.check, checksB[key] && styles.checkOn]}
-            >
-              <Text style={styles.checkText}>
-                {checksB[key] ? "☑" : "☐"} {label}
-              </Text>
-            </Pressable>
+          {SELF_ROWS.map((row) => (
+            <ConsentAffirmRow
+              key={row.key}
+              pointId={row.pointId}
+              label={row.label}
+              checked={checksA[row.key]}
+              onChange={(next) =>
+                setChecksA((c) => ({ ...c, [row.key]: next }))
+              }
+            />
+          ))}
+
+          <Text style={styles.section} accessibilityRole="header">
+            Practice partner yes ({partnerDecl?.displayLabel ?? "Partner"})
+          </Text>
+          <Body muted>
+            Demo only: complete these as if you were them after reading the
+            package. Real remote partners affirm on their own device.
+          </Body>
+          {SELF_ROWS.map((row) => (
+            <ConsentAffirmRow
+              key={`b-${row.key}`}
+              pointId={
+                row.key === "affirmedSoftSignal"
+                  ? "snapshot_soft_signal_ack"
+                  : "snapshot_mutual_partner_affirm"
+              }
+              label={`Partner: ${row.label.replace(/^I /, "").replace(/^This /, "this ")}`}
+              checked={checksB[row.key]}
+              onChange={(next) =>
+                setChecksB((c) => ({ ...c, [row.key]: next }))
+              }
+            />
           ))}
 
           <Button
-            label="Seal Consent Snapshot (both affirmed)"
-            disabled={!allA || !allB}
+            label={
+              sealArmed
+                ? CONSENT_POINTS.snapshot_dual_seal.copy.primary
+                : allA && allB
+                  ? "Arming seal…"
+                  : "Seal (complete every check first)"
+            }
+            disabled={!sealArmed}
             onPress={() => void seal()}
-            accessibilityHint="Records mutual affirmation of this exact snapshot fingerprint. Soft Signal remains available."
+            accessibilityHint={CONSENT_POINTS.snapshot_dual_seal.a11yHint}
+            accessibilityLabel={CONSENT_POINTS.snapshot_dual_seal.a11yLabel}
           />
         </>
       ) : null}
 
       {sealed ? (
         <View style={styles.sealed}>
-          <Text style={styles.sealedTitle}>Snapshot sealed</Text>
+          <Text style={styles.sealedTitle}>
+            {CONSENT_POINTS.snapshot_dual_seal.copy.success}
+          </Text>
           <Text style={styles.sealedBody}>
-            Fingerprint {snap!.fingerprint.slice(0, 20)}…{"\n"}
+            Shared seal · this moment only{"\n"}
             Soft Signal remains available to either person at any time.
           </Text>
           <Button
@@ -298,7 +354,7 @@ export default function ConsentSnapshotMutualScreen() {
         <View style={styles.withdrawn}>
           <Text style={styles.sealedTitle}>Withdrawn</Text>
           <Text style={styles.sealedBody}>
-            This snapshot is void. Nothing proceeds from it.
+            {CONSENT_POINTS.snapshot_withdraw.copy.success}
           </Text>
           <Button
             label="Prepare a new declaration"
@@ -308,8 +364,9 @@ export default function ConsentSnapshotMutualScreen() {
       ) : (
         <Button
           variant="signal"
-          label="Withdraw without explanation"
+          label={CONSENT_POINTS.snapshot_withdraw.copy.primary}
           onPress={() => void withdraw()}
+          accessibilityHint={CONSENT_POINTS.snapshot_withdraw.a11yHint}
         />
       )}
 
@@ -352,6 +409,22 @@ function makeStyles(colors: AppColors) {
       fontSize: 12,
     },
     bannerBody: { color: colors.ink, lineHeight: 22, fontSize: 15 },
+    demoBanner: {
+      backgroundColor: colors.apricotSoft,
+      borderRadius: 14,
+      padding: 14,
+      gap: 6,
+      borderWidth: 1,
+      borderColor: colors.apricot,
+      marginBottom: 8,
+    },
+    demoTitle: {
+      color: colors.plum,
+      fontWeight: "800" as const,
+      fontSize: 11,
+      letterSpacing: 1,
+    },
+    demoBody: { color: colors.ink, fontSize: 14, lineHeight: 20 },
     snapshot: {
       backgroundColor: colors.paper,
       borderWidth: 1,
@@ -386,19 +459,6 @@ function makeStyles(colors: AppColors) {
       marginTop: 16,
       marginBottom: 8,
     },
-    check: {
-      borderRadius: 12,
-      borderWidth: 1,
-      borderColor: colors.line,
-      padding: 12,
-      marginBottom: 8,
-      backgroundColor: colors.paper,
-    },
-    checkOn: {
-      borderColor: colors.signal,
-      backgroundColor: colors.signalSoft,
-    },
-    checkText: { color: colors.ink, fontSize: 15, lineHeight: 21 },
     sealed: {
       backgroundColor: colors.mossSoft,
       borderRadius: 16,
