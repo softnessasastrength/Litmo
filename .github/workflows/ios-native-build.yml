@@ -53,7 +53,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          xcodebuild             -workspace app/ios/Litmodevelopment.xcworkspace             -scheme Litmodevelopment             -configuration Debug             -sdk iphonesimulator             -destination "generic/platform=iOS Simulator"             -derivedDataPath "$RUNNER_TEMP/LitmoDerivedData"             CODE_SIGNING_ALLOWED=NO             CODE_SIGNING_REQUIRED=NO             build | tee "$RUNNER_TEMP/xcodebuild.log"
+          xcodebuild             -workspace app/ios/Litmodevelopment.xcworkspace             -scheme Litmodevelopment             -configuration Debug             -sdk iphonesimulator             -destination "generic/platform=iOS Simulator"             -derivedDataPath "$RUNNER_TEMP/LitmoDerivedData"             ARCHS=arm64             ONLY_ACTIVE_ARCH=YES             CODE_SIGNING_ALLOWED=NO             CODE_SIGNING_REQUIRED=NO             build | tee "$RUNNER_TEMP/xcodebuild.log"
 
       - name: Upload Xcode log
         if: always()
