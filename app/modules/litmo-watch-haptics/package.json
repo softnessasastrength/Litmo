@@ -1,0 +1,7 @@
+{
+  "name": "litmo-watch-haptics",
+  "version": "0.1.0",
+  "main": "index.ts",
+  "private": true,
+  "license": "MPL-2.0"
+}

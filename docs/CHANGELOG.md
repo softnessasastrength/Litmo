@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-07-13 — Apple Watch haptic co-regulation (ADR 0064)
+
+### Summary
+
+Watch as first-class soft co-regulation device: shared haptic library, Taptic
+phrase map, cross-device propose/preview/affirm, wrist Soft Signal kill,
+complications without FOMO, sensory profiles, Swift + Expo stubs, Watch learning
+track.
+
+### Material
+
+- `@litmo/domain` `hapticLanguage.ts` · `hapticWatch.ts` + tests  
+- `app/services/watchHapticBridge.ts`  
+- `app/modules/litmo-watch-haptics` · `packages/LitmoWatchHaptics`  
+- Learning path `haptic-watch-track`  
+- ADR 0064 · HAPTIC_LANGUAGE.md Watch section  
+
 ## 2026-07-13 — Haptic Language Track (5 calm learning modules)
 
 ### Summary

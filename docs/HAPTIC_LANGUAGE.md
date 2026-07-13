@@ -1,8 +1,12 @@
 # Haptic Language Specification – Litmo v0.1 (Nuclear Autistic Edition)
 
-**Status:** pure domain shipped (`hapticLanguageCore` + `hapticLanguageNuclear`)  
-**Version:** `0.1-nuclear` · ADR 0063  
-**Code:** `app/lib/hapticLanguageNuclear.ts` · `app/lib/hapticLanguageCore.ts`  
+**Status:** pure domain shipped (phone nuclear + **Watch / shared domain**)  
+**Version:** `0.2-watch` · ADR 0063 · **ADR 0064**  
+**Code:**  
+- Phone: `app/lib/hapticLanguageCore.ts` · `hapticLanguageNuclear.ts`  
+- Shared: `@litmo/domain` `hapticLanguage.ts` · `hapticWatch.ts`  
+- Swift: `packages/LitmoWatchHaptics`  
+- Expo stub: `app/modules/litmo-watch-haptics`  
 **Hardware:** [`HARDWARE/HAPTICS.md`](HARDWARE/HAPTICS.md) · ADR 0057  
 **Prior:** ADR 0039 five-event public API (still stable)
 
@@ -182,6 +186,47 @@ Patterns reference `HAPTIC_PHRASE_LIBRARY` / Soft Signal practice — not peer m
 ```
 
 On Soft Signal fire: `raiseInterrupt("soft_signal")` then `play("softSignal")`.
+
+---
+
+## 6b. Apple Watch · Taptic co-regulation (ADR 0064)
+
+> The Watch is an extension of safe human touch language — **never** a notification device.
+
+### Watch-specific patterns
+
+| Phrase | Meaning |
+| ------ | ------- |
+| `watch_gentle_tap` / `watch_strong_tap` | Local presence intensity |
+| `watch_presence` | Soft double — not peer proximity |
+| `watch_stroke` | Directional stroke **simulation** (not another hand) |
+| `watch_co_regulation_heartbeat` | Co-regulation rhythm — **not** medical HR |
+| `watch_check_in` | Optional gentle check-in |
+| **`watch_soft_signal`** | Triple + decay; **global kill**; offline-first |
+
+### Per-device intensity & profiles
+
+- Capabilities: `defaultWatchCapabilities()` / `featherModeCapabilities()`  
+- Sensory profiles travel: Overstimulated (feather), Co-regulation, Stop-only  
+- ND / feather caps max intensity on that device  
+
+### Cross-device Consent Snapshot enforcement
+
+```text
+Phone proposes → Watch previews → affirm/decline/Soft Signal
+→ live only if required devices affirmed + mayPlayOnDevice
+```
+
+Soft Signal **never** requires preview or dual affirm.
+
+### Complications (offline-first)
+
+Allowed: Soft Signal control, calm check-in, “session active” without peer identity.  
+Forbidden: badges, streaks, social unread, partner names on face.
+
+### Learning
+
+Path **`haptic-watch-track`**: intro · wrist Soft Signal · phone proposes/watch affirms · feather mode.
 
 ---
 

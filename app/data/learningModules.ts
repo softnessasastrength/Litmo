@@ -867,6 +867,197 @@ export const learningModules: LearningModule[] = [
     ],
   },
   {
+    id: "haptic-watch-intro",
+    title: "A Soft Presence on the Wrist",
+    summary:
+      "Apple Watch as co-regulation, not a notification device. Gentle tap, stroke simulation, heartbeat — always optional.",
+    minutes: 3,
+    track: "foundations",
+    themes: ["nervous-system", "product-safety", "communication"],
+    relatedPractice: [
+      {
+        id: "hw-soft",
+        label: "Soft Signal practice (phone)",
+        hint: "Wrist Soft Signal will mirror this sacred stop when Watch ships.",
+        href: "/soft-signal/practice",
+      },
+    ],
+    steps: [
+      {
+        id: "hwi-frame",
+        title: "Not a notification device",
+        body: "The Watch is an extension of safe human touch language — not a badge counter.\n\nOn the wrist, Litmo may offer:\n• Gentle tap (presence)\n• Soft double presence\n• Directional stroke simulation (still not another person’s hand)\n• Co-regulation heartbeat pattern (not medical monitoring)\n\nEverything is previewable, optional, and interruptible. Nothing means a peer is “there” without a real dual seal and session.",
+        takeaway: "Wrist presence is soft co-regulation, never FOMO.",
+      },
+      {
+        id: "hwi-taptic",
+        title: "Taptic strengths",
+        body: "The Taptic Engine is a precise linear actuator. Litmo uses short precise taps and warm descents — not long rumbles that feel like alarms.\n\nAlways-on complications may show Soft Signal or calm check-in only — never unread social counts or streaks.",
+        takeaway: "Precision over spam.",
+        scenario: {
+          prompt: "What must a Watch complication never show?",
+          options: [
+            {
+              label: "Unread social pressure or streaks",
+              feedback:
+                "Correct. Complications are Soft Signal / calm session state only.",
+            },
+            {
+              label: "A Soft Signal control",
+              feedback:
+                "Soft Signal on the face is allowed — free stop.",
+            },
+            {
+              label: "That you are in a calm active session (no peer name)",
+              feedback:
+                "Allowed when privacy-preserving — no peer identity.",
+            },
+          ],
+        },
+      },
+      {
+        id: "hwi-close",
+        title: "You did enough",
+        body: "You can stop here. Watch hardware ships in phases; the language is ready now.\n\nYou did enough. You can stop anytime.",
+        takeaway: "Language first; silicon second.",
+      },
+    ],
+  },
+  {
+    id: "haptic-watch-soft-signal",
+    title: "Soft Signal from the Wrist",
+    summary:
+      "Triple pulse + decay on Taptic. Global session kill. Offline-first. No explanation.",
+    minutes: 3,
+    track: "foundations",
+    themes: ["consent", "product-safety", "nervous-system"],
+    relatedPractice: [
+      {
+        id: "hws-practice",
+        label: "Practice Soft Signal now",
+        hint: "Phone path today; same sacred meaning on Watch later.",
+        href: "/soft-signal/practice",
+      },
+    ],
+    steps: [
+      {
+        id: "hws-sacred",
+        title: "Sacred triple + decay",
+        body: "Wrist Soft Signal: unmistakable triple pulse with warm decay. It raises a global kill — all other haptics stop on phone and Watch. If a session is active, it ends. No reason. Not 911.",
+        takeaway: "Stop is free from the wrist.",
+      },
+      {
+        id: "hws-offline",
+        title: "Offline-first",
+        body: "If the phone is unreachable, Watch Soft Signal still commits locally and queues the kill command. Your nervous system does not wait for a network.",
+        takeaway: "Local stop is authoritative.",
+        scenario: {
+          prompt: "Phone is in another room. You Soft Signal on Watch. What happens?",
+          options: [
+            {
+              label: "Stop is local now; kill propagates when possible",
+              feedback:
+                "Yes. Offline-first Soft Signal — never blocked on delivery.",
+            },
+            {
+              label: "Nothing until phone is online",
+              feedback:
+                "No. That would violate stop freeness.",
+            },
+            {
+              label: "Emergency services are called",
+              feedback:
+                "No. Soft Signal is not emergency dispatch.",
+            },
+          ],
+        },
+      },
+      {
+        id: "hws-close",
+        title: "You did enough",
+        body: "Practice on phone until Watch is paired. Same meaning.\n\nYou did enough. You can stop anytime.",
+        takeaway: "Muscle memory transfers.",
+      },
+    ],
+  },
+  {
+    id: "haptic-watch-consent",
+    title: "Phone Proposes, Watch Affirms",
+    summary:
+      "Cross-device Consent Snapshot: preview on wrist, dual affirm devices, then live — or Soft Signal.",
+    minutes: 3,
+    track: "foundations",
+    themes: ["consent", "product-safety"],
+    relatedPractice: [
+      {
+        id: "hwc-snap",
+        label: "Consent Snapshot prepare",
+        hint: "Vocabulary binds to consent-id; devices must affirm.",
+        href: "/consent-snapshot/prepare",
+      },
+    ],
+    steps: [
+      {
+        id: "hwc-flow",
+        title: "Propose → preview → affirm → live",
+        body: "Cross-device flow:\n1) Phone proposes a pattern (lexeme + intensity).\n2) Watch previews on your wrist alone.\n3) You affirm or Soft Signal / decline.\n4) Only when required devices have previewed and affirmed does live play unlock.\n\nRevocation is instant. Soft Signal kills everything mid-flow.",
+        takeaway: "Watch is a consent surface, not a slave motor.",
+        scenario: {
+          prompt: "Watch has not previewed. Can phone play live on Watch?",
+          options: [
+            {
+              label: "No — pending preview",
+              feedback:
+                "Correct. Fail closed until wrist preview + affirm.",
+            },
+            {
+              label: "Yes if phone already affirmed",
+              feedback:
+                "No. Each required device must preview.",
+            },
+          ],
+        },
+      },
+      {
+        id: "hwc-close",
+        title: "You did enough",
+        body: "You did enough. You can stop anytime.",
+        takeaway: "Dual-device affirm protects the language.",
+      },
+    ],
+  },
+  {
+    id: "haptic-watch-nd",
+    title: "Feather Mode on the Wrist",
+    summary:
+      "Overstimulated-day profiles, stop-only mode, longer previews — travel with you across phone and Watch.",
+    minutes: 3,
+    track: "foundations",
+    themes: ["nervous-system", "self-compassion", "product-safety"],
+    relatedPractice: [
+      {
+        id: "hwn-settings",
+        label: "ND Mode settings",
+        hint: "Feather / stop-only intensity on this phone today.",
+        href: "/settings",
+      },
+    ],
+    steps: [
+      {
+        id: "hwn-profiles",
+        title: "Profiles that travel",
+        body: "Sensory profiles (Overstimulated / feather, Co-regulation, Stop-only) apply to phone and Watch capabilities. They are private. They never appear on discovery.\n\nFeather mode caps intensity. Stop-only silences everything except Soft Signal.",
+        takeaway: "Your profile, your wrist, your volume.",
+      },
+      {
+        id: "hwn-close",
+        title: "You did enough",
+        body: "You did enough. You can stop anytime.",
+        takeaway: "Less is data, not failure.",
+      },
+    ],
+  },
+  {
     id: "haptic-language-practice",
     title: "Putting It Together",
     summary:
@@ -1839,6 +2030,19 @@ export const learningPaths: LearningPath[] = [
       "haptic-language-consent",
       "haptic-language-nd",
       "haptic-language-practice",
+    ],
+  },
+  {
+    id: "haptic-watch-track",
+    title: "Apple Watch · Wrist Co-regulation",
+    summary:
+      "Watch as soft co-regulation device: Taptic presence, co-regulation heartbeat, Soft Signal from the wrist, complications without notification spam. Never a certificate.",
+    minutes: 12,
+    moduleIds: [
+      "haptic-watch-intro",
+      "haptic-watch-soft-signal",
+      "haptic-watch-consent",
+      "haptic-watch-nd",
     ],
   },
   {
