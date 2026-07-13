@@ -127,4 +127,6 @@ public enum PlatformAuthority: Sendable {
         "Your profile is server-authoritative and read-only here. A profile never grants consent or proves safety."
     public static let sessionRequests =
         "Pending requests are server-authoritative and read-only here. Listing is never consent; act on the phone."
+    public static let selfExport =
+        "Self export is server-authoritative portability, not legal completeness, deletion, or a consent record."
 }
