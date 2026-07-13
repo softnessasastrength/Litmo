@@ -1,7 +1,7 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T12:45:00-04:00",
+  "updatedAt": "2026-07-13T13:00:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
@@ -13,13 +13,20 @@
     "workingTreeExpectedClean": true
   },
   "verification": {
-    "status": "pending",
+    "status": "passed",
     "commands": [
-      "GitHub Project State and CI checks pending for migration 036"
+      "npm run state:check — pass (GitHub Project State)",
+      "npm run lint — pass",
+      "npm run typecheck — pass",
+      "npm test — pass",
+      "npm run build — pass",
+      "npm run db:start / db:reset / db:lint — pass",
+      "npx supabase test db — pass, including private_alpha_safety_ops.test.sql 17/17",
+      "npm run test:integration — 5/5 pass"
     ],
     "failures": []
   },
-  "nextAction": "Run and repair full CI for migration 036; then record the remaining external-review and named-reviewer blockers without claiming completion.",
+  "nextAction": "Review and merge PR #66, then PR #67. SAFETY-OPS-001 remains active and externally blocked on qualified review and a named independent backup reviewer.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
