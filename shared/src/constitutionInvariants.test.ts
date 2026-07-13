@@ -1,8 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  accommodationsMustNotExportAsProfileTrait,
   assertNoViolations,
   boundaryOutranksScore,
+  CONSTITUTION_VERSION,
+  consentLanguageMustBeVersioned,
   demoMustBeLabeled,
   evaluateFeatureConstitutionally,
   failClosedWhenUncertain,
@@ -16,6 +19,35 @@ import {
   trustNeverCertifiesSafety,
   unilateralStopValid,
 } from "./constitutionInvariants.ts";
+
+test("constitution version pins living law v2", () => {
+  assert.equal(CONSTITUTION_VERSION, "litmo-constitution-v2");
+});
+
+test("Article V/XV: accommodations must not export as profile traits", () => {
+  assert.equal(
+    accommodationsMustNotExportAsProfileTrait({ exportsNdModeToPeers: true }),
+    false,
+  );
+  assert.equal(accommodationsMustNotExportAsProfileTrait({}), true);
+});
+
+test("Article 0/XII: consent language must be versioned", () => {
+  assert.equal(
+    consentLanguageMustBeVersioned({
+      hasVersionOrFingerprint: true,
+      mutatesSealInPlace: false,
+    }),
+    true,
+  );
+  assert.equal(
+    consentLanguageMustBeVersioned({
+      hasVersionOrFingerprint: true,
+      mutatesSealInPlace: true,
+    }),
+    false,
+  );
+});
 
 test("Article I: strictest boundary always wins", () => {
   assert.equal(strictestBoundary("welcomed", "off_limits"), "off_limits");

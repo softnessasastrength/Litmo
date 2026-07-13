@@ -8,6 +8,7 @@
 - **Status:** active; founder selected recommended defaults 2026-07-13; external review blockers remain
 - **Branch:** `main`
 - **Latest swarm:** NUCLEAR-001 six-agent activation 2026-07-13 — Living Constitution enforceable by design; see `docs/NUCLEAR_SWARM.md`
+- **Constitution:** `litmo-constitution-v2` — living consent language, Articles XI–XV, Vision 2030 (`docs/philosophy/VISION_2030.md`)
 
 ## Completed major product streams (on main)
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-07-13 — Constitution v2: living consent language + Vision 2030
+
+### Summary
+
+Maximum-ambition constitutional expansion for a fifty-year consent-culture horizon.
+Articles 0 and XI–XV; living versioned enforceable consent language; amendment
+classes A–D; Founding Thesis v2; new Vision 2030; machine pin `litmo-constitution-v2`.
+
+### Material
+
+- Root `CONSTITUTION.md` · `docs/LITMO_CONSTITUTION.md`
+- `docs/philosophy/00_Founding_Thesis.md` · `docs/philosophy/VISION_2030.md`
+- `docs/CONSTITUTION_ENFORCEMENT.md`
+- `shared` `CONSTITUTION_VERSION` + new invariant helpers
+
 ## 2026-07-13 — ND Mode second-level accommodations + trauma surfaces
 
 ### Summary
