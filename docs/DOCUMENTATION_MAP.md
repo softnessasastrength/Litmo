@@ -36,6 +36,7 @@ Use these documents when modifying or reviewing implemented behavior:
 - [`DATA_CLASSIFICATION.md`](DATA_CLASSIFICATION.md)
 - [`GDPR.md`](GDPR.md) — engineering GDPR alignment (not certified legal compliance)
 - [`ISO27701.md`](ISO27701.md) — ISO/IEC 27701 PIMS roadmap for a small team
+- [`LOCAL_SHARE.md`](LOCAL_SHARE.md) — AirDrop-style Multipeer nearby share (profiles / snapshot review)
 - [`PRIVACY_POLICY_DRAFT.md`](PRIVACY_POLICY_DRAFT.md)
 - [`PASSKEY_AUTHENTICATION.md`](PASSKEY_AUTHENTICATION.md)
 - [`SENSITIVE_DATA_ENCRYPTION.md`](SENSITIVE_DATA_ENCRYPTION.md)

@@ -20,19 +20,21 @@
 - Guided Learning lived lessons (LEARN-004): six short trauma-informed modules with scenarios and optional Vibe/self-quiz pairing after soft-close.
 - Neurodivergent Mode (ACCESS-002): Settings toggle optimizes quiz, partner, and learning (reduced stimulation, clear language, save/resume, read-aloud, dictation aids). Demo entry enables it by default.
 - QUIZ-004 review: short/deep paths verified; always-on mid-quiz resume; partner dual-consent + focused E2E stub; calm demo copy.
+- Nearby local share (SHARE-001 / ADR 0053): Multipeer + ephemeral app crypto for discovery profiles and co-located Consent Snapshot review; opt-in off by default; Expo Go fail-soft.
 
 ## Work in progress
 
-SAFETY-OPS-001 remains externally blocked on named qualified review and backup staffing. Quizzes + partner E2E are on `agent/quizzes-section`. Litmo Ops remains locked. ACCESS-001 optional founder VoiceOver smoke remains open.
+SAFETY-OPS-001 remains externally blocked on named qualified review and backup staffing. Quizzes + partner E2E + nearby share are on `agent/quizzes-section`. Litmo Ops remains locked. ACCESS-001 optional founder VoiceOver smoke remains open.
 
 ## Priority next work
 
-1. Land Quizzes / partner E2E PR when green (ADR 0050–0052).
+1. Land Quizzes / partner E2E / nearby-share PR when green (ADR 0050–0053).
 2. Review/merge remaining macOS read work if still open on other branches.
 3. Keep Campfire local-only; keep partner weather off the server plaintext path; keep destructive retention/deletion blocked until review.
-4. Optional founder VoiceOver smoke (ACCESS-001 residual), including Quizzes surfaces if reviewing.
+4. Optional founder VoiceOver smoke (ACCESS-001 residual), including Quizzes and Nearby Share if reviewing.
 5. Name independent backup reviewer before external alpha.
-6. Independent crypto review of quiz E2E before external beta (KNOWN_LIMITATIONS / ADR 0052).
+6. Independent crypto review of quiz E2E and local share before external beta (KNOWN_LIMITATIONS / ADR 0052 / 0053).
+7. Optional: two-device Multipeer physical smoke for Nearby Share.
 
 ## Verification baseline
 

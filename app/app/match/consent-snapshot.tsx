@@ -395,6 +395,28 @@ function ConsentSnapshotContent() {
           either profile changes, this snapshot is no longer current.
         </Body>
       )}
+      <Button
+        variant="secondary"
+        label="Share snapshot review nearby"
+        disabled={rows.length === 0}
+        onPress={() =>
+          router.push({
+            pathname: "/share/local",
+            params: {
+              kind: "consent_snapshot_review",
+              title: isReal
+                ? "Consent Snapshot review"
+                : "Mock Consent Snapshot review",
+              rows: JSON.stringify(rows),
+            },
+          } as never)
+        }
+        accessibilityHint="Opens intentional Multipeer nearby share for co-located snapshot review only. Never activates a session or grants consent."
+      />
+      <Body muted center>
+        Nearby share is co-located review only. It does not replace independent
+        confirmation or activate a session.
+      </Body>
       <Body muted center>
         Confirming may ask for notification permission and send one local
         notification so you can see how session alerts will feel.

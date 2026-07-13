@@ -88,6 +88,23 @@ Boundaries:
 
 macOS has no Quizzes surface in this milestone; Campfire and participant reads remain the desktop scope.
 
+## Nearby local share (Multipeer)
+
+AirDrop-style intentional exchange of discovery-safe profiles or co-located
+Consent Snapshot review rows (ADR 0053). Transport is Multipeer Connectivity
+(`litmo-local-share`); application crypto is ephemeral X25519 + AES-GCM
+(`localShareCore`). Master opt-in is off by default; radio only while
+`/share/local` is open. Never activates a session or grants touch consent.
+
+```text
+Settings master opt-in (default off)
+  → /share/local offer or receive
+  → Multipeer advertise/browse (service litmo-share)
+  → mutual invitation accept
+  → ephemeral ECDH hello + AES-GCM payload
+  → review on device → Stop / timeout / leave screen
+```
+
 ## Native macOS boundary
 
 The native macOS workspace is generated from `macos/project.yml` and contains three targets with deliberately narrow responsibilities:

@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-07-13 — Nearby local share (AirDrop-style)
+
+### Summary
+
+Multipeer Connectivity foundation for intentional nearby exchange of discovery
+profiles and co-located Consent Snapshot reviews. Ephemeral X25519 + AES-GCM
+application encryption, master opt-in off by default, easy stop and timeout,
+fail-soft in Expo Go. ADR 0053 and `docs/LOCAL_SHARE.md`.
+
+### Entry points
+
+- Settings master switch + Open Nearby Share  
+- Profile edit → Share nearby  
+- Consent Snapshot → Share snapshot review nearby  
+
+### Honest limits
+
+- Requires iOS development build (not Expo Go).  
+- Android nearby share deferred.  
+- Two-device physical radio smoke still human-led.
+
 ## 2026-07-13 — ISO 27701 PIMS roadmap
 
 ### Summary

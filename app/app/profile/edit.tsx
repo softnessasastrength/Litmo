@@ -105,6 +105,23 @@ export default function EditProfileScreen() {
           disabled={busy || !name.trim()}
           onPress={() => void save()}
         />
+        <Button
+          variant="secondary"
+          label="Share nearby (AirDrop-style)"
+          disabled={busy || !name.trim()}
+          onPress={() =>
+            router.push({
+              pathname: "/share/local",
+              params: {
+                kind: "discovery_profile",
+                displayName: name.trim(),
+                pronouns: pronouns.trim(),
+                bio: bio.trim(),
+              },
+            } as never)
+          }
+          accessibilityHint="Open intentional Multipeer nearby share for this discovery profile. Off by default; never consent to touch."
+        />
       </View>
     </Screen>
   );

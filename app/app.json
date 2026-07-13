@@ -23,7 +23,8 @@
         }
       ],
       "./plugins/withIOSXcode27Fixes.cjs",
-      "./plugins/withoutPushEntitlement.cjs"
+      "./plugins/withoutPushEntitlement.cjs",
+      "./plugins/withLocalShareBonjour.cjs"
     ],
     "experiments": {
       "typedRoutes": true

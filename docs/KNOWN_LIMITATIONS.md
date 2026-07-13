@@ -20,6 +20,20 @@
   missing governance policies and complete legal/distribution review before
   public launch.
 
+## Nearby local share (Multipeer)
+
+- Nearby Share requires an **iOS development build** with the `litmo-local-share`
+  module. Expo Go reports unavailable and does not advertise or browse.
+- Multipeer radio behavior depends on Local Network permission, device proximity,
+  and OS policy. Two-device physical smoke is not fully automated in CI.
+- Android nearby share is not implemented in this milestone.
+- Snapshot nearby share is **review only**; it does not activate sessions or
+  record consent confirmations. Profiles shared nearby never include private
+  nervous-system notes.
+- Application-layer crypto is ephemeral ECDH; Multipeer also uses required
+  transport encryption. Independent crypto review before external beta is still
+  recommended (same class as quiz E2E).
+
 ## Campfire Mode
 
 - Campfire is a local practice surface, not a real multi-person Litmo session.

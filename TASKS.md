@@ -45,6 +45,21 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 ## Completed
 
+### SHARE-001 — Nearby local share (Multipeer / AirDrop-style)
+
+- **Status:** completed (engineering foundation)
+- **Result:** ADR 0053; `litmo-local-share` Multipeer Expo module; pure
+  `localShareCore` (ephemeral X25519 + AES-GCM); `localShareService`;
+  `/share/local` intentional UX; Settings master opt-in (default off); entry
+  from profile edit and Consent Snapshot; Bonjour/Local Network plugin;
+  `docs/LOCAL_SHARE.md`. Snapshot share is co-located review only — never
+  session activation. Fail-soft without native module (Expo Go).
+- **Verification:** unit tests for protocol + preference; typecheck after
+  package link.
+- **Boundary:** physical two-device radio smoke human-led; Android deferred;
+  not a claim of AirDrop parity with Apple system UI.
+- **Related:** ACCESS-001 residual device smoke; GDPR data minimization.
+
 ### ISO27701-001 — PIMS compliance roadmap (documentation)
 
 - **Status:** completed (roadmap only; not certification)

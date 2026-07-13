@@ -15,6 +15,8 @@ export type LocalInventory = {
   mid_quiz_progress_keys: number;
   partner_invites_present: boolean;
   neurodivergent_mode_enabled: boolean | null;
+  /** Master opt-in for Multipeer nearby share (default off). */
+  nearby_share_enabled: boolean | null;
   privacy_notice_local: { version: string; acceptedAt: string } | null;
   notes: string[];
 };
@@ -90,6 +92,15 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     notes.push("nd_prefs_unreadable");
   }
 
+  let nearby_share_enabled: boolean | null = null;
+  try {
+    const raw = await AsyncStorage.getItem("@litmo/nearby_share_enabled_v1");
+    if (raw === null) nearby_share_enabled = false;
+    else nearby_share_enabled = raw === "1" || raw === "true";
+  } catch {
+    notes.push("nearby_share_pref_unreadable");
+  }
+
   let privacy_notice_local: LocalInventory["privacy_notice_local"] = null;
   try {
     const raw = await AsyncStorage.getItem("litmo.privacy.notice.accepted.v1");
@@ -106,6 +117,10 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     notes.push("privacy_notice_unreadable");
   }
 
+  notes.push(
+    "Nearby share payloads are ephemeral and never stored in this inventory.",
+  );
+
   return {
     collected_at: new Date().toISOString(),
     quiz_results_present,
@@ -115,6 +130,7 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     mid_quiz_progress_keys,
     partner_invites_present,
     neurodivergent_mode_enabled,
+    nearby_share_enabled,
     privacy_notice_local,
     notes,
   };

@@ -1,7 +1,7 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T22:00:00-04:00",
+  "updatedAt": "2026-07-13T23:30:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
@@ -9,28 +9,29 @@
   },
   "git": {
     "branch": "agent/quizzes-section",
-    "latestCoherentCommit": "pending-e2e",
+    "latestCoherentCommit": "pending-share-001",
     "workingTreeExpectedClean": false
   },
   "verification": {
     "status": "partial",
     "commands": [
-      "app typecheck — pass",
-      "doubleRatchetCore + quizShareCore unit tests — pass",
+      "app typecheck — run after npm install litmo-local-share",
+      "localShareCore + localSharePreferenceCore unit tests — run with app suite",
       "npm run state:check / full suite — run before PR land"
     ],
     "failures": []
   },
-  "nextAction": "Commit partner E2E (ADR 0052) with Quizzes section; run full verification; land PR when green. SAFETY-OPS external blockers remain.",
+  "nextAction": "Verify typecheck/tests for Nearby Share (ADR 0053) + Quizzes/E2E; commit; land PR when green. SAFETY-OPS external blockers remain.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
     "Named independent backup reviewer before external alpha and two-person permanent bans",
     "Apple signing credentials and reviewed staging configuration for a signed device/TestFlight build",
-    "Optional: independent crypto review of quiz partner E2E before external beta"
+    "Optional: independent crypto review of quiz partner E2E and local share before external beta"
   ],
   "risks": [
     "Partner quiz E2E is Signal-inspired 1:1 (not full multi-device Signal audit); peer package consents are self-asserted.",
+    "Nearby Multipeer share requires development build; Expo Go fail-soft; physical two-device smoke human-led.",
     "Expo Go / simulator may fall back to Secure Store-only private keys without Enclave vault wrap.",
     "Partner plaintext stays device-local; optional relay is ciphertext-only; own summaries may restore via ADR 0051.",
     "macOS participant reads use developer env tokens; not production passkey sign-in.",
@@ -43,6 +44,7 @@
     "ADR 0050 documents Quizzes tab, short/deep paths, local-first storage, four consent gates, Face ID.",
     "ADR 0051 documents optional owner-only quiz_result_summaries backup.",
     "ADR 0052 documents X3DH + Double Ratchet partner packages and ciphertext-only relay (038).",
-    "QUIZ-001 and QUIZ-002 completed in TASKS.md."
+    "ADR 0053 documents Multipeer nearby share for discovery profiles and co-located snapshot review.",
+    "QUIZ-001, QUIZ-002, SHARE-001 completed in TASKS.md."
   ]
 }

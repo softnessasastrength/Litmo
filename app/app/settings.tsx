@@ -9,6 +9,11 @@ import { SensitiveAccessGate } from "../components/SensitiveAccessGate";
 import { runtimeConfig } from "../config/runtime";
 import { hapticService } from "../services/hapticService";
 import { moderationService } from "../services/moderationService";
+import {
+  getNearbyShareEnabled,
+  setNearbyShareEnabled,
+} from "../services/localSharePreference";
+import { localShareService } from "../services/localShareService";
 
 export default function SettingsScreen() {
   return (
@@ -30,11 +35,15 @@ function SettingsContent() {
   } = useNeurodivergent();
   const [isStaff, setIsStaff] = useState(false);
   const [hapticsOn, setHapticsOn] = useState(true);
+  const [nearbyShareOn, setNearbyShareOn] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     void hapticService.isEnabled().then((on) => {
       if (!cancelled) setHapticsOn(on);
+    });
+    void getNearbyShareEnabled().then((on) => {
+      if (!cancelled) setNearbyShareOn(on);
     });
     return () => {
       cancelled = true;
@@ -169,6 +178,42 @@ function SettingsContent() {
         variant="secondary"
         label="Passkeys and registered devices"
         onPress={() => router.push("/security/devices" as never)}
+      />
+
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
+        <View style={{ flex: 1, gap: 6 }}>
+          <Body>
+            {nearbyShareOn
+              ? "Nearby share allowed"
+              : "Nearby share off (default)"}
+          </Body>
+          <Body muted>
+            AirDrop-style Multipeer exchange for discovery profiles and
+            co-located Consent Snapshot reviews. Off by default. Radio only
+            while you open Nearby Share. Easy stop. Never consent to touch.
+            Requires an iOS development build (not Expo Go).
+          </Body>
+        </View>
+        <Switch
+          accessibilityLabel="Nearby share"
+          accessibilityHint="Master opt-in for Multipeer nearby share. Default is off."
+          trackColor={{ false: colors.line, true: colors.mossSoft }}
+          thumbColor={nearbyShareOn ? colors.moss : colors.white}
+          ios_backgroundColor={colors.line}
+          onValueChange={(next) => {
+            setNearbyShareOn(next);
+            void setNearbyShareEnabled(next).then(() => {
+              if (!next) void localShareService.stop("settings_opt_out");
+            });
+          }}
+          value={nearbyShareOn}
+        />
+      </View>
+      <Button
+        variant="secondary"
+        label="Open Nearby Share"
+        onPress={() => router.push("/share/local" as never)}
+        accessibilityHint="Open the intentional nearby share screen for profiles or snapshot review"
       />
 
       <Body>Privacy & data protection</Body>
