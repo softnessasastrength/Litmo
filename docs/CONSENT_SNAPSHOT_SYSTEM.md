@@ -1,7 +1,8 @@
 # Consent Snapshot system (pre-session)
 
-**Status:** implemented for local/demo dual seal; real dual-device backend path remains Chapter 4 confirm APIs  
-**Routes:** `/consent-snapshot/prepare` · `/consent-snapshot/mutual` · existing `/match/consent-snapshot`
+**Status:** implemented for local/demo dual seal + nuclear domain machine (ADR 0062)  
+**Routes:** `/consent-snapshot/prepare` · `/consent-snapshot/mutual` · existing `/match/consent-snapshot`  
+**Nuclear twin:** `@litmo/domain` → `sessionConsentNuclear.ts` · migration 043
 
 > Before any in-person session, both people create and mutually agree on a digital snapshot that includes **current boundaries**, **mood/capacity**, **safewords**, **aftercare**, and **Soft Signal**.  
 > It must feel **serious and protective** — not a casual checklist.
@@ -58,3 +59,16 @@
 ## Feel
 
 Protective copy, signal-colored banners, Soft Signal non-negotiable block, fingerprint display, withdraw without explanation — designed to feel like a **safety gate**, not an engagement funnel.
+
+## Nuclear machine (ADR 0062)
+
+| Concern | Law |
+| --- | --- |
+| Immutability | Snapshot fingerprint/profiles/compatibility never mutate in place (DB trigger) |
+| Mutual seal | Both confirm **same** fingerprint; withdrawn/invalid → not confirmable |
+| Revocation | Soft Signal / withdraw clears confirmations + terminal lifecycle; ledgered |
+| Offline | Soft Signal intent outranks complete; terminal server wins reopen attempts |
+| Wrap-up | Private per party after `completed` / `soft_signaled` / `safety_ended`; `skipped` allowed |
+| Activation | `ready` + dual seal only (`canActivateSession` / `enforce_active_snapshot`) |
+
+See `docs/adr/0062-nuclear-session-consent-machine.md`.

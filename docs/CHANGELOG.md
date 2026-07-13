@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-07-13 — Nuclear session lifecycle + Consent Snapshot machine
+
+### Summary
+
+Second-level pure domain machine over ADR 0005: dual-seal verification,
+immutable snapshot bodies, revocation propagation, offline conflict resolution
+(Soft Signal beats complete), wrap-up skip, seal authority RPC, revocation ledger.
+
+### Material
+
+- `shared/src/sessionConsentNuclear.ts` + tests
+- `consentSnapshot` integrity + dual confirmation helpers
+- Migration `043_session_consent_nuclear.sql` + pgTAP
+- ADR 0062 · CONSENT_SNAPSHOT_SYSTEM nuclear section · CURRENT_STATE
+
 ## 2026-07-13 — Safety-ops HITL domain core + dual permanent ban + ledger
 
 ### Summary

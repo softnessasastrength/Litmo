@@ -166,6 +166,11 @@
 - Session timeout is a **local preference**, not yet a dual-agreed field on the
   server Consent Snapshot. Extending time on-device does not create a new mutual
   snapshot.
+- Nuclear session machine (ADR 0062 / migration 043) hardens snapshot body
+  immutability, revocation ledger, offline intent enqueue, seal authority view,
+  and wrap-up `skipped` in domain + SQL. Universal client reconcile of
+  `session_offline_intents` and continuous-consent UI clocks are not complete;
+  physical offline Soft Signal chaos remains pending.
 - Present-moment verification is **not** identity proof, background check, or
   safety certification.
 - Reflection tools are optional self-help, not clinical care. Editorial review

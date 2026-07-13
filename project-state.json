@@ -1,7 +1,7 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T22:00:00-04:00",
+  "updatedAt": "2026-07-13T23:30:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
@@ -21,7 +21,7 @@
     ],
     "failures": []
   },
-  "nextAction": "SAFETY-OPS-001 engineering deep-dive shipped (ADR 0061, migration 042, safetyOpsCore). Name real second reviewer before enabling permanent-ban completion; do not invent external approval.",
+  "nextAction": "Nuclear session/consent machine (ADR 0062) + SAFETY-OPS HITL (ADR 0061) in-repo. Name second reviewer or run physical Soft Signal offline chaos; do not invent external approval.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
@@ -35,6 +35,10 @@
     "Hardware Device OS design-only."
   ],
   "notes": [
+    {
+      "at": "2026-07-13",
+      "text": "ADR 0062 nuclear sessionConsentNuclear + migration 043 immutability/revocation/offline/wrap-up."
+    },
     {
       "at": "2026-07-13",
       "text": "Safety-ops HITL domain core, dual permanent ban workflow, trust/rate ledger expansion, staff audit (ADR 0061). named_second_owner_configured remains false."

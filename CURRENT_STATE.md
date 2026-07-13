@@ -15,6 +15,7 @@
 | ------ | ------ | ---- |
 | Touch Language (visual map, axes, share) | shipped | `docs/TOUCH_LANGUAGE.md` |
 | Consent Snapshot prepare + mutual seal | shipped | `docs/CONSENT_SNAPSHOT_SYSTEM.md` |
+| **Nuclear session + seal machine** | shipped (domain+SQL) | ADR 0062 · `@litmo/domain` `sessionConsentNuclear` |
 | Soft Signal + trauma safety (panic/timeout/reflect) | shipped | `docs/SOFT_SIGNAL.md`, `docs/TRAUMA_INFORMED_SAFETY.md` |
 | Proximity · NFC · QR · Multipeer | shipped | `docs/PROXIMITY_LAYER.md`, `docs/NFC_FEATURES.md` |
 | Guided Learning (lived + foundations + paths) | shipped | `docs/LEARNING_SYSTEM.md` |
@@ -29,6 +30,8 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
   `safetyOpsCore` / `docs/SAFETY_OPS_RUNTIME.md`). External/legal/staffing
   blockers remain (not inventable): named second reviewer, destructive
   retention, jurisdiction, external referral, complete deletion.
+- Session nuclear machine (ADR 0062 / migration 043) shipped in domain + SQL;
+  continuous-consent **UI clocks** and physical offline Soft Signal chaos still open.
 - ACCESS-001 residual: optional founder VoiceOver physical smoke.
 - Swarm residuals: dual-agreed session duration; TL soft_limit/speed server mapping; physical Multipeer/NFC/Soft Signal chaos; independent crypto review.
 - Litmo Ops remains locked without staff auth.
@@ -73,9 +76,9 @@ npm run build
 
 ## Exact next action
 
-SAFETY-OPS engineering deep-dive (queue/appeals/restrictions/HITL/ledger) is
-in-repo. Continue only with **named human owners** for remaining external gates,
-or switch to physical smokes / TL mapping when prioritized. Do not invent
+Nuclear session/consent domain + SQL (ADR 0062) and SAFETY-OPS HITL (ADR 0061)
+are in-repo. Next: named second safety reviewer, physical offline Soft Signal
+chaos, or continuous-consent UI heartbeat/zone-kill. Do not invent
 legal/clinical approval or named staff.
 
 ## Resume checklist

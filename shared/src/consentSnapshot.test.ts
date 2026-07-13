@@ -4,7 +4,9 @@ import {
   confirmSnapshot,
   consentLifecycleStates,
   createConsentSnapshot,
+  hasDualConfirmation,
   invalidateForMaterialChange,
+  verifyConsentSnapshotIntegrity,
   withdrawConsent,
 } from "./consentSnapshot.ts";
 const ids = {
@@ -91,3 +93,17 @@ for (const state of consentLifecycleStates)
       ),
     );
   });
+
+test("hasDualConfirmation and verifyConsentSnapshotIntegrity", () => {
+  const base = make();
+  assert.equal(verifyConsentSnapshotIntegrity(base), true);
+  assert.equal(hasDualConfirmation(base, ids.a, ids.b), false);
+  const dual = confirmSnapshot(
+    confirmSnapshot(base, ids.a, base.fingerprint, "2026-07-11T12:01:00Z"),
+    ids.b,
+    base.fingerprint,
+    "2026-07-11T12:02:00Z",
+  );
+  assert.equal(hasDualConfirmation(dual, ids.a, ids.b), true);
+  assert.equal(verifyConsentSnapshotIntegrity(dual), true);
+});

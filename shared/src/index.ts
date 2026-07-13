@@ -165,4 +165,5 @@ export * from "./consentEngine.ts";
 export * from "./consentSnapshot.ts";
 export * from "./legacyProfileAdapter.ts";
 export * from "./sessionLifecycle.ts";
+export * from "./sessionConsentNuclear.ts";
 export * from "./constitutionInvariants.ts";
