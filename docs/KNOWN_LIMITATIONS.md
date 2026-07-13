@@ -1,5 +1,16 @@
 # Known limitations
 
+## Licensing and governance
+
+- Litmo is licensed under MPL-2.0, but contributor attestation, a trademark
+  policy, a bundled-asset and third-party notice audit, and qualified legal
+  review are not yet complete. Impact: the source license is clear, while
+  public contribution and branded redistribution procedures are still
+  incomplete. Current mitigation: accept changes through reviewed repository
+  history and make no implied trademark grant. Removal criterion: publish the
+  missing governance policies and complete legal/distribution review before
+  public launch.
+
 ## Campfire Mode
 
 - Campfire is a local practice surface, not a real multi-person Litmo session.

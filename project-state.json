@@ -1,32 +1,32 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T10:30:00-04:00",
+  "updatedAt": "2026-07-13T11:00:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
     "status": "active"
   },
   "git": {
-    "branch": "feature/campfire-mode",
-    "latestCoherentCommit": "1ae8180331e8a02926cbeaef298525ca1f0355b8",
+    "branch": "agent/adopt-mpl-2.0",
+    "latestCoherentCommit": "e0809527966d6a609395e20272a2067f16cd5411",
     "workingTreeExpectedClean": true
   },
   "verification": {
     "status": "passed",
     "commands": [
-      "npm run state:check — pass (GitHub Project State)",
-      "npm run lint — pass",
-      "npm run typecheck — pass",
-      "npm test — pass",
-      "npm run build — pass",
-      "npm run db:start / db:reset / db:lint — pass",
+      "npm run state:check — pass on merged PRs #72 and #73",
+      "npm run lint — pass on merged PRs #72 and #73",
+      "npm run typecheck — pass on merged PRs #72 and #73",
+      "npm test — pass on merged PRs #72 and #73",
+      "npm run build — pass on merged PRs #72 and #73",
+      "npm run db:start / db:reset / db:lint — pass on merged PRs #72 and #73",
       "npx supabase test db — pass, including private_alpha_safety_ops.test.sql 17/17",
       "npm run test:integration — 5/5 pass"
     ],
     "failures": []
   },
-  "nextAction": "Review and merge clean mobile-controls PR #72, then review the separate local-only Campfire Mode PR. SAFETY-OPS-001 remains active and externally blocked on qualified review and a named independent backup reviewer.",
+  "nextAction": "Review and merge the focused MPL-2.0 licensing PR. Then create contributor-attestation and trademark policies as separate governance decisions; SAFETY-OPS-001 remains active and externally blocked on qualified review and a named independent backup reviewer.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
@@ -37,14 +37,15 @@
     "The routine kill-switch pauses discovery and new requests but intentionally preserves participant safety controls and does not force-end active sessions.",
     "Self export is an engineering portability primitive, not a claim of legally complete data access.",
     "External TestFlight remains blocked by deletion, hosted staging, AASA, disclosures, independent review, and signed-release evidence.",
-    "Campfire circle readiness is ephemeral local facilitation, not a real group session or multi-person consent record."
+    "Campfire circle readiness is ephemeral local facilitation, not a real group session or multi-person consent record.",
+    "MPL-2.0 licensing does not replace contributor, trademark, third-party notice, or qualified legal review."
   ],
   "notes": [
     "Founder selected the recommended S1-S10 directions on 2026-07-13.",
     "ADR 0042 distinguishes implemented engineering defaults from external-review-dependent policy.",
-    "Migration 036 adds invitations, membership gates, matching pause, tombstones, cleanup, and self export.",
-    "Destructive report/case/trust retention and account deletion are deliberately unimplemented pending review.",
-    "PR #70 integrated the private-alpha foundation on main; PR #72 contains the clean five-file mobile-controls delta.",
-    "ADR 0043 defines Campfire Mode as three device-local, non-persisted practices with no group matching or server authority."
+    "Migration 036 and PR #72 add invitations, membership gates, matching pause, tombstones, cleanup, self export, and mobile controls.",
+    "PR #73 adds all three device-local Campfire practices under ADR 0043.",
+    "Founder selected MPL-2.0 on 2026-07-13; ADR 0044 records the file-level copyleft decision.",
+    "Destructive report/case/trust retention and account deletion are deliberately unimplemented pending review."
   ]
 }

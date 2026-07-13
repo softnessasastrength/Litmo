@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-07-13 — MPL-2.0 project license
+
+### Summary
+
+Selected the Mozilla Public License Version 2.0 for Litmo and added the
+canonical license text, package metadata, and ADR 0044. MPL-2.0 provides
+file-level copyleft while allowing covered files to be combined into larger
+works distributed through channels such as compiled mobile applications.
+
+### User-visible impact
+
+None to application behavior. The repository is now openly reusable under
+clear terms instead of defaulting to all rights reserved.
+
+### Developer and governance impact
+
+- Except where noted otherwise, Litmo is licensed under `MPL-2.0`.
+- Distributed modifications to covered files remain under MPL-2.0 as required
+  by the license.
+- No noncommercial or custom field-of-use restriction was added.
+- Contributor attestation, trademark policy, third-party notice audit, and
+  qualified legal review remain follow-up work.
+
+### Migration and setup impact
+
+None. Runtime dependencies, commands, and application behavior are unchanged.
+
+### Related decision
+
+- ADR 0044
+- DOCS-002
+
 ## 2026-07-13 — Campfire Mode local practice hub
 
 ### Summary

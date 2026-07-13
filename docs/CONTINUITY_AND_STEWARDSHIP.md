@@ -70,6 +70,10 @@ When sources disagree, use this order unless a later ADR explicitly changes it:
 
 Code that contradicts a documented invariant is a defect, not a silent policy change.
 
+## Licensing status
+
+Litmo is licensed under the Mozilla Public License Version 2.0 (`MPL-2.0`) as recorded in `LICENSE` and ADR 0044. This resolves the previously missing software-license decision. Contributor attestation, trademark policy, third-party notice review, and qualified legal review remain required before broad public contribution or production distribution.
+
 ## Succession work still required
 
 Before Litmo becomes operationally important, create and maintain:
@@ -77,7 +81,6 @@ Before Litmo becomes operationally important, create and maintain:
 - `GOVERNANCE.md`
 - `SECURITY.md`
 - `CONTRIBUTING.md`
-- A selected software license
 - Maintainer and succession policy
 - Infrastructure ownership inventory
 - Credential and domain recovery procedures

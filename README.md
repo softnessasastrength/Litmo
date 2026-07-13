@@ -218,4 +218,6 @@ Read the [Founding Thesis](docs/philosophy/00_Founding_Thesis.md), [Constitution
 
 ## License
 
-No license has been selected yet. Until one is added, all rights are reserved.
+Except where otherwise noted, Litmo is licensed under the [Mozilla Public License 2.0](LICENSE) (`MPL-2.0`). MPL-2.0 is a file-level copyleft license: if you distribute modifications to covered files, those files must remain available under MPL-2.0 as required by the license. Third-party dependencies and assets retain their own licenses.
+
+Licensing does not waive Litmo's safety requirements or grant trademark rights. See [ADR 0044](docs/adr/0044-mpl-2.0-project-license.md) for the decision and follow-up governance work.

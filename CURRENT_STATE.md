@@ -6,7 +6,7 @@
 
 - **Name:** SAFETY-OPS-001 — Recommended private-alpha safety-operations foundation
 - **Status:** active; founder selected the recommended defaults on 2026-07-13
-- **Branch:** `main` contains the reviewed foundation through PR #70.
+- **Branch:** `main` contains the reviewed private-alpha mobile controls through PR #72 and all three local Campfire practices through PR #73.
 - **Latest known coherent milestone:** Chapters 1–5, LEARN-002, HAPTIC-001, matching-hold ends open sessions (ADR 0038), semantic haptics (ADR 0039), BETA-001 physical walkthrough (Track A/B/C all Pass, including physical B1–B26).
 
 ## Completed foundation
@@ -22,16 +22,17 @@
 - Chapter 5: blocks, age gate, reports, review queue, rate limits, trust events, restrictions, moderator console, peer signals, appeals, real discovery, ban ends open sessions, real Consent Snapshot UI.
 - Physical beta walkthrough checklist for founder/private validation (not external TestFlight).
 - BETA-001 complete: Track A Pass, Track C Pass, Track B Pass (automated backend + physical B1–B26 on device, founder, 2026-07-13). No Fail items recorded. Do not claim external beta readiness until RELEASE_AND_TESTFLIGHT blockers clear.
-- Private-alpha safety foundation is integrated on `main` through PR #70.
+- Private-alpha safety foundation and mobile controls are integrated on `main` through PR #72.
+- Campfire Mode's three device-local practices are integrated on `main` through PR #73.
 
 ## Work in progress
 
-SAFETY-OPS-001 is active. ADR 0042 and migration 036 implement the engineering-safe recommended foundation: hashed staff-issued invitations, seven-day expiry, private-alpha membership gates, routine matching pause, minimal unblock tombstones, bounded non-destructive cleanup, and self export. PR #72 contains the clean five-file mobile UI for invitation redemption, export, and staff controls. Campfire Mode is being added separately as a local-only practice surface under ADR 0043. External-review-dependent destructive retention, deletion, jurisdiction, escalation, and two-person staffing decisions remain blocked.
+SAFETY-OPS-001 is active. ADR 0042 and migration 036 implement the engineering-safe recommended foundation: hashed staff-issued invitations, seven-day expiry, private-alpha membership gates, routine matching pause, minimal unblock tombstones, bounded non-destructive cleanup, and self export. The matching mobile controls are merged through PR #72. Campfire Mode is merged through PR #73 as a separate local-only practice surface under ADR 0043. External-review-dependent destructive retention, deletion, jurisdiction, escalation, and two-person staffing decisions remain blocked. MPL-2.0 licensing is being recorded separately under ADR 0044.
 
 ## Priority next work
 
-1. Review and merge the clean private-alpha mobile-controls PR #72.
-2. Review Campfire Mode as a local practice tool; do not reinterpret it as real group matching or group consent.
+1. Review and merge the focused MPL-2.0 licensing PR; then create contributor and trademark policies as separate governance decisions.
+2. Keep Campfire Mode interpreted only as a local practice tool, never real group matching or group consent.
 3. Keep destructive retention and account deletion blocked until legal/privacy/security review names the permissible data categories, holds, and timing.
 4. Name and train an independent backup reviewer before external alpha; implement two-person permanent-ban approval only when that role exists.
 5. Optional founder VoiceOver smoke remains tracked under ACCESS-001.
@@ -77,7 +78,7 @@ Do not claim the current integrated `main` has passed every command unless the e
 
 ## Exact next action
 
-PR #70 is merged on `main`. PR #72 is the clean five-file mobile-controls delta and passed Project State, lint, typecheck, unit tests, build, database reset/lint, all pgTAP tests, and integration. Next: review/merge #72, then review the separate Campfire Mode PR. SAFETY-OPS-001 remains externally blocked on named qualified review and an independent backup reviewer.
+PRs #72 and #73 are merged on `main`; private-alpha mobile controls and all three local Campfire practices are integrated. Next: review and merge the focused MPL-2.0 licensing PR, then continue only governance or operational work with real named owners. SAFETY-OPS-001 remains externally blocked on named qualified review and an independent backup reviewer.
 
 ## Resume checklist
 
