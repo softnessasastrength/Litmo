@@ -5,33 +5,39 @@
 ## Active milestone
 
 - **Name:** SAFETY-OPS-001 — Recommended private-alpha safety-operations foundation
-- **Status:** active; founder selected the recommended defaults on 2026-07-13
-- **Branch:** `agent/macos-self-export-read` (MACOS-005). Open PR #83 holds 100-question vibe quiz + model. `main` has PRs #72–#82.
-- **Latest known coherent milestone:** Foundation through BETA-001; ACCESS-001 semantics (#78); macOS foundation (#76); trust history (#79); own profile (#80); session requests (#82).
+- **Status:** active; founder selected recommended defaults 2026-07-13; external review blockers remain
+- **Branch:** `main`
+- **Latest swarm:** SWARM-001 five-stream feature build/audit completed 2026-07-13 — see `docs/FEATURE_SWARM_TRACKER.md`
 
-## Completed foundation
+## Completed major product streams (on main)
 
-- Mobile vertical slice, consent, sessions, safety ops foundation, Campfire, MPL-2.0, hosted iOS/macOS compile.
-- MACOS-002 trust history (PR #79 / ADR 0046).
-- MACOS-003 own profile (PR #80 / ADR 0047).
-- MACOS-004 session requests read-only (PR #82 / ADR 0048).
+| Stream | Status | Docs |
+| ------ | ------ | ---- |
+| Touch Language (visual map, axes, share) | shipped | `docs/TOUCH_LANGUAGE.md` |
+| Consent Snapshot prepare + mutual seal | shipped | `docs/CONSENT_SNAPSHOT_SYSTEM.md` |
+| Soft Signal + trauma safety (panic/timeout/reflect) | shipped | `docs/SOFT_SIGNAL.md`, `docs/TRAUMA_INFORMED_SAFETY.md` |
+| Proximity · NFC · QR · Multipeer | shipped | `docs/PROXIMITY_LAYER.md`, `docs/NFC_FEATURES.md` |
+| Guided Learning (lived + foundations + paths) | shipped | `docs/LEARNING_SYSTEM.md` |
+| Local-first vault + encrypted backup | shipped | `docs/LOCAL_FIRST.md` (ADR 0058) |
+| Device OS + Soft Edge haptics | **design** | `docs/HARDWARE/DEVICE_OS.md`, `HARDWARE/HAPTICS.md` |
 
-## Work in progress
+Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (ADRs 0045–0049), quizzes (ADR 0050–52) also on `main`.
 
-- MACOS-005 self export on macOS (ADR 0049).
-- PR #83: 100-question vibe quiz + vibe-mix-1.0 model engine.
-- Litmo Ops remains locked. ACCESS-001 residual: optional founder VoiceOver smoke.
-- SAFETY-OPS-001 externally blocked on named qualified review and backup staffing.
+## Work in progress / residuals
+
+- SAFETY-OPS-001 external/legal/staffing blockers (not inventable).
+- ACCESS-001 residual: optional founder VoiceOver physical smoke.
+- Swarm residuals: dual-agreed session duration; TL soft_limit/speed server mapping; physical Multipeer/NFC/Soft Signal chaos; independent crypto review.
+- Litmo Ops remains locked without staff auth.
 
 ## Priority next work
 
-1. Merge PR #83 (quiz) and MACOS-005 export when green.
-2. Next gaps: learning sync (none), consent-snapshot display-only, or Ops staff auth design.
-3. Keep Campfire local-only; keep destructive retention/deletion blocked.
-4. Optional founder VoiceOver smoke.
-5. Name independent backup reviewer before external alpha.
-6. Independent crypto review of quiz E2E and local share before external beta (KNOWN_LIMITATIONS / ADR 0052 / 0053).
-7. Optional: two-device Multipeer physical smoke for Nearby Share.
+1. Keep SAFETY-OPS-001 external reviews moving with named owners only.
+2. Physical device smokes (Soft Signal offline, proximity two-device, NFC, VO).
+3. Optional: TL → server shape fidelity (`speed`, `soft_limit`).
+4. Optional: dual-agreed timeout on Consent Snapshot.
+5. Name crypto reviewer before external beta.
+6. Do not unlock Ops without server-backed staff authentication.
 
 ## Verification baseline
 
@@ -45,40 +51,35 @@ npm run db:lint
 npm run build
 ```
 
-macOS: `cd macos && xcodegen generate` then unsigned `xcodebuild` test/build.
-
-Quizzes unit coverage includes `doubleRatchetCore`, `quizShareCore`, `quizPaths`, `quizScoring`, and `quizResultsRepositoryCore` tests under `app/`.
-
 ## Known limitations and risks
 
 - Product is not production-ready for stranger meetings.
-- macOS reads require env configuration + access token; not production passkey UX.
-- Self export is not legally complete data access and not deletion.
-- Listed requests and profiles never grant consent.
-- Physical VoiceOver smoke still pending.
-- Ops is non-operational until real staff auth.
+- Hardware Device OS is design-only (not a shipping SKU).
+- Real Multipeer/NFC need iOS development builds (Expo Go practice paths).
+- Local session timeout is preference-only until server dual-agree.
+- Physical VoiceOver and offline Soft Signal chaos still pending.
 
 ## Architectural decisions
 
 - Repository artifacts are the source of truth.
 - Consent is explicit, current, revocable, session-specific.
-- macOS shows server-authoritative read models only; no Swift consent engine.
+- Soft Signal is unilateral; never a penalty; not emergency services.
+- Personal data is local-first (ADR 0058).
+- Device is a room for presence; phone is the studio.
 
 ## Exact next action
 
-Land MACOS-005 and rebased PR #83 after green checks. Do not unlock Ops without server-backed staff authentication.
+Execute residual physical smokes or TL server mapping when prioritized; otherwise continue SAFETY-OPS-001 only with named external owners. Do not invent legal/clinical approval.
 
 ## Resume checklist
 
-1. Read `CURRENT_STATE.md`, `TASKS.md`, `DECISIONS.md`, and `project-state.json`.
-2. Read `docs/KNOWN_LIMITATIONS.md` and ADRs 0045–0049.
+1. Read `CURRENT_STATE.md`, `TASKS.md`, `docs/FEATURE_SWARM_TRACKER.md`, `project-state.json`.
+2. Read `docs/KNOWN_LIMITATIONS.md` and recent ADRs (0058–0059, 0050–0057).
 3. Run `git status` and inspect recent commits.
 4. Verify last recorded checks before changing code.
 
 ## Stop checklist
 
 1. Stop at a coherent boundary.
-2. Preserve working changes.
-3. Run practical checks and record results.
-4. Commit coherent work; update continuity files.
-5. Note whether the tree is clean and the next resume action.
+2. Update this file, `TASKS.md`, and the swarm tracker if streams moved.
+3. Commit docs with code in the same workstream.

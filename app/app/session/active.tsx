@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { AppState, type AppStateStatus, Text, View } from "react-native";
+import {
+  AppState,
+  type AppStateStatus,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   Body,
@@ -322,166 +328,178 @@ function ActiveSessionContent() {
     });
   };
 
+  const softSignalState =
+    ended
+      ? "stopped"
+      : stopState === "stopping" || stopState === "pending"
+        ? "stopping"
+        : "idle";
+
   return (
     <Screen scroll={false} style={styles.screen}>
-      <View>
-        <Eyebrow>
-          {sessionId ? "ACTIVE SESSION" : "SIMULATED ACTIVE SESSION"}
-        </Eyebrow>
-        <Title>You’re both here.</Title>
-        <Body muted>
-          Keep noticing yourself. Agreement can change at any moment. Soft
-          Signal, quick exit, and panic mode never need a reason.
-        </Body>
-        {syncNote ? (
-          <View style={styles.syncNote} accessible accessibilityRole="text">
-            <Text style={styles.syncNoteText}>{syncNote}</Text>
-          </View>
-        ) : null}
-        {timeoutBanner ? (
-          <View
-            style={styles.timeoutNote}
-            accessible
-            accessibilityRole="alert"
-          >
-            <Text style={styles.timeoutNoteText}>{timeoutBanner}</Text>
-          </View>
-        ) : null}
-      </View>
-      <View
-        accessible
-        accessibilityLabel={`Session timer ${time}`}
-        style={styles.timerWrap}
+      {/* Scrollable context; Soft Signal stays sticky below for impossible-to-miss exit. */}
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.timer}>{time}</Text>
-        <Text style={styles.timerLabel}>
-          {sessionId ? "ELAPSED" : "ELAPSED · MOCK TIMER"}
-          {safetyPrefs.timeout.enabled
-            ? ` · BOUNDARY ${safetyPrefs.timeout.maxMinutes}M`
-            : ""}
-        </Text>
-      </View>
-      <Card>
-        <Text style={styles.prompt}>A gentle check-in</Text>
-        <Body>Are your breath, shoulders, and attention still saying yes?</Body>
-      </Card>
-      {timeoutDuePrompt && !ended ? (
-        <Card>
-          <Text style={styles.prompt}>Time boundary</Text>
+        <View>
+          <Eyebrow>
+            {sessionId ? "ACTIVE SESSION" : "SIMULATED ACTIVE SESSION"}
+          </Eyebrow>
+          <Title>You’re both here.</Title>
           <Body muted>
-            The time you set is complete. Soft Signal ends immediately. Extending
-            needs a free yes from you — never pressure.
+            Keep noticing yourself. Agreement can change at any moment. Soft
+            Signal stays pinned below — never needs a reason.
           </Body>
+          {syncNote ? (
+            <View style={styles.syncNote} accessible accessibilityRole="text">
+              <Text style={styles.syncNoteText}>{syncNote}</Text>
+            </View>
+          ) : null}
+          {timeoutBanner ? (
+            <View
+              style={styles.timeoutNote}
+              accessible
+              accessibilityRole="alert"
+            >
+              <Text style={styles.timeoutNoteText}>{timeoutBanner}</Text>
+            </View>
+          ) : null}
+        </View>
+        <View
+          accessible
+          accessibilityLabel={`Session timer ${time}`}
+          style={styles.timerWrap}
+        >
+          <Text style={styles.timer}>{time}</Text>
+          <Text style={styles.timerLabel}>
+            {sessionId ? "ELAPSED" : "ELAPSED · MOCK TIMER"}
+            {safetyPrefs.timeout.enabled
+              ? ` · BOUNDARY ${safetyPrefs.timeout.maxMinutes}M`
+              : ""}
+          </Text>
+        </View>
+        <Card>
+          <Text style={styles.prompt}>A gentle check-in</Text>
+          <Body>
+            Are your breath, shoulders, and attention still saying yes?
+          </Body>
+        </Card>
+        {timeoutDuePrompt && !ended ? (
+          <Card>
+            <Text style={styles.prompt}>Time boundary</Text>
+            <Body muted>
+              The time you set is complete. Soft Signal (pinned below) ends
+              immediately. Extending needs a free yes from you — never pressure.
+            </Body>
+            <Button
+              variant="secondary"
+              label="Continue a little longer (I still want to)"
+              onPress={() => {
+                setTimeoutDuePrompt(false);
+                setTimeoutBanner(
+                  "Continuing with awareness. Soft Signal is still available.",
+                );
+                void traumaSafetyService
+                  .loadPrefs()
+                  .then((p) =>
+                    traumaSafetyService.savePrefs({
+                      ...p,
+                      timeout: {
+                        ...p.timeout,
+                        maxMinutes: p.timeout.maxMinutes + 15,
+                      },
+                    }),
+                  )
+                  .then(setSafetyPrefs);
+              }}
+            />
+          </Card>
+        ) : null}
+        <View style={styles.secondaryControls}>
           <Button
-            label="Soft Signal — end now"
-            onPress={() => void timeoutSoftSignal()}
+            variant="secondary"
+            label="Quick exit"
+            disabled={ended}
+            onPress={() => void quickExit()}
+            accessibilityHint="Ends the session immediately and opens private wrap-up. No explanation needed."
           />
           <Button
             variant="secondary"
-            label="Continue a little longer (I still want to)"
-            onPress={() => {
-              setTimeoutDuePrompt(false);
-              setTimeoutBanner(
-                "Continuing with awareness. Soft Signal is still available.",
-              );
-              // Nudge boundary +15 min locally without requiring network.
-              void traumaSafetyService
-                .loadPrefs()
-                .then((p) =>
-                  traumaSafetyService.savePrefs({
-                    ...p,
-                    timeout: {
-                      ...p.timeout,
-                      maxMinutes: p.timeout.maxMinutes + 15,
-                    },
-                  }),
-                )
-                .then(setSafetyPrefs);
-            }}
+            label="Panic mode — stop & cover"
+            disabled={ended}
+            onPress={() => void panicExit()}
+            accessibilityHint="Ends the session immediately and shows a calm cover screen. Not emergency services."
           />
-        </Card>
-      ) : null}
+          <Button
+            variant="secondary"
+            label={completing ? "Ending…" : "End together"}
+            disabled={ended}
+            onPress={() => void endTogether()}
+            accessibilityHint="Ends the session as completed when both people are ready. Soft Signal is still available if you need to stop immediately."
+          />
+          {sessionId && peerUserId && !ended ? (
+            <>
+              <Button
+                variant="secondary"
+                label="Report for human review"
+                onPress={() =>
+                  router.push({
+                    pathname: "/security/report",
+                    params: {
+                      reportedId: peerUserId,
+                      sessionId,
+                      displayName: "the other person",
+                    },
+                  })
+                }
+                accessibilityHint="Opens a private structured report linked to this session. Does not end the session."
+              />
+              <Text style={styles.explain}>
+                Reporting does not end the session. Soft Signal (below) is still
+                the immediate stop. Litmo is not emergency response.
+              </Text>
+              <Button
+                variant="secondary"
+                label={
+                  blockState === "blocking"
+                    ? "Blocking…"
+                    : "Block this person and leave"
+                }
+                disabled={blockState === "blocking"}
+                onPress={() => void blockPeer()}
+                accessibilityHint="Privately blocks them and ends this session. They are not told who blocked them."
+              />
+              <Text style={styles.explain}>
+                Blocking ends open sessions with them and hides you from each
+                other. They are not told it was you.
+              </Text>
+              {blockState === "error" ? (
+                <Text accessibilityRole="alert" style={styles.explain}>
+                  {blockError}
+                </Text>
+              ) : null}
+            </>
+          ) : null}
+        </View>
+      </ScrollView>
+
       <View
-        style={styles.controls}
+        style={styles.stickyExit}
         accessibilityRole="summary"
-        accessibilityLabel="Session controls. Soft Signal is first and ends the session immediately."
+        accessibilityLabel="Soft Signal. Ends the session immediately. Always available."
       >
+        <Text style={styles.stickyLabel}>ALWAYS AVAILABLE · NO REASON NEEDED</Text>
         <SoftSignalButton
           prominent
-          state={
-            ended
-              ? "stopped"
-              : stopState === "stopping" || stopState === "pending"
-                ? "stopping"
-                : "idle"
+          state={softSignalState}
+          disabled={ended}
+          onPress={() =>
+            void (timeoutDuePrompt ? timeoutSoftSignal() : stop())
           }
-          disabled={ended}
-          onPress={() => void stop()}
         />
-        <Button
-          variant="secondary"
-          label="Quick exit"
-          disabled={ended}
-          onPress={() => void quickExit()}
-          accessibilityHint="Ends the session immediately and opens private wrap-up. No explanation needed."
-        />
-        <Button
-          variant="secondary"
-          label="Panic mode — stop & cover"
-          disabled={ended}
-          onPress={() => void panicExit()}
-          accessibilityHint="Ends the session immediately and shows a calm cover screen. Not emergency services."
-        />
-        <Button
-          variant="secondary"
-          label={completing ? "Ending…" : "End together"}
-          disabled={ended}
-          onPress={() => void endTogether()}
-          accessibilityHint="Ends the session as completed when both people are ready. Soft Signal is still available if you need to stop immediately."
-        />
-        {sessionId && peerUserId && !ended ? (
-          <>
-            <Button
-              variant="secondary"
-              label="Report for human review"
-              onPress={() =>
-                router.push({
-                  pathname: "/security/report",
-                  params: {
-                    reportedId: peerUserId,
-                    sessionId,
-                    displayName: "the other person",
-                  },
-                })
-              }
-              accessibilityHint="Opens a private structured report linked to this session. Does not end the session."
-            />
-            <Text style={styles.explain}>
-              Reporting does not end the session. Soft Signal is still the
-              immediate stop. Litmo is not emergency response.
-            </Text>
-            <Button
-              variant="secondary"
-              label={
-                blockState === "blocking"
-                  ? "Blocking…"
-                  : "Block this person and leave"
-              }
-              disabled={blockState === "blocking"}
-              onPress={() => void blockPeer()}
-              accessibilityHint="Privately blocks them and ends this session. They are not told who blocked them."
-            />
-            <Text style={styles.explain}>
-              Blocking ends open sessions with them and hides you from each
-              other. They are not told it was you.
-            </Text>
-            {blockState === "error" ? (
-              <Text accessibilityRole="alert" style={styles.explain}>
-                {blockError}
-              </Text>
-            ) : null}
-          </>
-        ) : null}
       </View>
     </Screen>
   );
@@ -489,7 +507,25 @@ function ActiveSessionContent() {
 
 function makeStyles(colors: AppColors) {
   return {
-    screen: { justifyContent: "space-between" },
+    screen: { flex: 1, justifyContent: "flex-start", paddingBottom: 0 },
+    scroll: { flex: 1 },
+    scrollContent: { gap: 16, paddingBottom: 16 },
+    stickyExit: {
+      borderTopWidth: 2,
+      borderTopColor: colors.signal,
+      backgroundColor: colors.cream,
+      paddingTop: 12,
+      paddingBottom: 8,
+      gap: 8,
+    },
+    stickyLabel: {
+      color: colors.signal,
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1.1,
+      textAlign: "center",
+    },
+    secondaryControls: { gap: 12, width: "100%" },
     timerWrap: { alignItems: "center", paddingHorizontal: 8 },
     timer: {
       color: colors.ink,
@@ -505,7 +541,6 @@ function makeStyles(colors: AppColors) {
       fontWeight: "800",
     },
     prompt: { color: colors.plum, fontWeight: "800", marginBottom: 7 },
-    controls: { gap: 12, width: "100%" },
     explain: {
       color: colors.muted,
       fontSize: 13,

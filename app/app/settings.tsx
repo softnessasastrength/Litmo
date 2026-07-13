@@ -217,15 +217,9 @@ function SettingsContent() {
       />
       <Button
         variant="secondary"
-        label="Proximity radar (anonymous nearby)"
-        onPress={() => router.push("/proximity/radar" as never)}
-        accessibilityHint="Opt-in anonymous compatibility radar, encrypted handshake, mutual consent before identity. Soft Signal exits. Never consent to touch."
-      />
-      <Button
-        variant="secondary"
-        label="NFC careful connect"
-        onPress={() => router.push("/nfc/connect" as never)}
-        accessibilityHint="Write or scan NFC invites, or fall back to QR and manual codes. Accept required after every tap."
+        label="Proximity Layer hub (radar · NFC · QR)"
+        onPress={() => router.push("/proximity" as never)}
+        accessibilityHint="Opens the proximity hub with extreme consent gates before radar, NFC, or Multipeer. Soft Signal exits. Never consent to touch."
       />
       <Button
         variant="secondary"

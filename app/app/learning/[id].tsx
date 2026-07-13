@@ -55,13 +55,15 @@ export default function LearningModuleScreen() {
       // presence once per module entry — not on resume of progress alone after rerender.
       if (!presencePlayedRef.current) {
         presencePlayedRef.current = true;
-        // Presence haptic skipped under reduced stimulation / ND mode.
+        if (!reducedStimulation) {
+          void hapticService.play("presence");
+        }
       }
     });
     return () => {
       active = false;
     };
-  }, [module]);
+  }, [module, reducedStimulation]);
 
   const completedView =
     Boolean(module) && stepIndex >= (module?.steps.length ?? 0);

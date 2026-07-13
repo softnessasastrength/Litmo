@@ -767,6 +767,28 @@ export const learningModules: LearningModule[] = [
         title: "Aftercare is private",
         body: "After contact — or after a stop — your system may need water, quiet, a walk, or no contact. Private wrap-up notes are for you. You are not required to soothe someone else’s ego after you set a boundary. Seeking professional support for ongoing distress is strength, not failure; Litmo is not therapy.",
         takeaway: "Your recovery pace is not a performance for anyone else.",
+        scenario: {
+          prompt:
+            "After Soft Signal you feel shaky. They want to “talk it out” right away. Kindest for you?",
+          options: [
+            {
+              label:
+                "Take private aftercare first (water, quiet, space) — conversation only if you freely want it later",
+              feedback:
+                "Yes. Aftercare is yours. You do not owe an immediate debrief to soothe them.",
+            },
+            {
+              label: "Stay until they feel better so you seem mature",
+              feedback:
+                "Managing their feelings mid-activation can cost your capacity. Exit is allowed.",
+            },
+            {
+              label: "Skip noticing your body and re-enter discovery immediately",
+              feedback:
+                "Rest is curriculum. You can return when your system has room again.",
+            },
+          ],
+        },
       },
       {
         id: "nss-close",

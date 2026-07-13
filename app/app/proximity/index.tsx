@@ -23,6 +23,8 @@ import {
   setNearbyShareEnabled,
 } from "../../services/localSharePreference";
 import { softSignalService } from "../../services/softSignalService";
+import { proximityService } from "../../services/proximityService";
+import { localShareService } from "../../services/localShareService";
 import { fonts, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
@@ -73,6 +75,17 @@ function ProximityHubContent() {
 
   const softSignal = async () => {
     setSsState("stopping");
+    // Tear down any active nearby radios/keys first (global hard stop).
+    try {
+      await proximityService.softSignal();
+    } catch {
+      // ignore — still fire Soft Signal and kill master
+    }
+    try {
+      await localShareService.stop("soft_signal");
+    } catch {
+      // ignore
+    }
     await softSignalService.fire({
       source: "practice",
       practiceOnly: true,

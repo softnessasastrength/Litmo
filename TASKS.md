@@ -6,6 +6,15 @@ Only one implementation task should normally be `active`. Every status change mu
 
 ## Active
 
+### SWARM-001 — Five-stream feature swarm (tracking)
+
+- **Status:** completed (2026-07-13)
+- **Owner:** multi-agent swarm + orchestrator
+- **Goal:** Build/verify Touch Language, Consent Snapshot + Soft Signal, Proximity/NFC, Guided Learning, Hardware Device OS — trauma-informed, ND-friendly, local-first, E2E where appropriate.
+- **Result:** All five streams already shipped on `main` (design-only for hardware). Tracker: `docs/FEATURE_SWARM_TRACKER.md`. Closeout fixed sticky Soft Signal, presence haptic, proximity Soft Signal teardown, settings hub routing, aftercare scenario.
+- **Residual backlog:** crypto review, dual-agreed session duration, TL server soft_limit/speed mapping, physical smokes — listed in tracker, not blocking product vertical slice.
+- **Verification:** typecheck + learning/trauma unit tests green on closeout.
+
 ### SAFETY-OPS-001 — Moderation and beta-operations design
 
 - **Status:** active

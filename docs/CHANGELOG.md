@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-07-13 — Multi-agent feature swarm closeout
+
+### Summary
+
+Five-agent audit of Touch Language, Consent Snapshot + Soft Signal, Proximity/NFC,
+Guided Learning, and Hardware Device OS confirmed all streams shipped (hardware =
+design-only). Closeout fixes: sticky Soft Signal on active session; learning
+presence haptic; proximity hub Soft Signal tears down radios; Settings →
+Proximity hub gates; aftercare scenario; `docs/FEATURE_SWARM_TRACKER.md` task
+system; CURRENT_STATE + TASKS updated.
+
+### Swarm residual (not blockers for vertical slice)
+
+- Dual-agreed session duration on server snapshot
+- TL soft_limit/speed server mapping
+- Physical Multipeer/NFC/Soft Signal chaos + VoiceOver
+- Independent crypto review before external beta
+
 ## 2026-07-13 — Trauma-informed safety system
 
 ### Summary
