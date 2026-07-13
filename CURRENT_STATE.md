@@ -6,7 +6,7 @@
 
 - **Name:** SAFETY-OPS-001 — Recommended private-alpha safety-operations foundation
 - **Status:** active; founder selected the recommended defaults on 2026-07-13
-- **Branch:** `main` contains PRs #72–#75. Draft PR #76 adds the founder-authorized native macOS foundation without changing the active SAFETY-OPS-001 milestone.
+- **Branch:** `main` contains PRs #72–#76, including the founder-authorized native macOS foundation. SAFETY-OPS-001 remains the active milestone.
 - **Latest known coherent milestone:** Chapters 1–5, LEARN-002, HAPTIC-001, matching-hold ends open sessions (ADR 0038), semantic haptics (ADR 0039), BETA-001 physical walkthrough (Track A/B/C all Pass, including physical B1–B26).
 
 ## Completed foundation
@@ -26,15 +26,15 @@
 - Campfire Mode's three device-local practices are integrated on `main` through PR #73.
 - MPL-2.0 licensing and ADR 0044 are integrated on `main` through PR #74.
 - A hosted unsigned Xcode 26.5 simulator build passed in strict CocoaPods deployment mode on PR #75 and produced a compiled `.app` plus full build log.
-- Draft PR #76 has a green hosted Xcode 26.5 macOS run: four Campfire tests passed, both separate arm64 app targets compiled, and unsigned inspection artifacts uploaded.
+- PR #76 has a green hosted Xcode 26.5 macOS run: four Campfire tests passed, both separate arm64 app targets compiled, and unsigned inspection artifacts uploaded.
 
 ## Work in progress
 
-SAFETY-OPS-001 remains active. Draft PR #76 is a bounded, founder-authorized platform slice under ADR 0045, not a roadmap promotion: native Litmo provides local Campfire and a read-only participant shell; the separately bundled Litmo Ops target remains locked until real staff authentication and server authorization exist. External-review-dependent destructive retention, deletion, jurisdiction, escalation, and two-person staffing decisions remain blocked.
+SAFETY-OPS-001 remains active. Merged PR #76 is a bounded, founder-authorized platform slice under ADR 0045, not a roadmap promotion: native Litmo provides local Campfire and a read-only participant shell; the separately bundled Litmo Ops target remains locked until real staff authentication and server authorization exist. External-review-dependent destructive retention, deletion, jurisdiction, escalation, and two-person staffing decisions remain blocked.
 
 ## Priority next work
 
-1. Review and merge green draft PR #76; then select the next separately reviewed macOS integration slice or return to governance work.
+1. Select the next separately reviewed macOS integration slice or return to governance work; keep Litmo Ops locked until real staff authentication and authorization exist.
 2. Keep Campfire Mode interpreted only as a local practice tool, never real group matching or group consent.
 3. Keep destructive retention and account deletion blocked until legal/privacy/security review names the permissible data categories, holds, and timing.
 4. Name and train an independent backup reviewer before external alpha; implement two-person permanent-ban approval only when that role exists.
@@ -81,7 +81,7 @@ Do not claim the current integrated `main` has passed every command unless the e
 
 ## Exact next action
 
-PRs #72–#75 are merged on `main`. Draft PR #76 is green and contains the first native macOS participant/Campfire and separately locked Ops foundations. Next: review and merge PR #76. Do not treat its unsigned artifacts as releases or unlock Ops without server-backed staff authentication and authorization. SAFETY-OPS-001 remains externally blocked on named qualified review and an independent backup reviewer.
+PRs #72–#76 are merged on `main`. PR #76 contains the first native macOS participant/Campfire and separately locked Ops foundations. Next: choose a separately reviewed integration slice. Do not treat unsigned artifacts as releases or unlock Ops without server-backed staff authentication and authorization. SAFETY-OPS-001 remains externally blocked on named qualified review and an independent backup reviewer.
 
 ## Resume checklist
 

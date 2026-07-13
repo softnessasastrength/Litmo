@@ -1,30 +1,29 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T14:00:00-04:00",
+  "updatedAt": "2026-07-13T14:04:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
     "status": "active"
   },
   "git": {
-    "branch": "agent/macos-native-foundation",
-    "latestCoherentCommit": "6a88abdd6f0e7c798d6c4b10839bea47afeda84f",
+    "branch": "main",
+    "latestCoherentCommit": "e9988a3da2ccf32e96c22273335e3e2e72eb4c96",
     "workingTreeExpectedClean": true
   },
   "verification": {
     "status": "passed",
     "commands": [
-      "GitHub Actions macOS Native Build run #2 — pass on PR #76 with Xcode 26.5",
-      "LitmoMacCoreTests — 4/4 Campfire invariant tests pass on hosted arm64 macOS",
-      "Litmo participant app — unsigned arm64 compile pass on hosted macOS",
-      "Litmo Ops app — unsigned arm64 compile pass on hosted macOS",
-      "npm run state:check, lint, typecheck, test, and build — pending for documentation-only continuity head",
-      "Database and integration verification — unchanged from merged PR #75 baseline"
+      "GitHub Actions macOS Native Build run #8 — pass on merged PR #76 with Xcode 26.5",
+      "LitmoMacCoreTests — 4/4 Campfire invariant tests pass",
+      "Litmo participant app and Litmo Ops — unsigned arm64 compile pass",
+      "Project State, lint, typecheck, unit tests, and build — pass on merged PR #76 head",
+      "Database/integration lane — no database changes in PR #76; merged baseline remains authoritative"
     ],
     "failures": []
   },
-  "nextAction": "Review and merge green draft PR #76. Then choose a separately reviewed macOS integration slice; do not unlock Ops without server-backed staff authentication and authorization.",
+  "nextAction": "Choose the next separately reviewed macOS integration slice or return to governance work. Litmo Ops stays locked until server-backed staff authentication and authorization exist.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
@@ -43,7 +42,7 @@
   ],
   "notes": [
     "PRs #72–#75 are merged on main.",
-    "PR #76 adds native SwiftUI participant/Campfire and separately locked Ops targets under ADR 0045.",
+    "PR #76 merged and adds native SwiftUI participant/Campfire and separately locked Ops targets under ADR 0045.",
     "macOS Native Build run #2 passed after adding the required generated framework Info.plist.",
     "Unsigned hosted artifacts are inspection builds, not signed or notarized releases.",
     "Destructive report/case/trust retention and account deletion remain deliberately unimplemented pending review."
