@@ -25,11 +25,11 @@
 
 ## Work in progress
 
-SAFETY-OPS-001 is active. ADR 0042 and migration 035 implement the engineering-safe recommended foundation: hashed staff-issued invitations, seven-day expiry, private-alpha membership gates, routine matching pause, minimal unblock tombstones, bounded non-destructive cleanup, and self export. External-review-dependent destructive retention, deletion, jurisdiction, escalation, and two-person staffing decisions remain blocked.
+SAFETY-OPS-001 is active. ADR 0042 and migration 036 implement the engineering-safe recommended foundation: hashed staff-issued invitations, seven-day expiry, private-alpha membership gates, routine matching pause, minimal unblock tombstones, bounded non-destructive cleanup, and self export. External-review-dependent destructive retention, deletion, jurisdiction, escalation, and two-person staffing decisions remain blocked.
 
 ## Priority next work
 
-1. Validate migration 035 and its pgTAP coverage in GitHub CI.
+1. Validate migration 036 and its pgTAP coverage in GitHub CI.
 2. Keep destructive retention and account deletion blocked until legal/privacy/security review names the permissible data categories, holds, and timing.
 3. Name and train an independent backup reviewer before external alpha; implement two-person permanent-ban approval only when that role exists.
 4. Optional founder VoiceOver smoke remains tracked under ACCESS-001.
@@ -74,7 +74,7 @@ Do not claim the current integrated `main` has passed every command unless the e
 
 ## Exact next action
 
-Run the full PR checks for migration 035. If green, SAFETY-OPS-001 remains active but externally blocked on named legal/privacy/safeguarding review and an independent backup reviewer; do not fabricate those approvals.
+Run the full PR checks for migration 036. If green, SAFETY-OPS-001 remains active but externally blocked on named legal/privacy/safeguarding review and an independent backup reviewer; do not fabricate those approvals.
 
 ## Resume checklist
 
