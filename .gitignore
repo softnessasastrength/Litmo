@@ -14,3 +14,7 @@ app/.env.lan.example
 # Generated native macOS project
 macos/LitmoMac.xcodeproj/
 macos/DerivedData/
+
+# Swift PM build products
+**/.build/
+**/DerivedData/
