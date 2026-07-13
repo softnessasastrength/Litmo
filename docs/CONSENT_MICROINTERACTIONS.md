@@ -93,6 +93,34 @@ Full typed inventory in code: `CONSENT_POINTS`.
 | `backup_opt_in` | Ciphertext backup |
 | `learning_scenario_choice` | **Never real consent** |
 
+### First-open onboarding (`onboard_*`)
+
+Canonical frame-by-frame flow: [`ONBOARDING_CONSENT_FLOW.md`](ONBOARDING_CONSENT_FLOW.md).
+
+| ID | Authorizes |
+| -- | ---------- |
+| `onboard_welcome_continue` | Open entry choice only |
+| `onboard_entry_demo` | Local fictional demo (no account) |
+| `onboard_entry_signin` | Begin passkey sign-in |
+| `onboard_entry_signup` | Begin registration |
+| `onboard_platonic_adult_ack` | Purpose ack (adults, platonic) — not age proof |
+| `onboard_age_self_report` | Demo/about-you 18+ self-report only |
+| `onboard_age_apple_range` | Coarse adult eligibility (real accounts) |
+| `onboard_age_dev_attest` | Dev-only self-attest outside production |
+| `onboard_profile_name` | Display name |
+| `onboard_profile_gender` | Gender self-describe |
+| `onboard_profile_orientation` | Orientation self-describe (never safety) |
+| `onboard_vibe_answer` | Weather scene only |
+| `onboard_vibe_keep` | Keep vibe profile (not snapshot) |
+| `onboard_touch_language_save` | Preference starting point |
+| `onboard_boundary_zone` | Future zone preference |
+| `onboard_boundary_hard_stop` | Absolute hard stop tag |
+| `onboard_boundary_private_note` | Private note (not shared by default) |
+| `onboard_boundary_save` | Persist map; open home — still no session consent |
+| `onboard_nd_default_demo` | Calm defaults on demo entry (device-local) |
+
+**Law:** finishing onboarding never seals a Consent Snapshot and never authorizes touch.
+
 ## Phase machines
 
 ### Soft Signal

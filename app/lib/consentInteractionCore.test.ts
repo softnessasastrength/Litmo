@@ -71,6 +71,59 @@ test("learning scenario is inform only", () => {
   assert.equal(CONSENT_POINTS.learning_scenario_choice.kind, "inform");
 });
 
+test("onboarding points exist and never grant session touch", () => {
+  const onboardIds = CONSENT_POINT_IDS.filter((id) => id.startsWith("onboard_"));
+  assert.ok(onboardIds.length >= 18, `expected onboard_* catalog, got ${onboardIds.length}`);
+  for (const id of onboardIds) {
+    const p = CONSENT_POINTS[id];
+    assert.ok(p.kind === "inform" || p.kind === "prepare", `${id} must be inform|prepare`);
+    assert.equal(p.requiresArm, false, `${id} must not require grant arm`);
+    assert.equal(p.requiresPeer, false, `${id} must not require peer`);
+    assert.ok(
+      p.neverMeans.some(
+        (n) =>
+          /consent to touch/i.test(n) ||
+          /session consent/i.test(n) ||
+          /mutual consent/i.test(n) ||
+          /Consent Snapshot/i.test(n) ||
+          /Ready to touch/i.test(n) ||
+          /Touches granted/i.test(n) ||
+          /Partner may touch/i.test(n) ||
+          /Immediate matching/i.test(n) ||
+          /Real person/i.test(n) ||
+          /matching/i.test(n) ||
+          /Account created/i.test(n) ||
+          /Government ID/i.test(n) ||
+          /safety/i.test(n) ||
+          /Public bio/i.test(n) ||
+          /Shared with partners/i.test(n) ||
+          /Clinical/i.test(n) ||
+          /Production eligibility/i.test(n) ||
+          /Age confirmed without gate/i.test(n) ||
+          /Age verified/i.test(n) ||
+          /birthday/i.test(n) ||
+          /Face ID proves age/i.test(n) ||
+          /Legal name/i.test(n) ||
+          /directory/i.test(n) ||
+          /Medical/i.test(n) ||
+          /Sexual content/i.test(n) ||
+          /identity/i.test(n) ||
+          /diagnosis/i.test(n),
+      ),
+      `${id} needs an explicit non-claim in neverMeans`,
+    );
+  }
+  assert.equal(CONSENT_POINTS.onboard_boundary_save.kind, "prepare");
+  assert.ok(
+    CONSENT_POINTS.onboard_boundary_save.neverMeans.some((n) =>
+      /Consent Snapshot sealed/i.test(n),
+    ),
+  );
+  assert.equal(CONSENT_POINTS.onboard_vibe_answer.kind, "inform");
+  assert.equal(CONSENT_POINTS.onboard_age_self_report.worksOffline, true);
+  assert.equal(CONSENT_POINTS.onboard_age_apple_range.worksOffline, false);
+});
+
 test("mayEnableGrantConfirm is deliberate", () => {
   assert.equal(
     mayEnableGrantConfirm({

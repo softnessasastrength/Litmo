@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-07-14 — Initial onboarding consent flow (full granularity)
+
+### Summary
+
+Canonical frame-by-frame design for first app open through Home: welcome,
+entry (demo vs passkey), About You, vibe quiz/result, Touch Language prepare,
+expanded body-zone boundaries, real-account age gate, and every control mapped
+to `onboard_*` consent points. Documents non-claims (prepare ≠ touch),
+edge-case encyclopedia, happy paths, and implementation gaps.
+
+### Developer impact
+
+- `docs/ONBOARDING_CONSENT_FLOW.md` (authoritative first-open flow)
+- `onboard_*` catalog already in `consentInteractionCore.ts`; tests assert
+  onboarding points are prepare/inform only and never grant touch
+- Cross-linked from `CONSENT_MICROINTERACTIONS.md` and `DOCUMENTATION_MAP.md`
+
 ## 2026-07-14 — Consent micro-interactions (maximum detail expansion)
 
 ### Summary
