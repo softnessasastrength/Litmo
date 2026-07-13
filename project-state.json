@@ -1,7 +1,7 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-14T00:30:00-04:00",
+  "updatedAt": "2026-07-14T12:00:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
@@ -9,20 +9,19 @@
   },
   "git": {
     "branch": "main",
-    "latestCoherentCommit": "bf66995",
+    "latestCoherentCommit": "95abe90",
     "workingTreeExpectedClean": true
   },
   "verification": {
     "status": "partial",
     "commands": [
-      "shared constitutionInvariants tests — 11/11",
-      "app typecheck — pass",
-      "learningModules + touchLanguageCore tests — pass",
-      "NUCLEAR-001 six-agent swarm — shipped"
+      "shared tests 78/78 (soft_limit engine)",
+      "softSignalServiceCore tests 8/8",
+      "sessionConsentSnapshotCore + app typecheck pass"
     ],
     "failures": []
   },
-  "nextAction": "War path: physical Soft Signal chaos + VoiceOver; crypto review (named); dual-agreed session duration; optional soft_limit as engine-native state. SAFETY-OPS external only with named owners.",
+  "nextAction": "Human fill PHYSICAL_SOFT_SIGNAL_CHAOS.md; named crypto review; optional sacred dual-path Consent Snapshot presenter or server dual duration. SAFETY-OPS only with named owners.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
@@ -31,14 +30,12 @@
     "Optional: independent crypto review of quiz E2E and local share before external beta"
   ],
   "risks": [
-    "Not production-ready for stranger meetings.",
-    "Hardware Device OS is design-only.",
-    "soft_limit still maps to ask_first on server engine (conservative).",
-    "ACCESS-001 VoiceOver smoke pending."
+    "Physical Soft Signal chaos not yet human-attested.",
+    "Server snapshot duration not dual-agreed (local mutual only).",
+    "Hardware Device OS design-only."
   ],
   "notes": [
-    "NUCLEAR-001: Living Constitution machine invariants + learning module.",
-    "Command center: docs/NUCLEAR_SWARM.md + CONSTITUTION_ENFORCEMENT.md",
-    "EmotionalOS hard limits hardened; Soft Signal sacred copy; Device SS matrix."
+    "95abe90: Soft Signal DI offline matrix; soft_limit first-class; dual local time boundary.",
+    "docs/NUCLEAR_SWARM.md residual war path updated."
   ]
 }
