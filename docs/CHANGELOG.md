@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-07-13 — Dedicated-device haptic system design (VCA + LRA)
+
+### Summary
+
+Specified the **Soft Edge** tactile language for the Litmo companion device
+vision: dual **voice-coil (VCA) + LRA** architecture, Soft Signal “curtain
+close,” consent-exchange and connection notification patterns, timing budgets,
+accessibility/ND rules, and firmware/software interfaces. Phone Expo haptics
+(ADR 0039) remain the shipping path; device docs are design-only until hardware.
+
+### User-visible impact
+
+- None in the current mobile app. Product vision language may appear on the
+  public `/litmo` hardware section separately.
+
+### Developer impact
+
+- `docs/HAPTIC_SYSTEM_DEVICE.md` — full implementation specification.
+- `docs/adr/0057-device-haptic-vca-lra-architecture.md` — architecture decision.
+- Cross-links from `docs/roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md` and
+  `docs/DOCUMENTATION_MAP.md`.
+
+### Related work
+
+- ADR 0039 / HAPTIC-001 phone semantic vocabulary
+- Hardware vision on Softnessasastrength-Website `/litmo#hardware`
+
 ## 2026-07-13 — 100-question vibe quiz + model-heavy mix engine
 
 ### Summary

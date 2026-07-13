@@ -45,6 +45,7 @@ Use these documents when modifying or reviewing implemented behavior:
 - [`SENSITIVE_DATA_ENCRYPTION.md`](SENSITIVE_DATA_ENCRYPTION.md)
 - [`CONSENT_WITHDRAWAL_AND_EMERGENCY_STOP.md`](CONSENT_WITHDRAWAL_AND_EMERGENCY_STOP.md)
 - [`LEARNING_SYSTEM.md`](LEARNING_SYSTEM.md)
+- [`HAPTIC_SYSTEM_DEVICE.md`](HAPTIC_SYSTEM_DEVICE.md) — dedicated-device VCA+LRA haptic system (vision; Soft Signal / consent / connection)
 - [`RELEASE_AND_TESTFLIGHT.md`](RELEASE_AND_TESTFLIGHT.md)
 - [`PHYSICAL_BETA_WALKTHROUGH.md`](PHYSICAL_BETA_WALKTHROUGH.md) — founder/private on-device checklist (not external TestFlight)
 - [`LOCAL_DEVELOPMENT.md`](LOCAL_DEVELOPMENT.md)

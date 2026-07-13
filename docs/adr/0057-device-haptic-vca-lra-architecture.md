@@ -1,0 +1,68 @@
+# ADR 0057 — Dual VCA + LRA architecture for dedicated-device haptics
+
+- **Status:** Accepted (hardware vision)
+- **Date:** 2026-07-13
+- **Owners:** Product + hardware (when staffed); coding agents maintain docs and phone-side semantic alignment
+
+## Context
+
+Litmo’s dedicated device vision needs a tactile language that matches warm, soft-edged hardware and trauma-informed product rules. Phone haptics (ADR 0039, Expo) already define a five-event semantic vocabulary. Dedicated hardware can go further with high-fidelity actuators but must not invent a second, conflicting meaning system.
+
+Industry constraints:
+
+- **LRA** actuators are efficient and good for sharp ticks near resonance, but narrow-band.
+- **Voice-coil / VCM (VCA)** class actuators provide broader frequency response and richer, more “realistic” tactile texture at higher power cost.
+- **ERM** motors are slow and muddy — poor fit for Soft Signal.
+- Human vibration perception for distinct fingertip/device cues roughly spans low tens of Hz through a few hundred Hz; Soft Signal needs fast start/stop, not long rumble.
+
+Soft Signal must be instant, unmistakable, and emotionally safe: a clear stop, not a panic alarm. Haptics must never encode another person’s consent.
+
+## Decision
+
+1. Adopt a **dual-actuator** stack for the dedicated Litmo device: **wideband VCA + LRA**.
+2. Keep **semantic event names** shared with phone clients; implement richer waveforms only on device firmware.
+3. Map Soft Signal to a dual-actuator **“curtain close”** pattern with ≤ 30 ms start latency and state-commit-before-playback ordering.
+4. Forbid ERM as the primary Soft Signal path; forbid engagement, secret, or interpersonal-touch-imitation haptics.
+5. Treat full pattern tables, mounting, and drivers as specified in `docs/HAPTIC_SYSTEM_DEVICE.md`.
+
+## Alternatives considered
+
+| Alternative | Why not (primary) |
+| --- | --- |
+| LRA-only | Insufficient soft “warm” body for Soft Edge personality |
+| VCA-only | Weaker efficient ticks; Soft Signal edge less crisp |
+| Piezo-only v1 | Integration voltage/mechanics heavier for early vision |
+| ERM Soft Signal | Slow, muddy, easy to misread as generic buzz |
+| Separate haptic languages per platform | Violates “same concept, every client” |
+
+## Consequences
+
+### Positive
+
+- High-fidelity Soft Signal and consent cues are designable without pretending phones have VCA.
+- Clear split of labor: LRA for edge, VCA for warmth.
+- Extends ADR 0039 without breaking Expo demo path.
+
+### Negative / costs
+
+- BOM, power, mechanical isolation, and dual drivers.
+- Calibration and user studies required before any hardware claim of “ready.”
+- Risk of over-design before private-alpha phone path is done.
+
+### Neutral
+
+- Phone continues on Expo presets; device simulator can proxy waveforms in audio for design.
+
+## Follow-up work
+
+1. Soft Edge v1 pattern pack + bench latency tests (when hardware exists).
+2. Perceptual study gate before marketing Soft Signal haptics.
+3. Keep `HAPTIC-001` phone implementation aligned with shared event names.
+4. Do not block private alpha on device manufacturing.
+
+## References
+
+- `docs/HAPTIC_SYSTEM_DEVICE.md`
+- `docs/roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md`
+- `docs/adr/0039-semantic-haptic-language.md`
+- Immersion, “The Haptic Stack – Hardware Layer” (actuator taxonomy: ERM, LRA, VCM, piezo)

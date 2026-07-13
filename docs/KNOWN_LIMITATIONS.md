@@ -250,6 +250,11 @@
   validate comfort, intensity, or recognizability. Physical-device validation is
   part of `docs/PHYSICAL_BETA_WALKTHROUGH.md` / BETA-001 — do not claim feel
   acceptance from unit tests alone. Preference is device-local only (no sync).
+- **Dedicated-device** high-fidelity VCA+LRA Soft Edge patterns
+  (`docs/HAPTIC_SYSTEM_DEVICE.md`, ADR 0057) are design-only. No production
+  hardware, factory calibration, or perceptual study has been completed. Do not
+  claim shipping device haptics or Soft Signal tactile guarantees until H3–H4
+  bench and user-study gates pass.
 
 ## Age eligibility
 

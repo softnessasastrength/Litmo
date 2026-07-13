@@ -4,6 +4,8 @@ Status: implementation-authorizing specification
 Owner: current coding agent
 Task: `HAPTIC-001`
 
+> **Dedicated-device haptics (VCA + LRA, Soft Signal curtain, consent/connection patterns)** are specified in [`docs/HAPTIC_SYSTEM_DEVICE.md`](../HAPTIC_SYSTEM_DEVICE.md) and [ADR 0057](../adr/0057-device-haptic-vca-lra-architecture.md). This document remains the **phone / Expo** implementation plan. Semantic event names must stay aligned across both.
+
 ## Intent
 
 Litmo should use haptics as a small, consistent nonverbal vocabulary—not as decoration. The first implementation should support the guided learning experience and the phone-visible demo while remaining optional, accessible, private, and safe.
