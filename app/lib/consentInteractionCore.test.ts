@@ -3,15 +3,21 @@ import test from "node:test";
 import {
   allConsentMicroRulesPass,
   assertConsentPoint,
+  CONSENT_EASING,
+  CONSENT_EDGE_CASES,
+  CONSENT_GESTURES,
   CONSENT_POINT_IDS,
   CONSENT_POINTS,
   CONSENT_TIMING,
+  CONSENT_VISUAL,
+  consentMotionDurationMs,
   consentPointsByKind,
   labelViolatesConsentGrammar,
   mayEnableGrantConfirm,
   mayFireSoftSignal,
   softSignalPhaseFromOutcome,
   stopFasterThanGrant,
+  visualRoleForPoint,
 } from "./consentInteractionCore.ts";
 
 test("stop is faster than grant (constitution I.4)", () => {
@@ -121,4 +127,16 @@ test("softSignalPhaseFromOutcome maps pending", () => {
 test("forbidden labels are rejected", () => {
   assert.equal(labelViolatesConsentGrammar("Swipe to agree"), true);
   assert.equal(labelViolatesConsentGrammar("Soft Signal — end now"), false);
+});
+
+test("visual roles: withdraw uses signal, grant uses moss", () => {
+  assert.equal(visualRoleForPoint("soft_signal_active"), "withdraw");
+  assert.equal(CONSENT_VISUAL.withdraw.fillKey, "signal");
+  assert.equal(visualRoleForPoint("snapshot_dual_seal"), "grant");
+  assert.equal(CONSENT_VISUAL.grant.fillKey, "moss");
+  assert.ok(CONSENT_GESTURES.withdraw.forbidden.includes("swipe_only_stop"));
+  assert.ok(CONSENT_EDGE_CASES.length >= 10);
+  assert.equal(CONSENT_EASING.banSpringBounceOnConsent, true);
+  assert.ok(consentMotionDurationMs("softSignalCover", true) <= 80);
+  assert.ok(consentMotionDurationMs("softSignalCover", false) >= 200);
 });

@@ -906,3 +906,278 @@ export function assertConsentPoint(id: ConsentPointId): ConsentPointSpec {
   if (!p) throw new Error(`unknown_consent_point:${id}`);
   return p;
 }
+
+// ── Visual tokens (semantic roles, not free color) ─────────────────────────
+/**
+ * Map to theme keys only — implementations use useColors().
+ * Soft Signal / withdraw always uses `signal` (rose), never moss (grant).
+ */
+
+export type ConsentVisualRole =
+  | "withdraw" // Soft Signal, block, decline-as-stop
+  | "grant" // Dual seal, confirm yes
+  | "prepare" // One-sided declaration
+  | "share" // Review accept
+  | "decline" // Not now
+  | "demo" // Practice partner banner
+  | "inform"; // Notices
+
+export const CONSENT_VISUAL: Record<
+  ConsentVisualRole,
+  {
+    fillKey: "signal" | "moss" | "plum" | "apricot" | "line";
+    softKey: "signalSoft" | "mossSoft" | "plumSoft" | "apricotSoft" | "paper";
+    borderWidth: number;
+    /** Label never relies on color alone. */
+    nonColorCue: string;
+  }
+> = {
+  withdraw: {
+    fillKey: "signal",
+    softKey: "signalSoft",
+    borderWidth: 3,
+    nonColorCue: "signal button + label Soft Signal / Withdraw",
+  },
+  grant: {
+    fillKey: "moss",
+    softKey: "mossSoft",
+    borderWidth: 1.5,
+    nonColorCue: "primary moss button + seal copy",
+  },
+  prepare: {
+    fillKey: "moss",
+    softKey: "mossSoft",
+    borderWidth: 1.5,
+    nonColorCue: "next / save primary",
+  },
+  share: {
+    fillKey: "moss",
+    softKey: "mossSoft",
+    borderWidth: 1.5,
+    nonColorCue: "Accept carefully + review-only subtitle",
+  },
+  decline: {
+    fillKey: "signal",
+    softKey: "signalSoft",
+    borderWidth: 1.5,
+    nonColorCue: "signal variant or secondary + Not now",
+  },
+  demo: {
+    fillKey: "apricot",
+    softKey: "apricotSoft",
+    borderWidth: 1,
+    nonColorCue: "DEMO banner uppercase text",
+  },
+  inform: {
+    fillKey: "line",
+    softKey: "paper",
+    borderWidth: 1,
+    nonColorCue: "body text only",
+  },
+};
+
+export function visualRoleForPoint(id: ConsentPointId): ConsentVisualRole {
+  const p = CONSENT_POINTS[id];
+  if (p.kind === "withdraw") return "withdraw";
+  if (p.kind === "grant") return "grant";
+  if (p.kind === "prepare") return "prepare";
+  if (p.kind === "share") return "share";
+  if (p.kind === "decline") return "decline";
+  if (id === "snapshot_mutual_partner_affirm") return "demo";
+  return "inform";
+}
+
+// ── Gesture policy ─────────────────────────────────────────────────────────
+/**
+ * Allowed input methods per kind. Soft Signal: single deliberate tap only
+ * (no swipe-only, no long-press requirement that delays free exit).
+ */
+
+export type ConsentGesture =
+  | "single_tap"
+  | "checkbox_toggle"
+  | "radio_choice"
+  | "hardware_button";
+
+export const CONSENT_GESTURES: Record<
+  ConsentPointKind,
+  {
+    primary: ConsentGesture;
+    allowed: ConsentGesture[];
+    forbidden: string[];
+  }
+> = {
+  withdraw: {
+    primary: "single_tap",
+    allowed: ["single_tap", "hardware_button"],
+    forbidden: [
+      "swipe_only_stop",
+      "long_press_required_before_stop",
+      "force_touch_menu_only",
+      "confirm_dialog_before_stop",
+    ],
+  },
+  grant: {
+    primary: "single_tap",
+    allowed: ["single_tap", "checkbox_toggle", "radio_choice"],
+    forbidden: ["swipe_to_consent", "shake_to_agree", "default_selected_yes"],
+  },
+  share: {
+    primary: "single_tap",
+    allowed: ["single_tap"],
+    forbidden: ["auto_accept_on_scan", "auto_accept_on_decode"],
+  },
+  decline: {
+    primary: "single_tap",
+    allowed: ["single_tap"],
+    forbidden: ["require_reason_modal"],
+  },
+  prepare: {
+    primary: "checkbox_toggle",
+    allowed: ["checkbox_toggle", "single_tap", "radio_choice"],
+    forbidden: ["skip_soft_signal_ack"],
+  },
+  inform: {
+    primary: "single_tap",
+    allowed: ["single_tap", "radio_choice"],
+    forbidden: ["treat_as_real_consent"],
+  },
+};
+
+// ── Edge-case matrix ───────────────────────────────────────────────────────
+/**
+ * Explicit outcomes for messy real life. Agents and UI must not invent
+ * friendlier-but-unconstitutional behavior under pressure.
+ */
+
+export type ConsentEdgeCaseId =
+  | "double_tap_soft_signal"
+  | "soft_signal_while_sealing"
+  | "soft_signal_offline"
+  | "network_fail_after_soft_signal"
+  | "grant_confirm_before_dwell"
+  | "fingerprint_stale_mid_seal"
+  | "demo_partner_unlabeled"
+  | "scan_without_accept"
+  | "decode_without_accept"
+  | "reduced_motion_on"
+  | "dynamic_type_xxx_large"
+  | "background_during_nearby"
+  | "one_party_affirms_other_silent";
+
+export type ConsentEdgeCase = {
+  id: ConsentEdgeCaseId;
+  situation: string;
+  requiredBehavior: string;
+  forbiddenBehavior: string;
+};
+
+export const CONSENT_EDGE_CASES: ConsentEdgeCase[] = [
+  {
+    id: "double_tap_soft_signal",
+    situation: "User hammers Soft Signal twice.",
+    requiredBehavior:
+      "First press ends; second is no-op (alreadyEnded). Never double-withdraw penalty.",
+    forbiddenBehavior: "Error toast blaming user; re-open session.",
+  },
+  {
+    id: "soft_signal_while_sealing",
+    situation: "User Soft Signals while dual-seal form is open.",
+    requiredBehavior:
+      "Stop wins. Seal abandoned. No half-sealed session activation.",
+    forbiddenBehavior: "Complete seal after Soft Signal.",
+  },
+  {
+    id: "soft_signal_offline",
+    situation: "Airplane mode Soft Signal mid-session.",
+    requiredBehavior: "localEnded true; pending_sync; UI shows stopped.",
+    forbiddenBehavior: "Block Soft Signal until online.",
+  },
+  {
+    id: "network_fail_after_soft_signal",
+    situation: "Remote withdraw fails after local end.",
+    requiredBehavior: "Stay ended; retry with same idempotency; never re-enable.",
+    forbiddenBehavior: "Return to active timer.",
+  },
+  {
+    id: "grant_confirm_before_dwell",
+    situation: "All checkboxes on, user taps Seal immediately.",
+    requiredBehavior: "Button disabled/arming until grantArmDwellMs.",
+    forbiddenBehavior: "Instant seal on last checkbox tick.",
+  },
+  {
+    id: "fingerprint_stale_mid_seal",
+    situation: "Profile changes while reviewing snapshot.",
+    requiredBehavior: "Fail closed; require rebuild; no seal on old fingerprint.",
+    forbiddenBehavior: "Seal stale package.",
+  },
+  {
+    id: "demo_partner_unlabeled",
+    situation: "Single-device dual affirm.",
+    requiredBehavior: "DEMO banner visible; copy says practice only.",
+    forbiddenBehavior: "Present as two real people.",
+  },
+  {
+    id: "scan_without_accept",
+    situation: "NFC tag read succeeds.",
+    requiredBehavior: "awaiting_post_tap_consent; content closed until Accept.",
+    forbiddenBehavior: "Auto-open payload on NDEF read.",
+  },
+  {
+    id: "decode_without_accept",
+    situation: "QR envelope decodes.",
+    requiredBehavior: "Review gate; explicit Accept.",
+    forbiddenBehavior: "Auto-accept on decode.",
+  },
+  {
+    id: "reduced_motion_on",
+    situation: "User has Reduce Motion / ND reduced stimulation.",
+    requiredBehavior: "Cuts or ≤ reducedMotionMaxMs; meaning in copy still complete.",
+    forbiddenBehavior: "Meaning only in animation.",
+  },
+  {
+    id: "dynamic_type_xxx_large",
+    situation: "Largest accessibility text size.",
+    requiredBehavior:
+      "Soft Signal sticky remains reachable; min touch targets; no clip of stop.",
+    forbiddenBehavior: "Soft Signal below fold only without sticky.",
+  },
+  {
+    id: "background_during_nearby",
+    situation: "User backgrounds app while radar on.",
+    requiredBehavior: "Prefer radio stop / fail closed (documented product path).",
+    forbiddenBehavior: "Silent background advertising forever.",
+  },
+  {
+    id: "one_party_affirms_other_silent",
+    situation: "Only one person confirmed engine snapshot.",
+    requiredBehavior: "Waiting state; no activate; Soft Signal/withdraw free.",
+    forbiddenBehavior: "Auto-activate on single confirm.",
+  },
+];
+
+export function edgeCaseById(id: ConsentEdgeCaseId): ConsentEdgeCase {
+  const e = CONSENT_EDGE_CASES.find((c) => c.id === id);
+  if (!e) throw new Error(`unknown_edge_case:${id}`);
+  return e;
+}
+
+/** Easing tokens for RN Animated (when motion allowed). */
+export const CONSENT_EASING = {
+  /** Soft Signal cover after end — gentle, never delay commit. */
+  afterStopEase: "ease-out" as const,
+  /** Grant seal success — soft confirmation, not celebratory bounce. */
+  grantSealEase: "ease-in-out" as const,
+  /** No spring bounce on consent (avoids playful dopamine). */
+  banSpringBounceOnConsent: true,
+} as const;
+
+export function consentMotionDurationMs(
+  kind: "softSignalCover" | "grantEase" | "row",
+  reducedMotion: boolean,
+): number {
+  if (reducedMotion) return CONSENT_TIMING.reducedMotionMaxMs;
+  if (kind === "softSignalCover") return CONSENT_TIMING.softSignalCoverEaseMs;
+  if (kind === "grantEase") return CONSENT_TIMING.grantPrimaryEaseMs;
+  return CONSENT_TIMING.snapshotRowTransitionMs;
+}

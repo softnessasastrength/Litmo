@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-07-14 — Consent micro-interactions (maximum detail expansion)
+
+### Summary
+
+Deepened consent grammar: visual roles (signal vs moss), gesture policy, 13
+edge-case outcomes, motion tokens, `useConsentGrantArm` progress, 
+`ConsentAcceptGate` on NFC + TL share, prepare Soft Signal acks via
+ConsentAffirmRow, engine snapshot confirm arming + arm progress bar.
+
+### Surfaces wired
+
+- Prepare Soft Signal acks  
+- Mutual dual seal arm progress  
+- Match consent-snapshot Yes→arm→confirm  
+- NFC post-tap Accept/Decline gate  
+- Touch Language share review gate  
+
 ## 2026-07-14 — Consent micro-interactions (Apple-level granularity)
 
 ### Summary

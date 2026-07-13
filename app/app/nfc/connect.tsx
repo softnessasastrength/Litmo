@@ -11,6 +11,7 @@ import {
   Title,
 } from "../../components/ui";
 import { CarefulConnectFallback } from "../../components/CarefulConnectFallback";
+import { ConsentAcceptGate } from "../../components/ConsentAcceptGate";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { useAuth } from "../../context/AuthContext";
 import { useNeurodivergent } from "../../context/NeurodivergentContext";
@@ -338,15 +339,15 @@ function NfcConnectContent() {
             Transport: {state.transport ?? "unknown"}. A physical tap or QR scan
             is not enough — only your Accept continues.
           </Body>
-          <Button
-            label="Accept carefully"
-            onPress={() => void nfcService.acceptPostTap()}
-            accessibilityHint="Derives ephemeral keys and allows sealed content. Never consent to touch."
-          />
-          <Button
-            variant="signal"
-            label="Decline — no explanation needed"
-            onPress={() => nfcService.declinePostTap()}
+          <ConsentAcceptGate
+            pointId="nfc_post_tap_accept"
+            disclaimer={
+              state.pendingOffer.disclaimer ||
+              "A scan is not consent. Accept opens sealed content for careful review only — never touch permission."
+            }
+            onAccept={() => void nfcService.acceptPostTap()}
+            onDecline={() => nfcService.declinePostTap()}
+            acceptLabel="Accept carefully — not consent to touch"
           />
         </Card>
       ) : null}

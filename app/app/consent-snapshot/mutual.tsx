@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
 import { Text, View } from "react-native";
 import {
@@ -21,11 +21,8 @@ import {
   type MutualConsentSnapshot,
   type PreSessionDeclaration,
 } from "../../lib/sessionConsentSnapshotCore";
-import {
-  CONSENT_POINTS,
-  CONSENT_TIMING,
-  mayEnableGrantConfirm,
-} from "../../lib/consentInteractionCore";
+import { CONSENT_POINTS, CONSENT_TIMING } from "../../lib/consentInteractionCore";
+import { useConsentGrantArm } from "../../hooks/useConsentGrantArm";
 import { sessionConsentSnapshotStore } from "../../services/sessionConsentSnapshotStore";
 import { hapticService } from "../../services/hapticService";
 import { fonts, type AppColors } from "../../theme";
@@ -89,9 +86,6 @@ export default function ConsentSnapshotMutualScreen() {
   const [checksA, setChecksA] = useState({ ...EMPTY_CHECKS });
   const [checksB, setChecksB] = useState({ ...EMPTY_CHECKS });
   const [error, setError] = useState("");
-  /** Dwell before dual seal arms — grant is deliberate; Soft Signal is not. */
-  const [dwellMs, setDwellMs] = useState(0);
-  const readyAt = useRef<number | null>(null);
 
   const rebuild = useCallback(
     (a: PreSessionDeclaration, b: PreSessionDeclaration) => {
@@ -99,8 +93,6 @@ export default function ConsentSnapshotMutualScreen() {
       setSnap(next);
       setChecksA({ ...EMPTY_CHECKS });
       setChecksB({ ...EMPTY_CHECKS });
-      readyAt.current = null;
-      setDwellMs(0);
       return next;
     },
     [],
@@ -136,26 +128,9 @@ export default function ConsentSnapshotMutualScreen() {
   const allA = Object.values(checksA).every(Boolean);
   const allB = Object.values(checksB).every(Boolean);
   const contentReady = Boolean(snap && !snap.withdrawnAt && !isSealed(snap));
-
-  // Apple-level dwell: seal cannot enable until min arm time after all toggles.
-  useEffect(() => {
-    if (!(allA && allB && contentReady)) {
-      readyAt.current = null;
-      setDwellMs(0);
-      return;
-    }
-    if (readyAt.current == null) readyAt.current = Date.now();
-    const tick = setInterval(() => {
-      if (readyAt.current == null) return;
-      setDwellMs(Date.now() - readyAt.current);
-    }, 50);
-    return () => clearInterval(tick);
-  }, [allA, allB, contentReady]);
-
-  const sealArmed = mayEnableGrantConfirm({
+  const { armed: sealArmed, armProgress } = useConsentGrantArm({
     contentReady,
     requiredTogglesAllOn: allA && allB,
-    dwellMs,
     fingerprintCurrent: Boolean(snap?.fingerprint),
     withdrawn: Boolean(snap?.withdrawnAt),
   });
@@ -318,6 +293,26 @@ export default function ConsentSnapshotMutualScreen() {
             />
           ))}
 
+          {allA && allB && !sealArmed ? (
+            <View
+              style={styles.armTrack}
+              accessible
+              accessibilityRole="progressbar"
+              accessibilityValue={{
+                min: 0,
+                max: 100,
+                now: Math.round(armProgress * 100),
+              }}
+              accessibilityLabel="Arming seal deliberately"
+            >
+              <View
+                style={[styles.armFill, { width: `${armProgress * 100}%` }]}
+              />
+              <Text style={styles.armLabel}>
+                Arming seal… {Math.round(armProgress * 100)}%
+              </Text>
+            </View>
+          ) : null}
           <Button
             label={
               sealArmed
@@ -458,6 +453,29 @@ function makeStyles(colors: AppColors) {
       color: colors.ink,
       marginTop: 16,
       marginBottom: 8,
+    },
+    armTrack: {
+      height: 36,
+      borderRadius: 12,
+      backgroundColor: colors.line,
+      overflow: "hidden" as const,
+      justifyContent: "center" as const,
+      marginBottom: 4,
+    },
+    armFill: {
+      position: "absolute" as const,
+      left: 0,
+      top: 0,
+      bottom: 0,
+      backgroundColor: colors.mossSoft,
+      borderRadius: 12,
+    },
+    armLabel: {
+      color: colors.moss,
+      fontSize: 12,
+      fontWeight: "700" as const,
+      textAlign: "center" as const,
+      zIndex: 1,
     },
     sealed: {
       backgroundColor: colors.mossSoft,

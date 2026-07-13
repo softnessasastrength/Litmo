@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 import {
   Body,
   Button,
@@ -9,6 +9,7 @@ import {
   Screen,
   Title,
 } from "../../components/ui";
+import { ConsentAffirmRow } from "../../components/ConsentAffirmRow";
 import {
   AFTERCARE_OPTIONS,
   ENERGY_OPTIONS,
@@ -378,41 +379,27 @@ export default function ConsentSnapshotPrepareScreen() {
               never failure.
             </Text>
           </View>
-          <Pressable
-            accessibilityRole="checkbox"
-            accessibilityState={{ checked: ssChecks.stop }}
-            onPress={() => setSsChecks((c) => ({ ...c, stop: !c.stop }))}
-            style={[styles.checkRow, ssChecks.stop && styles.checkOn]}
-          >
-            <Text style={styles.checkText}>
-              {ssChecks.stop ? "☑" : "☐"} I understand Soft Signal stops
-              everything immediately
-            </Text>
-          </Pressable>
-          <Pressable
-            accessibilityRole="checkbox"
-            accessibilityState={{ checked: ssChecks.noExplain }}
-            onPress={() =>
-              setSsChecks((c) => ({ ...c, noExplain: !c.noExplain }))
-            }
-            style={[styles.checkRow, ssChecks.noExplain && styles.checkOn]}
-          >
-            <Text style={styles.checkText}>
-              {ssChecks.noExplain ? "☑" : "☐"} No explanation is required from
-              either person
-            </Text>
-          </Pressable>
-          <Pressable
-            accessibilityRole="checkbox"
-            accessibilityState={{ checked: ssChecks.mutual }}
-            onPress={() => setSsChecks((c) => ({ ...c, mutual: !c.mutual }))}
-            style={[styles.checkRow, ssChecks.mutual && styles.checkOn]}
-          >
-            <Text style={styles.checkText}>
-              {ssChecks.mutual ? "☑" : "☐"} Soft Signal is equally available to
-              both of us
-            </Text>
-          </Pressable>
+          <ConsentAffirmRow
+            pointId="snapshot_soft_signal_ack"
+            label="I understand Soft Signal stops everything immediately"
+            detail="The moment it is used. No debate. No one more minute."
+            checked={ssChecks.stop}
+            onChange={(stop) => setSsChecks((c) => ({ ...c, stop }))}
+          />
+          <ConsentAffirmRow
+            pointId="snapshot_soft_signal_ack"
+            label="No explanation is required from either person"
+            detail="A complete stop needs no story."
+            checked={ssChecks.noExplain}
+            onChange={(noExplain) => setSsChecks((c) => ({ ...c, noExplain }))}
+          />
+          <ConsentAffirmRow
+            pointId="snapshot_soft_signal_ack"
+            label="Soft Signal is equally available to both of us"
+            detail="Either person. Anytime. Same authority."
+            checked={ssChecks.mutual}
+            onChange={(mutual) => setSsChecks((c) => ({ ...c, mutual }))}
+          />
         </>
       ) : null}
 

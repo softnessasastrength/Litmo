@@ -11,6 +11,8 @@ import {
   Screen,
   Title,
 } from "../../components/ui";
+import { CONSENT_POINTS } from "../../lib/consentInteractionCore";
+import { useConsentGrantArm } from "../../hooks/useConsentGrantArm";
 import {
   mockConsentProfileVersion,
   mockSnapshotNow,
@@ -213,7 +215,15 @@ function ConsentSnapshotContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [realSessionId]);
 
+  const { armed: confirmArmed, armProgress } = useConsentGrantArm({
+    contentReady: rows.length > 0 || !isReal,
+    requiredTogglesAllOn: decision === "yes",
+    fingerprintCurrent: true,
+    withdrawn: confirmState === "ended",
+  });
+
   const confirm = () => {
+    if (decision !== "yes" || !confirmArmed) return;
     if (realSessionId) {
       void confirmReal();
       return;
@@ -260,11 +270,11 @@ function ConsentSnapshotContent() {
       <Eyebrow>{isReal ? "CONSENT SNAPSHOT" : "MOCK CONSENT SNAPSHOT"}</Eyebrow>
       <Title>Read every boundary before you agree.</Title>
       <View style={styles.protectiveBanner}>
-        <Text style={styles.protectiveBannerTitle}>Protective process</Text>
+        <Text style={styles.protectiveBannerTitle}>Slow yes · free no</Text>
         <Text style={styles.protectiveBannerBody}>
           Soft Signal ends anything immediately — no explanation. A match or
-          vibe is never consent. For the full pre-session ritual (mood,
-          safewords, aftercare, dual seal), use Consent Snapshot prepare.
+          vibe is never consent. Your yes is deliberate; Confirm arms only after
+          you choose Yes and a short pause. Soft Signal never waits.
         </Text>
         {!isReal ? (
           <Button
@@ -279,8 +289,8 @@ function ConsentSnapshotContent() {
       </View>
       <Body>
         {isReal
-          ? "This is the live, directional overlap of both participants' saved touch and consent profiles, computed by the trusted backend. A match and a Vibe Profile do not grant consent."
-          : "This is the live, directional overlap of two mock preference sets computed by the real consent engine. A match and a Vibe Profile do not grant consent."}
+          ? "Shared permitted boundaries for this session only. A match and a Vibe Profile do not grant consent. Soft Signal stays free after you confirm."
+          : "Mock preference overlap from the real consent engine. Practice reading carefully — still never real consent."}
       </Body>
       <Card style={styles.snapshot}>
         {rows.length === 0 ? (
@@ -376,6 +386,27 @@ function ConsentSnapshotContent() {
           />
         </View>
       ) : null}
+      {decision === "yes" &&
+      !confirmArmed &&
+      confirmState !== "ended" &&
+      confirmState !== "waiting" ? (
+        <View
+          style={styles.armTrack}
+          accessible
+          accessibilityRole="progressbar"
+          accessibilityValue={{
+            min: 0,
+            max: 100,
+            now: Math.round(armProgress * 100),
+          }}
+          accessibilityLabel="Arming confirm deliberately"
+        >
+          <View style={[styles.armFill, { width: `${armProgress * 100}%` }]} />
+          <Text style={styles.armLabel}>
+            Arming confirm… {Math.round(armProgress * 100)}%
+          </Text>
+        </View>
+      ) : null}
       {decision !== "no" && confirmState !== "ended" ? (
         <Button
           label={
@@ -383,22 +414,20 @@ function ConsentSnapshotContent() {
               ? "Confirming…"
               : confirmState === "waiting"
                 ? "Check again"
-                : isReal
-                  ? "Confirm this snapshot"
-                  : "Confirm this mock snapshot"
+                : !confirmArmed && decision === "yes"
+                  ? "Arming confirm…"
+                  : CONSENT_POINTS.session_engine_confirm.copy.primary
           }
           disabled={
             decision !== "yes" ||
+            !confirmArmed ||
             confirmState === "confirming" ||
             confirmState === "waiting" ||
             (isReal && rows.length === 0)
           }
           onPress={confirm}
-          accessibilityHint={
-            decision !== "yes"
-              ? "Choose Yes above before confirming. Confirming records only your agreement to this snapshot."
-              : "Records your confirmation of this exact snapshot. Does not mean the other person has confirmed yet."
-          }
+          accessibilityLabel={CONSENT_POINTS.session_engine_confirm.a11yLabel}
+          accessibilityHint={CONSENT_POINTS.session_engine_confirm.a11yHint}
         />
       ) : null}
       {confirmState === "error" ? (
@@ -547,6 +576,29 @@ function makeStyles(colors: AppColors) {
     },
     waitingTitle: { color: colors.moss, fontWeight: "800" as const },
     waitingBody: { color: colors.ink, lineHeight: 21, marginTop: 4 },
+    armTrack: {
+      height: 36,
+      borderRadius: 12,
+      backgroundColor: colors.line,
+      overflow: "hidden" as const,
+      justifyContent: "center" as const,
+      marginBottom: 4,
+    },
+    armFill: {
+      position: "absolute" as const,
+      left: 0,
+      top: 0,
+      bottom: 0,
+      backgroundColor: colors.mossSoft,
+      borderRadius: 12,
+    },
+    armLabel: {
+      color: colors.moss,
+      fontSize: 12,
+      fontWeight: "700" as const,
+      textAlign: "center" as const,
+      zIndex: 1,
+    },
     error: { color: colors.signal, textAlign: "center" as const },
   };
 }

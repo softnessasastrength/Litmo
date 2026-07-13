@@ -10,6 +10,7 @@ import {
   Title,
 } from "../../components/ui";
 import { TouchLanguageMap } from "../../components/TouchLanguageMap";
+import { ConsentAcceptGate } from "../../components/ConsentAcceptGate";
 import {
   createDefaultTouchLanguage,
   summarizeForDisplay,
@@ -172,10 +173,16 @@ export default function TouchLanguageShareScreen() {
           <Text style={styles.cardTitle}>Partner map (review only)</Text>
           <Body muted>{received.disclaimer}</Body>
           {!acceptedReview ? (
-            <Button
-              label="I understand — review only, not consent"
-              onPress={() => setAcceptedReview(true)}
-              accessibilityHint="Reveals the shared map for review. Does not start a session or grant touch."
+            <ConsentAcceptGate
+              pointId="share_tl_accept"
+              disclaimer="This map is for careful review only. Accepting does not start a session, overwrite your map, or grant touch."
+              onAccept={() => setAcceptedReview(true)}
+              onDecline={() => {
+                setReceived(null);
+                setAcceptedReview(false);
+              }}
+              acceptLabel="I understand — review only, not consent"
+              declineLabel="Decline — clear share"
             />
           ) : (
             <>

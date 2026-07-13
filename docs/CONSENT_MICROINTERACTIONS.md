@@ -21,6 +21,21 @@
 | **Prepare ≠ consent** | Declaration authorizes nothing mutual |
 | **Learning ≠ real** | Scenario choices are `inform` kind |
 
+## Operating doctrine (maximum detail)
+
+From now on every consent UI change is reviewed against this file as if it were
+HIG for human safety. Ship nothing that hand-waves “users will understand.”
+
+| Obsess over | Spec home |
+| ----------- | --------- |
+| Timing | `CONSENT_TIMING` |
+| Color role | `CONSENT_VISUAL` (withdraw = signal rose; grant = moss) |
+| Gestures | `CONSENT_GESTURES` (no swipe-to-consent; Soft Signal = single tap / hardware) |
+| Edge cases | `CONSENT_EDGE_CASES` (13 explicit outcomes) |
+| Motion | `consentMotionDurationMs` + ban spring bounce on consent |
+| Arming | `useConsentGrantArm` + progress bar “Arming…” |
+| Accept gates | `ConsentAcceptGate` for NFC/TL/share |
+
 ## Timing table (ms)
 
 | Token | Value | Intent |
@@ -127,13 +142,35 @@ Before shipping a new consent-touching UI:
 8. [ ] Unit test or micro-rule if new timing law  
 9. [ ] Update this doc if catalog grows  
 
+## Visual roles
+
+| Role | Theme fill | Non-color cue |
+| ---- | ---------- | ------------- |
+| withdraw | `signal` (rose) | Soft Signal / Withdraw label + thick border |
+| grant | `moss` | Seal / Confirm primary |
+| share | `moss` | “Accept carefully — not consent” |
+| demo | `apricot` | DEMO banner uppercase |
+| decline | `signal` | Not now / Decline |
+
+**Never** use moss for Soft Signal. **Never** use signal rose for dual seal.
+
+## Gesture policy
+
+- Soft Signal: single tap or hardware button. **Forbidden:** swipe-only, long-press-required, confirm dialog before stop.
+- Grant: single tap after arm. **Forbidden:** swipe to agree, default-selected Yes.
+- Share/NFC: single Accept after review. **Forbidden:** auto-accept on scan/decode.
+
+## Edge cases (must not invent softer behavior)
+
+See `CONSENT_EDGE_CASES` in code — includes double-tap Soft Signal, Soft Signal while sealing, offline stop, pre-dwell seal tap, stale fingerprint, unlabeled demo, scan without accept, reduced motion, Dynamic Type, background radar, one-party affirm.
+
 ## Tests
 
 ```bash
 cd app && node --experimental-strip-types --test lib/consentInteractionCore.test.ts
 ```
 
-Enforces: stop faster than grant; Soft Signal offline + no arm; prepare ≠ consent; learning ≠ real; forbidden labels.
+Enforces: stop faster than grant; Soft Signal offline + no arm; prepare ≠ consent; learning ≠ real; forbidden labels; visual roles; gesture bans.
 
 ## Related
 
