@@ -89,8 +89,9 @@ function DeleteDataBody() {
         </Text>
         <Body muted>
           Clears local quiz results, learning progress, mid-quiz saves, partner
-          invites, known E2E identity material, and related preferences on this
-          phone. Immediate. Does not delete your cloud account by itself.
+          invites, known E2E identity material, Exorcism Dojo urge/burn state
+          (litmo.dojo.state.v1), and related preferences on this phone. Immediate.
+          Does not delete your cloud account by itself.
         </Body>
         <Button
           label={busy ? "Working…" : "Wipe data on this device"}
