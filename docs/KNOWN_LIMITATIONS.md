@@ -1,5 +1,29 @@
 # Known limitations
 
+## Private-alpha safety operations
+
+- Migration 035 adds hashed, single-use, seven-day staff invitations and
+  membership gates for discovery/new session requests. Invitation admission is
+  not identity verification, proof of safety, consent, or a legal eligibility
+  determination. Existing accounts at migration time are grandfathered as the
+  initial named cohort.
+- The routine matching pause hides discovery and rejects new requests. It does
+  not force-end active sessions and never removes Soft Signal, withdrawal,
+  wrap-up, blocking, or reporting controls.
+- The 90-day unblock tombstone contains only pair identifiers and timestamps
+  and is staff-only. Its duration is a provisional product/engineering default
+  pending privacy/safety review.
+- The cleanup RPC removes 30-day rate-limit data, expired tombstones, and unused
+  invitations only. It deliberately does not delete reports, moderation cases,
+  notes, trust events, or accounts.
+- `export_my_data()` is a self-only structured portability primitive. It is
+  not yet exposed in the mobile UI and is not a claim of legally complete data
+  access.
+- Complete account deletion, server-session revocation, scoped legal/safety
+  holds, destructive retention, jurisdiction policy, external-referral policy,
+  backup reviewer staffing, and two-person permanent-ban approval remain
+  blocked.
+
 ## Appearance
 
 - Appearance is device-local (light / dark / **system**). System follows the OS
