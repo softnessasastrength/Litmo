@@ -14,12 +14,17 @@ playful, and non-clinical.
   nearness without turning into a long questionnaire.
 - Result shows the vibe card, optional close blend, two “how you might show
   up” lines, and three light notes—not score charts or dense analysis.
+- Back between questions, retake from the vibe card, and “change a few
+  answers” from the result—still light taps, not a form wizard.
+- Soft presence haptic on pick (honors haptic preference); advance respects
+  reduced motion.
 - Still framed as a conversation starter, never diagnosis or consent.
 
 ### Developer impact
 
 - `app/data/quiz.ts` and `scoreQuizDetailed` support a light reveal.
 - Quiz tests lock the nine-question length and three-option format.
+- Saved draft answers for removed question ids are ignored on resume.
 
 ### Related work
 

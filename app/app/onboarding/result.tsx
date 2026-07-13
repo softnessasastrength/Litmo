@@ -64,6 +64,11 @@ export default function ResultScreen() {
         label="Keep this Vibe Profile"
         onPress={() => router.push("/profile/vibe")}
       />
+      <Button
+        label="Change a few answers"
+        variant="secondary"
+        onPress={() => router.replace("/onboarding/quiz")}
+      />
     </Screen>
   );
 }
