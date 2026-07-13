@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-07-13 — macOS session-requests read (read-only)
+
+### Summary
+
+Added a fail-closed **Requests** surface on native macOS that loads pending
+incoming and outgoing session requests via existing RPCs (ADR 0048). No accept,
+decline, create, or cancel actions.
+
+### User-visible impact
+
+- Sidebar **Requests** lists pending traffic or an honest empty state.
+- Missing config/session or HTTP failure fails closed with no fabricated rows.
+- Copy reminds that listing is never consent; action stays phone-first.
+
+### Related work
+
+- MACOS-004
+- ADR 0048
+
 ## 2026-07-13 — macOS own-profile read and shared transport
 
 ### Summary

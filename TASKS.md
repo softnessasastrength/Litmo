@@ -43,13 +43,24 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 ## Completed
 
+### MACOS-004 — macOS session-requests read (read-only)
+
+- **Status:** completed
+- **Result:** Requests sidebar loads `list_incoming_requests` and
+  `list_outgoing_requests` via shared transport; empty lists are honest
+  success; no mutations. ADR 0048.
+- **Verification:** local Xcode tests + Ops build; hosted macOS CI on PR.
+- **Boundary:** read-only; request is never consent; act on phone; Ops locked.
+- **Related decision:** ADR 0048.
+
 ### MACOS-003 — macOS own-profile read + shared transport
 
 - **Status:** completed
 - **Result:** Own-profile sidebar read via owner-RLS `profiles`; shared
   fail-closed Supabase transport reused by trust history and profile. ADR 0047.
+  Merged as PR #80.
 - **Verification:** local XcodeGen + Litmo tests + Ops unsigned build; hosted
-  macOS Native Build on the implementation PR.
+  macOS Native Build green on PR #80.
 - **Boundary:** read-only; no fabricated profiles; no profile edits; Ops locked.
 - **Related decision:** ADR 0047.
 

@@ -125,4 +125,6 @@ public enum PlatformAuthority: Sendable {
         "Self trust facts are server-authoritative and never a safety score. They never grant consent."
     public static let ownProfile =
         "Your profile is server-authoritative and read-only here. A profile never grants consent or proves safety."
+    public static let sessionRequests =
+        "Pending requests are server-authoritative and read-only here. Listing is never consent; act on the phone."
 }

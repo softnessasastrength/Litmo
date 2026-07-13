@@ -1,28 +1,29 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T15:10:00-04:00",
+  "updatedAt": "2026-07-13T15:45:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
     "status": "active"
   },
   "git": {
-    "branch": "agent/macos-own-profile-read",
-    "latestCoherentCommit": "8945a1e",
+    "branch": "agent/macos-session-requests-read",
+    "latestCoherentCommit": "e01ba40",
     "workingTreeExpectedClean": true
   },
   "verification": {
     "status": "passed",
     "commands": [
-      "Local xcodegen + Litmo 22/22 tests + LitmoOps unsigned build \u2014 pass",
+      "xcodegen generate \u2014 success",
+      "xcodebuild -scheme Litmo test \u2014 28/28 (Campfire+Trust+Profile+Requests)",
+      "xcodebuild -scheme LitmoOps build unsigned \u2014 BUILD SUCCEEDED",
       "npm run state:check \u2014 pass",
-      "GitHub Actions macOS Native Build run 29274759532 \u2014 pass on PR #80",
-      "GitHub Actions CI checks + database + Project State \u2014 pass on PR #80"
+      "Hosted macOS Native Build \u2014 pending on PR"
     ],
     "failures": []
   },
-  "nextAction": "Review and merge green PR #80 (MACOS-003). Next macOS read: requests or export. Ops stays locked. SAFETY-OPS external blockers remain.",
+  "nextAction": "Review/merge MACOS-004 PR after hosted green. Also merge PR #81 vibe quiz when green. Ops stays locked.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
@@ -30,16 +31,14 @@
     "Apple signing credentials and reviewed staging configuration for a signed device/TestFlight build"
   ],
   "risks": [
-    "macOS participant reads use developer env tokens for inspection only; not production passkey sign-in.",
-    "A profile is never consent or proof of safety.",
+    "macOS participant reads use developer env tokens; not production passkey sign-in.",
+    "A listed session request is never consent.",
     "Litmo Ops remains non-operational until real staff authentication and authorization exist.",
-    "ACCESS-001 still requires a physical founder VoiceOver smoke before it can be closed.",
-    "Unsigned hosted artifacts are inspection builds, not releases."
+    "ACCESS-001 still requires a physical founder VoiceOver smoke before it can be closed."
   ],
   "notes": [
-    "PRs #72\u2013#79 are merged on main.",
-    "PR #80 (MACOS-003) adds own-profile read + shared fail-closed transport (ADR 0047).",
-    "Hosted macOS Native Build 29274759532 passed on PR #80.",
-    "Destructive retention and account deletion remain blocked pending review."
+    "PRs #72\u2013#80 are merged on main.",
+    "MACOS-004 adds read-only session request lists (ADR 0048).",
+    "PR #81 holds light vibe quiz expansion + flow polish."
   ]
 }
