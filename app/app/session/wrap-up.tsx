@@ -53,10 +53,11 @@ export default function SessionWrapUpScreen() {
   const colors = useColors();
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
-  const { ended, sessionId, softSignalLogId } = useLocalSearchParams<{
+  const { ended, sessionId, softSignalLogId, exitKind } = useLocalSearchParams<{
     ended?: string;
     sessionId?: string;
     softSignalLogId?: string;
+    exitKind?: string;
   }>();
   const { status, user } = useAuth();
   const [outcome, setOutcome] = useState<WrapupOutcome | "">("");
@@ -164,6 +165,25 @@ export default function SessionWrapUpScreen() {
           accessibilityHint="View personal Soft Signal records on this device. Optional notes only — never required when you stop."
         />
       ) : null}
+      <Button
+        variant="secondary"
+        label="Optional reflection tools (skip anytime)"
+        onPress={() =>
+          router.push({
+            pathname: "/safety/reflection",
+            params: {
+              sessionId: sessionId ?? "",
+              softSignalLogId: softSignalLogId ?? "",
+              exitKind: exitKind ?? ended ?? "unknown",
+            },
+          } as never)
+        }
+        accessibilityHint="Private, trauma-informed prompts. Every step is skippable. Not therapy."
+      />
+      <Body muted>
+        Reflection is optional. Stopping mid-way is self-trust. Nothing here is
+        shared with a partner or used as a score.
+      </Body>
       <View style={styles.question}>
         <Text style={styles.questionText} accessibilityRole="header">
           How did this interaction feel for you?

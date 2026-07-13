@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-07-13 — Trauma-informed safety system
+
+### Summary
+
+Added panic mode, quick exit, optional session timeout, present-moment partner
+checks, and skippable private post-session reflection — all built on Soft Signal
+as stop authority. Not emergency services, not therapy, not safety certificates.
+
+### User-visible impact
+
+- Active session: Soft Signal · Quick exit · Panic cover · timeout banner
+- `/safety` hub, verify, panic-cover, reflection
+- Wrap-up → optional reflection tools
+- Home / Settings entry points
+
+### Developer impact
+
+- `traumaSafetyCore`, `traumaSafetyService`, `traumaSafetyStore`
+- ADR 0059, `docs/TRAUMA_INFORMED_SAFETY.md`
+
 ## 2026-07-13 — Local-first architecture + optional encrypted backup
 
 ### Summary

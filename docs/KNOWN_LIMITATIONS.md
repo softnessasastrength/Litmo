@@ -154,6 +154,19 @@
 - Enabling ND mode turns haptics off by default; users can re-enable haptics
   without leaving ND mode.
 
+## Trauma-informed safety tools
+
+- Panic mode ends the session via Soft Signal then shows a calm cover; it cannot
+  force-quit iOS or dispatch emergency services.
+- Session timeout is a **local preference**, not yet a dual-agreed field on the
+  server Consent Snapshot. Extending time on-device does not create a new mutual
+  snapshot.
+- Present-moment verification is **not** identity proof, background check, or
+  safety certification.
+- Reflection tools are optional self-help, not clinical care. Editorial review
+  for plain language / clinical safety of prompts remains open.
+- Trusted-contact SMS / external panic networks are not implemented.
+
 ## Local-first vault & encrypted backup
 
 - Personal domains (Touch Language, local Consent Snapshot packages, Soft Signal

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { AppState, type AppStateStatus } from "react-native";
+import { AppState, type AppStateStatus, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Text, View } from "react-native";
 import {
   Body,
   Button,
@@ -12,12 +11,15 @@ import {
 } from "../../components/ui";
 import { type AppColors } from "../../theme";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
-import { useAuth } from "../../context/AuthContext";
 import { SoftSignalButton } from "../../components/SoftSignalButton";
+import { useAuth } from "../../context/AuthContext";
 import { blockService } from "../../services/blockService";
 import { sessionCompleteService } from "../../services/sessionCompleteService";
 import { sessionRepository } from "../../services/sessionRepository";
 import { softSignalService } from "../../services/softSignalService";
+import { traumaSafetyService } from "../../services/traumaSafetyService";
+import type { TraumaSafetyPrefs } from "../../lib/traumaSafetyCore";
+import { defaultTraumaSafetyPrefs } from "../../lib/traumaSafetyCore";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
 const terminalEndedReason: Record<string, string> = {
@@ -51,12 +53,19 @@ function ActiveSessionContent() {
     "idle",
   );
   const [blockError, setBlockError] = useState("");
-  /** Display-only: last server sync outcome. Never invents consent offline. */
   const [syncNote, setSyncNote] = useState<string | null>(null);
+  const [safetyPrefs, setSafetyPrefs] = useState<TraumaSafetyPrefs>(
+    defaultTraumaSafetyPrefs(),
+  );
+  const [timeoutBanner, setTimeoutBanner] = useState<string | null>(null);
+  const [timeoutDuePrompt, setTimeoutDuePrompt] = useState(false);
   const endedRef = useRef(false);
+  const timeoutFiredRef = useRef(false);
 
-  // Real elapsed time from the database's started_at once a real session is
-  // present (migration 016); a plain local counter otherwise (demo/mock).
+  useEffect(() => {
+    void traumaSafetyService.loadPrefs().then(setSafetyPrefs);
+  }, []);
+
   useEffect(() => {
     if (ended) return;
     const timer = setInterval(() => {
@@ -74,10 +83,48 @@ function ActiveSessionContent() {
     return () => clearInterval(timer);
   }, [ended, startedAt, sessionId]);
 
-  // Fetch the real session once, then subscribe to changes so the other
-  // participant's soft signal or completion is reflected here without a
-  // manual refresh. On foreground, re-read so a missed Realtime event cannot
-  // leave a terminal session looking active.
+  // Session timeout: warning + auto Soft Signal or prompt.
+  useEffect(() => {
+    if (ended || endedRef.current) return;
+    const phase = traumaSafetyService.timeoutPhase(safetyPrefs, seconds);
+    if (phase.phase === "warning" && phase.message) {
+      setTimeoutBanner(phase.message);
+      setTimeoutDuePrompt(false);
+    } else if (phase.phase === "due") {
+      setTimeoutBanner(phase.message);
+      if (safetyPrefs.timeout.autoSoftSignalAtTimeout) {
+        if (!timeoutFiredRef.current) {
+          timeoutFiredRef.current = true;
+          void (async () => {
+            const result = await traumaSafetyService.timeoutExit(
+              sessionId,
+              true,
+            );
+            endedRef.current = true;
+            setEnded(true);
+            router.replace({
+              pathname: "/session/wrap-up",
+              params: {
+                ended:
+                  result.softSignal.outcome === "pending_sync"
+                    ? "pending-sync"
+                    : "soft-signal",
+                sessionId: sessionId ?? "",
+                softSignalLogId: result.softSignal.logEntry.id,
+                exitKind: result.exitKind,
+              },
+            });
+          })();
+        }
+      } else {
+        setTimeoutDuePrompt(true);
+      }
+    } else {
+      setTimeoutBanner(null);
+      setTimeoutDuePrompt(false);
+    }
+  }, [seconds, safetyPrefs, ended, sessionId, router]);
+
   useEffect(() => {
     if (!sessionId) return;
     let cancelled = false;
@@ -146,8 +193,41 @@ function ActiveSessionContent() {
   }, [sessionId]);
 
   const time = `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+
+  const goAfterExit = (result: {
+    exitKind: string;
+    softSignal: {
+      outcome: string;
+      logEntry: { id: string };
+    };
+    navigateTo: "wrap-up" | "panic-cover" | "home";
+  }) => {
+    const endedParam =
+      result.softSignal.outcome === "pending_sync"
+        ? "pending-sync"
+        : "soft-signal";
+    if (result.navigateTo === "panic-cover") {
+      router.replace({
+        pathname: "/safety/panic-cover",
+        params: {
+          sessionId: sessionId ?? "",
+          softSignalLogId: result.softSignal.logEntry.id,
+        },
+      } as never);
+      return;
+    }
+    router.replace({
+      pathname: "/session/wrap-up",
+      params: {
+        ended: endedParam,
+        sessionId: sessionId ?? "",
+        softSignalLogId: result.softSignal.logEntry.id,
+        exitKind: result.exitKind,
+      },
+    } as never);
+  };
+
   const stop = async () => {
-    // Soft Signal: local end is immediate; network never re-enables the session.
     if (endedRef.current) return;
     endedRef.current = true;
     setEnded(true);
@@ -159,23 +239,45 @@ function ActiveSessionContent() {
       practiceOnly: !sessionId,
     });
     if (result.outcome === "pending_sync") setStopState("pending");
-    router.replace({
-      pathname: "/session/wrap-up",
-      params: {
-        ended:
-          result.outcome === "pending_sync" ? "pending-sync" : "soft-signal",
-        sessionId: sessionId ?? "",
-        softSignalLogId: result.logEntry.id,
-      },
+    goAfterExit({
+      exitKind: "soft_signal",
+      softSignal: result,
+      navigateTo: "wrap-up",
     });
   };
+
+  const quickExit = async () => {
+    if (endedRef.current) return;
+    endedRef.current = true;
+    setEnded(true);
+    setStopState("stopping");
+    const result = await traumaSafetyService.quickExit(sessionId);
+    goAfterExit(result);
+  };
+
+  const panicExit = async () => {
+    if (endedRef.current) return;
+    endedRef.current = true;
+    setEnded(true);
+    setStopState("stopping");
+    const result = await traumaSafetyService.panicExit(sessionId);
+    goAfterExit(result);
+  };
+
+  const timeoutSoftSignal = async () => {
+    if (endedRef.current) return;
+    endedRef.current = true;
+    setEnded(true);
+    setStopState("stopping");
+    const result = await traumaSafetyService.timeoutExit(sessionId, false);
+    goAfterExit(result);
+  };
+
   const blockPeer = async () => {
     if (!peerUserId || endedRef.current) return;
     setBlockState("blocking");
     setBlockError("");
     try {
-      // Block RPC ends the pair session (ADR 0040). Soft Signal is still the
-      // immediate stop without cutting discovery permanently.
       await blockService.blockUser(peerUserId);
       endedRef.current = true;
       setEnded(true);
@@ -184,6 +286,7 @@ function ActiveSessionContent() {
         params: {
           ended: "soft-signal",
           sessionId: sessionId ?? "",
+          exitKind: "soft_signal",
         },
       });
     } catch (caught) {
@@ -200,10 +303,6 @@ function ActiveSessionContent() {
     endedRef.current = true;
     setEnded(true);
     setCompleting(true);
-    // "pending-sync" and "not-active" are different problems: a network
-    // failure is durably queued and retried on restore (ADR 0020), while a
-    // session that was never actually active cannot become completed by
-    // retrying — it needs the earlier steps finished first.
     let reason: "together" | "pending-sync" | "not-active" = sessionId
       ? "not-active"
       : "together";
@@ -218,9 +317,11 @@ function ActiveSessionContent() {
       params: {
         ended: reason,
         sessionId: sessionId ?? "",
+        exitKind: "together",
       },
     });
   };
+
   return (
     <Screen scroll={false} style={styles.screen}>
       <View>
@@ -229,11 +330,21 @@ function ActiveSessionContent() {
         </Eyebrow>
         <Title>You’re both here.</Title>
         <Body muted>
-          Keep noticing yourself. Agreement can change at any moment.
+          Keep noticing yourself. Agreement can change at any moment. Soft
+          Signal, quick exit, and panic mode never need a reason.
         </Body>
         {syncNote ? (
           <View style={styles.syncNote} accessible accessibilityRole="text">
             <Text style={styles.syncNoteText}>{syncNote}</Text>
+          </View>
+        ) : null}
+        {timeoutBanner ? (
+          <View
+            style={styles.timeoutNote}
+            accessible
+            accessibilityRole="alert"
+          >
+            <Text style={styles.timeoutNoteText}>{timeoutBanner}</Text>
           </View>
         ) : null}
       </View>
@@ -245,12 +356,51 @@ function ActiveSessionContent() {
         <Text style={styles.timer}>{time}</Text>
         <Text style={styles.timerLabel}>
           {sessionId ? "ELAPSED" : "ELAPSED · MOCK TIMER"}
+          {safetyPrefs.timeout.enabled
+            ? ` · BOUNDARY ${safetyPrefs.timeout.maxMinutes}M`
+            : ""}
         </Text>
       </View>
       <Card>
         <Text style={styles.prompt}>A gentle check-in</Text>
         <Body>Are your breath, shoulders, and attention still saying yes?</Body>
       </Card>
+      {timeoutDuePrompt && !ended ? (
+        <Card>
+          <Text style={styles.prompt}>Time boundary</Text>
+          <Body muted>
+            The time you set is complete. Soft Signal ends immediately. Extending
+            needs a free yes from you — never pressure.
+          </Body>
+          <Button
+            label="Soft Signal — end now"
+            onPress={() => void timeoutSoftSignal()}
+          />
+          <Button
+            variant="secondary"
+            label="Continue a little longer (I still want to)"
+            onPress={() => {
+              setTimeoutDuePrompt(false);
+              setTimeoutBanner(
+                "Continuing with awareness. Soft Signal is still available.",
+              );
+              // Nudge boundary +15 min locally without requiring network.
+              void traumaSafetyService
+                .loadPrefs()
+                .then((p) =>
+                  traumaSafetyService.savePrefs({
+                    ...p,
+                    timeout: {
+                      ...p.timeout,
+                      maxMinutes: p.timeout.maxMinutes + 15,
+                    },
+                  }),
+                )
+                .then(setSafetyPrefs);
+            }}
+          />
+        </Card>
+      ) : null}
       <View
         style={styles.controls}
         accessibilityRole="summary"
@@ -267,6 +417,20 @@ function ActiveSessionContent() {
           }
           disabled={ended}
           onPress={() => void stop()}
+        />
+        <Button
+          variant="secondary"
+          label="Quick exit"
+          disabled={ended}
+          onPress={() => void quickExit()}
+          accessibilityHint="Ends the session immediately and opens private wrap-up. No explanation needed."
+        />
+        <Button
+          variant="secondary"
+          label="Panic mode — stop & cover"
+          disabled={ended}
+          onPress={() => void panicExit()}
+          accessibilityHint="Ends the session immediately and shows a calm cover screen. Not emergency services."
         />
         <Button
           variant="secondary"
@@ -305,7 +469,7 @@ function ActiveSessionContent() {
               }
               disabled={blockState === "blocking"}
               onPress={() => void blockPeer()}
-              accessibilityHint="Privately blocks them and ends this session. They are not told who blocked them. Soft Signal is still available without blocking."
+              accessibilityHint="Privately blocks them and ends this session. They are not told who blocked them."
             />
             <Text style={styles.explain}>
               Blocking ends open sessions with them and hides you from each
@@ -322,6 +486,7 @@ function ActiveSessionContent() {
     </Screen>
   );
 }
+
 function makeStyles(colors: AppColors) {
   return {
     screen: { justifyContent: "space-between" },
@@ -331,7 +496,6 @@ function makeStyles(colors: AppColors) {
       fontFamily: "Georgia",
       fontSize: 66,
       fontVariant: ["tabular-nums"],
-      // Timer is decorative; cap so Soft Signal controls keep room under Dynamic Type.
       maxFontSizeMultiplier: 1.35,
     },
     timerLabel: {
@@ -357,5 +521,19 @@ function makeStyles(colors: AppColors) {
       borderRadius: 12,
     },
     syncNoteText: { color: colors.ink, fontSize: 14, lineHeight: 20 },
+    timeoutNote: {
+      marginTop: 12,
+      backgroundColor: colors.mossSoft,
+      borderLeftWidth: 4,
+      borderLeftColor: colors.moss,
+      padding: 12,
+      borderRadius: 12,
+    },
+    timeoutNoteText: {
+      color: colors.moss,
+      fontSize: 14,
+      lineHeight: 20,
+      fontWeight: "600",
+    },
   };
 }

@@ -18,6 +18,10 @@ const EXTRA_ASYNC_KEYS = [
   "litmo.privacy.notice.accepted.v1",
   "@litmo/nearby_share_enabled_v1",
   "litmo.proximity.prefs.v1",
+  "litmo.trauma_safety.prefs.v1",
+  "litmo.trauma_safety.verify.v1",
+  "litmo.trauma_safety.reflection.v1",
+  "litmo.trauma_safety.reflections.v1",
 ];
 
 const EXTRA_SECURE_KEYS = [
@@ -27,6 +31,10 @@ const EXTRA_SECURE_KEYS = [
   "litmo.quiz.e2e.spk.v2",
   "litmo.quiz.e2e.spk.v3",
   VAULT_SECRET_KEYS.backupMaster,
+  "litmo.trauma_safety.prefs.secure.v1",
+  "litmo.trauma_safety.verify.secure.v1",
+  "litmo.trauma_safety.reflection.secure.v1",
+  "litmo.trauma_safety.reflections.secure.v1",
 ];
 
 export type LocalWipeReport = {

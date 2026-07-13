@@ -49,6 +49,7 @@ Use these documents when modifying or reviewing implemented behavior:
 - [`CONSENT_SNAPSHOT_SYSTEM.md`](CONSENT_SNAPSHOT_SYSTEM.md) — pre-session declaration + mutual seal (Soft Signal, safewords, aftercare)
 - [`SOFT_SIGNAL.md`](SOFT_SIGNAL.md) — Soft Signal product system (app, hardware contract, private log)
 - [`LOCAL_FIRST.md`](LOCAL_FIRST.md) — local-first personal vault + optional encrypted cloud backup
+- [`TRAUMA_INFORMED_SAFETY.md`](TRAUMA_INFORMED_SAFETY.md) — panic, quick exit, timeout, verification, reflection
 - [`HARDWARE/HAPTICS.md`](HARDWARE/HAPTICS.md) — **canonical** dedicated-device haptics (VCM primary, Gentle Mode, Soft Signal warm descent, ND/sensory)
 - [`HAPTIC_SYSTEM_DEVICE.md`](HAPTIC_SYSTEM_DEVICE.md) — pointer to `HARDWARE/HAPTICS.md`
 

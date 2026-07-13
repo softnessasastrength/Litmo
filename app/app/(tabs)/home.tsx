@@ -259,6 +259,12 @@ export default function HomeTabScreen() {
       />
       <Button
         variant="secondary"
+        label="Trauma-informed safety (panic · timeout · reflect)"
+        onPress={() => router.push("/safety" as never)}
+        accessibilityHint="Panic cover, quick exit, session time boundaries, present-moment checks, and optional private reflection. Not emergency services."
+      />
+      <Button
+        variant="secondary"
         label="Proximity Layer (radar · NFC · QR · AirDrop)"
         onPress={() => router.push("/proximity" as never)}
         accessibilityHint="Full proximity hub: opt-in anonymous radar with Touch Language compatibility percent, NFC, encrypted QR, and AirDrop-style share. Extreme consent gating. Soft Signal anytime."

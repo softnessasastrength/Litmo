@@ -245,6 +245,12 @@ function SettingsContent() {
         onPress={() => router.push("/security/local-first" as never)}
         accessibilityHint="Personal data stays on this device first. Optional opaque encrypted cloud backup is off by default."
       />
+      <Button
+        variant="secondary"
+        label="Trauma-informed safety tools"
+        onPress={() => router.push("/safety" as never)}
+        accessibilityHint="Panic mode, quick exit, session timeout, partner checks, private reflection. Soft Signal is always available."
+      />
       <Body muted>
         Touch Language, Consent Snapshots, Soft Signal history, learning, and
         private history work fully offline. Cloud backup is optional ciphertext
