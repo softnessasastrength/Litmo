@@ -54,3 +54,14 @@ Material touch/consent changes call `save_profile_versions` transactionally. An 
 ## Existing proof-of-concept layers
 
 The Express consent-overlap service and early session/trust migrations remain intact. Chapter 2 does not expand the consent engine or session lifecycle; those are Chapter 3 and Chapter 4.
+
+
+## Native macOS boundary
+
+The native macOS workspace is generated from `macos/project.yml` and contains three targets with deliberately narrow responsibilities:
+
+- `Litmo` is the participant-facing app. Its first slice owns only local Campfire state and honest read-only placeholders.
+- `LitmoOps` is a separately bundled staff app. It fails closed and exposes no action without future server-backed staff authentication and authorization.
+- `LitmoMacCore` contains presentation-safe local state only. It does not duplicate the canonical TypeScript consent engine, session state machine, matching eligibility, or staff policy.
+
+Active physical sessions and Soft Signal remain phone-first. Consent and authorization remain server-authoritative. The participant and Ops apps use different bundle identifiers and entitlement files and currently share no App Group or Keychain group. See ADR 0045.

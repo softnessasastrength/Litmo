@@ -43,6 +43,15 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 ## Completed
 
+### MACOS-001 — Native participant and Ops foundations
+
+- **Status:** completed
+- **Result:** PR #76 adds two native SwiftUI macOS targets from one XcodeGen specification: a participant app with functional local Circle, Quiet, and Digital Campfire practices, and a separately bundled Litmo Ops app that fails closed with no staff actions.
+- **Verification:** macOS Native Build run #2 passed on `macos-26` with Xcode 26.5; four Campfire invariant tests passed, both arm64 apps compiled unsigned, and the workflow uploaded both `.app` bundles and Xcode logs.
+- **Boundary:** active physical sessions and Soft Signal remain phone-first; consent and staff authority remain server-side; no participant data is fabricated; the two apps share no App Group or Keychain group; unsigned CI artifacts are not distributable releases.
+- **Related decision:** ADR 0045.
+
+
 ### IOS-CI-001 — Hosted unsigned native iOS build
 
 - **Status:** completed

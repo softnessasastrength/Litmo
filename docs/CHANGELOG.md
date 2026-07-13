@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-07-13 — Native macOS participant and Ops foundations
+
+### Summary
+
+Added two native SwiftUI macOS targets generated from one reviewable XcodeGen specification: Litmo for participant preparation and local Campfire, and a separately bundled Litmo Ops shell.
+
+### User-visible impact
+
+- Circle, Quiet, and Digital Campfire practices run locally on macOS.
+- The participant workspace exposes honest read-only placeholders rather than mock account or consent data.
+- Litmo Ops displays its planned operational areas but remains disabled and fails closed.
+
+### Safety and developer impact
+
+- Active physical sessions and Soft Signal remain phone-first.
+- Consent, session, and staff authorization remain server-authoritative rather than being reimplemented in Swift.
+- Participant and Ops targets use separate bundle identifiers and entitlement files with no shared App Group.
+- Hosted Xcode 26.5 CI runs four Campfire invariant tests, builds both unsigned arm64 apps, and uploads inspection artifacts and logs.
+
+### Related work
+
+- MACOS-001
+- ADR 0045
+- PR #76
+
+
 ## 2026-07-13 — Hosted native iOS compile gate
 
 ### Summary

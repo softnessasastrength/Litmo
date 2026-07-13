@@ -1,0 +1,75 @@
+name: macOS Native Build
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/macos-native-build.yml"
+      - "macos/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-native-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  native-build:
+    name: Unsigned macOS apps and tests
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Record toolchain
+        run: |
+          xcodebuild -version
+          brew list xcodegen >/dev/null 2>&1 || brew install xcodegen
+          xcodegen --version
+      - name: Generate Xcode project
+        working-directory: macos
+        run: xcodegen generate
+      - name: Test participant foundation
+        shell: bash
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project macos/LitmoMac.xcodeproj \
+            -scheme Litmo \
+            -configuration Debug \
+            -destination "platform=macOS,arch=arm64" \
+            -derivedDataPath "$RUNNER_TEMP/LitmoMacDerivedData" \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=YES \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            test | tee "$RUNNER_TEMP/litmo-macos-test.log"
+      - name: Build locked Ops app
+        shell: bash
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project macos/LitmoMac.xcodeproj \
+            -scheme LitmoOps \
+            -configuration Debug \
+            -destination "platform=macOS,arch=arm64" \
+            -derivedDataPath "$RUNNER_TEMP/LitmoMacDerivedData" \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=YES \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            build | tee "$RUNNER_TEMP/litmo-ops-build.log"
+      - name: Upload Xcode logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Litmo-macOS-Xcode-logs
+          path: ${{ runner.temp }}/*.log
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Upload unsigned apps
+        uses: actions/upload-artifact@v4
+        with:
+          name: Litmo-macOS-apps
+          path: |
+            ${{ runner.temp }}/LitmoMacDerivedData/Build/Products/Debug/Litmo.app
+            ${{ runner.temp }}/LitmoMacDerivedData/Build/Products/Debug/Litmo Ops.app
+          if-no-files-found: error
+          retention-days: 7

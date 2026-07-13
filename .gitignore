@@ -10,3 +10,7 @@ npm-debug.log*
 .env.*
 !**/.env.example
 app/.env.lan.example
+
+# Generated native macOS project
+macos/LitmoMac.xcodeproj/
+macos/DerivedData/
