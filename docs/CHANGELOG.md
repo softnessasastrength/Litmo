@@ -1,414 +1,139 @@
 # Changelog
 
-## 2026-07-13 — Hardware device experience design
+## 2026-07-13 — Hardware haptics v4: intensity sliders + sensory preference sync
 
 ### Summary
 
-Added `docs/HARDWARE_DEVICE_EXPERIENCE.md`: end-to-end experience design for a
-dedicated Litmo device (Resting home, Nearby, careful invite, Snapshot review,
-Together, Quiet), Soft Signal primacy, careful notifications, and mapping from
-the current phone app. Vision only — not a manufacturing commitment.
-
-## 2026-07-13 — Auth ceremony Edge ops + device-bound consent
-
-### Summary
-
-WebAuthn remains Supabase Auth; new Edge Function `auth-ceremony` adds rate
-limiting and non-sensitive audit. Migration 040: `auth_audit_events`,
-`auth_ceremony_rate_limits`, `require_bound_auth_device` on consent snapshot
-confirm. Client wires gate into passkey/OTP/device register. Canonical
-architecture rewritten in `docs/AUTHENTICATION.md` (ADR 0056).
-
-### Migrations
-
-- `040_auth_passkey_ops.sql`
-
-## 2026-07-13 — Passkey-primary authentication polish
-
-### Summary
-
-Reinforced WebAuthn passkeys as the primary real-account path via Supabase Auth:
-soft native module load, calmer cancel handling, platform readiness checks,
-3-step sign-up, Face ID-forward sign-in, add-passkey on devices screen, honest
-recovery ladder. Canonical doc: `docs/AUTHENTICATION.md`.
-
-## 2026-07-13 — Robust encrypted QR fallback (proximity + NFC)
-
-### Summary
-
-Time-limited AES-GCM QR envelopes (`qrInviteCore`) for proximity invites,
-NFC offers/accepts/sealed packages, and Consent Snapshot starts. On-screen QR
-renderer, NFC → QR → manual degradation UI, split/co-located privacy modes.
-Proximity docs updated (`PROXIMITY_LAYER.md` §1b).
-
-## 2026-07-13 — NFC careful-connect (tag + QR fallback)
-
-### Summary
-
-NFC tap-to-connect foundation: Core NFC NDEF read/write module, ephemeral ECDH
-key exchange, explicit post-tap Accept/Decline, profile share / Consent Snapshot
-review invite / key-exchange intents, Share-sheet and manual-code fallbacks.
-Documented in `docs/NFC_FEATURES.md` (ADR 0055).
-
-### Honest limits
-
-- iOS has no third-party phone-to-phone NFC P2P; tags + QR/code are the model.  
-- Expo Go uses fallbacks only until a development build includes `litmo-nfc`.
-
-## 2026-07-13 — Proximity social layer
-
-### Summary
-
-Full proximity social layer: opt-in anonymous Multipeer radar, weather-resonance
-compatibility (never safety), encrypted local handshake, mutual interest and
-mutual identity-reveal gates, Soft Signal exits, ND-friendly progressive
-disclosure, and practice demo path for Expo Go. Architecture in
-`docs/PROXIMITY_LAYER.md` (ADR 0054).
-
-### Entry points
-
-- Home → Proximity  
-- Settings → Proximity radar  
-- Practice radar without radio  
-
-## 2026-07-13 — Nearby local share (AirDrop-style)
-
-### Summary
-
-Multipeer Connectivity foundation for intentional nearby exchange of discovery
-profiles and co-located Consent Snapshot reviews. Ephemeral X25519 + AES-GCM
-application encryption, master opt-in off by default, easy stop and timeout,
-fail-soft in Expo Go. ADR 0053 and `docs/LOCAL_SHARE.md`.
-
-### Entry points
-
-- Settings master switch + Open Nearby Share  
-- Profile edit → Share nearby  
-- Consent Snapshot → Share snapshot review nearby  
-
-### Honest limits
-
-- Requires iOS development build (not Expo Go).  
-- Android nearby share deferred.  
-- Two-device physical radio smoke still human-led.
-
-## 2026-07-13 — ISO 27701 PIMS roadmap
-
-### Summary
-
-Added `docs/ISO27701.md`: practical ISO/IEC 27701 Privacy Information Management
-System roadmap for Litmo as a small team. Maps privacy by design, consent
-management, data subject rights, and safety-feature integration to current repo
-assets; phased plan 0–4; lightweight risk register and SoA; explicitly not
-certification.
-
-### Related
-
-- Complements `docs/GDPR.md` (legal alignment) with management-system roadmap.
-
-## 2026-07-13 — GDPR alignment (privacy by design)
-
-### Summary
-
-Engineering alignment for maximum practical GDPR compliance: `docs/GDPR.md`,
-in-app Privacy Policy and Data Protection screens, enhanced portability export
-(server + device-local inventory), device wipe, erasure-request queue (no
-silent hard-delete), privacy-notice acceptance, Settings entry points. Sensitive
-touch profiles and Consent Snapshots prioritized in notices and export metadata.
-
-### Migrations
-
-- `039_gdpr_privacy_and_erasure.sql` — notice acceptances + erasure requests.
-
-### Honest limits
-
-- Full automated account destruction remains blocked pending legal/ops owners.
-
-## 2026-07-13 — Accessibility audit (Vibe Quiz + app)
-
-### Summary
-
-Published `docs/ACCESSIBILITY.md` checklist and audit. Started P0/P1 fixes for
-screen readers and neurodivergent support on the Vibe Quiz path.
-
-### Implemented this pass
-
-- Announce each quiz question to VoiceOver/TalkBack on change.
-- Progress bar: ND reduced motion, percent value text.
-- Fewer competing headers (Eyebrow demoted); Choice “option N of M”.
-- Dynamic Type on Title/Body/prompts; keyboard persist for dictation fields.
-- Result notes labeled for assistive tech.
-
-## 2026-07-13 — Inclusive Neurodivergent Mode patterns
-
-### Summary
-
-Neurodivergent Mode now covers progressive disclosure, customizable pace
-(confirm / slow / auto), easy breaks, and clearer progress labels on Vibe Quiz
-and Guided Learning, plus global larger text and reduced motion.
+Expanded **`docs/HARDWARE/HAPTICS.md`** to **v4.0**: global **0–100% intensity
+slider** (Settings + quick menu), optional **per-pattern intensity** advanced
+sliders, Sensory-Friendly auto scale + favor visuals, `effectiveIntensity`
+math, persistence across sessions, and **self-only sync** of sensory device
+preferences as a sibling of Touch Language profile data (never consent
+boundaries / never partner-visible). Patterns retain Primary / Gentle / full
+Visual Fallback specs.
 
 ### User-visible impact
 
-- Settings: global ND toggle + pace control when on.
-- Quiz: Continue when ready, take a break (saved), show more detail.
-- Learning: progress %, breaks, progressive body text.
-
-## 2026-07-13 — Partner invite guided flow (consent + E2E)
-
-### Summary
-
-Partner invite + shared comparison centered on a calm **next-step guide**:
-create → encrypt/share → dual compare consent → open comparison. Signal-style
-E2E packages; fail-closed mutual consent; empowering withdraw; design doc
-`docs/PARTNER_QUIZ_SHARE.md`.
-
-### User-visible impact
-
-- One primary CTA for the next safe action; advanced tools collapsed.
-- Package auto-shown after create; safety line always visible.
-- Demo practice still requires human share + compare consents.
-
-## 2026-07-13 — Global Neurodivergent Mode (app-wide)
-
-### Summary
-
-Neurodivergent Mode is a global Settings toggle: larger text/tap targets across
-themed styles, reduced motion, one-at-a-time quiz/learning, voice aids, and
-easy on-device saves. Applied to Vibe Quiz and Guided Learning.
+- None on current phone app (hardware vision).
 
 ### Developer impact
 
-- `useThemedStyles` scales with ND Mode; `neuroStyleScale` helpers + tests.
-- Context exposes `enabled`, `textScale`, `oneAtATime`, `voiceAids`, `easySaves`.
-- Learning scenarios gain dictation option numbers.
+- `docs/HARDWARE/HAPTICS.md` v4 control surface + preference store.
 
-## 2026-07-13 — Full Guided Learning lived-lesson track
+## 2026-07-13 — Hardware haptics v3: full visual fallbacks + multi-modal Soft Edge
 
 ### Summary
 
-Expanded the six hard-learned lived lessons into a complete private Guided
-Learning track (frame + short sections + scenarios), with stronger Vibe Quiz
-integration on result screens and Home/demo entry points.
+Expanded **`docs/HARDWARE/HAPTICS.md`** to **v3.0**: every pattern now specifies
+Primary haptic, Gentle Mode, and a **full Visual Fallback** (Soft Signal pulsing
+border + soft field + explicit “Session ended via Soft Signal” breath text;
+connection card glow; mutual seal ripple; positive check + particles; nearby
+edge glow). Sensory-Friendly is **one-tap from anywhere**; automatic visual
+fallback when haptics are off/failed; optional sound; reduced-motion rules.
 
 ### User-visible impact
 
-- Learn tab presents a full section: Lived lessons first, then foundations.
-- Each lived module is short, interactive, trauma-informed, leave-anytime.
-- Quiz results link related modules; Home opens Guided Learning.
-
-## 2026-07-13 — Vibe Quiz review + calm demo path
-
-### Summary
-
-Review pass on Vibe Quiz short/deep, partner invite + E2E stub, and ND-friendly
-demo. Mid-quiz save/resume always available; demo enables Neurodivergent Mode
-and uses short onboarding weather; copy no longer claims “nothing is saved.”
-
-### User-visible impact
-
-- Deep Vibe promises match behavior (device-local save/resume).
-- Demo walkthrough is quieter by default (ND Mode on).
-- Onboarding Vibe is short in demo/ND; full bank for real-account onboarding.
+- None on current phone app (hardware vision). Specs ready for device UI + firmware.
 
 ### Developer impact
 
-- QUIZ-004 in TASKS; ADR 0052 notes focused E2E stub scope.
+- `docs/HARDWARE/HAPTICS.md` v3 multi-modal authority.
 
-## 2026-07-13 — Neurodivergent Mode (quiz, partner, learning)
-
-### Summary
-
-Device-local **Neurodivergent Mode** optimizes Vibe Quiz, partner invite flow,
-and Guided Learning: reduced stimulation, clear language, jump navigation,
-mid-quiz save/resume, read-aloud, and keyboard-dictation aids. Not a score or
-consent gate.
-
-### User-visible impact
-
-- Settings toggle enables the full optimized bundle; quiets haptics by default.
-- Quiz: resume card, jump list, read aloud, option-number dictation field.
-- Partner + Learn: plain-language chrome, optional read-aloud, larger steps.
-- Hubs show ND status or link to Settings.
-
-### Developer impact
-
-- `NeurodivergentContext`, preference core/tests, `quizPlayProgress`,
-  `speechService` (+ optional `expo-speech`), `docs/NEURODIVERGENT_MODE.md`.
-
-## 2026-07-13 — Lived-lesson Guided Learning modules
+## 2026-07-13 — Hardware haptics v2: VCM-first, Gentle Mode, Soft Signal descent
 
 ### Summary
 
-Expanded Guided Practice with six short trauma-informed **lived lessons**
-(Consent as Language, Nervous System Safety, Boundaries, Recovering from
-Violation, Partner Communication, Self-Compassion), interactive scenarios,
-private progress, and optional Vibe/self-quiz pairing after soft close.
+Canonical dedicated-device haptic spec moved to **`docs/HARDWARE/HAPTICS.md`**
+(v2): wideband **VCM primary** + LRA secondary, device-wide warm field, **every
+pattern has Gentle / Sensory-Friendly Mode**, Soft Signal as long smooth
+**descending warm pulse**, connection rising heartbeat (gentle single throb),
+mutual consent double-pulse, positive feedback, nearby ambient, global
+Sensory-Friendly toggle, intensity + per-pattern presets, full off with
+visual/sound, vibe/sensory **suggestions** (confirm before apply).
 
 ### User-visible impact
 
-- Learn hub splits **Lived lessons** and **Litmo foundations**.
-- Module complete screen offers optional related private quiz (never required).
-- Quizzes hub links back to learning; Learn links to Quizzes.
-- Recovering-from-violation copy stays non-graphic, tool-focused, non-clinical.
+- None in the current mobile app (hardware vision).
 
 ### Developer impact
 
-- `LearningModule.track`, `relatedQuizId`, `relatedQuizPrompt`.
-- `learningModules.test.ts`; Learn/[id] soft-close UX; `docs/LEARNING_SYSTEM.md`.
+- `docs/HARDWARE/HAPTICS.md` — new canonical authority.
+- `docs/HAPTIC_SYSTEM_DEVICE.md` — pointer only.
+- ADR 0057, DOCUMENTATION_MAP, phone haptic plan, KNOWN_LIMITATIONS updated.
 
-## 2026-07-13 — Partner invite & shared comparison flow
+## 2026-07-13 — Soft Edge haptic system refined (warm, EI, anti cold-tech)
 
 ### Summary
 
-Polished Partner Invite and Shared Quiz Comparison: calm guided UX, dual
-consent gates, Signal-style E2E, and a demo-only fictional partner that still
-uses real crypto and never auto-opens comparison.
+Expanded `docs/HAPTIC_SYSTEM_DEVICE.md` to **v1.1 Soft Edge**: emotional
+intelligence rules, explicit contrast vs cold/tech haptics, full pattern palette
+(`breath`, `warmSeal`, `curtainClose`, `thorn`, …), profiles (`quiet_hearth`,
+etc.), EmotionalGuard, Soft Signal emotional safety, and authoring/validation
+gates. ADR 0057 updated to name Soft Edge personality.
 
 ### User-visible impact
 
-- Quizzes hub and Home link to partner invite & comparison.
-- Demo mode: practice with a fictional encrypted partner; Face ID skipped;
-  human share + compare consents still required.
-- Real accounts: Face ID step-up; optional claim-code relay; paste remains primary.
-- Comparison copy remains non-authority (never consent / safety / match score).
+- None in the current mobile app (design/vision).
 
 ### Developer impact
 
-- `quizDemoPartner` pure builder + tests; `practiceWithFictionalPartner` on invite store.
-- Entry / Home / Quizzes copy updated for demo path.
+- `docs/HAPTIC_SYSTEM_DEVICE.md` — major expansion.
+- `docs/adr/0057-device-haptic-vca-lra-architecture.md` — Soft Edge decision notes.
 
-## 2026-07-13 — Partner quiz E2E (X3DH + Double Ratchet)
+## 2026-07-13 — Dedicated-device haptic system design (VCA + LRA)
 
 ### Summary
 
-Partner quiz sharing upgrades from XOR seal-key packages to Signal-inspired
-X3DH + Double Ratchet. Private keys stay device-local (Secure Store + optional
-Secure Enclave vault wrap). Supabase optional relay stores opaque ciphertext
-only. Four mutual consent gates and non-authority copy are preserved.
+Specified the **Soft Edge** tactile language for the Litmo companion device
+vision: dual **voice-coil (VCA) + LRA** architecture, Soft Signal “curtain
+close,” consent-exchange and connection notification patterns, timing budgets,
+accessibility/ND rules, and firmware/software interfaces. Phone Expo haptics
+(ADR 0039) remain the shipping path; device docs are design-only until hardware.
 
 ### User-visible impact
 
-- Create **encrypted invite** (public keys only) → partner joins → share
-  encrypted weather → compare only with dual consent.
-- Packages no longer include a seal key; wrong/tampered ciphertext fails closed.
-- Optional claim-code relay when signed in (ciphertext only).
-- Copy emphasizes end-to-end encryption and “never consent to touch.”
+- None in the current mobile app. Product vision language may appear on the
+  public `/litmo` hardware section separately.
 
 ### Developer impact
 
-- `doubleRatchetCore`, `quizE2eIdentity`, `quizE2eSession`, `quizE2eRelay`.
-- Migration `038_quiz_e2e_ciphertext_relay.sql`.
-- Invite store v2 (`litmo.quizzes.invites.v2`); legacy sealKey invites dropped.
-- ADR 0052; deps `@noble/ciphers`, `@noble/curves`, `@noble/hashes`.
+- `docs/HAPTIC_SYSTEM_DEVICE.md` — full implementation specification.
+- `docs/adr/0057-device-haptic-vca-lra-architecture.md` — architecture decision.
+- Cross-links from `docs/roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md` and
+  `docs/DOCUMENTATION_MAP.md`.
 
 ### Related work
 
-- Builds on ADR 0050 / 0051 Quizzes section.
+- ADR 0039 / HAPTIC-001 phone semantic vocabulary
+- Hardware vision on Softnessasastrength-Website `/litmo#hardware`
 
-## 2026-07-13 — Optional owner-only quiz result backup
+## 2026-07-13 — 100-question vibe quiz + model-heavy mix engine
 
 ### Summary
 
-Authenticated users can optionally back up **own** quiz result summaries to
-Supabase under owner-only RLS. Partner comparison, invites, and seal keys remain
-device-local. Demo and unauthenticated use stay AsyncStorage-only.
+Expanded the onboarding Vibe Profile quiz to a full **100-question** social-weather
+bank (10 themes × 10 scenes) and a **model-heavy** scoring layer: normalized mix,
+per-theme leans, blend geometry, coverage confidence — still explicitly non-clinical.
 
 ### User-visible impact
 
-- Completing a quiz still always saves on device.
-- Signed-in sessions best-effort sync own summaries for restore after reinstall.
-- Result copy notes optional account backup; share/compare still needs dual consent.
+- Themes: place, regulation, comfort, talk, senses, tempo, first step, nearness,
+  play, and mends.
+- Progress shows `n / 100` with theme labels; mid-quiz save/resume and back.
+- Result: vibe card, **weather mix bars**, signature themes, confidence fill,
+  five diversified notes (not 100).
+- Copy: playful model version stamped; not diagnosis, safety, or consent.
 
 ### Developer impact
 
-- Migration `037_quiz_result_summaries.sql` + `upsert_own_quiz_result_summary`.
-- `quizResultsRepository` / `quizResultsRepositoryCore` with pure unit tests.
-- `export_my_data()` includes `quiz_result_summaries`.
-- ADR 0051.
+- `app/data/quiz.ts` — 100-question bank.
+- `app/lib/quizModel.ts` — `runQuizModel` / mix / themes / confidence (`vibe-mix-1.0`).
+- `quizScoring.ts` re-exports the model for existing imports.
+- Tests cover bank size, mix normalization, partial vs full confidence, lantern path.
 
 ### Related work
 
-- Builds on ADR 0050 quizzes section.
-
-## 2026-07-13 — Quizzes constitution review (privacy + consent gates)
-
-### Summary
-
-Constitution/trauma-informed pass on Quizzes: Face ID deny retry, join-invite
-seal adoption, Secure Store for private results, friendlier non-ranking compare
-copy, demo/home entry points, and hardened fail-closed share consent.
-
-### User-visible impact
-
-- Private quiz screens offer **Try Face ID again** / **Go back** if unlock fails.
-- Partner flow supports **Join invite from package** (adopt their seal).
-- Comparison language uses archetype display names, not raw ids.
-- Demo entry and Home link surface Quizzes with non-consent disclaimers.
-
-### Related work
-
-- QUIZ-001 / ADR 0050
-
-## 2026-07-13 — Quizzes section (short/deep vibe + partner consent)
-
-### Summary
-
-Added a full **Quizzes** tab: Vibe short/deep paths, four self-understanding
-quizzes, private results behind Face ID step-up, and partner invites that require
-explicit mutual consent before any comparison. Results are local-first; optional
-owner-only own-summary backup is ADR 0051. Invites/compare stay device-local.
-
-### User-visible impact
-
-- New tab: calm catalog of self quizzes (`/(tabs)/quizzes`).
-- Vibe Quiz short (~10 representative scenes) and deep (100) from the
-  social-weather bank.
-- Soft Capacity, Boundary Voice, Comfort & Care, Connection Pace.
-- Private result and partner-share screens use `SensitiveAccessGate` (Face ID
-  step-up on real accounts; demo ungated for Expo Go). Hub shows only
-  non-sensitive “saved privately” status.
-- Partner invites seal results; comparison stays closed until **four consents**
-  (host share, host compare, peer share, peer compare) and both sealed payloads
-  are present. Out-of-band JSON package exchange only.
-- Hard safety copy: quiz weather is never consent to touch, proof of safety, or
-  a Consent Snapshot substitute.
-
-### Developer impact
-
-- Catalog: `app/data/quizCatalog.ts`, `app/data/selfQuizzes.ts`.
-- Paths: `app/lib/quizPaths.ts` (short vs deep).
-- Routes: `app/app/quizzes/play.tsx`, `result.tsx`, `share.tsx`.
-- Stores: `quizResultsStore` (AsyncStorage), `quizInviteStore` (Secure Store).
-- Repository: `quizResultsRepository` (+ core) local-first with optional remote
-  own-summary merge (ADR 0051).
-- Pure logic: `app/services/quizShareCore.ts` (seal, four-gate compare, export).
-- Unit tests: seal fail-closed, dual share+compare gates, export omission
-  without share consent, safety copy (`quizShareCore.test.ts`); path/scoring
-  and repository-core tests.
-
-### Safety and data impact
-
-- No quiz results on discovery, trust ledger, or session activation.
-- Hub does not display private archetype outside Face ID; result/share are gated.
-- Four-gate compare; share consent requires a sealed payload; UI clears compare
-  when gates drop.
-- Lightweight seal is not production E2E; packages include the seal key — treat
-  like a password. Peer package consents are self-asserted (OOB trust).
-- Results use AsyncStorage; invites use Secure Store. Partner path stays fully
-  local. Optional own-summary backup is ADR 0051 / migration 037.
-- Documented in `docs/KNOWN_LIMITATIONS.md`.
-
-### Migration or setup impact
-
-- Quizzes section itself is local-first. Optional owner backup uses migration
-  `037_quiz_result_summaries.sql` (see separate changelog entry / ADR 0051).
-
-### Related work
-
-- ADR 0050 — Quizzes section and partner comparison consent
-- ADR 0051 — optional owner-only quiz result summary backup
-- Builds on vibe-mix model / 100-scene bank patterns
-- ADR 0007 — Face ID for real sessions (SensitiveAccessGate reuse)
+- Onboarding Vibe Profile (not Touch Language / Consent Snapshot)
 
 ## 2026-07-13 — macOS session-requests read (read-only)
 

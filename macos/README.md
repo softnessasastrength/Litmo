@@ -32,6 +32,7 @@ The participant app can load **self-only** server data when configured:
 | Trust history | `my_trust_signals` RPC | 0046 |
 | Profile | owner-RLS `profiles` row | 0047 |
 | Requests | `list_incoming_requests` / `list_outgoing_requests` (read-only) | 0048 |
+| Export | `export_my_data` (self-only; optional local JSON copy) | 0049 |
 
 Neither surface recomputes consent, invents rows when unavailable, or unlocks
 Ops. Shared fail-closed transport lives in `LitmoMacCore`.

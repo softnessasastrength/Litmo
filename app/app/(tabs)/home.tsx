@@ -11,6 +11,7 @@ import {
 } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { personaIdForUserId } from "../../data/mockConsentProfiles";
+import { quizCatalog } from "../../data/quizCatalog";
 import { notifyPrivateUpdate } from "../../services/notifications";
 import { sessionRepository } from "../../services/sessionRepository";
 import { fonts, type AppColors } from "../../theme";
@@ -196,6 +197,82 @@ export default function HomeTabScreen() {
           </View>
         ) : null}
       </Card>
+      <Card>
+        <Text style={styles.cardTitle}>Quizzes — all on device</Text>
+        <Body muted>
+          {quizCatalog.filter((q) => q.family === "vibe").length} Vibe depths
+          (Short ~10 · Deep 100) and{" "}
+          {quizCatalog.filter((q) => q.family === "self").length} self quizzes
+          (Soft Capacity, Boundary Voice, Comfort & Care, Connection Pace).
+          Results stay private — never consent to touch.
+        </Body>
+        <View style={styles.cardAction}>
+          <Button
+            label="Open Quizzes hub"
+            onPress={() => router.push("/(tabs)/quizzes" as never)}
+            accessibilityHint="Lists every quiz: short and deep Vibe plus self-understanding"
+          />
+        </View>
+        <View style={styles.cardAction}>
+          <Button
+            variant="secondary"
+            label="Start Short Vibe (~10 scenes)"
+            onPress={() =>
+              router.push({
+                pathname: "/quizzes/play",
+                params: { quizId: "vibe-short" },
+              } as never)
+            }
+            accessibilityHint="Starts the calm short Vibe Quiz immediately"
+          />
+        </View>
+        <View style={styles.cardAction}>
+          <Button
+            variant="secondary"
+            label="Start Deep Vibe (100 scenes)"
+            onPress={() =>
+              router.push({
+                pathname: "/quizzes/play",
+                params: { quizId: "vibe-deep" },
+              } as never)
+            }
+            accessibilityHint="Starts the full 100-scene Vibe Quiz. Progress saves on this device."
+          />
+        </View>
+      </Card>
+
+      <Button
+        variant="secondary"
+        label="Proximity (anonymous nearby radar)"
+        onPress={() => router.push("/proximity/radar" as never)}
+        accessibilityHint="Opens opt-in proximity layer: anonymous weather radar, encrypted handshake, mutual consent before any name. Soft Signal exits anytime. Never consent to touch."
+      />
+      <Button
+        variant="secondary"
+        label="NFC careful connect (tap / QR / code)"
+        onPress={() => router.push("/nfc/connect" as never)}
+        accessibilityHint="NFC tag, QR, or manual invite for profile share, snapshot review invite, or key exchange. Explicit accept after every tap. Never consent to touch."
+      />
+      <Button
+        variant="secondary"
+        label={
+          status === "demo"
+            ? "Guided Learning (lived lessons · demo)"
+            : "Guided Learning"
+        }
+        onPress={() => router.push("/(tabs)/learn" as never)}
+        accessibilityHint="Opens private short modules on consent language, boundaries, recovery, and more. Never a safety score."
+      />
+      <Button
+        variant="secondary"
+        label={
+          status === "demo"
+            ? "Partner invite practice (demo)"
+            : "Partner invite & comparison"
+        }
+        onPress={() => router.push("/quizzes/share" as never)}
+        accessibilityHint="Opens encrypted partner invite and mutual-consent comparison. Never auto-opens."
+      />
       <Button
         variant="secondary"
         label="Proximity (anonymous nearby radar)"

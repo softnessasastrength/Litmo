@@ -2,7 +2,8 @@
 
 ## Native macOS foundation
 
-- The native participant app provides functional device-local Campfire plus server-backed self-only reads: **trust history** (`my_trust_signals`, ADR 0046), **own profile** (owner-RLS `profiles`, ADR 0047), and **pending requests** (`list_incoming_requests` / `list_outgoing_requests`, ADR 0048, read-only). Other participant sections remain honest placeholders. The app does not fabricate participant records, cannot accept/decline requests, and cannot control active physical sessions or Soft Signal.
+- The native participant app provides functional device-local Campfire plus server-backed self-only reads: **trust history** (`my_trust_signals`, ADR 0046), **own profile** (owner-RLS `profiles`, ADR 0047), **pending requests** (ADR 0048, read-only), and **self export** (`export_my_data`, ADR 0049). Other participant sections remain honest placeholders. The app does not fabricate participant records, cannot accept/decline requests, and cannot control active physical sessions or Soft Signal.
+- Self export is an engineering portability summary with optional local pasteboard copy. It is not a claim of legally complete data access, not account deletion, and not a consent record.
 - Server-backed reads require explicit local configuration (`LITMO_SUPABASE_URL`, `LITMO_SUPABASE_ANON_KEY`) and a developer-supplied `LITMO_ACCESS_TOKEN`. Missing configuration or session fails closed. This is not passkey sign-in, not multi-device Keychain sync, and not production account UX.
 - Trust facts are never presented as a safety score and never grant consent. A profile is never consent or proof of safety. Positive history does not replace a current Consent Snapshot. Profile editing remains phone-first.
 - Litmo Ops is a separately bundled, fail-closed shell. Staff authentication, authorization, review data, mutations, audit logging, and operational readiness are not implemented.
@@ -249,6 +250,12 @@
   validate comfort, intensity, or recognizability. Physical-device validation is
   part of `docs/PHYSICAL_BETA_WALKTHROUGH.md` / BETA-001 — do not claim feel
   acceptance from unit tests alone. Preference is device-local only (no sync).
+- **Dedicated-device** high-fidelity VCM+LRA Soft Edge patterns
+  (`docs/HARDWARE/HAPTICS.md`, ADR 0057) are design-only. No production
+  hardware, factory calibration, or perceptual study has been completed. Do not
+  claim shipping device haptics or Soft Signal tactile guarantees until H3–H4
+  bench and sensory user-study gates pass. Gentle / Sensory-Friendly Mode is
+  specified but not implemented on a physical companion device.
 
 ## Age eligibility
 
