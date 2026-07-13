@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-07-13 — macOS self-export read
+
+### Summary
+
+Added a fail-closed **Export** surface on native macOS that loads `export_my_data`
+and shows category presence/counts, with optional local JSON copy (ADR 0049).
+
+### User-visible impact
+
+- Sidebar **Export** lists export categories or fails closed.
+- **Copy JSON** pastes the server payload to the local clipboard only when the
+  user asks.
+- Copy states this is portability engineering, not legal completeness or deletion.
+
+### Related work
+
+- MACOS-005
+- ADR 0049
+
 ## 2026-07-13 — macOS session-requests read (read-only)
 
 ### Summary

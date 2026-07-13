@@ -6,27 +6,29 @@
 
 - **Name:** SAFETY-OPS-001 — Recommended private-alpha safety-operations foundation
 - **Status:** active; founder selected the recommended defaults on 2026-07-13
-- **Branch:** `agent/macos-session-requests-read` carries MACOS-004. Open PR #81 holds the light vibe quiz. `main` contains PRs #72–#80.
-- **Latest known coherent milestone:** Chapters 1–5 foundation, BETA-001, ACCESS-001 semantics (PR #78), native macOS foundation (PR #76), MACOS-002 trust history (PR #79), MACOS-003 own profile (PR #80).
+- **Branch:** `agent/macos-self-export-read` (MACOS-005). Open PR #83 holds 100-question vibe quiz + model. `main` has PRs #72–#82.
+- **Latest known coherent milestone:** Foundation through BETA-001; ACCESS-001 semantics (#78); macOS foundation (#76); trust history (#79); own profile (#80); session requests (#82).
 
 ## Completed foundation
 
-- Playable mobile experience, demo mode, Supabase persistence, consent engine, session lifecycle, passkey architecture, learning system, Chapter 5 safety, private-alpha safety ops foundation.
-- Campfire Mode (PR #73), MPL-2.0 (PR #74), hosted iOS compile (PR #75), native macOS foundation (PR #76), continuity finalize (PR #77).
-- PR #78 ACCESS-001 semantics cleanup; VoiceOver smoke still optional.
-- PR #79 MACOS-002 self-only trust history (ADR 0046).
-- PR #80 MACOS-003 own profile + shared transport (ADR 0047).
+- Mobile vertical slice, consent, sessions, safety ops foundation, Campfire, MPL-2.0, hosted iOS/macOS compile.
+- MACOS-002 trust history (PR #79 / ADR 0046).
+- MACOS-003 own profile (PR #80 / ADR 0047).
+- MACOS-004 session requests read-only (PR #82 / ADR 0048).
 
 ## Work in progress
 
-SAFETY-OPS-001 remains externally blocked on named qualified review and backup staffing. MACOS-004 adds read-only session requests on macOS (ADR 0048). PR #81 lightens and expands the vibe quiz with back/retake polish. Litmo Ops remains locked.
+- MACOS-005 self export on macOS (ADR 0049).
+- PR #83: 100-question vibe quiz + vibe-mix-1.0 model engine.
+- Litmo Ops remains locked. ACCESS-001 residual: optional founder VoiceOver smoke.
+- SAFETY-OPS-001 externally blocked on named qualified review and backup staffing.
 
 ## Priority next work
 
-1. Review/merge MACOS-004 (PR #82) and vibe quiz (PR #81) when green.
-2. Next single macOS read surface: export (or display-only consent snapshot without recompute).
-3. Keep Campfire local-only; keep destructive retention/deletion blocked until review.
-4. Optional founder VoiceOver smoke (ACCESS-001 residual).
+1. Merge PR #83 (quiz) and MACOS-005 export when green.
+2. Next gaps: learning sync (none), consent-snapshot display-only, or Ops staff auth design.
+3. Keep Campfire local-only; keep destructive retention/deletion blocked.
+4. Optional founder VoiceOver smoke.
 5. Name independent backup reviewer before external alpha.
 
 ## Verification baseline
@@ -47,9 +49,8 @@ macOS: `cd macos && xcodegen generate` then unsigned `xcodebuild` test/build.
 
 - Product is not production-ready for stranger meetings.
 - macOS reads require env configuration + access token; not production passkey UX.
-- Profile, trust history, and request lists never grant consent.
-- A listed session request is never consent; mutations stay phone-first.
-- Learning progress is device-local only.
+- Self export is not legally complete data access and not deletion.
+- Listed requests and profiles never grant consent.
 - Physical VoiceOver smoke still pending.
 - Ops is non-operational until real staff auth.
 
@@ -57,16 +58,16 @@ macOS: `cd macos && xcodegen generate` then unsigned `xcodebuild` test/build.
 
 - Repository artifacts are the source of truth.
 - Consent is explicit, current, revocable, session-specific.
-- macOS displays server-authoritative read models only; no Swift consent engine; no request mutations on Mac.
+- macOS shows server-authoritative read models only; no Swift consent engine.
 
 ## Exact next action
 
-Land MACOS-004 (PR #82) and the light vibe quiz (PR #81) after green checks. Then choose export as the next fail-closed macOS read, or return to SAFETY-OPS external blockers. Do not unlock Ops without server-backed staff authentication.
+Land MACOS-005 and rebased PR #83 after green checks. Do not unlock Ops without server-backed staff authentication.
 
 ## Resume checklist
 
 1. Read `CURRENT_STATE.md`, `TASKS.md`, `DECISIONS.md`, and `project-state.json`.
-2. Read `docs/KNOWN_LIMITATIONS.md` and relevant ADRs (0045–0048).
+2. Read `docs/KNOWN_LIMITATIONS.md` and ADRs 0045–0049.
 3. Run `git status` and inspect recent commits.
 4. Verify last recorded checks before changing code.
 

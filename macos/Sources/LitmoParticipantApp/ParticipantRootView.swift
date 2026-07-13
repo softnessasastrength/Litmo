@@ -7,6 +7,7 @@ private enum ParticipantDestination: String, CaseIterable, Identifiable {
     case profile = "Profile"
     case trustHistory = "Trust history"
     case requests = "Requests"
+    case export = "Export"
     case participant = "Participant"
 
     var id: Self { self }
@@ -17,6 +18,7 @@ private enum ParticipantDestination: String, CaseIterable, Identifiable {
         case .profile: "person.text.rectangle"
         case .trustHistory: "clock.arrow.circlepath"
         case .requests: "tray"
+        case .export: "square.and.arrow.up"
         case .participant: "person.crop.circle"
         }
     }
@@ -39,6 +41,7 @@ struct ParticipantRootView: View {
             case .profile: OwnProfileView()
             case .trustHistory: TrustHistoryView()
             case .requests: SessionRequestsView()
+            case .export: SelfExportView()
             case .participant: ParticipantWorkspaceView()
             }
         }
@@ -81,18 +84,18 @@ struct ParticipantWorkspaceView: View {
         ("Profile", "person.text.rectangle", "Sidebar • owner RLS profile row"),
         ("Trust history", "clock.arrow.circlepath", "Sidebar • my_trust_signals RPC"),
         ("Requests", "tray", "Sidebar • list_incoming / list_outgoing (read-only)"),
+        ("Export", "square.and.arrow.up", "Sidebar • export_my_data (self-only)"),
     ]
     private let pendingSections = [
         ("Learning", "book.closed"),
         ("Consent snapshots", "checkmark.shield"),
-        ("Export", "square.and.arrow.up"),
     ]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("Participant").font(.largeTitle.bold())
             Text("Read-only foundation").font(.headline).foregroundStyle(.secondary)
-            Text("Profile, trust history, and pending requests are server-backed when configured. Remaining sections stay placeholders and never invent account data.")
+            Text("Profile, trust history, requests, and self export are server-backed when configured. Remaining sections stay placeholders and never invent account data.")
                 .frame(maxWidth: 620, alignment: .leading)
 
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 240), spacing: 16)], spacing: 16) {
@@ -124,6 +127,7 @@ struct ParticipantWorkspaceView: View {
             Text(PlatformAuthority.ownProfile).font(.footnote).foregroundStyle(.secondary)
             Text(PlatformAuthority.trustHistory).font(.footnote).foregroundStyle(.secondary)
             Text(PlatformAuthority.sessionRequests).font(.footnote).foregroundStyle(.secondary)
+            Text(PlatformAuthority.selfExport).font(.footnote).foregroundStyle(.secondary)
             Spacer()
         }
         .padding(32)

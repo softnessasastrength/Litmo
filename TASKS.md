@@ -43,13 +43,22 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 ## Completed
 
+### MACOS-005 — macOS self-export read
+
+- **Status:** completed
+- **Result:** Export sidebar loads `export_my_data`, shows category counts,
+  optional local JSON copy. ADR 0049.
+- **Verification:** local Xcode tests + Ops build; hosted macOS CI on PR.
+- **Boundary:** self-only; not legal completeness; not deletion; Ops locked.
+- **Related decision:** ADR 0049.
+
 ### MACOS-004 — macOS session-requests read (read-only)
 
 - **Status:** completed
 - **Result:** Requests sidebar loads `list_incoming_requests` and
   `list_outgoing_requests` via shared transport; empty lists are honest
-  success; no mutations. ADR 0048.
-- **Verification:** local Xcode tests + Ops build; hosted macOS CI on PR.
+  success; no mutations. ADR 0048. Merged as PR #82.
+- **Verification:** local Xcode tests + Ops build; hosted macOS CI green on PR #82.
 - **Boundary:** read-only; request is never consent; act on phone; Ops locked.
 - **Related decision:** ADR 0048.
 
