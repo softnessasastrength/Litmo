@@ -4,9 +4,9 @@
 
 ## Active milestone
 
-- **Name:** No active implementation milestone
-- **Status:** BETA-001 is complete; SAFETY-OPS-001 is pending founder/reviewer decisions
-- **Branch:** `main` at `42a1eed65b182c9880238eca26f3a53032ad5c43` is the integrated baseline. Decision preparation is on `agent/continuity-safety-ops-decisions`.
+- **Name:** SAFETY-OPS-001 — Recommended private-alpha safety-operations foundation
+- **Status:** active; founder selected the recommended defaults on 2026-07-13
+- **Branch:** `agent/safety-ops-recommended-foundation`, stacked on decision-preparation PR #66.
 - **Latest known coherent milestone:** Chapters 1–5, LEARN-002, HAPTIC-001, matching-hold ends open sessions (ADR 0038), semantic haptics (ADR 0039), BETA-001 physical walkthrough (Track A/B/C all Pass, including physical B1–B26).
 
 ## Completed foundation
@@ -25,13 +25,13 @@
 
 ## Work in progress
 
-Documentation-only decision preparation is in progress for SAFETY-OPS-001. `docs/SAFETY_OPS_FOUNDER_DECISIONS.md` contains the founder worksheet. No implementation task is `active`, and no Chapter 6 code is authorized.
+SAFETY-OPS-001 is active. ADR 0042 and migration 036 implement the engineering-safe recommended foundation: hashed staff-issued invitations, seven-day expiry, private-alpha membership gates, routine matching pause, minimal unblock tombstones, bounded non-destructive cleanup, and self export. External-review-dependent destructive retention, deletion, jurisdiction, escalation, and two-person staffing decisions remain blocked.
 
 ## Priority next work
 
-1. Founder reviews `docs/SAFETY_OPS_FOUNDER_DECISIONS.md` and records dispositions for S1–S10.
-2. Convert accepted decisions into focused ADRs; keep legal/privacy/safeguarding-dependent rows provisional until the named review exists.
-3. Separately decide whether to promote a Chapter 6 implementation milestone. Completing the worksheet alone is not implementation authorization.
+1. Review and merge continuity PR #66, then stacked implementation PR #67; both are green.
+2. Keep destructive retention and account deletion blocked until legal/privacy/security review names the permissible data categories, holds, and timing.
+3. Name and train an independent backup reviewer before external alpha; implement two-person permanent-ban approval only when that role exists.
 4. Optional founder VoiceOver smoke remains tracked under ACCESS-001.
 
 ## Verification baseline
@@ -74,7 +74,7 @@ Do not claim the current integrated `main` has passed every command unless the e
 
 ## Exact next action
 
-BETA-001 is closed with no Fail items. Next: the founder reviews `docs/SAFETY_OPS_FOUNDER_DECISIONS.md`, records S1–S10 dispositions, and identifies the required external reviewers. Do not implement Chapter 6 until a human separately promotes it.
+PR #67 passes Project State, lint, typecheck, unit tests, build, database reset/lint, all pgTAP tests (including the new 17-case SAFETY-OPS suite), and integration 5/5. Next: review/merge PR #66 then PR #67. SAFETY-OPS-001 remains active and externally blocked on named qualified review and an independent backup reviewer.
 
 ## Resume checklist
 
