@@ -6,16 +6,7 @@ Only one implementation task should normally be `active`. Every status change mu
 
 ## Active
 
-### BETA-001 — Integrated physical-iPhone validation
-
-- **Status:** active (Track A Pass; Track C Pass; Track B automated backend Pass)
-- **Owner:** founder plus current coding agent
-- **Goal:** Verify the integrated `main` experience on a physical iPhone from entry through learning, consent, session, stop, wrap-up, and haptic feel.
-- **Specification:** `docs/PHYSICAL_BETA_WALKTHROUGH.md` + `docs/PHYSICAL_BETA_WALKTHROUGH_RESULTS.md`
-- **Acceptance criteria:** documented test script (done); exact build/install method; passkey and Face ID behavior; privacy-safe backgrounding; session request; **real** Consent Snapshot (ADR 0036); realtime transition; Soft Signal; wrap-up; Chapter 5 safety smoke; five haptic events recognizability; failures recorded without euphemism.
-- **Progress 2026-07-12:** **Track A Pass** (founder). **Track C Pass** (engineering a11y). **Track B automated:** Docker + setup + all four seed password grants + integration **5/5** (seed maya↔eli lifecycle) + pgTAP 240/240; fixed seed GoTrue NULL token columns; seed lifecycle regression test landed.
-- **Next action:** Founder completes B1–B26 on device(s); agent only opens fix PRs for Fail items.
-- **Verification (agent, 2026-07-12):** `npm run typecheck` pass; `npm test` pass; `npm run test:integration` 5/5; `env HOME=/tmp npx supabase test db` 240/240; seed emails `maya`/`eli`/`eli-persona`/`jonah-persona` password grant HTTP 200.
+None. BETA-001 is complete; no other task is currently in the `active` state.
 
 ## Pending
 
@@ -23,9 +14,10 @@ Only one implementation task should normally be `active`. Every status change mu
 
 - **Status:** pending
 - **Owner:** founder plus current coding agent
-- **Depends on:** BETA-001
+- **Depends on:** BETA-001 (complete)
 - **Goal:** Validate VoiceOver, Dynamic Type, reduced motion, focus order, contrast, large touch targets, and non-color-only meaning.
 - **Acceptance criteria:** screen-by-screen findings; severity; reproducible steps; fixes and regression tests for material failures.
+- **Notes:** BETA-001 Track C covered engineering-level accessibility criteria (Pass); the optional founder VoiceOver smoke (`docs/ACCESSIBILITY_TRACK_C.md`) is the only item still outstanding here.
 
 ### SAFETY-OPS-001 — Moderation and beta-operations design
 
@@ -46,6 +38,12 @@ Only one implementation task should normally be `active`. Every status change mu
 None recorded. External credentials, signing, App Store configuration, or policy review may block specific tasks and must be documented when encountered.
 
 ## Completed
+
+### BETA-001 — Integrated physical-iPhone validation
+
+- **Status:** completed
+- **Result:** Track A (founder demo) Pass; Track C (engineering accessibility) Pass; Track B automated backend Pass (Docker + setup + all four seed password grants + integration 5/5 + pgTAP 240/240; seed GoTrue NULL-token bug fixed) plus **Track B physical B1–B26 Pass** on device(s) with two seed accounts (founder, 2026-07-13). No Fail items recorded. See `docs/PHYSICAL_BETA_WALKTHROUGH_RESULTS.md`.
+- **Next:** Optional founder VoiceOver smoke (`docs/ACCESSIBILITY_TRACK_C.md`, tracked under ACCESS-001). External TestFlight/private-alpha distribution remains a separate, explicitly gated decision — not authorized by this pass.
 
 ### HAPTIC-001 — Semantic haptic language foundation
 

@@ -43,14 +43,47 @@
 
 ## Track B — Real accounts
 
-| Status | **Automated backend Pass** (UI walkthrough still founder-owned) |
+| Status | **Pass** (automated backend + physical B1–B26 UI walkthrough) |
 |--------|-------------------------------------------------------------------|
 | Prep | `bash scripts/setup-track-b-local.sh` then `npm run api` + `npm run mobile` |
 | Sign-in | Development seed form: `maya.demo@litmo.local` / `LitmoDemo123!` (ADR 0041) |
 | Guide | `docs/TRACK_B_LOCAL.md` |
 | Automated (2026-07-12 agent) | Docker up; setup script; **all four seed emails** password grant HTTP 200; `npm run test:integration` **5/5** (includes seed maya↔eli full lifecycle); `env HOME=/tmp npx supabase test db` **240/240** |
 | Seed bug fixed | Seed rows left GoTrue token columns NULL → password login 500; fixed in `supabase/seed.sql` + setup verification (ADR 0041 addendum) |
-| Next | Founder/operator completes **B1–B26 on device(s)** with two accounts (Face ID + UI path) |
+| Physical B1–B26 (2026-07-13, founder) | **Pass** — all 26 items passed on physical device(s) with two seed accounts |
+
+### Track B physical walkthrough (B1–B26)
+
+| # | Item | Result |
+|---|------|--------|
+| B1 | Sign-in / passkey | **Pass** |
+| B2 | App background → return | **Pass** |
+| B3 | Face ID cancel / lockout | **Pass** |
+| B4 | Sign-out | **Pass** |
+| B5 | Discover (signed in) | **Pass** |
+| B6 | Peer signals | **Pass** |
+| B7 | Match → request session | **Pass** |
+| B8 | Peer accept | **Pass** |
+| B9 | Open Consent Snapshot | **Pass** |
+| B10 | Backend down / wrong LAN URL | **Pass** |
+| B11 | Confirm only one side | **Pass** |
+| B12 | Both confirm | **Pass** |
+| B13 | Withdraw pre-activation | **Pass** |
+| B14 | Active timer | **Pass** |
+| B15 | Soft Signal | **Pass** |
+| B16 | Report mid-session | **Pass** |
+| B17 | End / complete + wrap-up | **Pass** |
+| B18 | Home open sessions | **Pass** |
+| B19 | Block from match / settings | **Pass** |
+| B20 | Unblock | **Pass** |
+| B21 | Report from profile / wrap-up | **Pass** |
+| B22 | My reports / private signals | **Pass** |
+| B23 | Staff queue (if staff role granted) | **Pass** |
+| B24 | Matching hold (staff) | **Pass** |
+| B25 | Permanent ban (staff, synthetic only) | **Pass** |
+| B26 | Appeal (if restricted) | **Pass** |
+
+**Track B overall: Pass** (founder confirmed 2026-07-13: all B1–B26 passed on physical device(s)).
 
 ## Track C — Accessibility
 
@@ -72,13 +105,16 @@
 
 | Role | Demo track | Real track | Accessibility | Notes |
 |------|------------|------------|---------------|-------|
-| Founder | **Pass** | Pending UI walkthrough | Optional VoiceOver smoke | Track A confirmed good |
+| Founder | **Pass** | **Pass** (B1–B26 on physical device, 2026-07-13) | Optional VoiceOver smoke | Track A + Track B UI both confirmed good |
 | Agent | Partial Maestro | **Automated backend Pass** | **Pass** (engineering) | Seed login fix + pgTAP/integration 2026-07-12 |
 
-**Claim now:** Track A **Pass** (founder); Track C **Pass** (engineering a11y); Track B **automated backend Pass** (seed sign-in + two-client lifecycle).  
-**Not yet:** Track B physical two-device UI (B1–B26), full BETA-001, TestFlight, production safe.
+**Claim now:** Track A **Pass** (founder); Track C **Pass** (engineering a11y); Track B **Pass** (automated backend + physical B1–B26 UI walkthrough, founder, 2026-07-13). BETA-001 acceptance criteria met on `main`.
+**Not yet:** Optional founder VoiceOver smoke; full BETA-001 is not TestFlight or production-safety approval — see `RELEASE_AND_TESTFLIGHT` blockers before any external distribution.
 
 ## Next to full green
 
-1. **Track B on device** — founder runs B1–B26 with two seed accounts after `bash scripts/setup-track-b-local.sh` (use `app/.env.lan.example` on physical phone).  
-2. Optional founder VoiceOver smoke on Soft Signal + Consent Snapshot.
+BETA-001 is closed. Remaining optional item:
+
+1. Optional founder VoiceOver smoke on Soft Signal + Consent Snapshot (`docs/ACCESSIBILITY_TRACK_C.md`).
+
+External TestFlight / private-alpha distribution remains a separate, explicitly gated decision — see `CURRENT_STATE.md` known limitations.

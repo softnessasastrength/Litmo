@@ -1,38 +1,39 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-12T20:00:00-04:00",
+  "updatedAt": "2026-07-13T00:00:00-04:00",
   "milestone": {
     "id": "BETA-001",
     "name": "Integrated physical-iPhone validation",
-    "status": "active"
+    "status": "completed"
   },
   "git": {
-    "branch": "test/track-b-seed-lifecycle-integration",
-    "latestCoherentCommit": "track-b-seed-integration-in-progress",
-    "workingTreeExpectedClean": false
+    "branch": "main",
+    "latestCoherentCommit": "55c713ce6c7fa4c39c2d3159085c5287fb5c32a8",
+    "workingTreeExpectedClean": true
   },
   "verification": {
-    "status": "partial",
+    "status": "passed",
     "commands": [
-      "npm run test:integration — 5/5 (includes Track B seed lifecycle)",
-      "npm run lint / typecheck / state:check as needed",
-      "Physical Track B B1–B26 still founder-owned"
+      "npm run test:integration — 5/5 (includes Track B seed lifecycle, merged #60)",
+      "npm run lint / typecheck / state:check pass on main",
+      "Physical Track B B1–B26 — Pass (founder, 2026-07-13, docs/PHYSICAL_BETA_WALKTHROUGH_RESULTS.md)"
     ],
     "failures": []
   },
-  "nextAction": "Merge Track B seed integration test; founder runs B1–B26 on device.",
+  "nextAction": "No active milestone. Optional founder VoiceOver smoke (docs/ACCESSIBILITY_TRACK_C.md), or a human selects and marks active the next task in TASKS.md.",
   "blockedBy": [],
   "risks": [
-    "Track B physical two-account UI walkthrough not yet founder-signed.",
     "Real Consent Snapshot requires LAN-reachable snapshot backend and saved profiles.",
     "External TestFlight remains blocked (deletion, staging, AASA, disclosures, independent review).",
-    "Simulator-only testing cannot validate Face ID, haptics, or real-device accessibility."
+    "Simulator-only testing cannot validate Face ID, haptics, or real-device accessibility beyond what B1–B26 covered.",
+    "BETA-001 Pass is private validation only; it does not authorize external TestFlight or production-safety claims."
   ],
   "notes": [
     "Repository artifacts are the source of truth.",
     "HAPTIC-001 completed (ADR 0039).",
-    "integration/track-b-seed-accounts.test.mjs covers seed password + lifecycle.",
-    "PHYSICAL_BETA_WALKTHROUGH.md is not external beta approval."
+    "integration/track-b-seed-accounts.test.mjs covers seed password + lifecycle (merged #60).",
+    "PHYSICAL_BETA_WALKTHROUGH.md is not external beta approval.",
+    "BETA-001 closed 2026-07-13: Track A/B/C all Pass, including physical B1-B26 on device. No Fail items recorded; no agent fix PRs pending."
   ]
 }
