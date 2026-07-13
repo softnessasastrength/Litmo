@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-13 — Haptic Language v0.1 Nuclear Autistic Edition
+
+### Summary
+
+Full nuclear haptic spec: duration/intensity/rhythm/body zones/texture/context
+tags, safety envelopes, bracket syntax, consent-bound vocabulary, Soft Signal
+kill-all, phrase library, ND ceilings, expanded learning module.
+
+### Code
+
+- `app/lib/hapticLanguageNuclear.ts` + tests
+- Soft Signal `raiseInterrupt` before play
+- `docs/HAPTIC_LANGUAGE.md` rewritten as v0.1 nuclear
+
 ## 2026-07-13 — Semantic haptic language grammar (ADR 0063)
 
 ### Summary

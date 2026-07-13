@@ -54,3 +54,18 @@ export {
   type HapticPhrase,
   type HapticLexeme,
 } from "../lib/hapticLanguageCore.ts";
+export {
+  HAPTIC_NUCLEAR_SPEC_VERSION,
+  HAPTIC_PHRASE_LIBRARY,
+  libraryPhraseToHaptic,
+  parseNuclearSyntax,
+  mayPlayLivePattern,
+  defaultHapticVocabulary,
+  ndDefaultHapticVocabulary,
+  revokeHapticFacet,
+  markPatternPreviewed,
+  describePattern,
+  type NuclearPattern,
+  type HapticConsentVocabulary,
+  type LibraryPhraseId,
+} from "../lib/hapticLanguageNuclear.ts";

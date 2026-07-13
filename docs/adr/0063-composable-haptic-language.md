@@ -2,8 +2,16 @@
 
 - **Status:** accepted for phone engineering; hardware still design  
 - **Date:** 2026-07-13  
+- **Updated:** 2026-07-13 — Nuclear Autistic Edition v0.1 (`hapticLanguageNuclear`)  
 - **Supersedes in part:** extends ADR 0039 (does not remove five-event public API)  
 - **Constitution:** I.4 Soft Signal freeness · IV no engagement haptics · X honesty  
+
+## Nuclear v0.1 addendum
+
+Adds second/third-level primitives (duration classes, 5-step intensity, body zones,
+texture, context tags, safety envelopes), bracket syntax, consent-bound
+`HapticConsentVocabulary`, phrase library, Soft Signal kill-all, ND envelopes.
+Live session UI for dual-preview remains Phase B; pure law is enforceable now.
 
 ## Context
 

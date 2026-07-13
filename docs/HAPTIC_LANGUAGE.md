@@ -1,201 +1,221 @@
-# Semantic Haptic Language — full grammar
+# Haptic Language Specification – Litmo v0.1 (Nuclear Autistic Edition)
 
-**Status:** specification + pure implementation (`hapticLanguageCore`)  
-**Version:** language-v1 · ADR 0063  
-**Phone path:** Expo `expo-haptics` (iOS-excellent impact/notification mapping)  
-**Device path:** [`HARDWARE/HAPTICS.md`](HARDWARE/HAPTICS.md) · ADR 0057  
-**Prior slice:** ADR 0039 five-event vocabulary (still public API)
-
-> Litmo does not buzz at people.  
-> It **answers** them — in a language with grammar, dialect, and stop words.  
-> Soft Signal must say: *you stopped — you are free*.
+**Status:** pure domain shipped (`hapticLanguageCore` + `hapticLanguageNuclear`)  
+**Version:** `0.1-nuclear` · ADR 0063  
+**Code:** `app/lib/hapticLanguageNuclear.ts` · `app/lib/hapticLanguageCore.ts`  
+**Hardware:** [`HARDWARE/HAPTICS.md`](HARDWARE/HAPTICS.md) · ADR 0057  
+**Prior:** ADR 0039 five-event public API (still stable)
 
 ---
 
-## 1. Ambition
+## Core philosophy
 
-Treat touch feedback as **programmable, composable, and transmissible**:
+> **Touch is a language. Haptics are its phonemes, prosody, and punctuation.**
 
-| Property | Meaning |
-| -------- | ------- |
-| **Programmable** | Phrases are data: curve + rhythm + location + emotion + intensity |
-| **Composable** | Phrases chain into compositions (e.g. seal_step → confirmation) |
-| **Transmissible** | JSON recipes for Device OS / multi-client — never peer consent codes |
-| **Device-agnostic IR** | `HapticAtom[]` intermediate representation |
-| **Native-excellent iOS** | Impact/notification tiers + Core Haptics **hints** for future CHH |
-| **Safety interrupts** | Soft Signal / emergency abort in-flight decorative phrases |
+In Litmo, haptics are **never decorative feedback**. They are a **consensual, expressive, and revocable** channel that must obey the same strict consent spirit as physical touch:
 
----
+| Rule | Meaning |
+| ---- | ------- |
+| **Opt-in** | Global haptics off / ND intensity off is valid |
+| **Context-aware** | Patterns need sealed vocabulary in live sessions |
+| **Previewable** | Preview mandatory before live session patterns |
+| **Interruptible** | Soft Signal kills all active non-stop haptics |
+| **Honest** | Never means peer consented, is present, or is safe |
 
-## 2. Non-negotiable constitution
-
-1. Haptics **never** encode peer consent, remote presence, or “person is safe.”  
-2. Soft Signal **commits stop first**, then plays — never reverse.  
-3. **Silence is valid** — intensity 0 / haptics off / ND off still leave visual meaning.  
-4. **No engagement FOMO** loops, streaks, or secret inter-user codes.  
-5. **No imitation of interpersonal touch** as sexual or romantic signaling.  
-6. Touch Language **zones** ≠ haptic **locations** (permission vs motor).  
+Soft Signal remains **sacred**: commit stop first; haptic is freedom acknowledgment, not an alarm, not 911.
 
 ---
 
-## 3. Grammar layers
+## 1. Core primitives (second & third-level granularity)
 
-### 3.1 Lexemes (vocabulary / meanings)
+### Duration
 
-| Lexeme | Meaning | Primary use |
-| ------ | ------- | ----------- |
-| `presence` | You arrived; pause | entry, grounding |
-| `attention` | Look deliberately | consent checkpoints |
-| `confirmation` | Local action registered | save, complete |
-| `soft_signal` | Stop registered — freedom | Soft Signal |
-| `emergency_stop` | Emergency stop ack | panic path only |
-| `boundary_saved` | TL boundary stored locally | map edit |
-| `check_in_gentle` | Session check-in nudge | active session |
-| `zone_preview` | Local pressure preview | TL map select |
-| `seal_step` | Dual-seal progress step | snapshot mutual |
-| `wrap_complete` | Wrap-up recorded | wrap-up |
+| Class | Range | Notes |
+| ----- | ----- | ----- |
+| **Short** | 50–200 ms | taps, presence |
+| **Medium** | 300–800 ms | waves, check-ins |
+| **Sustained** | 1s+ with fade | requires envelope `allowSustained` |
 
-Legacy HAPTIC-001 names map: `softSignal` → `soft_signal`, etc.
+### Intensity (5-step pressure scale)
 
-### 3.2 Pressure curves
+`feather` → `light` → `medium` → `firm` → `firm_plus`  
+Mapped to LRA/VCA/phone impact tiers (`intensityStepToUnit`).
 
-`constant` · `rise` · `fall` · `soft_edge` · `descend_warm` · `pulse_once` · `double_tap`
+### Rhythm
 
-Soft Signal default: **`descend_warm`** (release, not alarm).
+Single pulse · double tap · wave (rising/falling) · trill · heartbeat (variable BPM) · breath · Soft Signal staccato+decay.
 
-### 3.3 Rhythm patterns
+### Location zones
 
-`single` · `double` · `triple_soft` · `heartbeat_calm` · `breath_slow` · `staccato_alert` (emergency only)
+**Body-mapped:** `shoulder-left/right`, `shoulders`, `forearm-*`, `hand-*`, `upper-back`, `mid-back`  
+**Device-relative:** `device`, `device-left/right/center`  
 
-### 3.4 Locations (logical)
+Phone collapses body zones to logical motor locations; hardware Device OS maps multi-actuator.
 
-`device` · `palm_center` · `palm_edge` · `fingertip` · `wrist` · `distributed`
+### Texture modifiers
 
-Phone collapses all to **device**. Hardware maps to multi-actuator (ADR 0057).
+`sharp` · `soft` · `rumbling` · `pulsing` · `directional_stroke` · `smooth`
 
-### 3.5 Emotional modifiers
+### Emotional / context tags (private by default)
 
-`neutral` · `calm` · `warm` · `crisp` · `solemn` · `clear`
+`grounding` · `affirming` · `playful` · `calming` · `energizing` · `check_in` · `presence` · `boundary_warning`
 
-Forbidden: arousal, FOMO, shame, “urgency marketing.”
+### Safety envelope
 
-### 3.6 Safety interrupts
-
-| Interrupt | Priority | Effect |
-| --------- | -------- | ------ |
-| `none` | 0 | — |
-| `user_cancel` | 50 | cancel decorative |
-| `soft_signal` | 90 | abort + Soft Signal phrase |
-| `emergency_stop` | 100 | abort + emergency phrase |
-
----
-
-## 4. Phrase & composition
+Every pattern is clamped by:
 
 ```ts
-HapticPhrase = {
-  version: 1,
-  lexeme, curve, rhythm, location, emotion,
-  intensity: 0..1,
-  interrupt,
-  durationMs?
-}
-
-HapticComposition = { id, phrases[], yieldToInterruptAbove }
+{ maxIntensity, maxDurationMs, allowSustained, requirePreviewBeforeLive }
 ```
+
+- **Default** envelope for standard sessions  
+- **ND envelope** lower intensity / shorter / no sustained  
+- **Soft Signal sacred envelope** — not ND-capped into inaudibility; still globally disableable  
+
+### Internal pattern syntax
+
+```text
+[shoulder-left][firm][wave-rising 600ms][heartbeat 72bpm][affirming][consent-id:xyz]
+```
+
+Parsed by `parseNuclearSyntax` → `NuclearPattern` → `HapticPhrase` → phone/device IR.
+
+---
+
+## 2. Consent integration (non-negotiable)
+
+| Requirement | Implementation |
+| ----------- | -------------- |
+| Preview mandatory before live | `mayPlayLivePattern` + `requirePreviewBeforeLive` |
+| Vocabulary in Consent Snapshot | `HapticConsentVocabulary` bound to `consentId` / fingerprint |
+| Dual affirm of allowed vocabulary | Product seal of allowed zones, max intensity, contexts |
+| Soft Signal / withdrawal kills all | `raiseInterrupt("soft_signal")` + `softSignalActive` gate |
+| Granular revocation | `revokeHapticFacet(vocab, "shoulder-left" \| "sustained")` |
+| ND Mode | `ND_SAFETY_ENVELOPE` + `ndDefaultHapticVocabulary` |
+
+**Soft Signal never requires preview or vocabulary seal.**
+
+Live play algorithm:
+
+```text
+if Soft Signal → always allow (language layer)
+if softSignalActive → deny all other
+if preview required && !previewed → deny
+if no vocabulary → deny
+if zone/intensity/context revoked or not sealed → deny
+else compile + play
+```
+
+---
+
+## 3. Core haptic phrases (library)
+
+| Id | Description |
+| -- | ----------- |
+| `greeting_double_tap` | Soft double tap — affirming arrival |
+| `greeting_shoulder_wave` | Rising wave — safe container |
+| `checkin_heartbeat` | Heartbeat ~72 bpm — co-regulation |
+| `checkin_soft_pulse` | Soft pulse — I'm here, no pressure |
+| `affirmation_stroke` | Light directional stroke (approved) |
+| `affirmation_trill` | Playful trill |
+| `grounding_rumble` | Deep slow rumble + fade |
+| `grounding_bilateral` | Bilateral soft pulsing |
+| **`soft_signal_sacred`** | Sharp triple + sustained decay — **cannot be overridden** |
+| `boundary_question` | Soft “question mark” before new zone |
+
+Access: `HAPTIC_PHRASE_LIBRARY` · `libraryPhraseToHaptic(id)`.
+
+---
+
+## 4. Technical implementation
+
+| Platform | Path |
+| -------- | ---- |
+| **iOS (now)** | Expo `impact` + `notification` + delays; Soft Signal warning + descend impacts |
+| **iOS (next)** | Core Haptics / AHAP from `core_haptics_hint` atoms |
+| **Android** | VibrationEffect fallbacks (planned parity) |
+| **Shared** | Versioned types in `app/lib` (domain-style pure); future `shared/` JSON recipes |
+| **Offline** | Local phrases + consentId hash validation before live |
+| **A11y** | `describePattern` full text; reduced intensity profiles; haptics never sole channel |
+| **Extensibility** | Community patterns require constitution review before core library |
 
 **Compile path:**
 
 ```text
-Phrase → HapticAtom[] (IR)
-      → PhoneHapticCall[] (Expo + CHH hints)
-      → [future] Core Haptics continuous events
-      → [future] Device firmware VCM/LRA frames
+Nuclear syntax / library id
+  → NuclearPattern
+  → HapticPhrase (clamp envelope)
+  → HapticAtom[] IR
+  → PhoneHapticCall[] | Device VCM/LRA frames
 ```
 
-Serialization: `serializePhrase` / `parsePhrase` — no user ids, no consent fingerprints.
+---
+
+## 5. Learning & onboarding flow
+
+| Module | Goal |
+| ------ | ---- |
+| **Feel Your Own Boundaries** | Self-only pattern tests |
+| **Preview Together** | Mutual preview before live |
+| **Soft Signal Drills** | Interrupt practice |
+| **ND track** | Slower pace, plain language, lower intensity |
+
+Catalog: Guided Learning `haptic-language` + extensions in module steps.
 
 ---
 
-## 5. Integration map
+## 6. Soft Signal sacred contract (haptic layer)
 
-| Surface | Integration |
-| ------- | ----------- |
-| **Soft Signal** | `play("softSignal")` → `descend_warm` + breath_slow + solemn + interrupt latch |
-| **Touch Language map** | Zone select → `zone_preview` intensity from zone/doc pressure |
-| **Active session** | Soft Signal path unchanged (commit first); optional `check_in_gentle` later |
-| **ND Mode** | `lexemeAllowedAtIntensity`: minimal = stop-class only |
-| **Learning** | Module `haptic-language` |
-| **Hardware Device OS** | Same lexemes; richer curves in firmware |
+```ts
+{
+  commitStopFirst: true,
+  interruptPriority: 90, // emergency_stop = 100
+  cannotBeOverriddenByOtherPhrases: true,
+  pattern: "descend_warm + breath/staccato decay",
+  notEmergencyServices: true,
+  notAPenalty: true,
+}
+```
 
----
-
-## 6. iOS excellence
-
-| Layer | Behavior |
-| ----- | -------- |
-| Expo Go / current | `impactAsync` + `notificationAsync` + delays |
-| Soft Signal | warning notification + descending impact chain |
-| Emergency | error notification + heavy double |
-| Future CHH | `core_haptics_hint` atoms (sharpness/intensity/duration) ready for native module |
-| Accessibility | Visual Soft Signal / status always primary; haptics optional |
-
-Physical feel validation remains a real-device smoke (not simulator proof).
+On Soft Signal fire: `raiseInterrupt("soft_signal")` then `play("softSignal")`.
 
 ---
 
-## 7. Implementation status
+## 7. Implementation status & plan
 
 | Piece | Status |
 | ----- | ------ |
-| `app/lib/hapticLanguageCore.ts` | **shipped** |
-| `hapticServiceCore` compile + interrupt + `playPhrase` | **shipped** |
-| TL map zone preview | **shipped** |
-| Soft Signal via grammar | **shipped** (legacy API) |
-| Core Haptics native module | planned |
-| Device firmware compiler | design (HARDWARE/HAPTICS) |
-| Multi-device recipe sync | not started (self-only when done) |
+| Nuclear primitives + syntax | **shipped** |
+| Consent vocabulary pure API | **shipped** |
+| Phrase library | **shipped** |
+| Soft Signal kill-all interrupt | **shipped** |
+| TL zone preview | **shipped** |
+| Mutual preview UI in snapshot | Phase B |
+| Persist vocabulary on server seal | Phase B |
+| Core Haptics AHAP | Phase C |
+| Device multi-actuator locations | Phase D (HARDWARE) |
 
----
+### Phase B — Consent Snapshot UI
 
-## 8. Implementation plan (phased)
-
-### Phase A — Grammar foundation (done in this workstream)
-
-- Pure language core + tests  
-- Service compile path + interrupt generation  
-- Spec + ADR 0063  
-- Learning module  
-- TL preview + Soft Signal mapping  
-
-### Phase B — Session polish
-
-- `check_in_gentle` on continuous consent UI when shipped  
-- `seal_step` on mutual snapshot affirm  
-- Settings: per-lexeme intensity advanced panel (optional)  
-- Wire ND `getIntensityPolicy` into `createHapticService`  
+1. Preview gallery in mutual seal flow  
+2. Affirm allowed zones / max intensity into package  
+3. Mid-session revoke facet control  
 
 ### Phase C — iOS Core Haptics
 
-- Optional native module for continuous events from `core_haptics_hint`  
-- Soft Signal true descending continuous event  
-- Keep Expo fallback  
+1. Native module consumes `core_haptics_hint`  
+2. Soft Signal continuous descend  
 
-### Phase D — Device OS parity
+### Phase D — Hardware
 
-- Compile IR → VCM/LRA frames per HARDWARE/HAPTICS.md  
-- Same lexeme names; distributed locations  
-
-### Phase E — Transmissible self recipes
-
-- Export/import personal intensity profiles (self-only)  
-- Never peer transmission of “touch messages”  
+1. Map body zones to distributed actuators  
+2. Same library ids / syntax  
 
 ---
 
-## 9. Related
+## 8. Related
 
-- ADR 0039 · ADR 0057 · **ADR 0063**  
-- `docs/roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md`  
-- `docs/HARDWARE/HAPTICS.md`  
-- Living Constitution I.4 Soft Signal freeness  
+- Living Constitution I.4 · IV · V (ND)  
+- ADR 0039 · 0057 · **0063**  
+- `NEURODIVERGENT_MODE.md`  
+- `SOFT_SIGNAL.md`  
