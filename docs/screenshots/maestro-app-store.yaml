@@ -82,16 +82,37 @@ appId: com.litmo.app.dev
 - tapOn: "A calm public place"
 - tapOn: "Save and meet the mock community"
 - extendedWaitUntil:
-    visible: "Welcomed"
+    visible: ".*Start body map.*|.*BOUNDARIES.*"
     timeout: 20000
 - takeScreenshot: asc-06-boundaries
-- tapOn: "Welcomed"
-- scroll
-- tapOn: "Welcomed"
-- scroll
-- tapOn: "Welcomed"
-- scroll
-- tapOn: "Welcomed"
+- tapOn: ".*Start body map.*"
+- extendedWaitUntil:
+    visible: "Welcomed"
+    timeout: 15000
+# Upper section — fill remaining as ask first for calm demo speed
+- tapOn: ".*Mark remaining in this section ask first.*"
+- tapOn: "Continue"
+- extendedWaitUntil:
+    visible: ".*Core.*|Welcomed"
+    timeout: 15000
+- tapOn: ".*Mark remaining in this section ask first.*"
+- tapOn: "Continue"
+- extendedWaitUntil:
+    visible: ".*Legs.*|Welcomed"
+    timeout: 15000
+- tapOn: ".*Mark remaining in this section ask first.*"
+- tapOn: "Continue"
+- extendedWaitUntil:
+    visible: ".*hard stop.*"
+    timeout: 15000
+- tapOn: "Continue"
+- extendedWaitUntil:
+    visible: ".*nervous-system note.*|.*Optional.*"
+    timeout: 15000
+- tapOn: ".*Review map.*"
+- extendedWaitUntil:
+    visible: ".*Save boundaries and continue.*"
+    timeout: 15000
 - tapOn: "Save boundaries and continue"
 - extendedWaitUntil:
     visible: "People|Discover|Home"

@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-07-13 — Expanded boundaries onboarding
+
+### Summary
+
+Expanded demo/onboarding **body map** from 4 zones to 12 (upper, core, lower),
+plus absolute hard-stop chips, optional private nervous-system note, multi-step
+flow with review, and ND-friendly bulk “ask first” helpers. Still local-only,
+fail closed (unset = off limits), never session consent.
+
+### User-visible impact
+
+- Onboarding boundaries: intro → upper → core → lower → hard stops → note →
+  review summary before home.
+- Hard stops: face, neck, surprise touch, from-behind, tickling, photos, etc.
+- “Mark all / remaining ask first” for low-energy setup.
+
+### Developer impact
+
+- `app/context/PrototypeContext.tsx` — expanded zones, hardStops, boundaryNote.
+- `app/app/onboarding/boundaries.tsx` — multi-step UI.
+
 ## 2026-07-13 — Hardware haptics v4: intensity sliders + sensory preference sync
 
 ### Summary
