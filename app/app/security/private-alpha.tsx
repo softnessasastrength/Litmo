@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { Text, TextInput } from "react-native";
-import { Body, Button, Card, Eyebrow, Screen, Title } from "../../components/ui";
+import {
+  Body,
+  Button,
+  Card,
+  Eyebrow,
+  Screen,
+  Title,
+} from "../../components/ui";
 import { FailureState, LoadingState } from "../../components/AsyncState";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { useAuth } from "../../context/AuthContext";
@@ -86,7 +93,11 @@ function PrivateAlphaContent() {
           Admission is not identity verification, proof of safety, or consent.
           Every session still requires its own active agreement.
         </Body>
-        <Button variant="secondary" label="Check again" onPress={() => void load()} />
+        <Button
+          variant="secondary"
+          label="Check again"
+          onPress={() => void load()}
+        />
       </Screen>
     );
   }
@@ -156,4 +167,3 @@ function makeStyles(colors: AppColors) {
     },
   };
 }
-
