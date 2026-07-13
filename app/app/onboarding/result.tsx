@@ -12,8 +12,12 @@ import {
 } from "../../components/ui";
 import { VibeCard } from "../../components/VibeCard";
 import { usePrototype } from "../../context/PrototypeContext";
-import { archetypes, quizDimensionLabels } from "../../data/quiz";
-import { scoreQuizDetailed, topInsights } from "../../lib/quizScoring";
+import { archetypes, type ArchetypeId } from "../../data/quiz";
+import {
+  confidenceCopy,
+  runQuizModel,
+  topInsights,
+} from "../../lib/quizScoring";
 import { fonts, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
@@ -21,9 +25,12 @@ export default function ResultScreen() {
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { answers, archetypeId } = usePrototype();
-  const result = useMemo(() => scoreQuizDetailed(answers), [answers]);
+  const result = useMemo(() => runQuizModel(answers), [answers]);
   const vibe = archetypes[result.primary || archetypeId];
   const insights = topInsights(result, 5);
+  const mixOrder = (Object.keys(archetypes) as ArchetypeId[]).sort(
+    (a, b) => result.mixPercent[b] - result.mixPercent[a],
+  );
 
   return (
     <Screen>
@@ -41,33 +48,80 @@ export default function ResultScreen() {
       />
 
       <Card>
+        <Text style={styles.sectionLabel}>Weather mix</Text>
+        <Body muted>
+          Playful model {result.modelVersion} — weights from your scenes, not a
+          clinical profile. Higher is not better.
+        </Body>
+        <View style={styles.mixList}>
+          {mixOrder.map((id) => (
+            <View key={id} style={styles.mixRow}>
+              <Text style={styles.mixName}>
+                {archetypes[id].name.replace(/^The\s+/, "")}
+              </Text>
+              <View style={styles.barTrack}>
+                <View
+                  style={[
+                    styles.barFill,
+                    {
+                      width: `${Math.max(result.mixPercent[id], result.mixPercent[id] > 0 ? 4 : 0)}%`,
+                      backgroundColor: archetypes[id].color,
+                    },
+                  ]}
+                />
+              </View>
+              <Text style={styles.mixPct}>{result.mixPercent[id]}%</Text>
+            </View>
+          ))}
+        </View>
+      </Card>
+
+      {result.signatureThemes.length > 0 ? (
+        <Card>
+          <Text style={styles.sectionLabel}>Where this showed up</Text>
+          <Body muted>
+            Themes that most strongly leaned {vibe.name.replace(/^The\s+/, "")}.
+          </Body>
+          <View style={styles.themeList}>
+            {result.signatureThemes.map((theme) => (
+              <Text key={theme.dimension} style={styles.themeLine}>
+                · {theme.label}
+                {theme.leanShare > 0
+                  ? ` (${Math.round(theme.leanShare * 100)}% lean)`
+                  : ""}
+              </Text>
+            ))}
+          </View>
+        </Card>
+      ) : null}
+
+      <Card>
         <Text style={styles.meta}>
-          {result.answeredCount} of {result.questionCount} scenes ·{" "}
-          {result.themesTouched} themes touched
+          {result.answeredCount}/{result.questionCount} scenes ·{" "}
+          {result.themesTouched}/10 themes ·{" "}
+          {Math.round(result.modelConfidence * 100)}% model fill
         </Text>
+        <Body muted>{confidenceCopy(result.confidenceLabel)}</Body>
         {insights.length > 0 ? (
           <View style={styles.insightList}>
-            <Text style={styles.sectionLabel}>A few notes (not all 100)</Text>
+            <Text style={[styles.sectionLabel, { marginTop: 12 }]}>
+              A few notes
+            </Text>
             {insights.map((insight) => (
               <Text
                 key={`${insight.questionId}:${insight.answerId}`}
                 style={styles.insightText}
               >
-                · {quizDimensionLabels[insight.dimension]}: {insight.text}
+                · {insight.text}
               </Text>
             ))}
           </View>
-        ) : (
-          <Body muted>
-            Answer a few scenes to see light notes here. Partial quizzes still
-            score what you finished.
-          </Body>
-        )}
+        ) : null}
       </Card>
 
       <Body muted center>
-        People are more nuanced than any quiz — even a long playful one. This is
-        not a diagnosis, ranking, or consent. A vibe never grants touch.
+        Model-heavy under the hood, still just social weather. Not a diagnosis,
+        safety score, or consent. A vibe never grants touch.
       </Body>
       <Button
         label="Keep this Vibe Profile"
@@ -84,18 +138,50 @@ export default function ResultScreen() {
 
 function makeStyles(colors: AppColors) {
   return {
-    meta: {
-      color: colors.muted,
-      fontSize: 13,
-      fontWeight: "600" as const,
-      marginBottom: 10,
-    },
     sectionLabel: {
       color: colors.ink,
       fontFamily: fonts.headline,
       fontSize: 20,
+      marginBottom: 6,
+    },
+    meta: {
+      color: colors.muted,
+      fontSize: 13,
+      fontWeight: "600" as const,
       marginBottom: 8,
     },
+    mixList: { gap: 10, marginTop: 12 },
+    mixRow: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: 8,
+    },
+    mixName: {
+      width: 88,
+      color: colors.ink,
+      fontSize: 13,
+      fontWeight: "700" as const,
+    },
+    barTrack: {
+      flex: 1,
+      height: 10,
+      borderRadius: 99,
+      backgroundColor: colors.line,
+      overflow: "hidden" as const,
+    },
+    barFill: {
+      height: 10,
+      borderRadius: 99,
+    },
+    mixPct: {
+      width: 40,
+      textAlign: "right" as const,
+      color: colors.muted,
+      fontSize: 13,
+      fontWeight: "700" as const,
+    },
+    themeList: { gap: 6, marginTop: 10 },
+    themeLine: { color: colors.ink, fontSize: 15, lineHeight: 22 },
     insightList: { gap: 8 },
     insightText: { color: colors.ink, fontSize: 15, lineHeight: 22 },
   };

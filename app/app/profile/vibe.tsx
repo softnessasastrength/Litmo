@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { Body, Button, Eyebrow, Screen, Title } from "../../components/ui";
 import { VibeCard } from "../../components/VibeCard";
 import { usePrototype } from "../../context/PrototypeContext";
-import { scoreQuizDetailed } from "../../lib/quizScoring";
+import { runQuizModel } from "../../lib/quizScoring";
 import { useAuth } from "../../context/AuthContext";
 import { profileRepository } from "../../services/profileRepository";
 
@@ -11,7 +11,7 @@ export default function VibeProfileScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const { answers, archetypeId, resetQuiz } = usePrototype();
-  const result = useMemo(() => scoreQuizDetailed(answers), [answers]);
+  const result = useMemo(() => runQuizModel(answers), [answers]);
 
   const retake = () => {
     resetQuiz();
@@ -37,8 +37,9 @@ export default function VibeProfileScreen() {
         showHowYouMightShowUp
       />
       <Body muted>
-        Built from up to 100 light scenes. Still only a conversation starter —
-        never consent. Sharing is not enabled in this prototype.
+        Built from up to 100 light scenes with a multi-theme mix model (
+        {result.modelVersion}). Still only a conversation starter — never
+        consent. Sharing is not enabled in this prototype.
       </Body>
       <Button
         label="Name my touch language"
