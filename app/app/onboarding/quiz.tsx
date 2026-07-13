@@ -4,7 +4,6 @@ import { Pressable, Text, View } from "react-native";
 import { Choice, FadeIn, Progress, Screen } from "../../components/ui";
 import {
   quizDimensionLabels,
-  quizQuestions,
   type QuizAnswer,
 } from "../../data/quiz";
 import { usePrototype } from "../../context/PrototypeContext";
@@ -15,12 +14,14 @@ import { profileRepository } from "../../services/profileRepository";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
 import { hapticService } from "../../services/hapticService";
+import { vibeQuestionsForMode } from "../../lib/quizPaths";
 
 /**
  * Onboarding Vibe path.
  * Demo / Neurodivergent Mode use the calm short (~10) set so the phone-visible
- * walkthrough stays light. Real account onboarding still uses the full bank so
+ * walkthrough stays light. Real account onboarding uses the full bank so
  * profile archetype remains a fuller first-pass signal — never consent.
+ * Short + Deep are always available again under the Quizzes tab.
  */
 export default function QuizScreen() {
   const styles = useThemedStyles(makeStyles);
@@ -29,10 +30,24 @@ export default function QuizScreen() {
   const { answers, setAnswer, hydrateAnswers } = usePrototype();
   const { user, status } = useAuth();
   const { prefs, reducedStimulation } = useNeurodivergent();
+
+  const useShortPath =
+    status === "demo" || prefs.enabled || reducedStimulation;
+  const questions = useMemo(
+    () => vibeQuestionsForMode(useShortPath ? "short" : "deep"),
+    [useShortPath],
+  );
+
   const [index, setIndex] = useState(0);
-  const question = quizQuestions[index];
-  const total = quizQuestions.length;
+  const safeIndex = Math.min(index, Math.max(0, questions.length - 1));
+  const question = questions[safeIndex];
+  const total = questions.length;
   const themeLabel = question ? quizDimensionLabels[question.dimension] : "";
+
+  useEffect(() => {
+    // Keep index in range if the short/deep set changes mid-session.
+    setIndex((i) => Math.min(i, Math.max(0, questions.length - 1)));
+  }, [questions.length]);
 
   useEffect(() => {
     if (!user) return;
@@ -41,7 +56,7 @@ export default function QuizScreen() {
       .then(({ draftProfile }) => {
         const saved = draftProfile.quizAnswers;
         if (Array.isArray(saved)) {
-          const known = new Set(quizQuestions.map((q) => q.id));
+          const known = new Set(questions.map((q) => q.id));
           const filtered = (saved as typeof answers).filter((item) =>
             known.has(item.questionId),
           );
@@ -55,9 +70,20 @@ export default function QuizScreen() {
         }
       })
       .catch(() => undefined);
-  }, [user?.id]);
+  }, [user?.id, questions]);
 
-  if (!question) return null;
+  if (!question || total === 0) {
+    return (
+      <Screen>
+        <Text style={styles.prompt} accessibilityRole="header">
+          Vibe scenes could not load.
+        </Text>
+        <Text style={styles.note}>
+          Try again from About you, or open Short / Deep anytime under Quizzes.
+        </Text>
+      </Screen>
+    );
+  }
 
   const selected = answers.find(
     (item) => item.questionId === question.id,
@@ -89,10 +115,10 @@ export default function QuizScreen() {
       ...answers.filter((item) => item.questionId !== question.id),
       selectedAnswer,
     ];
-    const isLast = index === total - 1;
+    const isLast = safeIndex === total - 1;
     persist(
       updated,
-      isLast ? total : index + 1,
+      isLast ? total : safeIndex + 1,
       isLast ? "vibe_result" : "vibe_quiz",
     );
     const delay = reducedMotion ? 0 : 140;
@@ -103,8 +129,8 @@ export default function QuizScreen() {
   };
 
   const goBack = () => {
-    if (index <= 0) return;
-    const next = index - 1;
+    if (safeIndex <= 0) return;
+    const next = safeIndex - 1;
     setIndex(next);
     persist(answers, next, "vibe_quiz");
   };
@@ -112,7 +138,7 @@ export default function QuizScreen() {
   return (
     <Screen>
       <View style={styles.topRow}>
-        {index > 0 ? (
+        {safeIndex > 0 ? (
           <Pressable
             onPress={goBack}
             accessibilityRole="button"
@@ -129,19 +155,24 @@ export default function QuizScreen() {
           <View style={styles.backPlaceholder} />
         )}
         <Text style={styles.count}>
-          {index + 1} / {total}
+          {safeIndex + 1} / {total}
         </Text>
       </View>
-      <Progress current={index + 1} total={total} />
+      <Progress current={safeIndex + 1} total={total} />
       <Text style={styles.theme} accessibilityLabel={`Theme: ${themeLabel}`}>
         {themeLabel}
       </Text>
-      {status === "demo" || prefs.enabled ? (
+      {useShortPath ? (
         <Text style={styles.hint}>
-          Short calm path for demo / Neurodivergent Mode. Full deep Vibe lives
-          under Quizzes anytime — never consent to touch.
+          Short calm path for demo / Neurodivergent Mode ({total} scenes). Full
+          Deep Vibe (100) is under Quizzes anytime — never consent to touch.
         </Text>
-      ) : null}
+      ) : (
+        <Text style={styles.hint}>
+          Deep first pass ({total} scenes). Prefer a lighter start? Short Vibe
+          is under Quizzes — never consent to touch.
+        </Text>
+      )}
       <FadeIn key={question.id}>
         <View style={styles.header}>
           <Text style={styles.kicker}>{question.kicker}</Text>
@@ -161,8 +192,9 @@ export default function QuizScreen() {
         </View>
       </FadeIn>
       <Text style={styles.note}>
-        One hundred light scenes — not a diagnosis. No answer is more evolved.
-        You can leave and resume anytime.
+        {useShortPath
+          ? "A soft first pass — not a diagnosis. No answer is more evolved."
+          : "One hundred light scenes — not a diagnosis. No answer is more evolved. You can leave and resume anytime under Quizzes."}
       </Text>
     </Screen>
   );
@@ -196,6 +228,13 @@ function makeStyles(colors: AppColors) {
       letterSpacing: 0.6,
       textTransform: "uppercase" as const,
       marginTop: 8,
+    },
+    hint: {
+      color: colors.muted,
+      fontSize: 13,
+      lineHeight: 18,
+      marginTop: 8,
+      marginBottom: 4,
     },
     header: { gap: 8, marginTop: 8, marginBottom: 20 },
     kicker: { color: colors.muted, fontSize: 14, fontWeight: "600" as const },
