@@ -1,5 +1,8 @@
 # Litmo Continuity and Stewardship
 
+**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**  
+Primary framing: Trauma-to-Code Exorcism Dojo — [`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md) · [`DOJO_GUIDELINES.md`](DOJO_GUIDELINES.md) · [`TRAUMA_ARCHITECTURE.md`](TRAUMA_ARCHITECTURE.md).
+
 ## Purpose
 
 Litmo must be understandable, operable, and governable without access to its founder, its original coding assistant, or any private conversation that contributed to the project.

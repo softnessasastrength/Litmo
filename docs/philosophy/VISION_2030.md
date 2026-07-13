@@ -1,6 +1,11 @@
 # Vision 2030 — Consent culture infrastructure
 
-**Status:** aspirational strategy (subordinate to the Constitution)  
+**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**  
+Vision residue from product-era ambition; sacred purpose is the Exorcism Dojo
+([`../EXORCISM_MANIFESTO.md`](../EXORCISM_MANIFESTO.md)). “2030 success” is optional fantasy —
+primary success is *seeing* and eventually *releasing* the control machinery.
+
+**Status:** aspirational strategy (subordinate to the Constitution / dojo law)  
 **Horizon:** ~2030  
 **Authority order:** Constitution → Founding Thesis → this Vision → roadmaps  
 

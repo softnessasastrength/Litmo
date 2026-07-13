@@ -1,5 +1,8 @@
 # Litmo Founding Thesis
 
+**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**  
+Primary framing: Trauma-to-Code Exorcism Dojo — [`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md) · [`DOJO_GUIDELINES.md`](DOJO_GUIDELINES.md) · [`TRAUMA_ARCHITECTURE.md`](TRAUMA_ARCHITECTURE.md).
+
 **Version:** thesis-v2 (aligned with `litmo-constitution-v2`)  
 **Companions:** [`../LITMO_CONSTITUTION.md`](../LITMO_CONSTITUTION.md) · [`VISION_2030.md`](VISION_2030.md) · root [`CONSTITUTION.md`](../../CONSTITUTION.md)
 

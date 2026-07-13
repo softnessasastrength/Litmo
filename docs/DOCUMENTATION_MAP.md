@@ -19,7 +19,10 @@ When these disagree, stop and reconcile them before implementing new work.
 
 These documents define why Litmo exists and the principles that outrank implementation convenience:
 
-- [`philosophy/00_Founding_Thesis.md`](philosophy/00_Founding_Thesis.md) — founding thesis v2 (living consent language)
+- **[`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md)** — **primary framing**: private Trauma-to-Code Exorcism Dojo (not a product)
+- **[`DOJO_GUIDELINES.md`](DOJO_GUIDELINES.md)** — how to work in this repo (radical honesty)
+- **[`TRAUMA_ARCHITECTURE.md`](TRAUMA_ARCHITECTURE.md)** — systems mapped to defenses / wounds
+- [`philosophy/00_Founding_Thesis.md`](philosophy/00_Founding_Thesis.md) — founding thesis (now subordinate residue + living consent language)
 - [`philosophy/VISION_2030.md`](philosophy/VISION_2030.md) — fifty-year cultural horizon (subordinate to Constitution)
 - [`LITMO_CONSTITUTION.md`](LITMO_CONSTITUTION.md) — binding articles 0–XV (`litmo-constitution-v2`)
 - Root [`CONSTITUTION.md`](../CONSTITUTION.md) — human charter twin

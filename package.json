@@ -2,6 +2,7 @@
   "name": "litmo",
   "version": "0.2.0",
   "private": true,
+  "description": "PRIVATE EXORCISM ARTIFACT — Trauma-to-Code Exorcism Dojo, not a consumer product. See docs/EXORCISM_MANIFESTO.md",
   "license": "MPL-2.0",
   "workspaces": [
     "app",

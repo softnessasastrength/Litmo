@@ -1,292 +1,146 @@
 # Litmo Constitution
 
-**Version:** `litmo-constitution-v2` (human charter)  
-**Binding technical twin:** [`docs/LITMO_CONSTITUTION.md`](docs/LITMO_CONSTITUTION.md)  
-**Founding thesis:** [`docs/philosophy/00_Founding_Thesis.md`](docs/philosophy/00_Founding_Thesis.md)  
-**Vision 2030:** [`docs/philosophy/VISION_2030.md`](docs/philosophy/VISION_2030.md)  
-**Enforcement:** [`docs/CONSTITUTION_ENFORCEMENT.md`](docs/CONSTITUTION_ENFORCEMENT.md)
+**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**
 
-This document is the highest-level product and ethical authority for Litmo. Code, design, growth, monetization, cultural partnerships, research, and operational decisions must remain consistent with it.
-
-It is written for a **fifty-year horizon**: not as brand poetry, but as load-bearing law for a living language of consent.
-
----
-
-## 1. Why Litmo Exists
-
-Litmo exists because adults have infrastructure for dating, hookups, work, transportation, and commerce, but almost none for safe, consensual, **platonic** physical connection.
-
-Loneliness is not only cognitive. It lives in the body. Touch starvation is real. So is the fear of asking. So is the harm that follows when people fill silence with assumption.
-
-Litmo helps people communicate needs, negotiate boundaries, and build trust around nonsexual touch and co-regulation. It is **infrastructure for human connection** — not a substitute for relationships, therapy, judgment, emergency services, or community.
-
-> **Touch is not a transaction. It is a language.**
+**Version:** `litmo-constitution-v3-exorcism`  
+**Sacred purpose:** Trauma-to-Code Exorcism Dojo  
+**Manifesto:** [`docs/EXORCISM_MANIFESTO.md`](docs/EXORCISM_MANIFESTO.md)  
+**Trauma map:** [`docs/TRAUMA_ARCHITECTURE.md`](docs/TRAUMA_ARCHITECTURE.md)  
+**Dojo law:** [`docs/DOJO_GUIDELINES.md`](docs/DOJO_GUIDELINES.md)  
+**Technical twin (historical product law):** [`docs/LITMO_CONSTITUTION.md`](docs/LITMO_CONSTITUTION.md)
 
 ---
 
-## 2. The Philosophy of Softness
+## Preamble — sacred purpose
 
-Softness is not weakness. It is the capacity to remain present, careful, responsive, and humane without surrendering boundaries.
+From this moment, Litmo’s highest authority is not market fit, growth, or “platform for others.”
 
-Litmo treats vulnerability as something to protect, not exploit. The product must never convert loneliness, touch starvation, grief, trauma, or social isolation into pressure, dependency, or engagement metrics.
+It is this:
 
-Softness includes **stop**. Soft Signal is not failure; it is literacy.
+> Externalize every defense around safety, control, touch, consent, ambiguity, connection, and softness into visible systems — so I can see them, name them, and one day release them.
 
----
+This Constitution binds **the dojo**.  
+Technical rules that follow are **dojo law** (how the ritual machine must behave), not a consumer brand promise.
 
-## 3. The Language of Consent (living, versioned, enforceable)
-
-Consent is explicit, informed, session-specific, mutual, continuous enough to re-check, and revocable at any time.
-
-Consent is a **language** with grammar:
-
-| Dimension | Role |
-| --------- | ---- |
-| Who | specific person(s) |
-| What | zones, modalities, hold types |
-| How | pressure, speed, intensity |
-| When | duration, moment, check-in windows |
-| Where | environment |
-| State | mood/capacity self-report (never a score) |
-| Stop | Soft Signal and equivalent exits — free, unilateral |
-
-Consent is **not** inferred from:
-
-- a match  
-- prior sessions  
-- profile or vibe compatibility  
-- silence, freeze, or delayed reply  
-- proximity, NFC, Multipeer, or “chemistry”  
-- payment or gifts  
-- a trust score or peer signal  
-- body language alone  
-- completed learning modules or quizzes  
-
-**Boundaries always override compatibility.** A user may stop, change their mind, decline, leave, or use Soft Signal without explanation or penalty.
-
-Profiles and quizzes provide a conversational head start. They never replace real-time communication or dual seal.
-
-### Living language rules
-
-1. **Versioned seals** — Consent Snapshots bind to fingerprints; material change invalidates affirmations.  
-2. **Enforceable grammar** — rules live in domain engines, RLS, and tests, not only in help copy.  
-3. **Strictest wins** — when preferences conflict, the more restrictive boundary governs.  
-4. **Dialects allowed, stop words sacred** — plain language and ND accommodations translate chrome; they never redefine Soft Signal as optional.  
-5. **Amendments only by process** — see §14 and `docs/LITMO_CONSTITUTION.md`.
+When product language and exorcism honesty conflict, **exorcism honesty wins**.
 
 ---
 
-## 4. What Litmo Will Never Become
+## Article 0 — Artifact, not product
 
-Litmo will never intentionally become:
-
-- a hookup or dating app in disguise  
-- a marketplace that treats access to bodies as a commodity  
-- a system that ranks human worth through popularity  
-- a surveillance product for monitoring intimate behavior  
-- a replacement for emergency services or clinical care  
-- a platform that rewards users for ignoring discomfort  
-- a product that uses shame, scarcity, streaks, or social pressure to drive engagement  
-- a public “safety score” economy  
-- a colonial monoculture that declares one culture’s touch norms universal  
-- a workplace or institutional surveillance tool dressed as wellness  
+1. This repository is a private ritual artifact.  
+2. Agents and collaborators must not reframe it as a shipping consumer product without explicit instruction.  
+3. Complexity must be nameable as defense, not only as “good engineering.”  
+4. The artifact may be completed, archived, or burned without that being failure.  
+5. Visible notices (“private exorcism artifact, not a product”) must not be removed to look professional.
 
 ---
 
-## 5. Product Principles
+## Article I — Soft Signal is the free exit
 
-1. Consent before convenience.  
-2. Safety before growth.  
-3. People before metrics.  
-4. Warmth before efficiency.  
-5. Transparency before persuasion.  
-6. Clarity before novelty.  
-7. User agency before retention.  
-8. Human review before irreversible punishment.  
-9. Stop before continue.  
-10. Local dignity before network effects.  
-
-Litmo does not create trust. It helps people communicate boundaries and build trust through repeated, consensual behavior.
+1. I must always be able to stop without explanation.  
+2. Soft Signal is unilateral, local-first, non-punitive.  
+3. No feature may make stop harder than continue.  
+4. This article externalizes the survival need to leave a trap without fawning.  
+5. The long-term healing work is learning when I am *not* trapped — without deleting Soft Signal.
 
 ---
 
-## 6. Design Principles
+## Article II — Consent is never assumed
 
-Litmo should feel warm, calm, playful, and emotionally intelligent.
-
-It should resemble:
-
-- a thoughtfully designed journal  
-- a whimsical personality quiz  
-- a cozy room  
-- a trusted guide  
-
-It should not resemble:
-
-- hospital software  
-- HR screening  
-- enterprise compliance tools  
-- swipe-first dating products  
-- manipulative social media feeds  
-
-People are more nuanced than profiles. Labels must remain invitations to conversation, never fixed diagnoses or identity boxes.
-
-The interface must communicate safety without creating a **false guarantee** of safety.
+1. Silence, match, vibe, prior yes, proximity, quiz, trust history ≠ consent.  
+2. Dual present affirmation for shared maps.  
+3. Strictest boundary wins.  
+4. This externalizes terror of assumption and sticky agreements.  
+5. Healing is allowing *some* ambiguity without building another engine — when I choose it.
 
 ---
 
-## 7. Accessibility & neurotype principles
+## Article III — Control made visible
 
-Accessibility is a product requirement, not polish.
-
-Litmo must support:
-
-- screen readers and meaningful accessibility labels  
-- readable type and scalable text  
-- sufficient contrast  
-- reduced-motion preferences  
-- non-color-only status cues  
-- clear, literal alternatives to metaphorical copy  
-- sensory-sensitive interaction patterns  
-- plain-language explanations of consent and safety tools  
-- **Neurodivergent Mode** second-level accommodations (pace, sensory profile, haptics, language density, overload exits) — device-local, never a public trait  
-
-No user should have to decode a whimsical interface to understand a boundary, warning, or exit.
+1. State machines, fingerprints, HITL bans, dual modes, nuclear grammars are allowed **as externalization**.  
+2. Each new control system must be linked in `TRAUMA_ARCHITECTURE.md` to the fear it serves.  
+3. Infinite control is not infinite safety.  
+4. Simplification is a valid dojo move when honesty says the cage is complete enough.
 
 ---
 
-## 8. Engineering Principles
+## Article IV — Softness is not the enemy
 
-- Prefer readable, explicit code over clever code.  
-- Fail closed on consent, authorization, and privacy.  
-- Minimize collection of intimate data.  
-- Treat safety-critical logic as testable invariants.  
-- Separate vibe compatibility from consent compatibility.  
-- Keep immutable records narrow, private, and purposeful.  
-- Document decisions alongside implementation.  
-- Never place secrets, private user data, or production credentials in source control.  
-- Share domain engines across clients so consent law does not fork.  
-
-A feature is not complete until tests, documentation, accessibility, and failure behavior have been considered.
+1. Softness is strength. Softness is also the wound.  
+2. The dojo does not mock softness or sell it.  
+3. Vulnerability is not engagement fuel.  
+4. I will not build systems that punish me for needing care.
 
 ---
 
-## 9. Community Standards
+## Article V — Privacy of the ritual
 
-Every participant is entitled to dignity, boundaries, privacy, and a complete answer when they say no.
-
-Litmo must prohibit:
-
-- sexual solicitation  
-- coercion or retaliation  
-- harassment  
-- boundary testing  
-- impersonation  
-- discrimination  
-- weaponizing trust or review systems  
-
-Reports involving discomfort require privacy, care, and human judgment. Trust systems must not become public humiliation systems.
-
-Collective safety tools (blocks, reports, holds, bans, appeals) serve community care **without erasing** individual Soft Signal rights.
+1. Intimate data stays local-first and private by default.  
+2. No public safety scores.  
+3. No training spectacle on Soft Signal narratives.  
+4. This is my material; exposure is my choice.
 
 ---
 
-## 10. Ethical AI Principles
+## Article VI — Honesty over polish
 
-AI may assist with writing, matching explanations, accessibility, moderation support, and engineering, but it may not be treated as an authority on consent or personal safety.
-
-AI systems must not:
-
-- infer consent  
-- diagnose users  
-- manipulate vulnerable users  
-- fabricate trust evidence  
-- silently alter boundaries  
-- make final high-stakes moderation decisions without accountable human review  
-- train on private consent content without explicit governance  
-
-Any AI-generated recommendation must remain subordinate to explicit user choice.
+1. Docs tell the truth about purpose.  
+2. Agents document uncertainty; they do not invent legal/clinical approval.  
+3. “Shipped” means externalized and testable — not “ready for strangers’ bodies.”  
+4. CODE_COMMENT_STANDARD remains: explain so future-me is not abandoned by past-me.
 
 ---
 
-## 11. Second-order principles (systems around the person)
+## Article VII — Technical integrity (craft inside the dojo)
 
-### 11.1 Collective safety
-
-Communities need queues, holds, and human review. Individuals keep absolute stop rights. No public safety marketplace.
-
-### 11.2 Living consent language
-
-Touch Language, snapshots, Soft Signal, and continuous consent are one language family — versioned, tested, and dual-party.
-
-### 11.3 Cultural adoption
-
-Litmo spreads grammar and exit, not a single intimacy culture. Localization preserves stop freeness.
-
-### 11.4 Institutional non-capture
-
-Partnerships must not convert Litmo into compulsory wellness, workplace monitoring, or compulsory “consent theater.”
+1. `main` stays coherent.  
+2. No secrets in the repo.  
+3. Fail closed on consent and stop paths.  
+4. Tests for safety-critical logic where practical.  
+5. Craft is respect for the ritual object — not a product launch checklist.
 
 ---
 
-## 12. Third-order principles (civilizational horizon)
+## Article VIII — Agents and collaborators
 
-### 12.1 Cultural literacy over time-on-app
-
-Success over decades is people speaking boundaries more clearly offline.
-
-### 12.2 Intergenerational duty
-
-Designs that teach the next generation that silence is yes, or that stop is shameful, are unconstitutional.
-
-### 12.3 Resistance to engagement capture
-
-Isolation must not be monetized as product-market fit.
-
-### 12.4 Continuity beyond ownership
-
-Consent data obligations outlive growth narratives, acquisitions, and pivots.
-
-### 12.5 Vision 2030
-
-Strategic aspiration is documented in [`docs/philosophy/VISION_2030.md`](docs/philosophy/VISION_2030.md). Strategy is subordinate to this Constitution.
+1. Read manifesto + dojo guidelines before major work.  
+2. Do not reintroduce product-first framing without explicit human request.  
+3. Prefer trauma-architecture honesty when adding systems.  
+4. Responsibility for what remains mine.
 
 ---
 
-## 13. The Founder Test
+## Article IX — The burn
 
-Before shipping a meaningful feature, ask:
-
-- Does this make users safer or merely more engaged?  
-- Does this preserve dignity?  
-- Would we still build it if it reduced retention?  
-- Does it encourage authentic connection rather than dependency?  
-- Can a user say no easily and without punishment?  
-- Are we representing uncertainty honestly?  
-- Would we be comfortable explaining this design publicly to users affected by it?  
-- Would we still be proud of this if it defined consent culture for fifty years?  
-
-If the answer reveals a conflict with this Constitution, the feature does not ship as designed.
+1. Completeness is defined by visibility of defenses, not feature count.  
+2. When I can see the pattern without needing another subsystem, the dojo may end.  
+3. Burning (archive, delete, fire, walk away) is graduation.  
+4. Nothing in this Constitution forbids release.
 
 ---
 
-## 14. Amendment process
+## Decision test (dojo)
 
-Changes to this Constitution require:
+Before adding work, answer:
 
-1. Explicit founder (or designated steward) approval for Class C structural changes.  
-2. A documented rationale and impact statement (what strengthens, weakens, or differs).  
-3. Synchronized update of `docs/LITMO_CONSTITUTION.md`, enforcement map, and machine version when meaning is enforceable.  
-4. No unrelated implementation smuggled into the same amendment.  
+1. What fear does this soothe?  
+2. Am I externalizing or avoiding?  
+3. Does Soft Signal stay free?  
+4. Does this pretend to be a product?  
+5. Could I name this in `TRAUMA_ARCHITECTURE.md`?  
+6. Does this bring me closer to a burnable, honest artifact?
 
-Core protections concerning explicit consent, revocability, private-by-default data, user agency, Soft Signal freeness, and honest representation may not be weakened merely to improve growth, retention, monetization, or implementation convenience.
-
-Full process: **Article Amendment** in `docs/LITMO_CONSTITUTION.md`.
+A lie blocks the work.
 
 ---
 
-## 15. Decision Rule
+## Precedence
 
-When two choices conflict, choose the one that better protects user dignity, consent, privacy, accessibility, and long-term trust — even when it slows development or reduces growth.
+This Constitution (v3-exorcism) outranks marketing, roadmaps, and product pitch residue.
 
-When culture, market, or model pressure conflicts with this Constitution, **the Constitution wins** until intentionally amended.
+Historical product constitution (`docs/LITMO_CONSTITUTION.md`) remains as **technical residue** of the control language — still useful as detailed safety law, subordinated to the sacred purpose above.
+
+---
+
+> **This is a private exorcism artifact, not a product.**

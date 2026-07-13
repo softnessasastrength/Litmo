@@ -1,14 +1,23 @@
 # Current Project State
 
+**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**  
+Primary framing: Trauma-to-Code Exorcism Dojo — [`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md) · [`DOJO_GUIDELINES.md`](DOJO_GUIDELINES.md) · [`TRAUMA_ARCHITECTURE.md`](TRAUMA_ARCHITECTURE.md).
+
 > Durable handoff for humans and coding agents. Update this file before stopping work for any reason.
+
+## Sacred framing (overrides product narrative)
+
+- **This is a private exorcism artifact, not a product.**
+- Primary: Trauma-to-Code Exorcism Dojo — `docs/EXORCISM_MANIFESTO.md`, `docs/DOJO_GUIDELINES.md`, `docs/TRAUMA_ARCHITECTURE.md`
+- Constitution: `litmo-constitution-v3-exorcism` (root `CONSTITUTION.md`)
 
 ## Active milestone
 
-- **Name:** SAFETY-OPS-001 — Recommended private-alpha safety-operations foundation
-- **Status:** active; founder selected recommended defaults 2026-07-13; external review blockers remain
+- **Name:** SAFETY-OPS-001 / dojo externalization (engineering may continue as craft)
+- **Status:** technical residue of control systems; framing is dojo, not private alpha product
 - **Branch:** `main`
-- **Latest swarm:** NUCLEAR-001 six-agent activation 2026-07-13 — Living Constitution enforceable by design; see `docs/NUCLEAR_SWARM.md`
-- **Constitution:** `litmo-constitution-v2` — living consent language, Articles XI–XV, Vision 2030 (`docs/philosophy/VISION_2030.md`)
+- **Latest swarm:** NUCLEAR-001 — Living Constitution; reframed under Exorcism Dojo 2026-07-13
+- **Constitution:** v3-exorcism sacred purpose + historical technical twin `docs/LITMO_CONSTITUTION.md`
 
 ## Completed major product streams (on main)
 

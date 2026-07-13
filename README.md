@@ -4,19 +4,9 @@
 
 # Litmo
 
-### Touch is not a transaction — it is a language.
+### A private Trauma-to-Code Exorcism Dojo
 
-**A consent-centered, trauma-informed platform for safe, non-sexual, platonic physical connection between consenting adults.**
-
-<br />
-
-[**Why Litmo**](#why-litmo) · [**Core experience**](#the-core-experience) · [**Safety**](#safety-is-product-logic) · [**Status**](#where-we-are) · [**Try the demo**](#try-it)
-
-<br />
-
-```text
-  soft presence  ·  explicit consent  ·  easy exits  ·  no scores
-```
+**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**
 
 <br />
 
@@ -24,234 +14,169 @@
 
 ---
 
-## Why Litmo
+## What this actually is
 
-Loneliness is not only in the mind. It lives in the body too.
+I am not primarily building an app for other people’s consent.
 
-Adults can go months — or years — without safe, affirming platonic touch. Not because they do not need it, but because we never built a shared grammar for asking for it without confusion, coercion, or shame.
+I am externalizing my trauma responses around **safety, control, touch, consent, ambiguity, human connection, and softness** into a complete, visible systems artifact — so I can finally *see* them, document them, and one day burn the ritual when it has done its work.
 
-Dating apps optimize for engagement. Clinical tools are not social infrastructure. “Just hug someone” is not a safety design.
-
-**Litmo exists to protect the language of touch** — not to sell it, score it, or turn it into a game.
-
-| Litmo is | Litmo is not |
+| Primary purpose | Not the primary purpose |
 | --- | --- |
-| Consent infrastructure for platonic touch | A dating or hookup app |
-| Explicit boundaries before bodies meet | Therapy or clinical care |
-| Session-specific, revocable agreement | Emergency or crisis services |
-| Soft stops without explanation | A public safety score |
-| Built for adults 18+ only | A product for minors |
+| Get defenses out of my body into code/docs | Ship a consumer product |
+| Radical honesty about over-engineering as control | Market “safety” as a brand |
+| A dojo for practice and seeing | A startup narrative |
+| An artifact I can complete and release | Infinite roadmap |
 
-> **Litmo is not trying to optimize touch. It is trying to protect it.**
+> Touch is not a transaction — it is a language.  
+> This repo is the dictionary of my control language, written loud enough to hear.
 
-Read the [Founding Thesis](docs/philosophy/00_Founding_Thesis.md) if you want the full human argument.
+**Read first:**
+
+1. [`docs/EXORCISM_MANIFESTO.md`](docs/EXORCISM_MANIFESTO.md)  
+2. [`docs/DOJO_GUIDELINES.md`](docs/DOJO_GUIDELINES.md)  
+3. [`docs/TRAUMA_ARCHITECTURE.md`](docs/TRAUMA_ARCHITECTURE.md)  
 
 ---
 
-## The core experience
+## Why it still looks like a product
 
-A calm path from self-knowledge to mutual confirmation — and always an exit.
+Trauma does not always look like collapse.
+
+Sometimes it looks like:
+
+- dual-seal consent snapshots  
+- Soft Signal kill paths on phone and Watch  
+- nuclear state machines  
+- fail-closed everything  
+- constitutions for fifty years  
+- haptic grammars  
+- HITL moderation  
+
+Those systems are real engineering. They are also **visible manifestations of my need to never again be trapped, assumed upon, or soft without armor**.
+
+The technical craft remains rigorous. The *framing* is no longer “we’re shipping a platform.” The framing is: **exorcism through architecture**.
+
+---
+
+## Dojo map (systems as symptoms)
+
+| System | Trauma it externalizes (summary) |
+| --- | --- |
+| Consent engine / dual seal | Fear of assumption and sticky prior yes |
+| Soft Signal / offline stop | Need to leave without negotiating with a trap |
+| Continuous / nuclear lifecycle | Hypervigilance formalized |
+| Touch Language | Body vocabulary when freeze steals words |
+| Haptics / Watch | Controlled co-regulation without full human risk |
+| Safety ops / bans | Need for a just-world machine |
+| ND Mode | Finally admitting volume knobs exist |
+| Constitution / docs | Freezing morality so I don’t improvise under flood |
+
+Full map: [`docs/TRAUMA_ARCHITECTURE.md`](docs/TRAUMA_ARCHITECTURE.md).
+
+---
+
+## Working here
+
+Follow [`docs/DOJO_GUIDELINES.md`](docs/DOJO_GUIDELINES.md).
+
+- Radical honesty  
+- No product theater  
+- Name the fear when adding a subsystem  
+- Softness remains sacred; unconscious control does not  
+- Agents must not reframe this as a consumer product without instruction  
+
+---
+
+## Technical reality (still here)
+
+The codebase is a monorepo (Expo app, shared domain, Supabase, macOS, Watch scaffold). It still runs. Tests still matter. Secrets still must never be committed.
+
+That is **craft inside the dojo**, not a claim that this is a market product.
+
+Setup and commands remain below for the human/agent who needs to run the machine while practicing.
+
+---
+
+## Why Litmo (old product story — retained as residue)
+
+The product language that used to lead this README is not deleted from history; it is **relegated**. It described a real longing: adults lack grammar for platonic touch. That longing is real. It is no longer the **primary sacred purpose** of this repository.
+
+| Residue claim | Dojo truth |
+| --- | --- |
+| Consent infrastructure for others | Infrastructure for *seeing my defenses* |
+| Protect the language of touch | Protect myself by building a language cage I can finally inspect |
+| Soft Signal for users | Soft Signal as my non-negotiable exit fantasy made real |
+
+---
+
+## The core experience (as ritual, not funnel)
 
 ```text
-Welcome
-  → Vibe (social weather, never consent)
-  → Touch Language (what feels okay on your body)
-  → Learn (short lived lessons)
-  → Discover / Nearby / Careful connect
-  → Consent Snapshot (both people affirm the same map)
-  → Active session
-  → Soft Signal or End together
-  → Private wrap-up + trust history
+Welcome (enter the dojo)
+  → Name the body (Touch Language)
+  → Dual seal (prove both meant this, now)
+  → Session (practice presence under rules)
+  → Soft Signal (leave without performance)
+  → Wrap-up (optional; skip is success)
+  → Docs (see what you built and why)
 ```
-
-### Touch Language
-
-Name pressure, duration, body zones, environment, and nervous-system context **before** anyone is near you. Private notes stay private.
-
-### Consent Snapshot
-
-Both people review the **exact intersection** of current boundaries. A match, a vibe, a quiz result, or a prior session is **never** consent.
 
 ### Soft Signal
 
-End immediately. No explanation. No penalty. No social negotiation. Soft Signal is product logic — not decorative copy.
+End immediately. No explanation. No penalty.  
+In the dojo: the purest externalization of **escape without fawning**.
 
-### Guided Learning
+### Consent Snapshot
 
-Short, trauma-informed modules on consent language, Soft Signal, blocking, and trust signals. Calm pace. Device-local progress. Optional Neurodivergent Mode.
-
-### Quizzes & partner weather
-
-Self-understanding only. Partner comparison needs **four separate consents** and optional E2E encryption. Weather is never a safety score and never activates a session.
-
-### Nearby, NFC, QR
-
-Opt-in proximity radar, Multipeer share, and NFC/QR careful-connect — with **explicit accept after every scan**. Identity is gated. Radio is off by default.
+Both parties affirm the same map.  
+In the dojo: the purest externalization of **never again sticky assumed yes**.
 
 ---
 
-## Safety is product logic
+## Safety is product logic — and trauma logic
 
-These are not slogans. They are enforced in flows, data, and authorization.
+Safety here is dual:
 
-| Principle | What it means in practice |
-| --- | --- |
-| Consent is active | Specific person, moment, and map — never inferred |
-| Strictest boundary wins | Overlap is the only permitted set |
-| Mutual confirmation | Both must affirm the same immutable snapshot |
-| Easy exits | Soft Signal and withdrawal beat “continue” |
-| Privacy by default | Sensitive data is local or encrypted; minimize collection |
-| Trust ≠ safety | History can inform; it never certifies a person |
-| Fail closed | Missing, stale, or contradictory data blocks progress |
-| Human review | Harm and coercion are not auto-punished by a model |
+1. **Technical:** fail closed, no public scores, Soft Signal free  
+2. **Exorcism:** the safety machinery is itself the material of practice  
 
-**Passkeys first** for real accounts (Face ID / Touch ID). Device binding gates real consent confirmation. Demo mode needs no account.
-
-Deep dives: [Consent Flow](docs/CONSENT_FLOW.md) · [Trust System](docs/TRUST_SYSTEM.md) · [Authentication](docs/AUTHENTICATION.md) · [Constitution](docs/LITMO_CONSTITUTION.md)
-
----
-
-## Who this is for
-
-- Adults who want **platonic** physical connection with clarity  
-- Trauma survivors and neurodivergent people who need **pace, language, and exits**  
-- Builders who care about **consent systems**, not engagement hacks  
-- Reviewers evaluating a **private-alpha foundation** honestly  
-
-If you are looking for a dating product, this is not it.  
-If you are looking for crisis care, please contact local emergency services — Litmo does not provide them.
+Do not confuse the two. Do not market the second as the first.
 
 ---
 
 ## Where we are
 
-<div align="center">
+Active engineering may continue. Framing is **dojo / artifact**.
 
-| | |
-| :---: | :--- |
-| **Status** | Advanced **private-beta foundation** |
-| **Ready for** | Local demo, engineering review, invite-only alpha prep |
-| **Not ready for** | Stranger meetings, public launch, production “safe” claims |
-
-</div>
-
-### Built
-
-- Phone-visible vertical slice (Expo Go demo + iOS dev build path)  
-- Consent engine, session lifecycle, Soft Signal, private wrap-ups  
-- Passkey-first auth, device binding, sensitive-data vault  
-- Chapter 5 safety surfaces + private-alpha ops foundations  
-- Quizzes, Guided Learning, Neurodivergent Mode  
-- Nearby share, proximity layer, NFC/QR careful-connect  
-- MPL-2.0 license; documented ADRs and known limits  
-
-### Still honest gaps
-
-- Not production-ready for stranger discovery  
-- Human recovery without a passkey is intentionally locked  
-- Some physical accessibility and crypto review remain open  
-- Destructive deletion and full legal/privacy claims stay blocked until named owners  
-
-> **Do not use the current build to arrange real-world sessions with strangers.**
-
-Handoff truth: [`CURRENT_STATE.md`](CURRENT_STATE.md) · Limits: [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md)
+See `CURRENT_STATE.md`, `TASKS.md`, and the manifesto for orientation.
 
 ---
 
-## Try it
-
-### Demo in minutes (no Docker)
+## Try it (if you need the machine running)
 
 ```bash
-npm ci
-npm run mobile
+# from repo root — craft, not product launch
+npm install
+npm run mobile   # or project-specific demo path
 ```
 
-On your phone: **Expo Go** → scan → **Explore the prototype** → **Enter the fictional demo**.
-
-Fictional adults only. No real matching. Neurodivergent Mode on by default in demo.
-
-### Real accounts (local stack)
-
-```bash
-npm ci
-npm run db:start && npm run db:reset
-cp app/.env.example app/.env   # paste URL + anon key from supabase status
-npm run dev
-```
-
-Passkeys need an **iOS development build** (not Expo Go). See [Local Development](docs/LOCAL_DEVELOPMENT.md) and [Authentication](docs/AUTHENTICATION.md).
-
-### Verify
-
-```bash
-npm run state:check && npm run lint && npm run typecheck && npm test
-```
+Demo mode is practice simulation. It is not “users.”
 
 ---
 
-## Under the hood
+## License / ownership
 
-| Layer | Stack |
-| --- | --- |
-| Mobile | React Native · Expo 55 · TypeScript · Expo Router |
-| Auth | Supabase Auth WebAuthn · native passkeys · Face ID lock |
-| Domain | Shared consent & session rules (`shared/`) |
-| Data | Supabase Postgres · RLS · Realtime · Edge ceremony ops |
-| Safety | Soft Signal, blocks, reports, rate limits, device binding |
+Personal ritual artifact. Treat access accordingly.  
+I am allowed to burn this when the work is done.
+
+---
+
+## Notice
 
 ```text
-Litmo/
-├── app/         Mobile client
-├── backend/     Express + domain services
-├── shared/      Canonical consent / session logic
-├── supabase/    Migrations, RLS, Edge functions, pgTAP
-├── docs/        Product, safety, architecture, ADRs
-└── documents/   Governance & design philosophy
+╔══════════════════════════════════════════════════════════╗
+║  THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.   ║
+║  Trauma-to-Code Exorcism Dojo. Radical honesty.        ║
+║  docs/EXORCISM_MANIFESTO.md · DOJO_GUIDELINES.md       ║
+╚══════════════════════════════════════════════════════════╝
 ```
-
-More: [Architecture](docs/ARCHITECTURE.md) · [Security](docs/SECURITY_MODEL.md) · [Doc map](docs/DOCUMENTATION_MAP.md)
-
----
-
-## Philosophy order
-
-```text
-Founding Thesis  →  Constitution  →  Product  →  Architecture  →  Code
-```
-
-Convenience never outranks consent. Growth never outranks privacy. Code never silently invents safety claims.
-
----
-
-## Contribute
-
-We welcome careful work. We do not welcome dark patterns, engagement traps, or “just ship it” on consent surfaces.
-
-1. Read the [Founding Thesis](docs/philosophy/00_Founding_Thesis.md) and [Constitution](docs/LITMO_CONSTITUTION.md)  
-2. Check [`CURRENT_STATE.md`](CURRENT_STATE.md) and [`TASKS.md`](TASKS.md)  
-3. Prefer small, tested, documented changes  
-
-> **Safety logic is product logic, not decorative copy.**
-
----
-
-## License
-
-Except where noted, Litmo is **[MPL-2.0](LICENSE)** — file-level copyleft. Licensing does not waive safety requirements or grant trademarks. See [ADR 0044](docs/adr/0044-mpl-2.0-project-license.md).
-
----
-
-<div align="center">
-
-<br />
-
-**Softness as a strength.**
-
-*Built for consenting adults. Non-sexual. Platonic. Specific. Revocable.*
-
-[Thesis](docs/philosophy/00_Founding_Thesis.md) · [Consent](docs/CONSENT_FLOW.md) · [Auth](docs/AUTHENTICATION.md) · [Status](CURRENT_STATE.md) · [Limitations](docs/KNOWN_LIMITATIONS.md)
-
-<br />
-
-</div>

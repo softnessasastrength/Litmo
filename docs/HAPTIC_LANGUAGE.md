@@ -1,5 +1,8 @@
 # Haptic Language Specification – Litmo v0.1 (Nuclear Autistic Edition)
 
+**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**  
+Primary framing: Trauma-to-Code Exorcism Dojo — [`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md) · [`DOJO_GUIDELINES.md`](DOJO_GUIDELINES.md) · [`TRAUMA_ARCHITECTURE.md`](TRAUMA_ARCHITECTURE.md).
+
 **Status:** pure domain shipped (phone nuclear + **Watch / shared domain**)  
 **Version:** `0.2-watch` · ADR 0063 · **ADR 0064**  
 **Code:**  

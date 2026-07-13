@@ -1,5 +1,8 @@
 # Trauma-informed safety system
 
+**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**  
+Primary framing: Trauma-to-Code Exorcism Dojo — [`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md) · [`DOJO_GUIDELINES.md`](DOJO_GUIDELINES.md) · [`TRAUMA_ARCHITECTURE.md`](TRAUMA_ARCHITECTURE.md).
+
 **Status:** implemented in mobile app (local-first; Soft Signal remains stop authority)  
 **ADR:** [0059-trauma-informed-safety-system.md](adr/0059-trauma-informed-safety-system.md)  
 **Routes:** `/safety` · `/safety/panic-cover` · `/safety/verify` · `/safety/reflection` · active session · wrap-up

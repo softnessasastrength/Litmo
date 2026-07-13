@@ -1,5 +1,8 @@
 # Task Ledger
 
+**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**  
+Primary framing: Trauma-to-Code Exorcism Dojo — [`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md) · [`DOJO_GUIDELINES.md`](DOJO_GUIDELINES.md) · [`TRAUMA_ARCHITECTURE.md`](TRAUMA_ARCHITECTURE.md).
+
 Allowed statuses: `pending`, `active`, `blocked`, `completed`, `abandoned`.
 
 Only one implementation task should normally be `active`. Every status change must include a short note and verification evidence where applicable.

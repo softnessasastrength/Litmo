@@ -1,5 +1,8 @@
 # Living Constitution — enforcement by design
 
+**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**  
+Primary framing: Trauma-to-Code Exorcism Dojo — [`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md) · [`DOJO_GUIDELINES.md`](DOJO_GUIDELINES.md) · [`TRAUMA_ARCHITECTURE.md`](TRAUMA_ARCHITECTURE.md).
+
 **Status:** active engineering map  
 **Constitution version:** `litmo-constitution-v2`  
 **Spiritual source:** [`LITMO_CONSTITUTION.md`](LITMO_CONSTITUTION.md) · root [`CONSTITUTION.md`](../CONSTITUTION.md)  

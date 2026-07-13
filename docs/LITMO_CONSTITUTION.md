@@ -1,5 +1,8 @@
 # The Litmo Constitution
 
+**THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT.**  
+Primary framing: Trauma-to-Code Exorcism Dojo — [`EXORCISM_MANIFESTO.md`](EXORCISM_MANIFESTO.md) · [`DOJO_GUIDELINES.md`](DOJO_GUIDELINES.md) · [`TRAUMA_ARCHITECTURE.md`](TRAUMA_ARCHITECTURE.md).
+
 **Version:** `litmo-constitution-v2`  
 **Status:** binding product and ethical authority  
 **Spiritual companions:** root [`CONSTITUTION.md`](../CONSTITUTION.md) · [`philosophy/00_Founding_Thesis.md`](philosophy/00_Founding_Thesis.md) · [`philosophy/VISION_2030.md`](philosophy/VISION_2030.md)  
