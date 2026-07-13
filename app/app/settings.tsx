@@ -170,6 +170,37 @@ function SettingsContent() {
         label="Passkeys and registered devices"
         onPress={() => router.push("/security/devices" as never)}
       />
+
+      <Body>Privacy & data protection</Body>
+      <Body muted>
+        Privacy by design, transparent notices, export, and erasure. Sensitive
+        touch and consent data are prioritized. See docs/GDPR.md.
+      </Body>
+      <Button
+        variant="secondary"
+        label="Privacy Policy"
+        onPress={() => router.push("/privacy/policy" as never)}
+        accessibilityHint="Opens the in-app privacy notice"
+      />
+      <Button
+        variant="secondary"
+        label="Data protection & rights"
+        onPress={() => router.push("/privacy/data-protection" as never)}
+        accessibilityHint="Opens GDPR-aligned rights and sensitive-data explanation"
+      />
+      <Button
+        variant="secondary"
+        label="Export my data"
+        onPress={() => router.push("/security/data-export" as never)}
+        accessibilityHint="Generate and share a private structured copy of your Litmo data"
+      />
+      <Button
+        variant="secondary"
+        label="Delete or wipe my data"
+        onPress={() => router.push("/privacy/delete-data" as never)}
+        accessibilityHint="Wipe this device and request account erasure"
+      />
+
       {status === "authenticated" ? (
         <>
           <Button
@@ -177,12 +208,6 @@ function SettingsContent() {
             label="Private-alpha access"
             onPress={() => router.push("/security/private-alpha" as never)}
             accessibilityHint="Check admission or redeem a private-alpha invitation"
-          />
-          <Button
-            variant="secondary"
-            label="Export my data"
-            onPress={() => router.push("/security/data-export" as never)}
-            accessibilityHint="Generate and share a private structured copy of your Litmo data"
           />
           <Button
             variant="secondary"

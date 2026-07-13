@@ -45,6 +45,18 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 ## Completed
 
+### GDPR-001 — Privacy by design, export/erase, notices
+
+- **Status:** completed (engineering); legal public-launch claim still blocked
+- **Result:** `docs/GDPR.md`; Privacy Policy + Data Protection + Delete/wipe
+  screens; Settings links; export merges server + local inventory; migration
+  039 privacy notice acceptances + erasure request queue; local data wipe.
+  Prioritizes touch profiles and consent snapshots in policy and export notes.
+- **Verification:** typecheck; unit suite green.
+- **Boundary:** no automatic `auth.users` hard-delete; controller/DPO contacts
+  placeholders until legal review; not a claim of certified GDPR readiness.
+- **Related:** DATA_CLASSIFICATION, PRIVACY_POLICY_DRAFT, SAFETY-OPS blockers.
+
 ### QUIZ-004 — Vibe Quiz review (short/deep, partner, E2E stub, ND/demo)
 
 - **Status:** completed

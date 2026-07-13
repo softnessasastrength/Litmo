@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-07-13 — GDPR alignment (privacy by design)
+
+### Summary
+
+Engineering alignment for maximum practical GDPR compliance: `docs/GDPR.md`,
+in-app Privacy Policy and Data Protection screens, enhanced portability export
+(server + device-local inventory), device wipe, erasure-request queue (no
+silent hard-delete), privacy-notice acceptance, Settings entry points. Sensitive
+touch profiles and Consent Snapshots prioritized in notices and export metadata.
+
+### Migrations
+
+- `039_gdpr_privacy_and_erasure.sql` — notice acceptances + erasure requests.
+
+### Honest limits
+
+- Full automated account destruction remains blocked pending legal/ops owners.
+
 ## 2026-07-13 — Accessibility audit (Vibe Quiz + app)
 
 ### Summary

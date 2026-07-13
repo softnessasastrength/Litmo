@@ -62,6 +62,20 @@
   backup reviewer staffing, and two-person permanent-ban approval remain
   blocked.
 
+## GDPR / privacy tooling
+
+- In-app Privacy Policy, Data Protection, export, and erase/wipe screens exist
+  (`docs/GDPR.md`). They are **engineering alignment**, not certified legal
+  compliance or a finalized public notice.
+- `request_account_erasure` records a **pending queue** only. Complete
+  automated destruction of `auth.users` and all related rows is **not**
+  implemented — blocked until legal/ops name owners (see Agents.md).
+- Device wipe is immediate for known local stores; residual Secure Store keys
+  for ad-hoc ratchet sessions may remain until app uninstall.
+- Export does **not** include E2E private keys or partner plaintext.
+- Controller identity, DPO, EU representative, and supervisory complaint
+  contacts are placeholders until legal review.
+
 ## Neurodivergent Mode
 
 - Preference is **device-local** only (AsyncStorage). It is not synced, not
