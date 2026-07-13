@@ -1,15 +1,15 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T13:00:00-04:00",
+  "updatedAt": "2026-07-13T10:30:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
     "status": "active"
   },
   "git": {
-    "branch": "agent/safety-ops-recommended-foundation",
-    "latestCoherentCommit": "44d27eb1ca7040f949b35be7a0cb46179115ec2b",
+    "branch": "feature/campfire-mode",
+    "latestCoherentCommit": "1ae8180331e8a02926cbeaef298525ca1f0355b8",
     "workingTreeExpectedClean": true
   },
   "verification": {
@@ -26,7 +26,7 @@
     ],
     "failures": []
   },
-  "nextAction": "Review and merge PR #66, then PR #67. SAFETY-OPS-001 remains active and externally blocked on qualified review and a named independent backup reviewer.",
+  "nextAction": "Review and merge clean mobile-controls PR #72, then review the separate local-only Campfire Mode PR. SAFETY-OPS-001 remains active and externally blocked on qualified review and a named independent backup reviewer.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
@@ -36,12 +36,15 @@
     "Invitation membership is admission control, not identity verification, proof of safety, or consent.",
     "The routine kill-switch pauses discovery and new requests but intentionally preserves participant safety controls and does not force-end active sessions.",
     "Self export is an engineering portability primitive, not a claim of legally complete data access.",
-    "External TestFlight remains blocked by deletion, hosted staging, AASA, disclosures, independent review, and signed-release evidence."
+    "External TestFlight remains blocked by deletion, hosted staging, AASA, disclosures, independent review, and signed-release evidence.",
+    "Campfire circle readiness is ephemeral local facilitation, not a real group session or multi-person consent record."
   ],
   "notes": [
     "Founder selected the recommended S1-S10 directions on 2026-07-13.",
     "ADR 0042 distinguishes implemented engineering defaults from external-review-dependent policy.",
     "Migration 036 adds invitations, membership gates, matching pause, tombstones, cleanup, and self export.",
-    "Destructive report/case/trust retention and account deletion are deliberately unimplemented pending review."
+    "Destructive report/case/trust retention and account deletion are deliberately unimplemented pending review.",
+    "PR #70 integrated the private-alpha foundation on main; PR #72 contains the clean five-file mobile-controls delta.",
+    "ADR 0043 defines Campfire Mode as three device-local, non-persisted practices with no group matching or server authority."
   ]
 }

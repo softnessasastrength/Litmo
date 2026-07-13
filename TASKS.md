@@ -42,6 +42,18 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 ## Completed
 
+### CAMPFIRE-001 — Local Campfire practice hub
+
+- **Status:** completed
+- **Result:** One local Campfire hub with three explicitly distinct practices:
+  a two-to-eight-person unanimous-readiness circle with immediate reason-free
+  pause, open-ended quiet co-regulation, and a five/ten/twenty-minute digital
+  focus fire. No state is persisted or shared, and no group matching or
+  multi-person Consent Snapshot is implied.
+- **Verification:** pure circle/timer unit tests plus repository CI recorded on
+  the implementation PR.
+- **Related decision:** ADR 0043.
+
 ### LEARN-003 — Blocking, reporting, and trust-signal learning modules
 
 - **Status:** completed
