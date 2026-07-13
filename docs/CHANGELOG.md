@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-07-13 — Hardware haptics v4: intensity sliders + sensory preference sync
+
+### Summary
+
+Expanded **`docs/HARDWARE/HAPTICS.md`** to **v4.0**: global **0–100% intensity
+slider** (Settings + quick menu), optional **per-pattern intensity** advanced
+sliders, Sensory-Friendly auto scale + favor visuals, `effectiveIntensity`
+math, persistence across sessions, and **self-only sync** of sensory device
+preferences as a sibling of Touch Language profile data (never consent
+boundaries / never partner-visible). Patterns retain Primary / Gentle / full
+Visual Fallback specs.
+
+### User-visible impact
+
+- None on current phone app (hardware vision).
+
+### Developer impact
+
+- `docs/HARDWARE/HAPTICS.md` v4 control surface + preference store.
+
 ## 2026-07-13 — Hardware haptics v3: full visual fallbacks + multi-modal Soft Edge
 
 ### Summary

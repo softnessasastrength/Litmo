@@ -23,9 +23,10 @@ Soft Signal must be instant, unmistakable, and emotionally safe: a clear stop, n
 2. Aim for **device-wide distributed** warm haptics (palm-coupled field; multi-actuator in phase when present).
 3. Keep **semantic event names** shared with phone clients; richer waveforms live on device firmware only.
 4. **Soft Signal (critical):** long, smooth **descending warm pulse** that fades (freedom/release) — not an alarm. Gentle Mode: extremely subtle slow low-amplitude fade. Start latency ≤ 30 ms; state commit before playback.
-5. **Every pattern** has **Gentle / Sensory-Friendly** haptic **and a full Visual Fallback**. Soft Signal visual always fires on stop. Sensory-Friendly Mode is **one-tap from anywhere**. Automatic visual fallback when haptics are off or failed; optional sound; reduced-motion rules.
-6. Forbid ERM-primary Soft Signal; forbid engagement, secret, and interpersonal-touch-imitation haptics.
-7. Full multi-modal library is specified in **`docs/HARDWARE/HAPTICS.md`** v3+ (canonical).
+5. **Every pattern** has **Gentle / Sensory-Friendly** haptic **and a full Visual Fallback**. Soft Signal visual always fires on stop. Sensory-Friendly Mode is **one-tap from anywhere** and lowers intensity while favoring visuals.
+6. **Global haptic intensity 0–100%** (Settings + quick menu) and optional **per-pattern intensity** (advanced); preferences persist across sessions and sync as **self-only sensory device preferences** (sibling of Touch Language profile data — never consent boundaries, never partner-visible).
+7. Forbid ERM-primary Soft Signal; forbid engagement, secret, and interpersonal-touch-imitation haptics.
+8. Full multi-modal library + slider math is specified in **`docs/HARDWARE/HAPTICS.md`** v4+ (canonical).
 
 ## Alternatives considered
 
