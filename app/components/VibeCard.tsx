@@ -4,13 +4,27 @@ import { fonts, radius, type AppColors } from "../theme";
 import { Pill } from "./ui";
 import { useThemedStyles } from "../hooks/useThemedStyles";
 
-export function VibeCard({ archetypeId }: { archetypeId: ArchetypeId }) {
+type VibeCardProps = {
+  archetypeId: ArchetypeId;
+  secondaryId?: ArchetypeId | null;
+  blendLabel?: string | null;
+  showHowYouMightShowUp?: boolean;
+};
+
+export function VibeCard({
+  archetypeId,
+  secondaryId = null,
+  blendLabel = null,
+  showHowYouMightShowUp = false,
+}: VibeCardProps) {
   const styles = useThemedStyles(makeStyles);
   const vibe = archetypes[archetypeId];
   return (
     <View
       accessible
-      accessibilityLabel={`${vibe.name}. ${vibe.tagline}`}
+      accessibilityLabel={`${vibe.name}. ${vibe.tagline}${
+        blendLabel ? `. ${blendLabel}` : ""
+      }`}
       style={[styles.card, { backgroundColor: vibe.softColor }]}
     >
       <View style={styles.top}>
@@ -22,17 +36,31 @@ export function VibeCard({ archetypeId }: { archetypeId: ArchetypeId }) {
       <Text style={styles.eyebrow}>{vibe.eyebrow}</Text>
       <Text style={styles.name}>{vibe.name}</Text>
       <Text style={styles.tagline}>{vibe.tagline}</Text>
+      {blendLabel ? <Text style={styles.blend}>{blendLabel}</Text> : null}
+      {secondaryId && !blendLabel ? (
+        <Text style={styles.blend}>
+          Also in the mix: {archetypes[secondaryId].name.replace(/^The\s+/, "")}
+        </Text>
+      ) : null}
       <View style={styles.traits}>
         {vibe.traits.map((trait) => (
           <Pill key={trait}>{trait}</Pill>
         ))}
       </View>
+      {showHowYouMightShowUp
+        ? vibe.howYouMightShowUp.map((line) => (
+            <Text key={line} style={styles.showUp}>
+              · {line}
+            </Text>
+          ))
+        : null}
       <Text style={styles.note}>
         A conversation starter, never the whole story.
       </Text>
     </View>
   );
 }
+
 function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
   return {
     card: {
@@ -75,7 +103,15 @@ function makeStyles(colors: AppColors, shadow: Record<string, unknown> = {}) {
       marginTop: 7,
     },
     tagline: { color: colors.ink, fontSize: 17, lineHeight: 25, marginTop: 8 },
+    blend: {
+      color: colors.plum,
+      fontSize: 14,
+      lineHeight: 20,
+      fontWeight: "600",
+      marginTop: 8,
+    },
     traits: { flexDirection: "row", flexWrap: "wrap", gap: 7, marginTop: 18 },
+    showUp: { color: colors.ink, fontSize: 14, lineHeight: 20, marginTop: 6 },
     note: { color: colors.muted, fontSize: 12, marginTop: 20 },
   };
 }
