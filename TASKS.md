@@ -15,8 +15,8 @@ Only one implementation task should normally be `active`. Every status change mu
 - **Progress 2026-07-13 (agent):** drafted `docs/SAFETY_OPS_DESIGN.md` — a ground-truth inventory of what Chapter 5 already built (blocking, reports, moderation queue, restrictions, appeals, rate limits, trust events, age gate) plus proposals for the still-unbuilt pieces (invite codes, retention/deletion/export framed around GDPR-style data-rights principles as design philosophy, beta kill-switch, escalation ladder). Explicitly a draft: does not authorize Chapter 6 implementation, does not constitute legal review, and flags several open questions (retention windows, jurisdiction exclusions, who staffs escalation beyond the founder) that only the founder/legal review can resolve. Still **pending** — this task isn't done until that review happens.
 - **Decision preparation 2026-07-13:** `docs/SAFETY_OPS_FOUNDER_DECISIONS.md` converts the draft's open questions into ten explicit choices with recommended private-alpha defaults, alternatives, required reviewers, and a completion gate. This is decision preparation only: SAFETY-OPS-001 remains `pending`, and Chapter 6 implementation is not authorized.
 - **Implementation progress 2026-07-13:** founder selected the recommended defaults. ADR 0042 and migration 036 implement hashed single-use seven-day staff invitations, membership gates, a scoped matching pause, 90-day minimal unblock tombstones, non-destructive cleanup, and self export, with pgTAP coverage. External-review and named-reviewer items remain blockers, not inferred approvals.
-- **Verification:** PR #67 passes Project State, lint, typecheck, unit tests, build, database reset/lint, pgTAP (including private-alpha 17/17), and integration 5/5.
-- **Next action:** merge PR #66 then #67; then complete only operational/external-review items that have real named owners.
+- **Verification:** The foundation and mobile controls are merged through PR #72; Project State, lint, typecheck, unit tests, build, database reset/lint, pgTAP (including private-alpha 17/17), and integration 5/5 passed on the reviewed implementation PRs.
+- **Next action:** complete only operational/external-review items that have real named owners. Destructive retention, deletion, jurisdiction policy, external referral, backup staffing, and two-person permanent bans remain blocked.
 
 ## Pending
 
@@ -35,6 +35,7 @@ Only one implementation task should normally be `active`. Every status change mu
 - **Owner:** every contributor and coding agent
 - **Goal:** Treat documentation as part of each implementation unit.
 - **Acceptance criteria:** update current state, task ledger, changelog, known limitations, architecture, ADRs, and release docs whenever behavior changes.
+- **Progress 2026-07-13:** founder selected MPL-2.0. ADR 0044, the canonical `LICENSE`, package metadata, and public license copy record the file-level copyleft decision. Contributor attestation, trademark policy, third-party notice audit, and qualified legal review remain follow-up governance work.
 
 ## Blocked
 
