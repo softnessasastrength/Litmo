@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-07-13 — Hardware device experience design
+
+### Summary
+
+Added `docs/HARDWARE_DEVICE_EXPERIENCE.md`: end-to-end experience design for a
+dedicated Litmo device (Resting home, Nearby, careful invite, Snapshot review,
+Together, Quiet), Soft Signal primacy, careful notifications, and mapping from
+the current phone app. Vision only — not a manufacturing commitment.
+
 ## 2026-07-13 — Auth ceremony Edge ops + device-bound consent
 
 ### Summary
