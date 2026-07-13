@@ -9,21 +9,21 @@
   },
   "git": {
     "branch": "main",
-    "latestCoherentCommit": "e9988a3da2ccf32e96c22273335e3e2e72eb4c96",
+    "latestCoherentCommit": "8ced065",
     "workingTreeExpectedClean": true
   },
   "verification": {
     "status": "passed",
     "commands": [
-      "GitHub Actions macOS Native Build run #8 — pass on merged PR #76 with Xcode 26.5",
-      "LitmoMacCoreTests — 4/4 Campfire invariant tests pass",
-      "Litmo participant app and Litmo Ops — unsigned arm64 compile pass",
-      "Project State, lint, typecheck, unit tests, and build — pass on merged PR #76 head",
-      "Database/integration lane — no database changes in PR #76; merged baseline remains authoritative"
+      "GitHub Actions macOS Native Build run #8 \u2014 pass on merged PR #76 with Xcode 26.5",
+      "LitmoMacCoreTests \u2014 4/4 Campfire invariant tests pass",
+      "Litmo participant app and Litmo Ops \u2014 unsigned arm64 compile pass",
+      "Project State, lint, typecheck, unit tests, and build \u2014 pass on merged PR #76 head",
+      "Database/integration lane \u2014 no database changes in PR #76; merged baseline remains authoritative"
     ],
     "failures": []
   },
-  "nextAction": "Choose the next separately reviewed macOS integration slice or return to governance work. Litmo Ops stays locked until server-backed staff authentication and authorization exist.",
+  "nextAction": "Choose the next separately reviewed macOS integration slice or return to governance work. Litmo Ops stays locked until server-backed staff authentication and authorization exist. ACCESS-001 residual: optional founder VoiceOver smoke.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
@@ -38,13 +38,15 @@
     "Campfire circle readiness is ephemeral local facilitation, not a real group session or multi-person consent record.",
     "The hosted Xcode lane is unsigned simulator compilation, not device, entitlement, archive, or TestFlight validation.",
     "The native macOS participant app is local Campfire plus a read-only shell; it is not an active-session controller.",
-    "Litmo Ops is separately bundled but intentionally non-operational until real staff authentication, authorization, audit logging, and API contracts exist."
+    "Litmo Ops is separately bundled but intentionally non-operational until real staff authentication, authorization, audit logging, and API contracts exist.",
+    "ACCESS-001 still requires a physical founder VoiceOver smoke before it can be closed."
   ],
   "notes": [
-    "PRs #72–#75 are merged on main.",
+    "PRs #72\u2013#75 are merged on main.",
     "PR #76 merged and adds native SwiftUI participant/Campfire and separately locked Ops targets under ADR 0045.",
     "macOS Native Build run #2 passed after adding the required generated framework Info.plist.",
     "Unsigned hosted artifacts are inspection builds, not signed or notarized releases.",
-    "Destructive report/case/trust retention and account deletion remain deliberately unimplemented pending review."
+    "Destructive report/case/trust retention and account deletion remain deliberately unimplemented pending review.",
+    "ACCESS-001 2026-07-13: residual work is the optional founder VoiceOver smoke; selector semantics fixes were standardized in app/app/security/moderation.tsx and app/app/settings.tsx."
   ]
 }

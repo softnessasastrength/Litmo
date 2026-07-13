@@ -137,6 +137,8 @@ function ModerationQueueContent() {
             key={value}
             variant={filter === value ? "primary" : "secondary"}
             label={label}
+            accessibilityRole="radio"
+            accessibilityState={{ selected: filter === value }}
             onPress={() => setFilter(value)}
           />
         ))}

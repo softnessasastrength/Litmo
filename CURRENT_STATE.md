@@ -30,7 +30,7 @@
 
 ## Work in progress
 
-SAFETY-OPS-001 remains active. Merged PR #76 is a bounded, founder-authorized platform slice under ADR 0045, not a roadmap promotion: native Litmo provides local Campfire and a read-only participant shell; the separately bundled Litmo Ops target remains locked until real staff authentication and server authorization exist. External-review-dependent destructive retention, deletion, jurisdiction, escalation, and two-person staffing decisions remain blocked.
+SAFETY-OPS-001 remains active. Merged PR #76 is a bounded, founder-authorized platform slice under ADR 0045, not a roadmap promotion: native Litmo provides local Campfire and a read-only participant shell; the separately bundled Litmo Ops target remains locked until real staff authentication and server authorization exist. External-review-dependent destructive retention, deletion, jurisdiction, escalation, and two-person staffing decisions remain blocked. ACCESS-001's deferred semantics fixes (moderation filter selected-state, Settings haptics `Switch`) have been standardized in code; the optional founder VoiceOver smoke is the only remaining item on that task.
 
 ## Priority next work
 
@@ -81,7 +81,7 @@ Do not claim the current integrated `main` has passed every command unless the e
 
 ## Exact next action
 
-PRs #72–#76 are merged on `main`. PR #76 contains the first native macOS participant/Campfire and separately locked Ops foundations. Next: choose a separately reviewed integration slice. Do not treat unsigned artifacts as releases or unlock Ops without server-backed staff authentication and authorization. SAFETY-OPS-001 remains externally blocked on named qualified review and an independent backup reviewer.
+PRs #72–#76 are merged on `main`. PR #76 contains the first native macOS participant/Campfire and separately locked Ops foundations. Next: choose a separately reviewed integration slice. Do not treat unsigned artifacts as releases or unlock Ops without server-backed staff authentication and authorization. SAFETY-OPS-001 remains externally blocked on named qualified review and an independent backup reviewer. Separately, ACCESS-001's only remaining item is the optional founder VoiceOver smoke on physical iPhone.
 
 ## Resume checklist
 

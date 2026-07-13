@@ -18,7 +18,9 @@
 
 - `app/components/ui.tsx` — Button, Choice, Title/Eyebrow headers  
 - `app/app/session/active.tsx` — Soft Signal a11y label/hint order  
-- `app/app/match/consent-snapshot.tsx` — boundary rows, decision group, withdraw  
+- `app/app/match/consent-snapshot.tsx` — boundary rows, decision group, withdraw
+- `app/app/security/moderation.tsx` — queue filters now expose selected state
+- `app/app/settings.tsx` — haptics uses a real `Switch` control instead of a button
 
 ## Founder VoiceOver smoke (optional, 3 minutes)
 

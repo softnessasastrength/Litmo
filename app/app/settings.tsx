@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
-import { Linking } from "react-native";
+import { Linking, Switch, View } from "react-native";
 import { Body, Button, Eyebrow, Screen, Title } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
@@ -20,7 +20,7 @@ export default function SettingsScreen() {
 function SettingsContent() {
   const router = useRouter();
   const { status, signOut } = useAuth();
-  const { scheme, resolvedScheme, cycleScheme } = useTheme();
+  const { scheme, resolvedScheme, cycleScheme, colors } = useTheme();
   const [isStaff, setIsStaff] = useState(false);
   const [hapticsOn, setHapticsOn] = useState(true);
 
@@ -75,20 +75,28 @@ function SettingsContent() {
             ? "Dark mode softens the surface for low light. Safety colors stay distinct; meaning is never color-only."
             : "Light mode is the default cream journal surface. Switch anytime on this device only."}
       </Body>
-      <Button
-        variant="secondary"
-        label={hapticsOn ? "Haptics: on" : "Haptics: off"}
-        onPress={() => {
-          const next = !hapticsOn;
-          setHapticsOn(next);
-          void hapticService.setEnabled(next);
-        }}
-        accessibilityHint="Toggles local haptic feedback. Disabling suppresses all vibration while visible and spoken feedback remain."
-      />
-      <Body muted>
-        Haptics are a local optional vocabulary (presence, attention, confirm,
-        Soft Signal). They never mean another person agreed or is present.
-      </Body>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
+        <View style={{ flex: 1, gap: 6 }}>
+          <Body>{hapticsOn ? "Haptics on" : "Haptics off"}</Body>
+          <Body muted>
+            Haptics are a local optional vocabulary (presence, attention,
+            confirm, Soft Signal). They never mean another person agreed or is
+            present.
+          </Body>
+        </View>
+        <Switch
+          accessibilityLabel="Haptics"
+          accessibilityHint="Disables or enables local haptic feedback. Spoken and visible feedback remain."
+          trackColor={{ false: colors.line, true: colors.mossSoft }}
+          thumbColor={hapticsOn ? colors.moss : colors.white}
+          ios_backgroundColor={colors.line}
+          onValueChange={(next) => {
+            setHapticsOn(next);
+            void hapticService.setEnabled(next);
+          }}
+          value={hapticsOn}
+        />
+      </View>
       <Button
         variant="secondary"
         label="Passkeys and registered devices"

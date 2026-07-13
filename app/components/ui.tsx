@@ -2,6 +2,7 @@ import type { PropsWithChildren, ReactNode } from "react";
 import {
   Animated,
   Pressable,
+  type PressableProps,
   SafeAreaView,
   ScrollView,
   Text,
@@ -235,24 +236,28 @@ export function Button({
   onPress,
   variant = "primary",
   disabled = false,
+  accessibilityRole = "button",
   accessibilityHint,
   accessibilityLabel,
+  accessibilityState,
 }: {
   label: string;
   onPress: () => void;
   variant?: "primary" | "secondary" | "signal";
   disabled?: boolean;
+  accessibilityRole?: PressableProps["accessibilityRole"];
   accessibilityHint?: string;
   /** Defaults to the visible label. Override for Soft Signal context. */
   accessibilityLabel?: string;
+  accessibilityState?: PressableProps["accessibilityState"];
 }) {
   const styles = useUiStyles();
   return (
     <Pressable
-      accessibilityRole="button"
+      accessibilityRole={accessibilityRole}
       accessibilityLabel={accessibilityLabel ?? label}
       accessibilityHint={accessibilityHint}
-      accessibilityState={{ disabled }}
+      accessibilityState={{ disabled, ...accessibilityState }}
       disabled={disabled}
       onPress={onPress}
       // Extra space around safety and primary actions for large fingers / Dynamic Type.
