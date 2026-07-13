@@ -53,9 +53,10 @@ export default function SessionWrapUpScreen() {
   const colors = useColors();
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
-  const { ended, sessionId } = useLocalSearchParams<{
+  const { ended, sessionId, softSignalLogId } = useLocalSearchParams<{
     ended?: string;
     sessionId?: string;
+    softSignalLogId?: string;
   }>();
   const { status, user } = useAuth();
   const [outcome, setOutcome] = useState<WrapupOutcome | "">("");
@@ -141,16 +142,28 @@ export default function SessionWrapUpScreen() {
       <Eyebrow>
         {canPersist ? "PRIVATE WRAP-UP" : "PRIVATE MOCK WRAP-UP"}
       </Eyebrow>
-      <Title>The session has ended.</Title>
+      <Title>
+        {ended === "soft-signal" || ended === "pending-sync"
+          ? "You stopped safely."
+          : "The session has ended."}
+      </Title>
       <Body>
         {ended === "soft-signal"
-          ? "Soft Signal ended the session immediately. You do not need to explain why."
+          ? "Soft Signal ended the session immediately. That was the right call if you needed it. You do not need to explain why. Soft Signal is never a penalty."
           : ended === "pending-sync"
-            ? "The session stopped on this device. Litmo will keep retrying the private stop request when a connection returns. It cannot resume here."
+            ? "Stopped on this device. Litmo will sync the private stop when the network returns. The session cannot resume here."
             : ended === "not-active"
               ? "This session hadn't fully started yet, so it can't be marked complete. Nothing was recorded as ended — you can return and pick up where you left off."
               : "You ended the session together."}
       </Body>
+      {ended === "soft-signal" || ended === "pending-sync" ? (
+        <Button
+          variant="secondary"
+          label="Open private Soft Signal log"
+          onPress={() => router.push("/soft-signal/log" as never)}
+          accessibilityHint="View personal Soft Signal records on this device. Optional notes only — never required when you stop."
+        />
+      ) : null}
       <View style={styles.question}>
         <Text style={styles.questionText} accessibilityRole="header">
           How did this interaction feel for you?

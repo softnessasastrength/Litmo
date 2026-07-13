@@ -233,6 +233,12 @@ function SettingsContent() {
         onPress={() => router.push("/touch-language" as never)}
         accessibilityHint="Pressure, speed, duration, body map, hard and soft limits. Local save and secure partner share."
       />
+      <Button
+        variant="secondary"
+        label="Soft Signal practice & private log"
+        onPress={() => router.push("/soft-signal/practice" as never)}
+        accessibilityHint="Practice Soft Signal and view private exit records on this device."
+      />
 
       <Body>Privacy & data protection</Body>
       <Body muted>

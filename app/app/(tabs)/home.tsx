@@ -253,6 +253,12 @@ export default function HomeTabScreen() {
       />
       <Button
         variant="secondary"
+        label="Soft Signal (practice & private log)"
+        onPress={() => router.push("/soft-signal/practice" as never)}
+        accessibilityHint="Practice Soft Signal without a peer, or open your private Soft Signal records. Never punitive."
+      />
+      <Button
+        variant="secondary"
         label="Proximity (anonymous nearby radar)"
         onPress={() => router.push("/proximity/radar" as never)}
         accessibilityHint="Opens opt-in proximity layer: anonymous weather radar, encrypted handshake, mutual consent before any name. Soft Signal exits anytime. Never consent to touch."

@@ -13,11 +13,11 @@ import {
 import { type AppColors } from "../../theme";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { useAuth } from "../../context/AuthContext";
+import { SoftSignalButton } from "../../components/SoftSignalButton";
 import { blockService } from "../../services/blockService";
-import { emergencyStopService } from "../../services/emergencyStopService";
-import { hapticService } from "../../services/hapticService";
 import { sessionCompleteService } from "../../services/sessionCompleteService";
 import { sessionRepository } from "../../services/sessionRepository";
+import { softSignalService } from "../../services/softSignalService";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
 const terminalEndedReason: Record<string, string> = {
@@ -147,25 +147,25 @@ function ActiveSessionContent() {
 
   const time = `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
   const stop = async () => {
-    // Safety transition first; haptic acknowledgement never gates the stop.
+    // Soft Signal: local end is immediate; network never re-enables the session.
+    if (endedRef.current) return;
     endedRef.current = true;
     setEnded(true);
     setStopState("stopping");
-    let pendingSync = false;
-    if (sessionId) {
-      const result = await emergencyStopService.stop(sessionId);
-      if (result.status === "stopped_pending_sync") {
-        pendingSync = true;
-        setStopState("pending");
-      }
-    }
-    // Soft Signal acknowledgement only — does not represent the peer stopping.
-    void hapticService.play("softSignal");
+    const result = await softSignalService.fire({
+      source: "active_session",
+      sessionId: sessionId ?? null,
+      surface: "mobile_app",
+      practiceOnly: !sessionId,
+    });
+    if (result.outcome === "pending_sync") setStopState("pending");
     router.replace({
       pathname: "/session/wrap-up",
       params: {
-        ended: pendingSync ? "pending-sync" : "soft-signal",
+        ended:
+          result.outcome === "pending_sync" ? "pending-sync" : "soft-signal",
         sessionId: sessionId ?? "",
+        softSignalLogId: result.logEntry.id,
       },
     });
   };
@@ -256,28 +256,18 @@ function ActiveSessionContent() {
         accessibilityRole="summary"
         accessibilityLabel="Session controls. Soft Signal is first and ends the session immediately."
       >
-        <Button
-          variant="signal"
-          label={
-            stopState === "stopping" ? "Stopping…" : "Soft Signal — end now"
+        <SoftSignalButton
+          prominent
+          state={
+            ended
+              ? "stopped"
+              : stopState === "stopping" || stopState === "pending"
+                ? "stopping"
+                : "idle"
           }
           disabled={ended}
           onPress={() => void stop()}
-          accessibilityLabel={
-            stopState === "stopping"
-              ? "Stopping session"
-              : "Soft Signal, end session now"
-          }
-          accessibilityHint="Ends the session immediately for both people. No explanation required. Not emergency response or crisis services."
         />
-        <Text
-          accessibilityRole="text"
-          style={styles.explain}
-          // Meaning is also in the button label — not color-only.
-        >
-          Soft Signal ends the session immediately. No explanation needed. No
-          penalty. Litmo is not emergency response or crisis services.
-        </Text>
         <Button
           variant="secondary"
           label={completing ? "Ending…" : "End together"}

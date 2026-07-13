@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-07-13 — Full Soft Signal system (app + hardware contract + private log)
+
+### Summary
+
+Unified Soft Signal: impossible-to-miss `SoftSignalButton`, `softSignalService`
+(local end → remote withdraw → private log → haptic → hardware command),
+practice mode, personal Secure Store log with optional post-stop journal notes,
+and a firmware contract aligned with Soft Edge haptics (warm descent, not alarm).
+
+### User-visible impact
+
+- Active session Soft Signal control redesigned (banner + heavy affordance)
+- Home / Settings → practice + private log
+- Emotionally safe wrap-up language preserved; no reason required at stop
+
+### Developer impact
+
+- `app/lib/softSignalCore.ts`, `softSignalService`, `softSignalLogStore`,
+  `softSignalHardware`, `SoftSignalButton`
+- `docs/SOFT_SIGNAL.md`
+
 ## 2026-07-13 — Consent Snapshot prepare + mutual seal system
 
 ### Summary
