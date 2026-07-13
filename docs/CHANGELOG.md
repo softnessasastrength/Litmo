@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-07-14 — 16-agent dual-mode architecture swarm
+
+### Summary
+
+Sixteen specialized design agents (monorepo, flags, consent domain, Soft Signal,
+onboarding, dual seal, Touch Language, RF gatekeeper, auth/age, App Review,
+Maximum experience, macOS SPM, privacy, CI, a11y/trauma, docs stewardship)
+produced a unified architecture for MAXIMUM_MODE vs APP_STORE_SAFE.
+
+### Output
+
+- `docs/DUAL_MODE_16_AGENT_SWARM.md` — roster, folder/graph, flag matrix, flows,
+  consensus gap board (G1–G13), P0–P2 backlog
+- Cross-linked from DOCUMENTATION_MAP
+
 ## 2026-07-14 — Dual-mode architecture (MAXIMUM_MODE / APP_STORE_SAFE + SPM)
 
 ### Summary
