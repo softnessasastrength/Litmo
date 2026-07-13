@@ -1,6 +1,6 @@
 # SAFETY-OPS-001 Founder Decision Packet
 
-**Status:** decision worksheet; no implementation authorization.
+**Status:** recommended options selected by the founder on 2026-07-13; engineering implementation authorized. External-review gates remain.
 
 This packet turns the open questions in [SAFETY_OPS_DESIGN.md](SAFETY_OPS_DESIGN.md)
 into explicit founder decisions. It does not replace safety, legal, privacy, or
@@ -16,23 +16,27 @@ For each decision:
 3. identify any external review still required;
 4. promote accepted decisions into focused ADRs before implementation.
 
-Do not mark SAFETY-OPS-001 complete until every blocking decision has an owner
-and disposition. Do not promote Chapter 6 merely by completing this worksheet.
+Recommended options were selected by the founder on 2026-07-13, authorizing the
+engineering foundation described in ADR 0042. SAFETY-OPS-001 remains active,
+not complete: named human roles and external-review dispositions are still
+required before the corresponding release claims or destructive workflows.
 
 ## Decision summary
 
 | ID | Decision | Recommended private-alpha default | Founder selection | External review required |
 | --- | --- | --- | --- | --- |
-| S1 | Alpha access | Founder-issued, single-use invitations | Pending | Safety/product |
-| S2 | Invite expiry | 7 days; revoke at any time | Pending | No |
-| S3 | Eligibility and geography | Named adults only; smallest reviewed jurisdiction set | Pending | Legal/privacy |
-| S4 | Kill-switch scope | Pause discovery and new requests; preserve stop/wrap-up | Pending | Safety/product |
-| S5 | Data lifecycle | Bounded provisional windows below | Pending | Legal/privacy |
-| S6 | Account deletion and export | Immediate access disable; reviewed deletion/export workflow | Pending | Legal/privacy/security |
-| S7 | Review staffing | Founder plus independent backup before external alpha | Pending | Safety/governance |
-| S8 | Escalation | Human decisions; no automatic external referral except legal duty | Pending | Legal/safeguarding |
-| S9 | Block-history tombstone | Minimal 90-day abuse-control tombstone | Pending | Privacy/safety |
-| S10 | Permanent-ban authority | Staff-only; two-person confirmation when staffing permits | Pending | Safety/governance |
+| S1 | Alpha access | Founder-issued, single-use invitations | Accepted* | Safety/product |
+| S2 | Invite expiry | 7 days; revoke at any time | Accepted* | No |
+| S3 | Eligibility and geography | Named adults only; smallest reviewed jurisdiction set | Accepted* | Legal/privacy |
+| S4 | Kill-switch scope | Pause discovery and new requests; preserve stop/wrap-up | Accepted* | Safety/product |
+| S5 | Data lifecycle | Bounded provisional windows below | Accepted* | Legal/privacy |
+| S6 | Account deletion and export | Immediate access disable; reviewed deletion/export workflow | Accepted* | Legal/privacy/security |
+| S7 | Review staffing | Founder plus independent backup before external alpha | Accepted* | Safety/governance |
+| S8 | Escalation | Human decisions; no automatic external referral except legal duty | Accepted* | Legal/safeguarding |
+| S9 | Block-history tombstone | Minimal 90-day abuse-control tombstone | Accepted* | Privacy/safety |
+| S10 | Permanent-ban authority | Staff-only; two-person confirmation when staffing permits | Accepted* | Safety/governance |
+
+*Accepted means the recommended product direction is authorized. It does not convert an external-review requirement into legal, privacy, clinical, or safeguarding approval.*
 
 ## S1 — Who can issue invitations?
 
@@ -46,9 +50,9 @@ private alpha. Enrolled participants receive no invite budget initially.
 - **Option C — Cohort import:** staff enroll a pre-reviewed named cohort without
   transferable codes.
 
-**Founder selection:** Pending  
-**Rationale:** Pending  
-**Reviewer/date:** Pending
+**Founder selection:** Recommended option accepted (2026-07-13)  
+**Rationale:** Conservative private-alpha default selected; retain every stated review and release gate.  
+**Reviewer/date:** Founder, 2026-07-13
 
 ## S2 — How long should invitations remain valid?
 
@@ -60,9 +64,9 @@ revoked, or invalid invitations return the same non-disclosing response.
 - **Option B — 7 days (recommended):** bounded without creating needless urgency.
 - **Option C — 30 days:** easier coordination; larger leakage/reuse window.
 
-**Founder selection:** Pending  
-**Rationale:** Pending  
-**Reviewer/date:** Pending
+**Founder selection:** Recommended option accepted (2026-07-13)  
+**Rationale:** Conservative private-alpha default selected; retain every stated review and release gate.  
+**Reviewer/date:** Founder, 2026-07-13
 
 ## S3 — Who is eligible, and where may the alpha operate?
 
@@ -80,9 +84,9 @@ This decision must name:
   known participant;
 - what evidence, if any, is retained to establish invitation eligibility.
 
-**Founder selection:** Pending  
+**Founder selection:** Recommended option accepted (2026-07-13)  
 **Legal/privacy disposition:** Required before external alpha  
-**Reviewer/date:** Pending
+**Reviewer/date:** Founder, 2026-07-13
 
 ## S4 — What does the beta kill-switch do?
 
@@ -99,9 +103,9 @@ explicit, staff-audit-logged, and visually distinguished from routine pause.
 - **Option C — Multiple scoped flags:** discovery, requests, activation, and
   emergency stop-all controlled independently.
 
-**Founder selection:** Pending  
-**Rationale:** Pending  
-**Reviewer/date:** Pending
+**Founder selection:** Recommended option accepted (2026-07-13)  
+**Rationale:** Conservative private-alpha default selected; retain every stated review and release gate.  
+**Reviewer/date:** Founder, 2026-07-13
 
 ## S5 — What provisional data lifetimes should engineering design around?
 
@@ -120,9 +124,9 @@ legal sufficiency:
 Alternatives are shorter windows, longer explicitly justified windows, or no
 collection for a category. "Keep forever" is not an acceptable silent default.
 
-**Founder selection:** Pending  
+**Founder selection:** Recommended option accepted (2026-07-13)  
 **Legal/privacy disposition:** Required before implementation  
-**Reviewer/date:** Pending
+**Reviewer/date:** Founder, 2026-07-13
 
 ## S6 — What happens when a participant requests deletion or export?
 
@@ -141,9 +145,9 @@ collection for a category. "Keep forever" is not an acceptable silent default.
 The founder must choose the ordinary completion target (for example 7 or 30
 days), the cancellation/grace rule, and who approves a scoped hold.
 
-**Founder selection:** Pending  
+**Founder selection:** Recommended option accepted (2026-07-13)  
 **Legal/privacy/security disposition:** Required before external TestFlight  
-**Reviewer/date:** Pending
+**Reviewer/date:** Founder, 2026-07-13
 
 ## S7 — Who reviews safety cases?
 
@@ -158,9 +162,9 @@ access is least-privilege, time-bounded where possible, and audit-logged.
 - **Option C — Contracted safeguarding/moderation service:** more resilient but
   requires vendor, privacy, training, and data-processing review.
 
-**Founder selection:** Pending  
+**Founder selection:** Recommended option accepted (2026-07-13)  
 **Named role owner(s):** Pending  
-**Reviewer/date:** Pending
+**Reviewer/date:** Founder, 2026-07-13
 
 ## S8 — What is the escalation boundary?
 
@@ -173,10 +177,10 @@ steps, and emergency language must be written with qualified legal and
 safeguarding review. Litmo must not represent ordinary moderation as emergency
 response or clinical care.
 
-**Founder selection:** Pending  
+**Founder selection:** Recommended option accepted (2026-07-13)  
 **Legal/safeguarding disposition:** Required  
 **Incident contact list owner:** Pending  
-**Reviewer/date:** Pending
+**Reviewer/date:** Founder, 2026-07-13
 
 ## S9 — Is block history retained after unblock?
 
@@ -190,9 +194,9 @@ either participant or use it as a public trust signal.
 - **Option C — Retain with moderation cases only:** create history only when a
   separate report or case provides a defined safety purpose.
 
-**Founder selection:** Pending  
-**Rationale:** Pending  
-**Reviewer/date:** Pending
+**Founder selection:** Recommended option accepted (2026-07-13)  
+**Rationale:** Conservative private-alpha default selected; retain every stated review and release gate.  
+**Reviewer/date:** Founder, 2026-07-13
 
 ## S10 — Who may impose a permanent ban?
 
@@ -208,9 +212,9 @@ permits.
 - **Option C — One reviewer for all actions:** faster, with greater error and
   conflict risk.
 
-**Founder selection:** Pending  
-**Rationale:** Pending  
-**Reviewer/date:** Pending
+**Founder selection:** Recommended option accepted (2026-07-13)  
+**Rationale:** Conservative private-alpha default selected; retain every stated review and release gate.  
+**Reviewer/date:** Founder, 2026-07-13
 
 ## Decisions that may proceed without legal conclusions
 
