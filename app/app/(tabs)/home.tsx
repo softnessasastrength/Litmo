@@ -204,6 +204,12 @@ export default function HomeTabScreen() {
       />
       <Button
         variant="secondary"
+        label="NFC careful connect (tap / QR / code)"
+        onPress={() => router.push("/nfc/connect" as never)}
+        accessibilityHint="NFC tag, QR, or manual invite for profile share, snapshot review invite, or key exchange. Explicit accept after every tap. Never consent to touch."
+      />
+      <Button
+        variant="secondary"
         label="Explore Quizzes (short or deep Vibe)"
         onPress={() => router.push("/(tabs)/quizzes" as never)}
         accessibilityHint="Opens self-understanding quizzes. Results are never consent to touch."

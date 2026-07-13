@@ -413,6 +413,24 @@ function ConsentSnapshotContent() {
         }
         accessibilityHint="Opens intentional Multipeer nearby share for co-located snapshot review only. Never activates a session or grants consent."
       />
+      <Button
+        variant="secondary"
+        label="NFC / QR snapshot review invite"
+        disabled={rows.length === 0}
+        onPress={() =>
+          router.push({
+            pathname: "/nfc/connect",
+            params: {
+              intent: "snapshot_initiate",
+              title: isReal
+                ? "Consent Snapshot review"
+                : "Mock Consent Snapshot review",
+              rows: JSON.stringify(rows),
+            },
+          } as never)
+        }
+        accessibilityHint="Creates an NFC or QR invite for co-located snapshot review. Receiver must Accept after scan. Never activates a session."
+      />
       <Body muted center>
         Nearby share is co-located review only. It does not replace independent
         confirmation or activate a session.

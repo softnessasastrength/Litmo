@@ -122,6 +122,18 @@ export default function EditProfileScreen() {
           }
           accessibilityHint="Open intentional Multipeer nearby share for this discovery profile. Off by default; never consent to touch."
         />
+        <Button
+          variant="secondary"
+          label="NFC / QR careful profile share"
+          disabled={busy || !name.trim()}
+          onPress={() =>
+            router.push({
+              pathname: "/nfc/connect",
+              params: { intent: "profile_share" },
+            } as never)
+          }
+          accessibilityHint="Create an NFC tag or QR invite for discovery profile share. Receiver must Accept after every tap."
+        />
       </View>
     </Screen>
   );

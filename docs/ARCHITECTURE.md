@@ -122,6 +122,22 @@ Master opt-in (default off)
   → Soft Signal / timeout / leave → off
 ```
 
+## NFC careful-connect
+
+Tag-based NFC bootstrap for a single careful intent (ADR 0055,
+`docs/NFC_FEATURES.md`). Core NFC NDEF read/write when available; same protocol
+over deep link, Share sheet, and manual code. **Post-tap Accept is mandatory.**
+Ephemeral X25519 + AES-GCM seals profile / snapshot-review / key-exchange
+payloads. Snapshot path never activates a session.
+
+```text
+Create offer (ephemeral keys)
+  → write NDEF tag OR share litmo://nfc/v1/…
+  → peer scans → post-tap Accept/Decline
+  → accept link → host seals AES-GCM package
+  → peer opens only after accept → Soft clear anytime
+```
+
 ## Native macOS boundary
 
 The native macOS workspace is generated from `macos/project.yml` and contains three targets with deliberately narrow responsibilities:

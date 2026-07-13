@@ -21,7 +21,7 @@
     ],
     "failures": []
   },
-  "nextAction": "Verify typecheck/tests for Proximity (ADR 0054) + Nearby Share (ADR 0053) + Quizzes/E2E; commit; land PR when green. SAFETY-OPS external blockers remain.",
+  "nextAction": "Verify typecheck/tests for NFC (ADR 0055) + Proximity + Nearby Share + Quizzes; commit; land PR when green. SAFETY-OPS external blockers remain.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
@@ -46,6 +46,7 @@
     "ADR 0052 documents X3DH + Double Ratchet partner packages and ciphertext-only relay (038).",
     "ADR 0053 documents Multipeer nearby share for discovery profiles and co-located snapshot review.",
     "ADR 0054 / PROXIMITY_LAYER.md document opt-in anonymous radar, handshake, identity gates, Soft Signal.",
-    "QUIZ-001, QUIZ-002, SHARE-001, PROX-001 completed in TASKS.md."
+    "ADR 0055 / NFC_FEATURES.md document NFC tag careful-connect, post-tap consent, QR/manual fallback.",
+    "QUIZ-001, QUIZ-002, SHARE-001, PROX-001, NFC-001 completed in TASKS.md."
   ]
 }

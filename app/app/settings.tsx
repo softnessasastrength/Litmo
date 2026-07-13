@@ -221,6 +221,12 @@ function SettingsContent() {
         onPress={() => router.push("/proximity/radar" as never)}
         accessibilityHint="Opt-in anonymous compatibility radar, encrypted handshake, mutual consent before identity. Soft Signal exits. Never consent to touch."
       />
+      <Button
+        variant="secondary"
+        label="NFC careful connect"
+        onPress={() => router.push("/nfc/connect" as never)}
+        accessibilityHint="Write or scan NFC invites, or fall back to QR and manual codes. Accept required after every tap."
+      />
 
       <Body>Privacy & data protection</Body>
       <Body muted>

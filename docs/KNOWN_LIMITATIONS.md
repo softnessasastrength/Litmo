@@ -20,6 +20,17 @@
   missing governance policies and complete legal/distribution review before
   public launch.
 
+## NFC careful-connect
+
+- Real NFC read/write needs an **iOS development build** with Core NFC and the
+  `litmo-nfc` module. Expo Go uses QR/share/manual paste only.
+- iOS third-party apps **cannot** do general phone-to-phone NFC P2P; Litmo uses
+  NDEF **tags** plus deep-link fallbacks. Do not claim AirDrop-like phone bumps.
+- Offers expire (~3 minutes). Post-tap Accept is mandatory; a scan alone never
+  opens identity or snapshot content.
+- Snapshot NFC intent is review-only and never activates a session.
+- Physical tag smoke tests are human-led; Android HCE peer path is deferred.
+
 ## Proximity social layer
 
 - Proximity radar real radio requires an **iOS development build** with

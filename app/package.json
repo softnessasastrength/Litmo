@@ -36,6 +36,7 @@
     "expo-status-bar": "~55.0.0",
     "litmo-age-range": "file:modules/litmo-age-range",
     "litmo-local-share": "file:modules/litmo-local-share",
+    "litmo-nfc": "file:modules/litmo-nfc",
     "litmo-passkeys": "file:modules/litmo-passkeys",
     "react": "19.2.0",
     "react-dom": "19.2.0",

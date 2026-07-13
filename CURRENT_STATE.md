@@ -22,6 +22,7 @@
 - QUIZ-004 review: short/deep paths verified; always-on mid-quiz resume; partner dual-consent + focused E2E stub; calm demo copy.
 - Nearby local share (SHARE-001 / ADR 0053): Multipeer + ephemeral app crypto for discovery profiles and co-located Consent Snapshot review; opt-in off by default; Expo Go fail-soft.
 - Proximity social layer (PROX-001 / ADR 0054): anonymous radar, weather resonance, encrypted handshake, mutual identity gates, Soft Signal, practice demo; `docs/PROXIMITY_LAYER.md`.
+- NFC careful-connect (NFC-001 / ADR 0055): NDEF tag + QR/manual fallback, post-tap consent, E2E seal for profile/snapshot-review/key-exchange; `docs/NFC_FEATURES.md`.
 
 ## Work in progress
 
@@ -29,7 +30,7 @@ SAFETY-OPS-001 remains externally blocked on named qualified review and backup s
 
 ## Priority next work
 
-1. Land Quizzes / partner E2E / nearby-share / proximity PR when green (ADR 0050–0054).
+1. Land Quizzes / partner E2E / nearby-share / proximity / NFC PR when green (ADR 0050–0055).
 2. Review/merge remaining macOS read work if still open on other branches.
 3. Keep Campfire local-only; keep partner weather off the server plaintext path; keep destructive retention/deletion blocked until review.
 4. Optional founder VoiceOver smoke (ACCESS-001 residual), including Quizzes and Nearby Share if reviewing.

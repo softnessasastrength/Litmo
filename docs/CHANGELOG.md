@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-13 — NFC careful-connect (tag + QR fallback)
+
+### Summary
+
+NFC tap-to-connect foundation: Core NFC NDEF read/write module, ephemeral ECDH
+key exchange, explicit post-tap Accept/Decline, profile share / Consent Snapshot
+review invite / key-exchange intents, Share-sheet and manual-code fallbacks.
+Documented in `docs/NFC_FEATURES.md` (ADR 0055).
+
+### Honest limits
+
+- iOS has no third-party phone-to-phone NFC P2P; tags + QR/code are the model.  
+- Expo Go uses fallbacks only until a development build includes `litmo-nfc`.
+
 ## 2026-07-13 — Proximity social layer
 
 ### Summary

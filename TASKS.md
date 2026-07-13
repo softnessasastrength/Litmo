@@ -45,6 +45,18 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 ## Completed
 
+### NFC-001 — NFC careful-connect (tag + QR fallback)
+
+- **Status:** completed (engineering foundation)
+- **Result:** `docs/NFC_FEATURES.md` + ADR 0055; `litmo-nfc` Core NFC module;
+  `nfcCore` protocol (offer/accept/sealed, ECDH+AES-GCM); `nfcService`;
+  `/nfc/connect` trauma-informed UI with post-tap Accept; Share/manual fallback;
+  Home/Settings/Profile/Snapshot entry points; NFC config plugin.
+- **Verification:** nfcCore unit tests; typecheck after package link.
+- **Boundary:** iOS tag model only (no third-party P2P NFC); Expo Go fallbacks;
+  physical tag smoke human-led; Android HCE deferred.
+- **Related:** SHARE-001, PROX-001.
+
 ### PROX-001 — Proximity social layer
 
 - **Status:** completed (engineering foundation)

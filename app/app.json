@@ -24,7 +24,8 @@
       ],
       "./plugins/withIOSXcode27Fixes.cjs",
       "./plugins/withoutPushEntitlement.cjs",
-      "./plugins/withLocalShareBonjour.cjs"
+      "./plugins/withLocalShareBonjour.cjs",
+      "./plugins/withLitmoNfc.cjs"
     ],
     "experiments": {
       "typedRoutes": true
