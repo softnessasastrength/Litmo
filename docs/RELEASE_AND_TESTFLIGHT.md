@@ -32,8 +32,9 @@ compile on GitHub's `macos-26` runner:
 
 1. installs the locked npm dependencies;
 2. installs CocoaPods in strict deployment mode;
-3. builds `app/ios/Litmodevelopment.xcworkspace` with Xcode for a generic iOS
-   Simulator and code signing disabled;
+3. builds `app/ios/Litmodevelopment.xcworkspace` with Xcode for the hosted
+   Apple-silicon runner's arm64 iOS Simulator architecture and code signing
+   disabled;
 4. uploads the compiled simulator `.app` and full Xcode log for seven days.
 
 The workflow runs manually and on pull requests that change app, shared,
