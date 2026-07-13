@@ -47,15 +47,7 @@ jobs:
 
       - name: Install locked CocoaPods dependencies
         working-directory: app/ios
-        run: pod install
-
-      - name: Upload regenerated Podfile lock
-        uses: actions/upload-artifact@v4
-        with:
-          name: Litmo-Podfile-lock
-          path: app/ios/Podfile.lock
-          if-no-files-found: error
-          retention-days: 7
+        run: pod install --deployment
 
       - name: Build unsigned simulator app
         shell: bash
