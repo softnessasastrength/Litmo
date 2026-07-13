@@ -1,33 +1,30 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T11:53:00-04:00",
+  "updatedAt": "2026-07-13T14:00:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
     "status": "active"
   },
   "git": {
-    "branch": "agent/ios-native-ci-build",
-    "latestCoherentCommit": "025c4be5672b7ad4120df683b979d7ff8bd00913",
+    "branch": "agent/macos-native-foundation",
+    "latestCoherentCommit": "6a88abdd6f0e7c798d6c4b10839bea47afeda84f",
     "workingTreeExpectedClean": true
   },
   "verification": {
     "status": "passed",
     "commands": [
-      "npm run state:check — pass on PR #75 recovery head",
-      "npm run lint — pass on PR #75 recovery head",
-      "npm run typecheck — pass on PR #75 recovery head",
-      "npm test — pass on PR #75 recovery head",
-      "npm run build — pass on PR #75 recovery head",
-      "GitHub Actions iOS Native Build run #5 — pass before arm64 CI optimization with Xcode 26.5, strict pod deployment, simulator .app, and full log",
-      "npm run db:start / db:reset / db:lint — pass on merged baseline",
-      "npx supabase test db — pass on merged baseline",
-      "npm run test:integration — 5/5 pass on merged baseline"
+      "GitHub Actions macOS Native Build run #2 — pass on PR #76 with Xcode 26.5",
+      "LitmoMacCoreTests — 4/4 Campfire invariant tests pass on hosted arm64 macOS",
+      "Litmo participant app — unsigned arm64 compile pass on hosted macOS",
+      "Litmo Ops app — unsigned arm64 compile pass on hosted macOS",
+      "npm run state:check, lint, typecheck, test, and build — pending for documentation-only continuity head",
+      "Database and integration verification — unchanged from merged PR #75 baseline"
     ],
     "failures": []
   },
-  "nextAction": "Merge green PR #75. Then create contributor-attestation and trademark policies as separate governance decisions; SAFETY-OPS-001 remains active and externally blocked on qualified review and a named independent backup reviewer.",
+  "nextAction": "Review and merge green draft PR #76. Then choose a separately reviewed macOS integration slice; do not unlock Ops without server-backed staff authentication and authorization.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
@@ -40,13 +37,15 @@
     "Self export is an engineering portability primitive, not a claim of legally complete data access.",
     "External TestFlight remains blocked by deletion, hosted staging, AASA, disclosures, independent review, and signed-release evidence.",
     "Campfire circle readiness is ephemeral local facilitation, not a real group session or multi-person consent record.",
-    "The hosted Xcode lane is unsigned simulator compilation, not device, entitlement, archive, or TestFlight validation."
+    "The hosted Xcode lane is unsigned simulator compilation, not device, entitlement, archive, or TestFlight validation.",
+    "The native macOS participant app is local Campfire plus a read-only shell; it is not an active-session controller.",
+    "Litmo Ops is separately bundled but intentionally non-operational until real staff authentication, authorization, audit logging, and API contracts exist."
   ],
   "notes": [
-    "PRs #72 and #73 integrated private-alpha mobile controls and all three local Campfire practices.",
-    "PR #74 selected MPL-2.0 under ADR 0044.",
-    "PR #75 iOS Native Build run #5 passed before the arm64 CI optimization with Xcode 26.5 and strict CocoaPods deployment mode.",
-    "The final PR #75 workflow restores CocoaPods deployment mode so future native builds fail on lock drift.",
-    "Destructive report/case/trust retention and account deletion are deliberately unimplemented pending review."
+    "PRs #72–#75 are merged on main.",
+    "PR #76 adds native SwiftUI participant/Campfire and separately locked Ops targets under ADR 0045.",
+    "macOS Native Build run #2 passed after adding the required generated framework Info.plist.",
+    "Unsigned hosted artifacts are inspection builds, not signed or notarized releases.",
+    "Destructive report/case/trust retention and account deletion remain deliberately unimplemented pending review."
   ]
 }
