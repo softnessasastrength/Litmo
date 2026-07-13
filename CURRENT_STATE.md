@@ -6,7 +6,7 @@
 
 - **Name:** SAFETY-OPS-001 — Recommended private-alpha safety-operations foundation
 - **Status:** active; founder selected the recommended defaults on 2026-07-13
-- **Branch:** `agent/safety-ops-recommended-foundation`, stacked on decision-preparation PR #66.
+- **Branch:** `main` contains the reviewed foundation through PR #70.
 - **Latest known coherent milestone:** Chapters 1–5, LEARN-002, HAPTIC-001, matching-hold ends open sessions (ADR 0038), semantic haptics (ADR 0039), BETA-001 physical walkthrough (Track A/B/C all Pass, including physical B1–B26).
 
 ## Completed foundation
@@ -22,17 +22,19 @@
 - Chapter 5: blocks, age gate, reports, review queue, rate limits, trust events, restrictions, moderator console, peer signals, appeals, real discovery, ban ends open sessions, real Consent Snapshot UI.
 - Physical beta walkthrough checklist for founder/private validation (not external TestFlight).
 - BETA-001 complete: Track A Pass, Track C Pass, Track B Pass (automated backend + physical B1–B26 on device, founder, 2026-07-13). No Fail items recorded. Do not claim external beta readiness until RELEASE_AND_TESTFLIGHT blockers clear.
+- Private-alpha safety foundation is integrated on `main` through PR #70.
 
 ## Work in progress
 
-SAFETY-OPS-001 is active. ADR 0042 and migration 036 implement the engineering-safe recommended foundation: hashed staff-issued invitations, seven-day expiry, private-alpha membership gates, routine matching pause, minimal unblock tombstones, bounded non-destructive cleanup, and self export. External-review-dependent destructive retention, deletion, jurisdiction, escalation, and two-person staffing decisions remain blocked.
+SAFETY-OPS-001 is active. ADR 0042 and migration 036 implement the engineering-safe recommended foundation: hashed staff-issued invitations, seven-day expiry, private-alpha membership gates, routine matching pause, minimal unblock tombstones, bounded non-destructive cleanup, and self export. PR #72 contains the clean five-file mobile UI for invitation redemption, export, and staff controls. Campfire Mode is being added separately as a local-only practice surface under ADR 0043. External-review-dependent destructive retention, deletion, jurisdiction, escalation, and two-person staffing decisions remain blocked.
 
 ## Priority next work
 
-1. Review and merge continuity PR #66, then stacked implementation PR #67; both are green.
-2. Keep destructive retention and account deletion blocked until legal/privacy/security review names the permissible data categories, holds, and timing.
-3. Name and train an independent backup reviewer before external alpha; implement two-person permanent-ban approval only when that role exists.
-4. Optional founder VoiceOver smoke remains tracked under ACCESS-001.
+1. Review and merge the clean private-alpha mobile-controls PR #72.
+2. Review Campfire Mode as a local practice tool; do not reinterpret it as real group matching or group consent.
+3. Keep destructive retention and account deletion blocked until legal/privacy/security review names the permissible data categories, holds, and timing.
+4. Name and train an independent backup reviewer before external alpha; implement two-person permanent-ban approval only when that role exists.
+5. Optional founder VoiceOver smoke remains tracked under ACCESS-001.
 
 ## Verification baseline
 
@@ -60,7 +62,8 @@ Do not claim the current integrated `main` has passed every command unless the e
 - Learning completion is not evidence of safety, competence, or consent.
 - First-session learning gates have not been approved or implemented.
 - Physical-device accessibility validation remains incomplete.
-- Moderation, reporting, operational review, invitation expiry, and eligibility rules remain incomplete.
+- Moderation operations still require qualified review and named backup staffing; the engineering invitation-expiry and eligibility gates are implemented.
+- Campfire circle readiness is local, ephemeral facilitation and is not a multi-person Consent Snapshot.
 - Passkey deployment depends on correct Associated Domains and server-side relying-party configuration.
 
 ## Architectural decisions
@@ -74,7 +77,7 @@ Do not claim the current integrated `main` has passed every command unless the e
 
 ## Exact next action
 
-PR #67 passes Project State, lint, typecheck, unit tests, build, database reset/lint, all pgTAP tests (including the new 17-case SAFETY-OPS suite), and integration 5/5. Next: review/merge PR #66 then PR #67. SAFETY-OPS-001 remains active and externally blocked on named qualified review and an independent backup reviewer.
+PR #70 is merged on `main`. PR #72 is the clean five-file mobile-controls delta and passed Project State, lint, typecheck, unit tests, build, database reset/lint, all pgTAP tests, and integration. Next: review/merge #72, then review the separate Campfire Mode PR. SAFETY-OPS-001 remains externally blocked on named qualified review and an independent backup reviewer.
 
 ## Resume checklist
 
