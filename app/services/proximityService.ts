@@ -8,6 +8,9 @@
 import { litmoLocalShare, litmoLocalShareAvailable } from "litmo-local-share";
 import { hapticService } from "./hapticService.ts";
 import { safeLog } from "./logger.ts";
+import { softSignalService } from "./softSignalService.ts";
+import { touchLanguageStore } from "./touchLanguageStore.ts";
+import { anonAxesFromTouchLanguage } from "../lib/touchLanguageProximity.ts";
 import {
   b64url,
   bandLabel,
@@ -293,10 +296,19 @@ class ProximityController {
       );
     }
     const available = await litmoLocalShare.isAvailable();
+    // Optional anonymous TL axes from local Touch Language (no body zones on wire).
+    let tlAnon: ProximityBeacon["tlAnon"] = null;
+    try {
+      const tl = await touchLanguageStore.load();
+      if (tl) tlAnon = anonAxesFromTouchLanguage(tl);
+    } catch {
+      tlAnon = null;
+    }
     this.selfBeacon = buildBeacon({
       axes: prefs.axes,
       weather: prefs.includeWeather ? prefs.weather : "none",
       quiet: prefs.quietPreferred,
+      tlAnon,
     });
     this.anonymousLabel = mintAnonymousPeerLabel();
     this.matchMap.clear();
@@ -568,7 +580,12 @@ class ProximityController {
 
   /** Soft Signal — immediate, reason-free exit. */
   async softSignal(): Promise<void> {
-    void hapticService.play("softSignal");
+    // Personal Soft Signal log + haptic/hardware (never gates teardown).
+    void softSignalService.fire({
+      source: "practice",
+      practiceOnly: true,
+      surface: "mobile_app",
+    });
     const peerId = this.state.activePeerId;
     if (peerId && !this.state.demoMode && this.crypto) {
       try {

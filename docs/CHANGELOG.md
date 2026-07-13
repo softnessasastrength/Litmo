@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-07-13 — Full Proximity Layer hub + TL compatibility %
+
+### Summary
+
+Unified **Proximity Layer** hub with extreme consent gating; anonymous **Touch
+Language shape compatibility %** on radar (coarse axes only, no zones on wire);
+NFC / encrypted QR / AirDrop-style Multipeer paths linked from one place; Soft
+Signal integrated with personal log.
+
+### User-visible impact
+
+- `/proximity` hub (master off default + three gates)
+- Radar shows weather resonance **and** TL compatibility when available
+- Home → Proximity Layer opens the hub
+
+### Developer impact
+
+- `touchLanguageProximity.ts`, beacon `tlAnon` / `|c####`
+- `proximity/index.tsx`, service TL load + Soft Signal fire
+
 ## 2026-07-13 — Full Soft Signal system (app + hardware contract + private log)
 
 ### Summary

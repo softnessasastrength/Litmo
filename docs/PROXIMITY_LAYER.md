@@ -19,7 +19,11 @@ payload share), [LOCAL_SHARE.md](LOCAL_SHARE.md), Constitution Articles I–V.
 | --- | --- |
 | Opt-in nearby discovery | Radio **off by default**; master switch + intentional start |
 | Anonymized compatibility radar | See *weather resonance* without names, photos, or account IDs |
+| Touch Language compatibility % | Optional coarse TL axes on beacon → **0–100% preference shape** (never zones, never safety) |
 | Secure local handshake | Apple **Multipeer Connectivity** + app-layer **E2E** (ephemeral X25519 + AES-GCM) |
+| NFC tap-to-connect | Careful-connect with Accept after every scan ([NFC_FEATURES.md](NFC_FEATURES.md)) |
+| QR fallback | Encrypted `litmo://q/v1/` envelopes when Multipeer/NFC weak |
+| AirDrop-style share | Multipeer payload share for profile / snapshot review (ADR 0053) |
 | Consent before identity | **Mutual** interest, then **mutual** reveal — fail closed |
 | Soft Signal exits | One control ends radio + clears keys; no explanation, no penalty |
 | Trauma-informed | No urgency dark patterns; easy leave; calm copy under stress |
@@ -101,21 +105,34 @@ later ones. Soft Signal may be pressed at **any** step.
 
 ---
 
+## 2b. Unified hub
+
+**Route:** `/proximity` (hub) · `/proximity/radar` · `/nfc/connect` · `/share/local`
+
+Hub requires **master opt-in** plus three explicit gates before any path:
+
+1. Nearby % is not safety or consent  
+2. No pressure on Soft Signal / decline  
+3. Soft Signal may end presence instantly  
+
 ## 3. Anonymous beacon (public discovery only)
 
 Carried in Multipeer **discoveryInfo** (size-constrained):
 
 ```text
 m=px
-b=v1|p{p}r{r}s{s}e{e}|w{H|L|T|n}|q{0|1}|t{token}
+b=v1|p{p}r{r}s{s}e{e}|w{H|L|T|n}|q{0|1}|t{token}[|c{p}{s}{d}{o}]
 ```
 
 | Field | Meaning |
 | --- | --- |
-| pace / presence / sensory / repair | Coarse **0–3** axes (social weather, not Touch Language) |
+| pace / presence / sensory / repair | Coarse **0–3** axes (social weather) |
 | weather | Optional vibe family: hearth / lantern / tidepool / none |
 | quiet | Prefers quieter nearby interactions |
 | token | **Ephemeral** rotating id — **not** account id |
+| `c####` (optional) | Anonymous **Touch Language** axes: pressure, speed, duration, openness — **no body zones** |
+
+TL axes are derived locally from the saved Touch Language map (`touchLanguageProximity.ts`). When both peers broadcast them, radar shows **Touch Language shape XX%** with a hard disclaimer: not safety, not consent.
 
 **Never** in the beacon:
 

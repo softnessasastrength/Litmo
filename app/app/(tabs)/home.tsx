@@ -259,15 +259,9 @@ export default function HomeTabScreen() {
       />
       <Button
         variant="secondary"
-        label="Proximity (anonymous nearby radar)"
-        onPress={() => router.push("/proximity/radar" as never)}
-        accessibilityHint="Opens opt-in proximity layer: anonymous weather radar, encrypted handshake, mutual consent before any name. Soft Signal exits anytime. Never consent to touch."
-      />
-      <Button
-        variant="secondary"
-        label="NFC careful connect (tap / QR / code)"
-        onPress={() => router.push("/nfc/connect" as never)}
-        accessibilityHint="NFC tag, QR, or manual invite for profile share, snapshot review invite, or key exchange. Explicit accept after every tap. Never consent to touch."
+        label="Proximity Layer (radar · NFC · QR · AirDrop)"
+        onPress={() => router.push("/proximity" as never)}
+        accessibilityHint="Full proximity hub: opt-in anonymous radar with Touch Language compatibility percent, NFC, encrypted QR, and AirDrop-style share. Extreme consent gating. Soft Signal anytime."
       />
       <Button
         variant="secondary"

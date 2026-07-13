@@ -11,6 +11,7 @@ import {
   Title,
 } from "../../components/ui";
 import { CarefulConnectFallback } from "../../components/CarefulConnectFallback";
+import { SoftSignalButton } from "../../components/SoftSignalButton";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { useAuth } from "../../context/AuthContext";
 import { useNeurodivergent } from "../../context/NeurodivergentContext";
@@ -278,20 +279,12 @@ function ProximityRadarContent() {
             ) : null}
           </Card>
 
-          <Button
-            variant="signal"
-            label="Soft Signal — stop nearby now"
+          <SoftSignalButton
+            prominent
             onPress={() => {
-              void proximityService.softSignal();
-              setStep("intro");
+              void proximityService.softSignal().then(() => setStep("intro"));
             }}
-            accessibilityLabel="Soft Signal, stop nearby now"
-            accessibilityHint="Immediately turns off proximity radio, clears ephemeral keys, and needs no explanation. Not emergency response."
           />
-          <Body muted>
-            Soft Signal ends nearby presence immediately. No explanation. No
-            penalty. Litmo is not emergency response or crisis services.
-          </Body>
 
           <CarefulConnectFallback
             nfcAvailable={false}
@@ -365,9 +358,23 @@ function ProximityRadarContent() {
                   <Card key={m.peerKey} style={styles.card}>
                     <Text style={styles.peerLabel}>{m.ephemeralLabel}</Text>
                     <Body>
-                      {bandLabel(m.band)} · weather resonance {m.resonance}
+                      {bandLabel(m.band)} · weather resonance {m.resonance}%
                     </Body>
+                    {m.tlCompatibility != null ? (
+                      <Body>
+                        Touch Language shape {m.tlCompatibility}%
+                        {m.tlBandLabel ? ` · ${m.tlBandLabel}` : ""}
+                      </Body>
+                    ) : (
+                      <Body muted>
+                        Touch Language % unavailable (peer or you not
+                        broadcasting TL axes)
+                      </Body>
+                    )}
                     <Body muted>{m.disclaimer}</Body>
+                    {m.tlCompatibility != null ? (
+                      <Body muted>{m.tlDisclaimer}</Body>
+                    ) : null}
                     {showDetail ? (
                       <Body muted>
                         Quiet-preferred: {m.beacon.quiet ? "yes" : "no"}

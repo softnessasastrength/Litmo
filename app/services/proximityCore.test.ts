@@ -36,6 +36,7 @@ test("beacon discovery encode/decode round-trip", () => {
     quiet: true,
     token: "abc12xyz",
     now: 1,
+    tlAnon: { pressure: 1, speed: 2, duration: 0, openness: 2 },
   });
   const encoded = encodeBeaconForDiscovery(beacon);
   const decoded = decodeBeaconFromDiscovery(encoded);
@@ -44,6 +45,18 @@ test("beacon discovery encode/decode round-trip", () => {
   assert.equal(decoded.weather, "hearth");
   assert.equal(decoded.quiet, true);
   assert.deepEqual(decoded.axes, beacon.axes);
+  assert.deepEqual(decoded.tlAnon, beacon.tlAnon);
+});
+
+test("beacon without TL axes still decodes", () => {
+  const beacon = buildBeacon({
+    axes: { pace: 1, presence: 1, sensory: 1, repair: 1 },
+    token: "notlnotl",
+  });
+  assert.equal(beacon.tlAnon, null);
+  const decoded = decodeBeaconFromDiscovery(encodeBeaconForDiscovery(beacon));
+  assert.ok(decoded);
+  assert.equal(decoded.tlAnon, null);
 });
 
 test("decode rejects malformed or identity-like payloads", () => {
@@ -78,6 +91,28 @@ test("radar match never claims safety", () => {
   });
   assert.ok(match.disclaimer.toLowerCase().includes("not safety"));
   assert.ok(match.disclaimer.toLowerCase().includes("not consent"));
+  assert.equal(match.tlCompatibility, null);
+});
+
+test("radar match includes TL compatibility when both broadcast axes", () => {
+  const self = buildBeacon({
+    axes: { pace: 1, presence: 1, sensory: 1, repair: 1 },
+    token: "selfself",
+    tlAnon: { pressure: 1, speed: 1, duration: 1, openness: 1 },
+  });
+  const peer = buildBeacon({
+    axes: { pace: 1, presence: 1, sensory: 1, repair: 1 },
+    token: "peerpeer",
+    tlAnon: { pressure: 1, speed: 1, duration: 1, openness: 1 },
+  });
+  const match = buildRadarMatch({
+    peerKey: "p1",
+    ephemeralLabel: "·peer",
+    selfBeacon: self,
+    peerBeacon: peer,
+  });
+  assert.equal(match.tlCompatibility, 100);
+  assert.ok(match.tlDisclaimer.toLowerCase().includes("not consent"));
 });
 
 test("identity reveal requires mutual consent and encrypted channel", () => {

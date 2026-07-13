@@ -58,6 +58,16 @@ export type ProximityBeacon = {
   weather: WeatherFamily;
   /** Prefers quieter nearby interactions. */
   quiet: boolean;
+  /**
+   * Optional anonymous Touch Language axes (no body zones).
+   * Encoded as c{p}{s}{d}{o} — never lists preferred areas.
+   */
+  tlAnon: {
+    pressure: number;
+    speed: number;
+    duration: number;
+    openness: number;
+  } | null;
   /** Epoch ms when this beacon was minted. */
   mintedAt: number;
 };
@@ -77,6 +87,13 @@ export type RadarMatch = {
   resonance: number;
   band: CompatibilityBand;
   disclaimer: string;
+  /**
+   * 0–100 anonymous Touch Language shape compatibility when both peers
+   * broadcast TL axes. Null if either side omitted TL. Never safety/consent.
+   */
+  tlCompatibility: number | null;
+  tlBandLabel: string | null;
+  tlDisclaimer: string;
 };
 
 export type IdentityRevealPayload = {
@@ -140,6 +157,9 @@ export type DisclosurePhase =
 const RESONANCE_DISCLAIMER =
   "Weather resonance only. Not safety, not trust, not consent to touch, not a match.";
 
+const TL_COMPAT_DISCLAIMER =
+  "Anonymous Touch Language compatibility only. Not safety, not trust, not consent to touch, not a session invitation.";
+
 const IDENTITY_DISCLAIMER =
   "Identity was revealed only after mutual consent nearby. This is never consent to touch and never starts a session.";
 
@@ -178,21 +198,33 @@ export function buildBeacon(input: {
   token?: string;
   now?: number;
   random?: (n: number) => Uint8Array;
+  /** Optional anonymous TL axes (no zone list). */
+  tlAnon?: ProximityBeacon["tlAnon"];
 }): ProximityBeacon {
   const random = input.random ?? ((n: number) => randomBytes(n));
+  const tl = input.tlAnon;
   return {
     v: PROXIMITY_PROTOCOL_VERSION,
     token: input.token ?? mintEphemeralToken(random),
     axes: normalizeAxes(input.axes),
     weather: input.weather ?? "none",
     quiet: Boolean(input.quiet),
+    tlAnon: tl
+      ? {
+          pressure: clampAxis(tl.pressure),
+          speed: clampAxis(tl.speed),
+          duration: clampAxis(tl.duration),
+          openness: clampAxis(tl.openness),
+        }
+      : null,
     mintedAt: input.now ?? Date.now(),
   };
 }
 
 /**
  * Compact discoveryInfo-safe encoding (short strings only).
- * Format: v1|p{p}r{r}s{s}e{e}|w{W}|q{0|1}|t{token}
+ * Format: v1|p{p}r{r}s{s}e{e}|w{W}|q{0|1}|t{token}[|c{p}{s}{d}{o}]
+ * Optional trailing |c#### is anonymous Touch Language axes.
  */
 export function encodeBeaconForDiscovery(beacon: ProximityBeacon): string {
   const w =
@@ -204,9 +236,16 @@ export function encodeBeaconForDiscovery(beacon: ProximityBeacon): string {
           ? "T"
           : "n";
   const a = beacon.axes;
-  return `v1|p${a.pace}r${a.presence}s${a.sensory}e${a.repair}|w${w}|q${
+  let out = `v1|p${a.pace}r${a.presence}s${a.sensory}e${a.repair}|w${w}|q${
     beacon.quiet ? 1 : 0
   }|t${beacon.token}`;
+  if (beacon.tlAnon) {
+    const t = beacon.tlAnon;
+    out += `|c${clampAxis(t.pressure)}${clampAxis(t.speed)}${clampAxis(
+      t.duration,
+    )}${clampAxis(t.openness)}`;
+  }
+  return out;
 }
 
 export function decodeBeaconFromDiscovery(
@@ -214,7 +253,7 @@ export function decodeBeaconFromDiscovery(
 ): ProximityBeacon | null {
   if (!raw || typeof raw !== "string") return null;
   const m = raw.match(
-    /^v1\|p(\d)r(\d)s(\d)e(\d)\|w([HLTn])\|q([01])\|t([A-Za-z0-9_-]{4,16})$/,
+    /^v1\|p(\d)r(\d)s(\d)e(\d)\|w([HLTn])\|q([01])\|t([A-Za-z0-9_-]{4,16})(?:\|c([0-3]{4}))?$/,
   );
   if (!m) return null;
   const token = m[7];
@@ -227,6 +266,16 @@ export function decodeBeaconFromDiscovery(
         : m[5] === "T"
           ? "tidepool"
           : "none";
+  const tlRaw = m[8];
+  const tlAnon =
+    tlRaw && tlRaw.length === 4
+      ? {
+          pressure: clampAxis(Number(tlRaw[0])),
+          speed: clampAxis(Number(tlRaw[1])),
+          duration: clampAxis(Number(tlRaw[2])),
+          openness: clampAxis(Number(tlRaw[3])),
+        }
+      : null;
   return {
     v: PROXIMITY_PROTOCOL_VERSION,
     token,
@@ -238,6 +287,7 @@ export function decodeBeaconFromDiscovery(
     }),
     weather,
     quiet: m[6] === "1",
+    tlAnon,
     mintedAt: Date.now(),
   };
 }
@@ -298,6 +348,23 @@ export function buildRadarMatch(input: {
     selfQuiet: input.selfBeacon.quiet,
     peerQuiet: input.peerBeacon.quiet,
   });
+  let tlCompatibility: number | null = null;
+  let tlBand: string | null = null;
+  if (input.selfBeacon.tlAnon && input.peerBeacon.tlAnon) {
+    const keys = ["pressure", "speed", "duration", "openness"] as const;
+    let dist = 0;
+    for (const k of keys) {
+      dist += Math.abs(
+        clampAxis(input.selfBeacon.tlAnon[k]) -
+          clampAxis(input.peerBeacon.tlAnon[k]),
+      );
+    }
+    tlCompatibility = Math.max(0, Math.min(100, Math.round(100 * (1 - dist / 12))));
+    if (tlCompatibility >= 80) tlBand = "Very similar Touch Language shape";
+    else if (tlCompatibility >= 60) tlBand = "Similar Touch Language shape";
+    else if (tlCompatibility >= 40) tlBand = "Gentle Touch Language overlap";
+    else tlBand = "Different Touch Language shape";
+  }
   return {
     peerKey: input.peerKey,
     ephemeralLabel: input.ephemeralLabel,
@@ -305,6 +372,9 @@ export function buildRadarMatch(input: {
     resonance,
     band: bandForResonance(resonance),
     disclaimer: RESONANCE_DISCLAIMER,
+    tlCompatibility,
+    tlBandLabel: tlBand,
+    tlDisclaimer: TL_COMPAT_DISCLAIMER,
   };
 }
 
@@ -504,18 +574,21 @@ export function demoRadarPeers(self: ProximityBeacon): RadarMatch[] {
       weather: "tidepool",
       quiet: true,
       token: "demo0001",
+      tlAnon: { pressure: 0, speed: 1, duration: 1, openness: 1 },
     }),
     buildBeacon({
       axes: { pace: 2, presence: 2, sensory: 2, repair: 2 },
       weather: "lantern",
       quiet: false,
       token: "demo0002",
+      tlAnon: { pressure: 2, speed: 2, duration: 2, openness: 2 },
     }),
     buildBeacon({
       axes: { pace: 0, presence: 0, sensory: 0, repair: 0 },
       weather: "hearth",
       quiet: true,
       token: "demo0003",
+      tlAnon: self.tlAnon ?? { pressure: 1, speed: 1, duration: 1, openness: 1 },
     }),
   ];
   return samples.map((b, i) =>
