@@ -275,44 +275,6 @@ export default function HomeTabScreen() {
       />
       <Button
         variant="secondary"
-        label="Proximity (anonymous nearby radar)"
-        onPress={() => router.push("/proximity/radar" as never)}
-        accessibilityHint="Opens opt-in proximity layer: anonymous weather radar, encrypted handshake, mutual consent before any name. Soft Signal exits anytime. Never consent to touch."
-      />
-      <Button
-        variant="secondary"
-        label="NFC careful connect (tap / QR / code)"
-        onPress={() => router.push("/nfc/connect" as never)}
-        accessibilityHint="NFC tag, QR, or manual invite for profile share, snapshot review invite, or key exchange. Explicit accept after every tap. Never consent to touch."
-      />
-      <Button
-        variant="secondary"
-        label="Explore Quizzes (short or deep Vibe)"
-        onPress={() => router.push("/(tabs)/quizzes" as never)}
-        accessibilityHint="Opens self-understanding quizzes. Results are never consent to touch."
-      />
-      <Button
-        variant="secondary"
-        label={
-          status === "demo"
-            ? "Guided Learning (lived lessons · demo)"
-            : "Guided Learning"
-        }
-        onPress={() => router.push("/(tabs)/learn" as never)}
-        accessibilityHint="Opens private short modules on consent language, boundaries, recovery, and more. Never a safety score."
-      />
-      <Button
-        variant="secondary"
-        label={
-          status === "demo"
-            ? "Partner invite practice (demo)"
-            : "Partner invite & comparison"
-        }
-        onPress={() => router.push("/quizzes/share" as never)}
-        accessibilityHint="Opens encrypted partner invite and mutual-consent comparison. Never auto-opens."
-      />
-      <Button
-        variant="secondary"
         label="Meet the mock community"
         onPress={() => router.push("/discover")}
       />
