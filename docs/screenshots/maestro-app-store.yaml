@@ -1,0 +1,130 @@
+# App Store Connect demo screenshots (synthetic only — no real private data).
+appId: com.litmo.app.dev
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    text: "Cancel"
+    optional: true
+- extendedWaitUntil:
+    visible: ".*Explore the prototype.*"
+    timeout: 60000
+- takeScreenshot: asc-01-welcome
+- tapOn: ".*Explore the prototype.*"
+- extendedWaitUntil:
+    visible: ".*Enter the fictional demo.*"
+    timeout: 20000
+- takeScreenshot: asc-02-entry
+- tapOn: ".*Enter the fictional demo.*"
+- extendedWaitUntil:
+    visible: ".*What should we call you.*"
+    timeout: 20000
+- inputText: "River"
+- tapOn:
+    text: ".*A LITTLE ABOUT YOU.*"
+    optional: true
+- tapOn: "Next"
+- extendedWaitUntil:
+    visible: ".*trips around the sun.*"
+    timeout: 15000
+- inputText: "28"
+- tapOn:
+    text: ".*A LITTLE ABOUT YOU.*"
+    optional: true
+- scroll
+- tapOn: "Next"
+- extendedWaitUntil:
+    visible: "Non-binary"
+    timeout: 15000
+- tapOn: "Non-binary"
+- tapOn: "Next"
+- extendedWaitUntil:
+    visible: "Queer"
+    timeout: 15000
+- tapOn: "Queer"
+- tapOn: "Continue to the quiz"
+- extendedWaitUntil:
+    visible: "The window nook"
+    timeout: 20000
+- takeScreenshot: asc-03-vibe-quiz
+- tapOn: "The window nook"
+- extendedWaitUntil:
+    visible: "Build a tiny nest"
+    timeout: 15000
+- tapOn: "Build a tiny nest"
+- extendedWaitUntil:
+    visible: "Offering commentary"
+    timeout: 15000
+- tapOn: "Offering commentary"
+- extendedWaitUntil:
+    visible: "A sleepy fireplace"
+    timeout: 15000
+- tapOn: "A sleepy fireplace"
+- extendedWaitUntil:
+    visible: "Quiet company"
+    timeout: 15000
+- tapOn: "Quiet company"
+- extendedWaitUntil:
+    visible: "Let it unfold slowly"
+    timeout: 15000
+- tapOn: "Let it unfold slowly"
+- extendedWaitUntil:
+    visible: ".*Keep this Vibe Profile.*"
+    timeout: 20000
+- takeScreenshot: asc-04-vibe-result
+- tapOn: "Keep this Vibe Profile"
+- extendedWaitUntil:
+    visible: "Feather-light"
+    timeout: 20000
+- takeScreenshot: asc-05-touch-language
+- tapOn: "Feather-light"
+- tapOn: "A brief hello"
+- tapOn: "A calm public place"
+- tapOn: "Save and meet the mock community"
+- extendedWaitUntil:
+    visible: "Welcomed"
+    timeout: 20000
+- takeScreenshot: asc-06-boundaries
+- tapOn: "Welcomed"
+- scroll
+- tapOn: "Welcomed"
+- scroll
+- tapOn: "Welcomed"
+- scroll
+- tapOn: "Welcomed"
+- tapOn: "Save boundaries and continue"
+- extendedWaitUntil:
+    visible: "People|Discover|Home"
+    timeout: 20000
+- takeScreenshot: asc-07-home
+- tapOn:
+    text: "People"
+    optional: true
+- tapOn:
+    text: "Discover"
+    optional: true
+- extendedWaitUntil:
+    visible: ".*Maya.*"
+    timeout: 20000
+- takeScreenshot: asc-08-discover
+- tapOn: ".*Maya.*"
+- extendedWaitUntil:
+    visible: ".*Consent Snapshot.*"
+    timeout: 15000
+- takeScreenshot: asc-09-match
+- tapOn: ".*Consent Snapshot.*"
+- extendedWaitUntil:
+    visible: ".*MOCK.*|.*mock.*|.*boundary.*"
+    timeout: 15000
+- takeScreenshot: asc-10-consent-snapshot
+- tapOn: "Yes, this matches what I agree to now"
+- tapOn: "Confirm this mock snapshot"
+- extendedWaitUntil:
+    visible: ".*Soft Signal.*"
+    timeout: 20000
+- takeScreenshot: asc-11-active-soft-signal
+- tapOn: ".*Soft Signal.*"
+- extendedWaitUntil:
+    visible: ".*wrap.*|.*Soft Signal.*|.*together.*"
+    timeout: 20000
+- takeScreenshot: asc-12-wrap-up
