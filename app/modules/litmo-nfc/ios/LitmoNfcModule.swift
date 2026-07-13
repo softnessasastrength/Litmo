@@ -254,15 +254,37 @@ extension NfcCoordinator: NFCNDEFReaderSessionDelegate {
         if let uri = record.wellKnownTypeURIPayload()?.absoluteString, !uri.isEmpty {
           return uri
         }
-        var locale: Locale?
-        if let text = record.wellKnownTypeTextPayload(locale: &locale), !text.isEmpty {
+        if let text = parseWellKnownText(record), !text.isEmpty {
           return text
         }
-        if let s = String(data: record.payload, encoding: .utf8), s.contains("litmo://") {
-          return s
+        // Raw UTF-8 fallback for custom/absolute URI payloads.
+        if let s = String(data: record.payload, encoding: .utf8) {
+          let trimmed = s.trimmingCharacters(in: .controlCharacters)
+          if trimmed.contains("litmo://") || trimmed.contains("https://") {
+            return trimmed
+          }
         }
       }
     }
     return nil
+  }
+
+  /// Parse NFC Forum Well Known Type Text (TNF 0x01, type "T").
+  /// Avoids SDK-specific instance helpers that break on Xcode beta CoreNFC.
+  private func parseWellKnownText(_ record: NFCNDEFPayload) -> String? {
+    let typeString = String(data: record.type, encoding: .utf8) ?? ""
+    guard typeString == "T" else { return nil }
+    let data = record.payload
+    guard !data.isEmpty else { return nil }
+    let status = data[data.startIndex]
+    let langLen = Int(status & 0x3F)
+    let isUTF16 = (status & 0x80) != 0
+    let textStart = 1 + langLen
+    guard data.count >= textStart else { return nil }
+    let textData = data.subdata(in: textStart..<data.count)
+    if isUTF16 {
+      return String(data: textData, encoding: .utf16)
+    }
+    return String(data: textData, encoding: .utf8)
   }
 }
