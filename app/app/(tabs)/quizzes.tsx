@@ -96,8 +96,9 @@ export default function QuizzesHubScreen() {
         <Text style={styles.safetyTitle}>Safety promise</Text>
         <Text style={styles.safetyBody}>
           Partner comparison only opens after both people explicitly consent to
-          share and to compare. Face ID protects private result views on real
-          accounts. A quiz match is never permission to touch.
+          share and to compare. Results are end-to-end encrypted for the invite.
+          Face ID protects private result and partner screens on real accounts.
+          A quiz match is never permission to touch.
         </Text>
       </View>
 
@@ -223,8 +224,8 @@ export default function QuizzesHubScreen() {
 
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Partner invites. Two consents: share a sealed result, then compare only if both opt in."
-        accessibilityHint="Opens partner invite and comparison flow"
+        accessibilityLabel="Partner invites and shared comparison. Two consents: share an encrypted result, then compare only if both opt in. End-to-end encrypted."
+        accessibilityHint="Opens partner invite and mutual-consent comparison flow"
         onPress={() => router.push("/quizzes/share" as never)}
         style={({ pressed }) => [styles.shareCard, pressed && styles.pressed]}
       >
@@ -233,14 +234,17 @@ export default function QuizzesHubScreen() {
             <Ionicons name="people-outline" size={20} color={colors.plum} />
           </View>
           <View style={styles.cardCopy}>
-            <Text style={styles.cardTitle}>Partner invites</Text>
+            <Text style={styles.cardTitle}>Partner invites & comparison</Text>
             <Text style={styles.cardSummary}>
-              Two calm steps: (1) consent to share a sealed result, then (2)
-              consent to compare. Nothing opens until both people choose both.
+              Invite one person. Encrypt your weather with Signal-style E2E.
+              Comparison opens only after both of you consent to share and to
+              compare — never automatically, never as consent to touch.
             </Text>
           </View>
         </View>
-        <Text style={styles.shareMeta}>Mutual consent · never auto-open</Text>
+        <Text style={styles.shareMeta}>
+          Mutual consent · E2E encrypted · never auto-open
+        </Text>
       </Pressable>
     </ScrollView>
   );

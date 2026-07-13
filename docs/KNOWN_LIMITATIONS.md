@@ -62,6 +62,20 @@
   backup reviewer staffing, and two-person permanent-ban approval remain
   blocked.
 
+## Partner invite & shared comparison (demo + real)
+
+- **Demo path (single device):** Quizzes → Partner invites → Create invite →
+  **Practice with fictional partner (demo)** → consent to **share** (after
+  taking the quiz) → consent to **compare** → Open shared comparison. Face ID
+  is skipped in demo. The fictional peer is educational only and still arrives
+  via real X3DH + Double Ratchet ciphertext; local human consents are never
+  auto-granted.
+- **Real dual-device path:** Host creates invite → share public package → peer
+  joins and shares encrypted result → host imports → both complete share +
+  compare → comparison opens. Optional claim-code relay when signed in.
+- Comparison requires **four gates** (local share, local compare, partner share,
+  partner compare) plus both decrypted results. Missing any gate fails closed.
+
 ## Quizzes section, partner E2E, and optional own-summary backup
 
 - The Quizzes tab (ADR 0050 / **0052**) is **local-first self-understanding**.

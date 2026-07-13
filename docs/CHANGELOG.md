@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-07-13 — Partner invite & shared comparison flow
+
+### Summary
+
+Polished Partner Invite and Shared Quiz Comparison: calm guided UX, dual
+consent gates, Signal-style E2E, and a demo-only fictional partner that still
+uses real crypto and never auto-opens comparison.
+
+### User-visible impact
+
+- Quizzes hub and Home link to partner invite & comparison.
+- Demo mode: practice with a fictional encrypted partner; Face ID skipped;
+  human share + compare consents still required.
+- Real accounts: Face ID step-up; optional claim-code relay; paste remains primary.
+- Comparison copy remains non-authority (never consent / safety / match score).
+
+### Developer impact
+
+- `quizDemoPartner` pure builder + tests; `practiceWithFictionalPartner` on invite store.
+- Entry / Home / Quizzes copy updated for demo path.
+
 ## 2026-07-13 — Partner quiz E2E (X3DH + Double Ratchet)
 
 ### Summary

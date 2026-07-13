@@ -29,13 +29,28 @@ import {
   quizE2eIdentity,
   unwrapSecretBlob,
   wrapSecretBlob,
-  type PublicBundle,
 } from "./quizE2eIdentity.ts";
+import {
+  QUIZ_E2E_SESSION_OPEN_PLAIN,
+  quizE2eAad,
+  type E2eInvitePublic,
+  type E2ePeerHandshakePackage,
+  type E2eResultPackage,
+} from "./quizE2eProtocol.ts";
 import * as SecureStore from "expo-secure-store";
+
+export {
+  QUIZ_E2E_SESSION_OPEN_PLAIN,
+  quizE2eAad,
+  type E2eInvitePublic,
+  type E2ePeerHandshakePackage,
+  type E2eResultPackage,
+  type PublicBundle,
+} from "./quizE2eProtocol.ts";
 
 const RATCHET_PREFIX = "litmo.quiz.e2e.ratchet.";
 const RATCHET_META_PREFIX = "litmo.quiz.e2e.ratchet.meta.";
-const SESSION_OPEN_PLAIN = JSON.stringify({ t: "session-open", v: 1 });
+const SESSION_OPEN_PLAIN = QUIZ_E2E_SESSION_OPEN_PLAIN;
 
 type RatchetStored = {
   vaultWrapped: boolean;
@@ -46,51 +61,6 @@ type RatchetMeta = {
   /** Host identity public — binds AAD so only this invite session decrypts. */
   hostIdentityPublic: string;
   hostSignedPrekeyPublic: string;
-};
-
-export type E2eInvitePublic = {
-  v: 3;
-  kind: "public-invite";
-  protocol: "x3dh+double-ratchet";
-  invitePublicId: string;
-  quizId: QuizCatalogId;
-  hostBundle: PublicBundle;
-  createdAt: string;
-};
-
-export type E2ePeerHello = {
-  peerIdentityPublic: string;
-  peerEphemeralPublic: string;
-};
-
-export type E2ePeerHandshakePackage = {
-  v: 3;
-  kind: "peer-handshake";
-  protocol: "x3dh+double-ratchet";
-  invitePublicId: string;
-  quizId: QuizCatalogId;
-  peerIdentityPublic: string;
-  peerEphemeralPublic: string;
-  /** First Alice ciphertext — establishes host send chain. Not a quiz result. */
-  sessionOpen: RatchetMessage;
-};
-
-export type E2eResultPackage = {
-  v: 3;
-  kind: "result";
-  protocol: "x3dh+double-ratchet";
-  invitePublicId: string;
-  quizId: QuizCatalogId;
-  role: "host" | "peer";
-  consentToShare: boolean;
-  consentToCompare: boolean;
-  /** Double Ratchet ciphertext of ShareableQuizResult JSON */
-  message: RatchetMessage;
-  /**
-   * Peer-first packages may embed handshake so host can accept + decrypt in one paste.
-   * Host result packages omit this.
-   */
-  handshake?: Omit<E2ePeerHandshakePackage, "v" | "kind" | "protocol">;
 };
 
 function b64urlToBytes(s: string): Uint8Array {
@@ -106,19 +76,6 @@ function bytesToB64url(bytes: Uint8Array): string {
   let s = "";
   for (const b of bytes) s += String.fromCharCode(b);
   return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
-}
-
-/**
- * AAD binds ciphertext to this invite + host public keys.
- * A third party without the matching ratchet state cannot decrypt;
- * wrong invite or host identity fails closed.
- */
-function aadFor(
-  quizId: string,
-  invitePublicId: string,
-  hostIdentityPublic: string,
-): string {
-  return `quiz:${quizId}|${invitePublicId}|host:${hostIdentityPublic}`;
 }
 
 const SECURE_OPTS = {
@@ -197,7 +154,7 @@ async function aadForInvite(
 ): Promise<string | null> {
   const meta = await loadRatchetMeta(invitePublicId);
   if (!meta?.hostIdentityPublic) return null;
-  return aadFor(quizId, invitePublicId, meta.hostIdentityPublic);
+  return quizE2eAad(quizId, invitePublicId, meta.hostIdentityPublic);
 }
 
 export const quizE2eSession = {
@@ -263,7 +220,7 @@ export const quizE2eSession = {
         hostIdentityPublic: invite.hostBundle.identityPublic,
         hostSignedPrekeyPublic: invite.hostBundle.signedPrekeyPublic,
       });
-      const aad = aadFor(
+      const aad = quizE2eAad(
         invite.quizId,
         invite.invitePublicId,
         invite.hostBundle.identityPublic,
@@ -341,7 +298,7 @@ export const quizE2eSession = {
         hostIdentityPublic: invite.hostBundle.identityPublic,
         hostSignedPrekeyPublic: invite.hostBundle.signedPrekeyPublic,
       });
-      const aad = aadFor(
+      const aad = quizE2eAad(
         invite.quizId,
         invite.invitePublicId,
         invite.hostBundle.identityPublic,

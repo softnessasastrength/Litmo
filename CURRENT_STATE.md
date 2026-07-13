@@ -16,7 +16,7 @@
 - PR #78 ACCESS-001 semantics cleanup; VoiceOver smoke still optional.
 - PR #79 MACOS-002 self-only trust history (ADR 0046).
 - PR #80 MACOS-003 own profile + shared transport (ADR 0047).
-- Quizzes section: short/deep vibe + self quizzes, local-first results, Face ID step-up on private result/share, four-gate partner comparison (ADR 0050); optional owner-only summary backup (ADR 0051); partner E2E X3DH + Double Ratchet with ciphertext-only optional relay (ADR 0052).
+- Quizzes section: short/deep vibe + self quizzes, local-first results, Face ID step-up on private result/share, four-gate partner comparison (ADR 0050); optional owner-only summary backup (ADR 0051); partner E2E X3DH + Double Ratchet with ciphertext-only optional relay (ADR 0052); demo fictional-partner practice on invite flow (QUIZ-003).
 
 ## Work in progress
 

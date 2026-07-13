@@ -23,10 +23,8 @@ import {
 const IDENTITY_KEY = "litmo.quiz.e2e.identity.v3";
 const SPK_KEY = "litmo.quiz.e2e.spk.v3";
 
-export type PublicBundle = {
-  identityPublic: string; // base64url
-  signedPrekeyPublic: string;
-};
+import type { PublicBundle } from "./quizE2eProtocol.ts";
+export type { PublicBundle };
 
 export type IdentityStorageMode = "vault-wrapped" | "secure-store-fallback";
 

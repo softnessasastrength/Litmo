@@ -204,6 +204,16 @@ export default function HomeTabScreen() {
       />
       <Button
         variant="secondary"
+        label={
+          status === "demo"
+            ? "Partner invite practice (demo)"
+            : "Partner invite & comparison"
+        }
+        onPress={() => router.push("/quizzes/share" as never)}
+        accessibilityHint="Opens encrypted partner invite and mutual-consent comparison. Never auto-opens."
+      />
+      <Button
+        variant="secondary"
         label="Meet the mock community"
         onPress={() => router.push("/discover")}
       />

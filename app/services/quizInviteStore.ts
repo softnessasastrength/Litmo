@@ -22,6 +22,10 @@ import {
   type E2ePeerHandshakePackage,
   type E2eResultPackage,
 } from "./quizE2eSession.ts";
+import {
+  buildDemoPeerResultPackage,
+  fictionalPeerResult,
+} from "./quizDemoPartner.ts";
 
 const STORAGE_KEY = "litmo.quizzes.invites.v2";
 
@@ -119,6 +123,45 @@ export const quizInviteStore = {
     const invite = await this.get(inviteId);
     if (!invite) return null;
     return this.update(withLocalCompareConsent(invite, consent));
+  },
+
+  /**
+   * Demo-only: import a fictional peer encrypted with real X3DH+DR against this
+   * host invite. Does NOT grant local share/compare consent — human must still
+   * opt in before comparison opens.
+   */
+  async practiceWithFictionalPartner(
+    inviteId: string,
+  ): Promise<QuizInvite | { error: string }> {
+    const invite = await this.get(inviteId);
+    if (!invite) return { error: "Invite not found on this device." };
+    if (invite.role !== "host") {
+      return {
+        error:
+          "Practice with a fictional partner is for the invite host on this device.",
+      };
+    }
+    if (!invite.publicInvitePackage) {
+      return { error: "Public invite material missing. Create a new invite." };
+    }
+    if (invite.peerResult) {
+      return {
+        error:
+          "A partner result is already present. Comparison still needs your share and compare consents.",
+      };
+    }
+    let publicInvite: E2eInvitePublic;
+    try {
+      publicInvite = JSON.parse(invite.publicInvitePackage) as E2eInvitePublic;
+    } catch {
+      return { error: "Public invite is unreadable. Create a new invite." };
+    }
+    const fictional = fictionalPeerResult(invite.quizId);
+    const pack = buildDemoPeerResultPackage(publicInvite, fictional, {
+      consentToCompare: true,
+    });
+    if ("error" in pack) return pack;
+    return this.importPackage(JSON.stringify(pack));
   },
 
   /**
