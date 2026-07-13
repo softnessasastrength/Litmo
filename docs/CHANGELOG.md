@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-13 — Watch app scaffold + Soft Signal wrist/phone kill bridge
+
+### Summary
+
+watchOS app (Soft Signal, presence, co-regulation, check-in), Soft Signal
+complication, Watch Connectivity hub, phone Soft Signal best-effort kill to
+Watch. Offline-first; stop never waits on delivery.
+
+### Material
+
+- `watch/` XcodeGen project + README  
+- `docs/WATCH_INTEGRATION.md`  
+- `softSignalService.fire` → `watchHapticBridge.softSignalFromWrist`  
+
 ## 2026-07-13 — Apple Watch haptic co-regulation (ADR 0064)
 
 ### Summary

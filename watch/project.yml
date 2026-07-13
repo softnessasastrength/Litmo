@@ -1,0 +1,55 @@
+# Litmo Watch — soft co-regulation companion (watchOS).
+# Generate: cd watch && xcodegen generate
+# Soft Signal is free, offline-first, never a notification spam face.
+name: LitmoWatch
+options:
+  bundleIdPrefix: com.litmo
+  deploymentTarget:
+    watchOS: "10.0"
+packages:
+  LitmoWatchHaptics:
+    path: ../packages/LitmoWatchHaptics
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    WATCHOS_DEPLOYMENT_TARGET: "10.0"
+    CODE_SIGN_STYLE: Automatic
+targets:
+  LitmoWatch:
+    type: application
+    platform: watchOS
+    sources: [Sources/LitmoWatchApp]
+    dependencies:
+      - package: LitmoWatchHaptics
+        product: LitmoWatchHaptics
+    info:
+      path: Configs/Info.plist
+      properties:
+        CFBundleDisplayName: Litmo
+        WKCompanionAppBundleIdentifier: com.litmo.app
+        WKRunsIndependentlyOfCompanionApp: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.litmo.watch
+        PRODUCT_NAME: LitmoWatch
+        TARGETED_DEVICE_FAMILY: "4"
+        SDKROOT: watchos
+  LitmoWatchExtension:
+    type: app-extension
+    platform: watchOS
+    sources: [Sources/LitmoWatchWidgets]
+    dependencies:
+      - package: LitmoWatchHaptics
+        product: LitmoWatchHaptics
+    info:
+      path: Configs/WidgetInfo.plist
+      properties:
+        CFBundleDisplayName: Litmo Soft Signal
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.litmo.watch.widgets
+        PRODUCT_NAME: LitmoWatchWidgets
+        TARGETED_DEVICE_FAMILY: "4"
+        SDKROOT: watchos

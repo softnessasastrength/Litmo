@@ -20,7 +20,7 @@
 | Soft Signal + trauma safety (panic/timeout/reflect) | shipped | `docs/SOFT_SIGNAL.md`, `docs/TRAUMA_INFORMED_SAFETY.md` |
 | **Neurodivergent Mode v3** (sensory/pace/language/exits) | shipped | `docs/NEURODIVERGENT_MODE.md` · `neuroAccommodationCore` |
 | **Semantic haptic language** (composable grammar) | shipped (phone) | `docs/HAPTIC_LANGUAGE.md` · ADR 0063 · hardware design |
-| **Apple Watch haptic co-regulation** | domain + stubs | ADR 0064 · `@litmo/domain` hapticWatch · Watch app TBD |
+| **Apple Watch haptic co-regulation** | domain + **watch/ scaffold** | ADR 0064 · `watch/` · WATCH_INTEGRATION.md |
 | Proximity · NFC · QR · Multipeer | shipped | `docs/PROXIMITY_LAYER.md`, `docs/NFC_FEATURES.md` |
 | Guided Learning (lived + foundations + paths) | shipped | `docs/LEARNING_SYSTEM.md` |
 | Local-first vault + encrypted backup | shipped | `docs/LOCAL_FIRST.md` (ADR 0058) |

@@ -101,19 +101,39 @@ public enum LitmoWatchPhraseLibrary {
 
 /// Global Soft Signal kill payload — mirrors TS SoftSignalKillCommand.
 public struct LitmoSoftSignalKillCommand: Codable, Sendable {
-  public var kind: String = "soft_signal_kill"
+  public var kind: String
   public var sourceDeviceId: String
   public var sourceClass: String
   public var sessionId: String?
   public var at: String
-  public var killAllHaptics: Bool = true
+  public var killAllHaptics: Bool
   public var endSession: Bool
 
   public init(watchDeviceId: String, sessionId: String?, at: String) {
+    self.kind = "soft_signal_kill"
     self.sourceDeviceId = watchDeviceId
     self.sourceClass = "watch"
     self.sessionId = sessionId
     self.at = at
+    self.killAllHaptics = true
     self.endSession = sessionId != nil
+  }
+
+  public init(
+    kind: String = "soft_signal_kill",
+    sourceDeviceId: String,
+    sourceClass: String,
+    sessionId: String?,
+    at: String,
+    killAllHaptics: Bool = true,
+    endSession: Bool
+  ) {
+    self.kind = kind
+    self.sourceDeviceId = sourceDeviceId
+    self.sourceClass = sourceClass
+    self.sessionId = sessionId
+    self.at = at
+    self.killAllHaptics = killAllHaptics
+    self.endSession = endSession
   }
 }

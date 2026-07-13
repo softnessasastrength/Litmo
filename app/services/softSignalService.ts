@@ -21,6 +21,7 @@ import { hapticService } from "./hapticService.ts";
 import { getSoftSignalHardwareBridge } from "./softSignalHardware.ts";
 import { softSignalLogStore } from "./softSignalLogStore.ts";
 import { createSoftSignalService } from "./softSignalServiceCore.ts";
+import { watchHapticBridge } from "./watchHapticBridge.ts";
 
 /**
  * WHAT: Production Soft Signal core with real stop/log/haptic/hardware deps.
@@ -61,6 +62,13 @@ const core = createSoftSignalService({
     // then play descend_warm / triple-decay phrase (hapticLanguageNuclear v0.1).
     hapticService.raiseInterrupt("soft_signal");
     void hapticService.play("softSignal");
+    // Best-effort wrist mirror — never blocks stop (ADR 0064).
+    void watchHapticBridge
+      .softSignalFromWrist({
+        watchDeviceId: "phone-originated",
+        sessionId: null,
+      })
+      .catch(() => undefined);
   },
   /**
    * WHAT: Emit SoftSignalHardwareCommand to current hardware bridge.
@@ -87,10 +95,21 @@ export const softSignalService = {
    * CONSENT: Unilateral stop. Remote failure still returns localEnded: true via core.
    * EDGE CASES: See createSoftSignalService.fire — practiceOnly, pending_sync, etc.
    * NEVER: Await peer; require explanation; treat as emergency services.
-   * SEE: SoftSignalFireRequest; emergencyStopService.stop
+   * SEE: SoftSignalFireRequest; emergencyStopService.stop · ADR 0064 watch kill
    */
   async fire(request: SoftSignalFireRequest): Promise<SoftSignalFireResult> {
-    return core.fire(request);
+    const result = await core.fire(request);
+    // After local stop authority, best-effort Watch kill with session id when known.
+    // Must never block or reverse localEnded.
+    if (!request.practiceOnly && request.sessionId) {
+      void watchHapticBridge
+        .softSignalFromWrist({
+          watchDeviceId: "phone-originated",
+          sessionId: request.sessionId,
+        })
+        .catch(() => undefined);
+    }
+    return result;
   },
 
   /**
