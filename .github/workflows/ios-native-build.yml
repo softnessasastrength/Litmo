@@ -1,0 +1,73 @@
+name: iOS Native Build
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/ios-native-build.yml"
+      - "app/**"
+      - "shared/**"
+      - "package.json"
+      - "package-lock.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-native-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  simulator-build:
+    name: Unsigned iOS Simulator build
+    runs-on: macos-15
+    timeout-minutes: 45
+    env:
+      CI: "1"
+      EXPO_PUBLIC_APP_ENV: development
+      LITMO_FREE_TIER_BUILD: "1"
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Record Xcode version
+        run: xcodebuild -version
+
+      - name: Install JavaScript dependencies
+        run: npm ci
+
+      - name: Install locked CocoaPods dependencies
+        working-directory: app/ios
+        run: pod install --deployment
+
+      - name: Build unsigned simulator app
+        shell: bash
+        run: |
+          set -o pipefail
+          xcodebuild             -workspace app/ios/Litmodevelopment.xcworkspace             -scheme Litmodevelopment             -configuration Debug             -sdk iphonesimulator             -destination "generic/platform=iOS Simulator"             -derivedDataPath "$RUNNER_TEMP/LitmoDerivedData"             CODE_SIGNING_ALLOWED=NO             CODE_SIGNING_REQUIRED=NO             build | tee "$RUNNER_TEMP/xcodebuild.log"
+
+      - name: Upload Xcode log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Litmo-xcodebuild-log
+          path: ${{ runner.temp }}/xcodebuild.log
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload simulator app
+        uses: actions/upload-artifact@v4
+        with:
+          name: Litmo-iOS-Simulator
+          path: ${{ runner.temp }}/LitmoDerivedData/Build/Products/Debug-iphonesimulator/Litmodevelopment.app
+          if-no-files-found: error
+          retention-days: 7
