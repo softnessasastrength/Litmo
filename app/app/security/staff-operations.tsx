@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { Alert, Share, Text, View } from "react-native";
-import { Body, Button, Card, Eyebrow, Screen, Title } from "../../components/ui";
+import {
+  Body,
+  Button,
+  Card,
+  Eyebrow,
+  Screen,
+  Title,
+} from "../../components/ui";
 import { FailureState, LoadingState } from "../../components/AsyncState";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { useAuth } from "../../context/AuthContext";
@@ -64,7 +71,8 @@ function StaffOperationsContent() {
       </Screen>
     );
   }
-  if (state.kind === "loading") return <LoadingState label="Loading safety operations…" />;
+  if (state.kind === "loading")
+    return <LoadingState label="Loading safety operations…" />;
   if (state.kind === "denied") {
     return (
       <Screen>
@@ -100,7 +108,8 @@ function StaffOperationsContent() {
               setBusy(true);
               setError("");
               try {
-                const paused = await safetyOpsService.setMatchingPaused(enabled);
+                const paused =
+                  await safetyOpsService.setMatchingPaused(enabled);
                 setState({ kind: "ready", paused });
               } catch (caught) {
                 setError(
@@ -133,11 +142,13 @@ function StaffOperationsContent() {
         <View style={styles.cardActions}>
           <Button
             variant={state.paused ? "secondary" : "signal"}
-            label={busy
-              ? "Updating…"
-              : state.paused
-                ? "Resume matching"
-                : "Pause all new matching"}
+            label={
+              busy
+                ? "Updating…"
+                : state.paused
+                  ? "Resume matching"
+                  : "Pause all new matching"
+            }
             disabled={busy}
             onPress={() => changePause(!state.paused)}
           />
@@ -161,7 +172,9 @@ function StaffOperationsContent() {
                 setError("");
                 setInviteCode(null);
                 try {
-                  setInviteCode(await safetyOpsService.issuePrivateAlphaInvite());
+                  setInviteCode(
+                    await safetyOpsService.issuePrivateAlphaInvite(),
+                  );
                 } catch (caught) {
                   setError(
                     caught instanceof Error
@@ -177,7 +190,11 @@ function StaffOperationsContent() {
         </View>
         {inviteCode ? (
           <View style={styles.codeBlock}>
-            <Text selectable accessibilityLabel="New private-alpha invitation code" style={styles.code}>
+            <Text
+              selectable
+              accessibilityLabel="New private-alpha invitation code"
+              style={styles.code}
+            >
               {inviteCode}
             </Text>
             <Button
@@ -190,7 +207,8 @@ function StaffOperationsContent() {
               }}
             />
             <Body muted>
-              Share it now. Leaving this screen permanently hides this plaintext code.
+              Share it now. Leaving this screen permanently hides this plaintext
+              code.
             </Body>
           </View>
         ) : null}
@@ -200,7 +218,11 @@ function StaffOperationsContent() {
           {error}
         </Text>
       ) : null}
-      <Button variant="secondary" label="Refresh state" onPress={() => void load()} />
+      <Button
+        variant="secondary"
+        label="Refresh state"
+        onPress={() => void load()}
+      />
     </Screen>
   );
 }
@@ -236,4 +258,3 @@ function makeStyles(colors: AppColors) {
     error: { color: colors.signal, textAlign: "center" as const },
   };
 }
-
