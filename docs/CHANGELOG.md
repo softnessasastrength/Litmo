@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-07-13 — Draft SAFETY-OPS-001 moderation/beta-ops design proposal
+
+### Summary
+
+Added `docs/SAFETY_OPS_DESIGN.md`: a ground-truth inventory of Chapter 5's
+already-shipped moderation system (blocking, reports, review queue,
+restrictions, appeals, rate limits, trust events, age gate) plus proposals for
+what Chapter 6 still needs (invite-only enrollment, retention/deletion/export,
+beta kill-switch, escalation ladder). Retention/deletion/export is framed
+around GDPR-style data-rights principles as design philosophy, not a
+compliance claim.
+
+### User-visible impact
+
+- None. Draft proposal document; no runtime behavior changed.
+
+### Developer impact
+
+- New doc registered in `docs/DOCUMENTATION_MAP.md` under "Roadmaps and future
+  intent." Explicitly does not authorize Chapter 6 implementation.
+
+### Related decision and roadmap
+
+- `TASKS.md` SAFETY-OPS-001 (stays `pending` — needs founder/safety review),
+  PR #63
+- `docs/roadmap/CHAPTER_6_PRIVATE_ALPHA.md`
+
 ## 2026-07-12 — Track B seed-account integration test
 
 ### Summary

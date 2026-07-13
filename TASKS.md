@@ -17,7 +17,7 @@ None. BETA-001 is complete; no other task is currently in the `active` state.
 - **Depends on:** BETA-001 (complete)
 - **Goal:** Validate VoiceOver, Dynamic Type, reduced motion, focus order, contrast, large touch targets, and non-color-only meaning.
 - **Acceptance criteria:** screen-by-screen findings; severity; reproducible steps; fixes and regression tests for material failures.
-- **Notes:** BETA-001 Track C covered engineering-level accessibility criteria (Pass); the optional founder VoiceOver smoke (`docs/ACCESSIBILITY_TRACK_C.md`) is the only item still outstanding here.
+- **Notes:** BETA-001 Track C covered engineering-level accessibility criteria (Pass); the optional founder VoiceOver smoke (`docs/ACCESSIBILITY_TRACK_C.md`) is the only physical-device item still outstanding. **Progress 2026-07-13 (agent):** static-analysis-only audit of screens Track C didn't cover, fixing a VoiceOver bug in `boundaries.tsx` (radiogroup collapsed under a stray `accessible` prop) and a dark-mode contrast bug across auth/profile screens; see PR #61. Two items explicitly deferred as needing a product decision, not fixed in that PR: moderation-queue filter buttons lack `accessibilityState` for the active filter; Settings toggles use plain buttons instead of switch semantics.
 
 ### SAFETY-OPS-001 — Moderation and beta-operations design
 
@@ -25,6 +25,7 @@ None. BETA-001 is complete; no other task is currently in the `active` state.
 - **Owner:** founder plus safety/product reviewer
 - **Goal:** Define reporting, blocking, invitation expiry, eligibility, human review, escalation, retention, and beta kill-switch behavior before broader discovery.
 - **Acceptance criteria:** product specification; threat/abuse cases; data handling; operational roles; unresolved legal and clinical boundaries clearly identified.
+- **Progress 2026-07-13 (agent):** drafted `docs/SAFETY_OPS_DESIGN.md` — a ground-truth inventory of what Chapter 5 already built (blocking, reports, moderation queue, restrictions, appeals, rate limits, trust events, age gate) plus proposals for the still-unbuilt pieces (invite codes, retention/deletion/export framed around GDPR-style data-rights principles as design philosophy, beta kill-switch, escalation ladder). Explicitly a draft: does not authorize Chapter 6 implementation, does not constitute legal review, and flags several open questions (retention windows, jurisdiction exclusions, who staffs escalation beyond the founder) that only the founder/legal review can resolve. Still **pending** — this task isn't done until that review happens.
 
 ### DOCS-002 — Keep documentation synchronized
 
