@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { Share, Text } from "react-native";
-import { Body, Button, Card, Eyebrow, Screen, Title } from "../../components/ui";
+import {
+  Body,
+  Button,
+  Card,
+  Eyebrow,
+  Screen,
+  Title,
+} from "../../components/ui";
 import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { useAuth } from "../../context/AuthContext";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
@@ -55,7 +62,13 @@ function DataExportContent() {
         that every possible category is complete.
       </Body>
       <Button
-        label={busy ? "Generating…" : payload ? "Regenerate export" : "Generate export"}
+        label={
+          busy
+            ? "Generating…"
+            : payload
+              ? "Regenerate export"
+              : "Generate export"
+        }
         disabled={busy}
         onPress={() => {
           void (async () => {
@@ -79,7 +92,8 @@ function DataExportContent() {
         <>
           <Card>
             <Text style={styles.meta}>
-              Generated {typeof payload.generated_at === "string"
+              Generated{" "}
+              {typeof payload.generated_at === "string"
                 ? new Date(payload.generated_at).toLocaleString()
                 : "just now"}
             </Text>
@@ -118,4 +132,3 @@ function makeStyles(colors: AppColors) {
     error: { color: colors.signal, textAlign: "center" as const },
   };
 }
-
