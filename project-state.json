@@ -1,29 +1,29 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T14:04:00-04:00",
+  "updatedAt": "2026-07-13T14:16:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
     "status": "active"
   },
   "git": {
-    "branch": "main",
-    "latestCoherentCommit": "8ced065",
-    "workingTreeExpectedClean": true
+    "branch": "agent/macos-trust-history-read",
+    "latestCoherentCommit": "8d9d0a0ecbd3a0ab3d4a2f271df8291fab9b4745",
+    "workingTreeExpectedClean": false
   },
   "verification": {
     "status": "passed",
     "commands": [
-      "GitHub Actions macOS Native Build run #8 \u2014 pass on merged PR #76 with Xcode 26.5",
-      "LitmoMacCoreTests \u2014 4/4 Campfire invariant tests pass",
-      "Litmo participant app and Litmo Ops \u2014 unsigned arm64 compile pass",
-      "Project State, lint, typecheck, unit tests, and build \u2014 pass on merged PR #76 head",
-      "Database/integration lane \u2014 no database changes in PR #76; merged baseline remains authoritative"
+      "xcodegen generate \u2014 success in macos/",
+      "xcodebuild -scheme Litmo test (arm64, CODE_SIGNING_ALLOWED=NO) \u2014 13/13 tests pass (4 Campfire + 9 TrustSignals)",
+      "xcodebuild -scheme LitmoOps build (arm64, unsigned) \u2014 BUILD SUCCEEDED",
+      "npm run state:check \u2014 pass after project-state update",
+      "Hosted macOS Native Build \u2014 pending on implementation PR"
     ],
     "failures": []
   },
-  "nextAction": "Choose the next separately reviewed macOS integration slice or return to governance work. Litmo Ops stays locked until server-backed staff authentication and authorization exist. ACCESS-001 residual: optional founder VoiceOver smoke.",
+  "nextAction": "Review and merge MACOS-002 self-only trust history PR after hosted macOS CI is green. Litmo Ops stays locked. ACCESS-001 residual remains optional founder VoiceOver smoke (PR #78 if open).",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
@@ -42,11 +42,12 @@
     "ACCESS-001 still requires a physical founder VoiceOver smoke before it can be closed."
   ],
   "notes": [
-    "PRs #72\u2013#75 are merged on main.",
-    "PR #76 merged and adds native SwiftUI participant/Campfire and separately locked Ops targets under ADR 0045.",
-    "macOS Native Build run #2 passed after adding the required generated framework Info.plist.",
+    "PRs #72\u2013#77 are merged on main.",
+    "PR #76 added native SwiftUI participant/Campfire and locked Ops under ADR 0045.",
+    "MACOS-002 adds fail-closed self-only trust history via my_trust_signals (ADR 0046).",
     "Unsigned hosted artifacts are inspection builds, not signed or notarized releases.",
     "Destructive report/case/trust retention and account deletion remain deliberately unimplemented pending review.",
-    "ACCESS-001 2026-07-13: residual work is the optional founder VoiceOver smoke; selector semantics fixes were standardized in app/app/security/moderation.tsx and app/app/settings.tsx."
+    "ACCESS-001 2026-07-13: residual work is the optional founder VoiceOver smoke; selector semantics fixes were standardized in app/app/security/moderation.tsx and app/app/settings.tsx.",
+    "PR #78 merged ACCESS-001 semantics cleanup; optional founder VoiceOver smoke remains."
   ]
 }

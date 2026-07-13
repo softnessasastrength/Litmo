@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-07-13 — macOS self-only trust history read
+
+### Summary
+
+Added the first server-backed participant read model on native macOS: self-only
+trust history via the existing `my_trust_signals` RPC, with fail-closed
+configuration and session handling (ADR 0046).
+
+### User-visible impact
+
+- The Litmo macOS app gains a **Trust history** sidebar surface.
+- When Supabase URL, anon key, and an access token are present, the app loads
+  server facts (account age, profile complete, adult confirmation, terminal
+  session counts) without inventing a safety score.
+- When configuration or session is missing, or the server refuses the call, the
+  surface fails closed and shows no fabricated participant data.
+
+### Safety and developer impact
+
+- Swift decodes and displays server fields only; it does not recompute trust or
+  consent.
+- Local inspection uses `LITMO_SUPABASE_URL`, `LITMO_SUPABASE_ANON_KEY`, and
+  `LITMO_ACCESS_TOKEN` (documented in `macos/README.md`). This is not production
+  passkey sign-in.
+- Unit tests cover decoding, configuration/session fail-closed paths, and HTTP
+  success/error handling with an injected HTTP performer.
+- Litmo Ops remains locked and still shares no credentials or app group.
+
+### Related work
+
+- MACOS-002 (trust-history read slice)
+- ADR 0046
+- ADR 0029 / ADR 0045
+
 ## 2026-07-13 — ACCESS-001 a11y semantics cleanup
 
 ### Summary
@@ -24,6 +58,7 @@ binary toggle.
 ### Related decision and roadmap
 
 - `TASKS.md` ACCESS-001 (still pending physical founder VoiceOver smoke)
+
 
 ## 2026-07-13 — Native macOS participant and Ops foundations
 

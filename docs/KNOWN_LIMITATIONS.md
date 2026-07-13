@@ -2,7 +2,9 @@
 
 ## Native macOS foundation
 
-- The native participant app currently provides functional device-local Campfire and a read-only information shell. It has no server connection, does not fabricate participant records, and cannot control active physical sessions or Soft Signal.
+- The native participant app provides functional device-local Campfire and a first server-backed **self-only trust history** read (`my_trust_signals`, ADR 0046). Other participant sections remain honest placeholders. The app does not fabricate participant records and cannot control active physical sessions or Soft Signal.
+- Trust history requires explicit local configuration (`LITMO_SUPABASE_URL`, `LITMO_SUPABASE_ANON_KEY`) and a developer-supplied `LITMO_ACCESS_TOKEN`. Missing configuration or session fails closed. This is not passkey sign-in, not multi-device Keychain sync, and not production account UX.
+- Trust facts are never presented as a safety score and never grant consent. Positive history does not replace a current Consent Snapshot.
 - Litmo Ops is a separately bundled, fail-closed shell. Staff authentication, authorization, review data, mutations, audit logging, and operational readiness are not implemented.
 - The participant and Ops targets intentionally share no App Group or Keychain group. Signing, notarization, hardened-runtime distribution validation, and physical accessibility review remain outstanding.
 - Hosted CI artifacts are unsigned arm64 inspection builds. They are not notarized, installable distribution releases, or evidence of production entitlements.

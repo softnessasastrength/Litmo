@@ -43,6 +43,18 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 ## Completed
 
+### MACOS-002 — macOS self-only trust history read
+
+- **Status:** completed
+- **Result:** Native participant app loads self-only trust facts from
+  `my_trust_signals` when configuration and a session token are present;
+  otherwise fails closed. ADR 0046 records the boundary.
+- **Verification:** local XcodeGen + `xcodebuild test` on Litmo scheme (arm64);
+  hosted macOS Native Build expected on the implementation PR.
+- **Boundary:** no consent recomputation, no mock trust rows, no Ops unlock, no
+  production passkey UX, no shared App Group/Keychain with Ops or iOS.
+- **Related decision:** ADR 0046.
+
 ### MACOS-001 — Native participant and Ops foundations
 
 - **Status:** completed

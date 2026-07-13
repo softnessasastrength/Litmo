@@ -4,6 +4,7 @@ import LitmoMacCore
 private enum ParticipantDestination: String, CaseIterable, Identifiable {
     case home = "Home"
     case campfire = "Campfire"
+    case trustHistory = "Trust history"
     case participant = "Participant"
 
     var id: Self { self }
@@ -11,6 +12,7 @@ private enum ParticipantDestination: String, CaseIterable, Identifiable {
         switch self {
         case .home: "house"
         case .campfire: "flame"
+        case .trustHistory: "clock.arrow.circlepath"
         case .participant: "person.crop.circle"
         }
     }
@@ -30,6 +32,7 @@ struct ParticipantRootView: View {
             switch selection ?? .campfire {
             case .home: HomeView()
             case .campfire: CampfireHubView()
+            case .trustHistory: TrustHistoryView()
             case .participant: ParticipantWorkspaceView()
             }
         }
@@ -68,20 +71,37 @@ private struct HomeView: View {
 }
 
 struct ParticipantWorkspaceView: View {
-    private let sections = [
-        ("Profile", "person.text.rectangle"), ("Learning", "book.closed"),
-        ("Requests", "tray"), ("Consent snapshots", "checkmark.shield"),
-        ("Trust history", "clock.arrow.circlepath"), ("Export", "square.and.arrow.up")
+    private let pendingSections = [
+        ("Profile", "person.text.rectangle"),
+        ("Learning", "book.closed"),
+        ("Requests", "tray"),
+        ("Consent snapshots", "checkmark.shield"),
+        ("Export", "square.and.arrow.up"),
     ]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text("Participant").font(.largeTitle.bold())
             Text("Read-only foundation").font(.headline).foregroundStyle(.secondary)
-            Text("A server connection is not configured in this first slice. No participant or consent data is fabricated, and no mutations are available.")
+            Text("Trust history is the first server-backed read surface. Other sections remain placeholders and never invent account data.")
                 .frame(maxWidth: 620, alignment: .leading)
+
+            GroupBox {
+                Label {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Trust history").font(.headline)
+                        Text("Open from the sidebar. Loads self-only facts from `my_trust_signals` when configuration and a session token are present; otherwise fails closed.")
+                            .foregroundStyle(.secondary)
+                    }
+                } icon: {
+                    Image(systemName: "clock.arrow.circlepath")
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(8)
+            }
+
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 16)], spacing: 16) {
-                ForEach(sections, id: \.0) { section in
+                ForEach(pendingSections, id: \.0) { section in
                     GroupBox {
                         Label(section.0, systemImage: section.1)
                             .font(.headline)
@@ -90,6 +110,7 @@ struct ParticipantWorkspaceView: View {
                 }
             }
             Text(PlatformAuthority.activeSessions).font(.footnote).foregroundStyle(.secondary)
+            Text(PlatformAuthority.trustHistory).font(.footnote).foregroundStyle(.secondary)
             Spacer()
         }
         .padding(32)
