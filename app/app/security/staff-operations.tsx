@@ -236,3 +236,4 @@ function makeStyles(colors: AppColors) {
     error: { color: colors.signal, textAlign: "center" as const },
   };
 }
+
