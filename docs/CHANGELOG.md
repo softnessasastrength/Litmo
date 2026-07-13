@@ -1,23 +1,32 @@
 # Changelog
 
-## 2026-07-13 — macOS self-export read
+## 2026-07-13 — 100-question vibe quiz + model-heavy mix engine
 
 ### Summary
 
-Added a fail-closed **Export** surface on native macOS that loads `export_my_data`
-and shows category presence/counts, with optional local JSON copy (ADR 0049).
+Expanded the onboarding Vibe Profile quiz to a full **100-question** social-weather
+bank (10 themes × 10 scenes) and a **model-heavy** scoring layer: normalized mix,
+per-theme leans, blend geometry, coverage confidence — still explicitly non-clinical.
 
 ### User-visible impact
 
-- Sidebar **Export** lists export categories or fails closed.
-- **Copy JSON** pastes the server payload to the local clipboard only when the
-  user asks.
-- Copy states this is portability engineering, not legal completeness or deletion.
+- Themes: place, regulation, comfort, talk, senses, tempo, first step, nearness,
+  play, and mends.
+- Progress shows `n / 100` with theme labels; mid-quiz save/resume and back.
+- Result: vibe card, **weather mix bars**, signature themes, confidence fill,
+  five diversified notes (not 100).
+- Copy: playful model version stamped; not diagnosis, safety, or consent.
+
+### Developer impact
+
+- `app/data/quiz.ts` — 100-question bank.
+- `app/lib/quizModel.ts` — `runQuizModel` / mix / themes / confidence (`vibe-mix-1.0`).
+- `quizScoring.ts` re-exports the model for existing imports.
+- Tests cover bank size, mix normalization, partial vs full confidence, lantern path.
 
 ### Related work
 
-- MACOS-005
-- ADR 0049
+- Onboarding Vibe Profile (not Touch Language / Consent Snapshot)
 
 ## 2026-07-13 — macOS session-requests read (read-only)
 
