@@ -29,7 +29,7 @@ SAFETY-OPS-001 is active. ADR 0042 and migration 036 implement the engineering-s
 
 ## Priority next work
 
-1. Validate migration 036 and its pgTAP coverage in GitHub CI.
+1. Review and merge continuity PR #66, then stacked implementation PR #67; both are green.
 2. Keep destructive retention and account deletion blocked until legal/privacy/security review names the permissible data categories, holds, and timing.
 3. Name and train an independent backup reviewer before external alpha; implement two-person permanent-ban approval only when that role exists.
 4. Optional founder VoiceOver smoke remains tracked under ACCESS-001.
@@ -74,7 +74,7 @@ Do not claim the current integrated `main` has passed every command unless the e
 
 ## Exact next action
 
-Run the full PR checks for migration 036. If green, SAFETY-OPS-001 remains active but externally blocked on named legal/privacy/safeguarding review and an independent backup reviewer; do not fabricate those approvals.
+PR #67 passes Project State, lint, typecheck, unit tests, build, database reset/lint, all pgTAP tests (including the new 17-case SAFETY-OPS suite), and integration 5/5. Next: review/merge PR #66 then PR #67. SAFETY-OPS-001 remains active and externally blocked on named qualified review and an independent backup reviewer.
 
 ## Resume checklist
 
