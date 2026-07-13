@@ -1,3 +1,18 @@
+/**
+ * Consent Snapshot confirmation screen (match flow).
+ *
+ * WHAT: Review shared permitted boundaries; dual-confirm or withdraw before session activate.
+ * WHY: Explicit, session-specific, revocable consent — match/vibe never substitutes.
+ * CONSENT: Primary consent surface. Confirm arms only after Yes + grant-arm dwell.
+ *          Withdraw is free, reasonless, no peer approval. Soft Signal remains free later.
+ * EDGE CASES:
+ *   - mock path (no sessionId) vs real session path diverge for persist only
+ *   - empty shared rows → Confirm stays disabled (fail closed)
+ *   - peer withdraw / terminal lifecycle → leave without activating
+ * NEVER: Auto-confirm from NFC/QR share; treat nearby share as activation; skip arm dwell.
+ * SEE: CONSENT_POINTS.session_engine_confirm · useConsentGrantArm · sessionRepository
+ */
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Text, View } from "react-native";
@@ -36,6 +51,14 @@ import {
   buildSnapshotStartInner,
 } from "../../services/qrInviteCore";
 
+/**
+ * WHAT: Route shell that wraps snapshot content in Face ID / sensitive step-up.
+ * WHY: Consent Snapshot is private session material; real accounts require biometrics.
+ * CONSENT: Gate does not grant session consent — only unlocks reading the screen.
+ * EDGE CASES: Demo/pre-account required=false → children render without LocalAuth.
+ * NEVER: Treat biometric success as dual-confirm or session activation.
+ * SEE: SensitiveAccessGate · BiometricLockContext
+ */
 export default function ConsentSnapshotScreen() {
   return (
     <SensitiveAccessGate>
@@ -44,6 +67,14 @@ export default function ConsentSnapshotScreen() {
   );
 }
 
+/**
+ * WHAT: Full Consent Snapshot UI + confirm/withdraw orchestration for mock or real sessions.
+ * WHY: Isolate biometric gate from lifecycle logic so denied Face ID never half-confirms.
+ * CONSENT: Yes requires arm; No/withdraw cancels without penalty; share is review-only.
+ * EDGE CASES: See loadRealSnapshot, confirmReal, lifecycle subscription handlers.
+ * NEVER: Confirm without decision === "yes" and confirmArmed; auto-accept after QR/NFC.
+ * SEE: docs/adr for session lifecycle · phone-visible vertical slice step 7
+ */
 function ConsentSnapshotContent() {
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
@@ -51,6 +82,7 @@ function ConsentSnapshotContent() {
     id?: string;
     sessionId?: string;
   }>();
+  // Empty string sessionId must not count as real — fail closed to mock practice path.
   const realSessionId =
     typeof sessionId === "string" && sessionId.length > 0 ? sessionId : null;
   const isReal = Boolean(realSessionId);
@@ -68,6 +100,13 @@ function ConsentSnapshotContent() {
   >(isReal ? "loading" : "idle");
   const [realLoadError, setRealLoadError] = useState("");
 
+  /**
+   * WHAT: Build display rows from mock dual-profile compatibility for demo practice.
+   * WHY: Phone-visible path without backend still trains careful reading of overlap.
+   * CONSENT: Mock overlap is never real consent and must not claim mutual affirmation.
+   * EDGE CASES: missing id → default mock peer "maya".
+   * NEVER: Persist mock rows as sealed production snapshots.
+   */
   const mockRows = useMemo(() => {
     const result = computeCompatibility(
       mockConsentProfileVersion("self"),
@@ -77,11 +116,21 @@ function ConsentSnapshotContent() {
     return buildSnapshotRows(result);
   }, [id]);
 
+  // Real path: empty until loaded; never fall back to mock rows for a real sessionId.
   const rows = isReal ? (realRows ?? []) : mockRows;
 
   const proceededRef = useRef(false);
   const leftRef = useRef(false);
   const attentionPlayedRef = useRef(false);
+
+  /**
+   * WHAT: Activate real session once and navigate to active timer.
+   * WHY: Dual-confirm (or already-ready subscription) must only activate once under races.
+   * CONSENT: Callers must only invoke after mutual snapshot ready — not after single Yes.
+   * EDGE CASES:
+   *   - proceededRef / leftRef → idempotent no-op (subscription + confirm race)
+   * NEVER: Activate after withdraw/ended; call without realSessionId.
+   */
   const proceedToActive = async () => {
     if (proceededRef.current || leftRef.current) return;
     proceededRef.current = true;
@@ -93,6 +142,13 @@ function ConsentSnapshotContent() {
     });
   };
 
+  /**
+   * WHAT: Terminal UI state when session can no longer complete consent review.
+   * WHY: Peer cancel/expire/soft-signal must stop confirm without trapping the user.
+   * CONSENT: Leaving ended is not a grant; it prevents contact from starting.
+   * EDGE CASES: leftRef makes leaveEnded idempotent under multi-status events.
+   * NEVER: Proceed to active from ended.
+   */
   const leaveEnded = (message: string) => {
     if (leftRef.current) return;
     leftRef.current = true;
@@ -100,6 +156,13 @@ function ConsentSnapshotContent() {
     setLifecycleNote(message);
   };
 
+  /**
+   * WHAT: Map engine CompatibilityResult to SnapshotRow UI list (or empty).
+   * WHY: Null compatibility must show empty shared list, not stale prior rows.
+   * CONSENT: Rows are read-only presentation of intersection — not an auto-yes.
+   * EDGE CASES: null → [] so Confirm stays disabled when isReal && rows.length === 0.
+   * NEVER: Invent permitted zones when engine returned null.
+   */
   const applyCompatibility = (compatibility: CompatibilityResult | null) => {
     if (!compatibility) {
       setRealRows([]);
@@ -108,6 +171,14 @@ function ConsentSnapshotContent() {
     setRealRows(buildSnapshotRows(compatibility));
   };
 
+  /**
+   * WHAT: Fetch or create the session’s Consent Snapshot and hydrate rows.
+   * WHY: Real sessions need server fingerprint + compatibility before any confirm.
+   * CONSENT: Create/get is prepare-only until both people confirm independently.
+   * EDGE CASES: no latest → createSnapshot; network error → FailureState with retry.
+   * NEVER: Auto-confirm after successful load.
+   * SEE: sessionRepository.getLatestSessionSnapshot · createSnapshot
+   */
   const loadRealSnapshot = async () => {
     if (!realSessionId) return;
     setRealLoad("loading");
@@ -116,6 +187,7 @@ function ConsentSnapshotContent() {
       let current =
         await sessionRepository.getLatestSessionSnapshot(realSessionId);
       if (!current) {
+        // First arrival creates immutable snapshot from current dual profiles.
         current = await sessionRepository.createSnapshot(realSessionId);
       }
       setSnapshot(current);
@@ -146,6 +218,16 @@ function ConsentSnapshotContent() {
     void hapticService.play("attention");
   }, [isReal, realLoad]);
 
+  /**
+   * WHAT: Record this person’s confirm of the current snapshot fingerprint.
+   * WHY: Dual independent confirm is required before activate (constitution).
+   * CONSENT: Session-specific grant of this snapshot only; Soft Signal remains free later.
+   * EDGE CASES:
+   *   - result !== "ready" → waiting for peer (do not activate)
+   *   - missing local snapshot → create then confirm
+   * NEVER: Activate on single-side confirm; ignore fingerprint mismatch errors.
+   * SEE: sessionRepository.confirmSnapshot
+   */
   const confirmReal = async () => {
     setConfirmState("confirming");
     setConfirmError("");
@@ -158,6 +240,7 @@ function ConsentSnapshotContent() {
         created.id,
         created.fingerprint,
       );
+      // Only mutual ready may start contact; single-side stays in waiting.
       if (result !== "ready") {
         setConfirmState("waiting");
         return;
@@ -178,12 +261,20 @@ function ConsentSnapshotContent() {
   useEffect(() => {
     if (!realSessionId) return;
     let cancelled = false;
+    /**
+     * WHAT: React to session lifecycle status from initial get + realtime subscription.
+     * WHY: Peer confirm, withdraw, or Soft Signal must update this device without refresh.
+     * CONSENT: ready/active → proceed only if not already left; terminal → leaveEnded.
+     * EDGE CASES: cancelled flag after unmount; leftRef blocks late ready races.
+     * NEVER: Treat match status alone as consent without snapshot ready path.
+     */
     const handleStatus = (status: string) => {
       if (cancelled || leftRef.current) return;
       if (status === "ready" || status === "active") {
         void proceedToActive();
         return;
       }
+      // Terminal / non-activatable statuses: fail closed — no session begins.
       if (
         status === "cancelled" ||
         status === "expired" ||
@@ -215,6 +306,7 @@ function ConsentSnapshotContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [realSessionId]);
 
+  // Grant-arm: Confirm disabled until Yes + deliberate dwell; withdrawn/ended disarms.
   const { armed: confirmArmed, armProgress } = useConsentGrantArm({
     contentReady: rows.length > 0 || !isReal,
     requiredTogglesAllOn: decision === "yes",
@@ -222,16 +314,32 @@ function ConsentSnapshotContent() {
     withdrawn: confirmState === "ended",
   });
 
+  /**
+   * WHAT: Entry point for Confirm button — real dual-confirm or mock navigate.
+   * WHY: Single gate so UI cannot call activate without decision + arm checks.
+   * CONSENT: Requires explicit Yes and armed state; mock never writes real consent.
+   * EDGE CASES: !yes || !armed → no-op; mock skips server and opens active demo.
+   * NEVER: Bypass arm for “already matched” or NFC scan success.
+   */
   const confirm = () => {
     if (decision !== "yes" || !confirmArmed) return;
     if (realSessionId) {
       void confirmReal();
       return;
     }
+    // Mock path: practice navigation only — not a persisted consent seal.
     void scheduleDemoNotification(4);
     router.push("/session/active");
   };
 
+  /**
+   * WHAT: Withdraw pre-activation consent or leave mock without grant.
+   * WHY: Free no — constitution forbids requiring reason, dwell, or peer OK to stop.
+   * CONSENT: Unilateral cancel of consent process; never a penalty.
+   * EDGE CASES: mock → home replace; RPC fail → error state, stay for retry.
+   * NEVER: Require explanation fields; treat withdraw as Soft Signal log requirement.
+   * SEE: sessionRepository.withdrawConsent
+   */
   const withdraw = async () => {
     if (!realSessionId) {
       router.replace("/home");
@@ -522,6 +630,13 @@ function ConsentSnapshotContent() {
     </Screen>
   );
 }
+/**
+ * WHAT: Theme styles for snapshot list, decisions, arm progress, stop/waiting banners.
+ * WHY: Visual hierarchy for slow-yes / free-no without color-only meaning.
+ * CONSENT: Not a consent surface — presentation only.
+ * EDGE CASES: none — pure style map.
+ * NEVER: Encode grant vs withdraw as color alone without labels.
+ */
 function makeStyles(colors: AppColors) {
   return {
     protectiveBanner: {

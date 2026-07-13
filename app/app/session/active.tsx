@@ -29,12 +29,26 @@ import { defaultTraumaSafetyPrefs } from "../../lib/traumaSafetyCore";
 import { SOFT_SIGNAL_COPY } from "../../lib/softSignalCore";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
+/**
+ * Maps terminal session repository statuses → wrap-up `ended` query params.
+ * soft_signaled / safety_ended share soft-signal wrap-up framing (withdraw path).
+ * completed → together. Unknown statuses do not force navigation.
+ */
 const terminalEndedReason: Record<string, string> = {
   soft_signaled: "soft-signal",
   safety_ended: "soft-signal",
   completed: "together",
 };
 
+/**
+ * WHAT: Route shell for active session — wraps content in SensitiveAccessGate.
+ * WHY: Real account sensitive surface may require fresh device-owner check;
+ *   Soft Signal and session state must not be reachable without that gate when required.
+ * CONSENT: Gate is device ownership / privacy cover — NEVER touch consent or dual-seal.
+ * EDGE CASES: Demo may pass gate rules differently; content still renders Soft Signal.
+ * NEVER: Treat gate unlock as session yes; skip Soft Signal because lock succeeded.
+ * SEE: SensitiveAccessGate · docs ONBOARDING vs session (Soft Signal only post-onboarding)
+ */
 export default function ActiveSessionScreen() {
   return (
     <SensitiveAccessGate>
@@ -43,6 +57,25 @@ export default function ActiveSessionScreen() {
   );
 }
 
+/**
+ * WHAT: Live / simulated active session UI — timer, timeout prefs, sticky Soft Signal,
+ *   quick/panic exit, end together, optional report/block.
+ * WHY: Session-time withdraw must stay faster and more available than any continue path;
+ *   sticky Soft Signal is constitution I.4 (stop always reachable).
+ * CONSENT: Soft Signal / quick / panic / timeout exit are WITHDRAW paths (no reason,
+ *   no peer required, local end authoritative). “End together” is mutual complete — not
+ *   Soft Signal. Report does not end session. Extend-time is free yes only after timeout due.
+ * EDGE CASES:
+ *   - No sessionId → simulated timer + practice-capable Soft Signal (practiceOnly when fire).
+ *   - Network loss → syncNote; Soft Signal still works offline.
+ *   - Terminal remote status → wrap-up once (endedRef).
+ *   - Timeout auto Soft Signal vs prompt extend (+15 min prefs).
+ *   - Double-fire guarded by endedRef before async I/O.
+ * NEVER: Require reason at stop; hide Soft Signal under scroll only; claim emergency services;
+ *   invent consent from timer still running; block without peerUserId.
+ * SEE: softSignalService · traumaSafetyService · SOFT_SIGNAL_COPY · softSignalCore
+ *   · docs/CONSENT_MICROINTERACTIONS.md (session grammar, not onboard_*)
+ */
 function ActiveSessionContent() {
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
@@ -66,12 +99,14 @@ function ActiveSessionContent() {
   );
   const [timeoutBanner, setTimeoutBanner] = useState<string | null>(null);
   const [timeoutDuePrompt, setTimeoutDuePrompt] = useState(false);
+  // Synchronous guards: React state alone can double-fire Soft Signal under rapid taps.
   const endedRef = useRef(false);
   const timeoutFiredRef = useRef(false);
 
   useEffect(() => {
     void traumaSafetyService.loadPrefs().then(async (prefs) => {
       // Dual-agreed time from sealed local mutual snapshot (strictest of both).
+      // Prefer intersection maxDurationMinutes when mutual present and not withdrawn.
       try {
         const {
           sessionConsentSnapshotStore,
@@ -90,6 +125,7 @@ function ActiveSessionContent() {
               ...prefs.timeout,
               enabled: true,
               maxMinutes: mins,
+              // Warn window scales with agreed max; floor 1 minute.
               warnBeforeMinutes: Math.min(
                 prefs.timeout.warnBeforeMinutes,
                 Math.max(1, Math.floor(mins / 6)),
@@ -99,16 +135,18 @@ function ActiveSessionContent() {
           return;
         }
       } catch {
-        // ignore — local prefs still apply
+        // ignore — local prefs still apply (fail open for comfort prefs, not for consent)
       }
       setSafetyPrefs(prefs);
     });
   }, []);
 
   useEffect(() => {
+    // Stop ticking once ended so wrap-up does not keep advancing display.
     if (ended) return;
     const timer = setInterval(() => {
       if (startedAt) {
+        // Real session: elapsed from server/local startedAt.
         setSeconds(
           Math.max(
             0,
@@ -116,6 +154,7 @@ function ActiveSessionContent() {
           ),
         );
       } else if (!sessionId) {
+        // Simulated path: simple increment mock timer.
         setSeconds((value) => value + 1);
       }
     }, 1000);
@@ -123,6 +162,7 @@ function ActiveSessionContent() {
   }, [ended, startedAt, sessionId]);
 
   // Session timeout: warning + auto Soft Signal or prompt.
+  // Timeout Soft Signal is still withdraw — no reason, local end first in service layer.
   useEffect(() => {
     if (ended || endedRef.current) return;
     const phase = traumaSafetyService.timeoutPhase(safetyPrefs, seconds);
@@ -132,6 +172,7 @@ function ActiveSessionContent() {
     } else if (phase.phase === "due") {
       setTimeoutBanner(phase.message);
       if (safetyPrefs.timeout.autoSoftSignalAtTimeout) {
+        // Fire once only — auto path must not loop Soft Signal.
         if (!timeoutFiredRef.current) {
           timeoutFiredRef.current = true;
           void (async () => {
@@ -156,6 +197,7 @@ function ActiveSessionContent() {
           })();
         }
       } else {
+        // Prompt path: Soft Signal still sticky below; extend is optional free yes.
         setTimeoutDuePrompt(true);
       }
     } else {
@@ -165,9 +207,18 @@ function ActiveSessionContent() {
   }, [seconds, safetyPrefs, ended, sessionId, router]);
 
   useEffect(() => {
+    // Real sessionId: hydrate startedAt / peer / terminal status + subscribe.
     if (!sessionId) return;
     let cancelled = false;
 
+    /**
+     * WHAT: Applies remote session row to local timer/peer/terminal navigation.
+     * WHY: Peer Soft Signal or complete must end UI even if local button unused.
+     * CONSENT: Terminal soft_signaled is withdraw path; completed is together — not new grant.
+     * EDGE CASES: endedRef prevents double wrap-up navigation.
+     * NEVER: Treat active status as ongoing body permission without sealed snapshot elsewhere.
+     * SEE: sessionRepository · terminalEndedReason
+     */
     const applySession = (session: {
       status: string;
       startedAt: string | null;
@@ -202,6 +253,7 @@ function ActiveSessionContent() {
         setSyncNote(null);
         applySession(session);
       } catch {
+        // Fail open for Soft Signal: network uncertainty must not disable stop.
         if (!cancelled)
           setSyncNote(
             "Connection uncertain. Soft Signal still works offline; completion will sync when the network returns.",
@@ -218,6 +270,7 @@ function ActiveSessionContent() {
       },
     );
 
+    // Foreground return: re-pull status in case Soft Signal landed while backgrounded.
     const onAppState = (next: AppStateStatus) => {
       if (next === "active") void refresh();
     };
@@ -233,6 +286,14 @@ function ActiveSessionContent() {
 
   const time = `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
 
+  /**
+   * WHAT: Routes after any Soft Signal-family exit (wrap-up or panic cover).
+   * WHY: Centralize pending_sync vs soft-signal ended param + panic branch.
+   * CONSENT: Post-withdraw navigation only — session already locally ended by services.
+   * EDGE CASES: navigateTo panic-cover → cover screen; else wrap-up with log id.
+   * NEVER: Require reason text; block navigation on network (local end already done).
+   * SEE: traumaSafetyService exit results · softSignalService.fire outcomes
+   */
   const goAfterExit = (result: {
     exitKind: string;
     softSignal: {
@@ -266,8 +327,17 @@ function ActiveSessionContent() {
     } as never);
   };
 
+  /**
+   * WHAT: Primary Soft Signal fire from sticky button (active_session source).
+   * WHY: Immediate withdraw; practiceOnly when no sessionId (simulated).
+   * CONSENT: WITHDRAW — no arm, no reason, no peer. Local end authoritative.
+   * EDGE CASES: endedRef short-circuit; pending_sync still navigates wrap-up.
+   * NEVER: Ask why; wait for network before local end (service order); re-enable grant.
+   * SEE: softSignalService.fire · SoftSignalButton · constitution I.4
+   */
   const stop = async () => {
     if (endedRef.current) return;
+    // Optimistic local end before await — stop must not lose a race to double-tap continue.
     endedRef.current = true;
     setEnded(true);
     setStopState("stopping");
@@ -275,6 +345,7 @@ function ActiveSessionContent() {
       source: "active_session",
       sessionId: sessionId ?? null,
       surface: "mobile_app",
+      // No real session → practice-shaped fire (no peer notify).
       practiceOnly: !sessionId,
     });
     if (result.outcome === "pending_sync") setStopState("pending");
@@ -285,6 +356,14 @@ function ActiveSessionContent() {
     });
   };
 
+  /**
+   * WHAT: Quick exit via trauma safety stack (Soft Signal family, wrap-up).
+   * WHY: Alternate labeled path for users who want “leave now” without panic cover.
+   * CONSENT: WITHDRAW — same philosophy as Soft Signal; no reason.
+   * EDGE CASES: endedRef guard; result.navigateTo may still be wrap-up.
+   * NEVER: Route to emergency services; require explanation.
+   * SEE: traumaSafetyService.quickExit
+   */
   const quickExit = async () => {
     if (endedRef.current) return;
     endedRef.current = true;
@@ -294,6 +373,14 @@ function ActiveSessionContent() {
     goAfterExit(result);
   };
 
+  /**
+   * WHAT: Panic mode — Soft Signal + calm cover screen (not emergency services).
+   * WHY: Discretionary cover after immediate stop for safety / social exit needs.
+   * CONSENT: WITHDRAW then cover — cover is not a grant delay.
+   * EDGE CASES: endedRef; goAfterExit may choose panic-cover.
+   * NEVER: Claim 911/emergency response; require reason; delay stop for cover animation.
+   * SEE: traumaSafetyService.panicExit · /safety/panic-cover
+   */
   const panicExit = async () => {
     if (endedRef.current) return;
     endedRef.current = true;
@@ -303,6 +390,14 @@ function ActiveSessionContent() {
     goAfterExit(result);
   };
 
+  /**
+   * WHAT: Soft Signal when timeout is due and user uses sticky button (non-auto path).
+   * WHY: Sticky Soft Signal remains primary stop even while “continue a little longer” exists.
+   * CONSENT: WITHDRAW — timeout soft signal, not a penalty.
+   * EDGE CASES: autoSoftSignal path uses separate timeoutExit(true); this is false (manual).
+   * NEVER: Force extend; punish for stopping at boundary.
+   * SEE: traumaSafetyService.timeoutExit · timeoutDuePrompt UI
+   */
   const timeoutSoftSignal = async () => {
     if (endedRef.current) return;
     endedRef.current = true;
@@ -312,6 +407,14 @@ function ActiveSessionContent() {
     goAfterExit(result);
   };
 
+  /**
+   * WHAT: Blocks peer and ends local session navigation to wrap-up.
+   * WHY: Safety/privacy leave path distinct from Soft Signal but still immediate exit.
+   * CONSENT: Block + leave is not dual-seal; does not require Soft Signal first.
+   * EDGE CASES: !peerUserId or already ended → no-op; network error keeps UI with message.
+   * NEVER: Tell peer who blocked; claim block is Soft Signal log semantics unless wired.
+   * SEE: blockService.blockUser
+   */
   const blockPeer = async () => {
     if (!peerUserId || endedRef.current) return;
     setBlockState("blocking");
@@ -338,6 +441,14 @@ function ActiveSessionContent() {
     }
   };
 
+  /**
+   * WHAT: Mutual “end together” complete path (not Soft Signal withdraw).
+   * WHY: Allow graceful complete when both ready; Soft Signal remains available until then.
+   * CONSENT: Complete is not withdraw and not a new grant — session ends as completed/pending.
+   * EDGE CASES: No sessionId → treat as together (simulated). Service pending_sync / not-active.
+   * NEVER: Disable Soft Signal while completing; require Soft Signal reason after together.
+   * SEE: sessionCompleteService.complete
+   */
   const endTogether = async () => {
     endedRef.current = true;
     setEnded(true);
@@ -361,6 +472,7 @@ function ActiveSessionContent() {
     });
   };
 
+  // Map UI SoftSignalButton states from local end + stopState (never “half active” after stop).
   const softSignalState =
     ended
       ? "stopped"
@@ -427,6 +539,7 @@ function ActiveSessionContent() {
               The time you set is complete. Soft Signal (pinned below) ends
               immediately. Extending needs a free yes from you — never pressure.
             </Body>
+            {/* Extend is optional free yes — Soft Signal still available and sticky. */}
             <Button
               variant="secondary"
               label="Continue a little longer (I still want to)"
@@ -442,6 +555,7 @@ function ActiveSessionContent() {
                       ...p,
                       timeout: {
                         ...p.timeout,
+                        // +15 minutes — comfort extension, not auto consent for more touch.
                         maxMinutes: p.timeout.maxMinutes + 15,
                       },
                     }),
@@ -475,6 +589,7 @@ function ActiveSessionContent() {
           />
           {sessionId && peerUserId && !ended ? (
             <>
+              {/* Report does NOT end session — Soft Signal remains the immediate stop. */}
               <Button
                 variant="secondary"
                 label="Report for human review"
@@ -519,6 +634,7 @@ function ActiveSessionContent() {
         </View>
       </ScrollView>
 
+      {/* Sticky Soft Signal: always visible; never buried under scroll content only. */}
       <View
         style={styles.stickyExit}
         accessibilityRole="summary"
@@ -531,6 +647,7 @@ function ActiveSessionContent() {
           state={softSignalState}
           disabled={ended}
           onPress={() =>
+            // When timeout due, sticky stop uses timeout Soft Signal path; else standard fire.
             void (timeoutDuePrompt ? timeoutSoftSignal() : stop())
           }
         />
@@ -539,6 +656,14 @@ function ActiveSessionContent() {
   );
 }
 
+/**
+ * WHAT: Theme styles for active session timer, sticky Soft Signal chrome, notes.
+ * WHY: Sticky exit uses signal border — withdraw visual weight; not grant moss.
+ * CONSENT: Sticky layout is withdraw ergonomics — never a grant control style.
+ * EDGE CASES: none — pure style factory.
+ * NEVER: Style Soft Signal like a secondary muted link; hide sticky under padding tricks.
+ * SEE: SOFT_SIGNAL_COPY · SoftSignalButton
+ */
 function makeStyles(colors: AppColors) {
   return {
     screen: { flex: 1, justifyContent: "flex-start", paddingBottom: 0 },

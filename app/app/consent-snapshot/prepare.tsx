@@ -1,3 +1,14 @@
+/**
+ * Consent Snapshot — prepare screen (personal declaration only).
+ *
+ * WHAT (module): Multi-step UI to build/save PreSessionDeclaration on-device.
+ * WHY: Prepare must be serious and separate from mutual seal so one save never unlocks touch.
+ * CONSENT: prepare ≠ mutual seal ≠ touch. Soft Signal affirmations required before save path.
+ * Unset zones stay off_limits via TL mapping. maxDurationMinutes is personal; mutual takes min.
+ * NEVER: Do not auto-navigate into active session; do not claim dual affirm on this screen.
+ * SEE: sessionConsentSnapshotCore · mutual.tsx · docs/CODE_COMMENT_STANDARD.md
+ */
+
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { Text, TextInput, View } from "react-native";
@@ -28,6 +39,13 @@ import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 import { hapticService } from "../../services/hapticService";
 
+/**
+ * WHAT: Wizard step ids for the prepare flow.
+ * WHY: Ordered protective narrative: intro → state → duration → boundaries → safewords → aftercare → Soft Signal → save.
+ * CONSENT: soft_signal step gates save with three explicit understandings.
+ * EDGE CASES: Unknown stepIndex falls back to intro in render.
+ * NEVER: Do not skip Soft Signal step for “power users”.
+ */
 type Step =
   | "intro"
   | "state"
@@ -38,6 +56,13 @@ type Step =
   | "soft_signal"
   | "save";
 
+/**
+ * WHAT: Ordered step sequence for progress UI and continue navigation.
+ * WHY: Fixed order prevents jumping to save without Soft Signal education steps.
+ * CONSENT: Order is product grammar, not decoration.
+ * EDGE CASES: Length used for clamp on stepIndex.
+ * NEVER: Do not reorder Soft Signal after save.
+ */
 const STEPS: Step[] = [
   "intro",
   "state",
@@ -49,6 +74,15 @@ const STEPS: Step[] = [
   "save",
 ];
 
+/**
+ * WHAT: Optional personal max-duration choices for this moment (null = no fixed clock).
+ * WHY: UI-facing presets in [15,60] plus null; core accepts 5–180 but prepare offers clear commons.
+ * CONSENT: Clock is never a cage — Soft Signal anytime sooner (copy on every option).
+ * EDGE CASES: null selected clears maxDurationMinutes; mutual seal takes stricter min of both.
+ * NEVER: Do not present duration as requiring someone to finish the full time.
+ *
+ * Unit: minutes | null. Changing options only affects prepare UX, not core clamp.
+ */
 const DURATION_CHOICES: Array<{ minutes: number | null; label: string; detail: string }> = [
   { minutes: null, label: "No fixed clock", detail: "Soft Signal anytime — no agreed max" },
   { minutes: 15, label: "About 15 minutes", detail: "Short, clear boundary" },
@@ -58,19 +92,29 @@ const DURATION_CHOICES: Array<{ minutes: number | null; label: string; detail: s
 ];
 
 /**
- * Prepare your side of a pre-session Consent Snapshot.
- * Serious, protective — not a casual checklist.
+ * WHAT: Screen component for preparing one person's pre-session Consent Snapshot declaration.
+ * WHY: Serious multi-step protective path before mutual seal; hydrates from vault or Touch Language.
+ * CONSENT: Saves only local declaration (notConsentAlone). Soft Signal three checks required before save.
+ * EDGE CASES:
+ *   - existing vault declaration wins over TL seed
+ *   - no TL → empty declaration (all zones off_limits by core default)
+ *   - save without three Soft Signal UI checks → error, no persist
+ *   - save failure → alert, stay on screen
+ * NEVER: Never claim this save seals mutual consent or starts touch.
+ * SEE: sessionConsentSnapshotStore.saveDeclaration · ConsentAffirmRow
  */
 export default function ConsentSnapshotPrepareScreen() {
   const styles = useThemedStyles(makeStyles);
   const colors = useColors();
   const router = useRouter();
   const [stepIndex, setStepIndex] = useState(0);
+  // Fail-closed default: empty declaration is all off_limits until TL/vault loads.
   const [decl, setDecl] = useState<PreSessionDeclaration>(
     createEmptyDeclaration(),
   );
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  // Soft Signal UI checks start false — must be intentionally toggled (prepare gate).
   const [ssChecks, setSsChecks] = useState({
     stop: false,
     noExplain: false,
@@ -79,9 +123,17 @@ export default function ConsentSnapshotPrepareScreen() {
 
   const step = STEPS[stepIndex] ?? "intro";
 
+  /**
+   * WHAT: On mount, hydrate declaration from vault or Touch Language.
+   * WHY: Resume prepare work; otherwise seed from TL map (unset → off_limits).
+   * CONSENT: Load is prepare-only; does not open mutual seal automatically.
+   * EDGE CASES: existing declaration short-circuits TL; missing both keeps empty defaults.
+   * NEVER: Do not overwrite user mid-edit after first paint beyond this mount effect.
+   */
   useEffect(() => {
     void (async () => {
       const existing = await sessionConsentSnapshotStore.loadDeclaration();
+      // Prefer saved prepare work over re-seeding TL (user may have edited safewords etc.).
       if (existing) {
         setDecl(existing);
         return;
@@ -91,6 +143,13 @@ export default function ConsentSnapshotPrepareScreen() {
     })();
   }, []);
 
+  /**
+   * WHAT: Immutable patch helper that re-stamps updatedAt + constitutional flags.
+   * WHY: Every field edit must keep notConsentAlone / forThisMomentOnly true after merge.
+   * CONSENT: Prevents accidental flag loss if a patch spreads a partial object.
+   * EDGE CASES: none beyond pure state transform of current decl.
+   * NEVER: Do not allow patch to set notConsentAlone false.
+   */
   const patch = (fn: (d: PreSessionDeclaration) => PreSessionDeclaration) => {
     setDecl((d) =>
       fn({
@@ -102,7 +161,17 @@ export default function ConsentSnapshotPrepareScreen() {
     );
   };
 
+  /**
+   * WHAT: Gate Soft Signal checks, persist declaration, navigate to mutual seal screen.
+   * WHY: Mutual path must not open without a valid local prepare + Soft Signal understanding.
+   * CONSENT: Save is still prepare-only; mutual.tsx performs dual affirm separately.
+   * EDGE CASES:
+   *   - incomplete ssChecks → error, no network/vault write
+   *   - store throw → user-visible error
+   * NEVER: Do not navigate to /session/active from prepare.
+   */
   const saveAndContinue = async () => {
+    // Fail-closed: all three Soft Signal statements must be affirmed before persist.
     if (!ssChecks.stop || !ssChecks.noExplain || !ssChecks.mutual) {
       setError("Affirm all three Soft Signal statements to continue.");
       return;
@@ -119,12 +188,14 @@ export default function ConsentSnapshotPrepareScreen() {
           understandsMutualAvailability: true,
           affirmedAt: now,
         },
+        // Re-assert prepare-only flags at the write boundary.
         notConsentAlone: true,
         forThisMomentOnly: true,
         updatedAt: now,
       });
       setDecl(next);
       void hapticService.play("confirmation");
+      // Mutual seal is the next consent phase — not active session.
       router.push("/consent-snapshot/mutual" as never);
     } catch {
       setError("Could not save your declaration on this device.");
@@ -216,6 +287,7 @@ export default function ConsentSnapshotPrepareScreen() {
                 detail={opt.detail}
                 selected={decl.maxDurationMinutes === opt.minutes}
                 onPress={() =>
+                  // Personal max only; mutual core applies Math.min later.
                   patch((d) => ({ ...d, maxDurationMinutes: opt.minutes }))
                 }
               />
@@ -237,6 +309,7 @@ export default function ConsentSnapshotPrepareScreen() {
               <Text key={String(b.zoneId)} style={styles.listLine}>
                 · {b.label}:{" "}
                 <Text style={styles.listStatus}>
+                  {/* soft_limit / ask_first / welcomed / off_limits shown as plain words */}
                   {b.status.replaceAll("_", " ")}
                 </Text>
               </Text>
@@ -263,6 +336,7 @@ export default function ConsentSnapshotPrepareScreen() {
             variant="secondary"
             label="Reload from saved Touch Language"
             onPress={() => {
+              // Explicit user action: re-map TL → declaration (private notes still not copied).
               void touchLanguageStore.load().then((tl) => {
                 if (tl) setDecl(declarationFromTouchLanguage(tl, decl.displayLabel));
               });
@@ -282,6 +356,7 @@ export default function ConsentSnapshotPrepareScreen() {
           <TextInput
             value={decl.safewords.stop}
             onChangeText={(stop) =>
+              // Cap length to match parseDeclaration slice(0, 40).
               patch((d) => ({
                 ...d,
                 safewords: { ...d.safewords, stop: stop.slice(0, 40) },
@@ -308,6 +383,7 @@ export default function ConsentSnapshotPrepareScreen() {
           <TextInput
             value={decl.safewords.ok ?? ""}
             onChangeText={(ok) =>
+              // Empty trim → null optional ok; never required to stop.
               patch((d) => ({
                 ...d,
                 safewords: {
@@ -339,6 +415,7 @@ export default function ConsentSnapshotPrepareScreen() {
                   label={opt.label}
                   selected={on}
                   onPress={() =>
+                    // Multi-select: toggle id in/out; empty aftercare is allowed.
                     patch((d) => {
                       const aftercare = on
                         ? d.aftercare.filter((x) => x !== opt.id)
@@ -354,6 +431,7 @@ export default function ConsentSnapshotPrepareScreen() {
           <TextInput
             value={decl.aftercareNote ?? ""}
             onChangeText={(aftercareNote) =>
+              // Cap 400 to match parse; empty → null.
               patch((d) => ({
                 ...d,
                 aftercareNote: aftercareNote.slice(0, 400) || null,
@@ -379,6 +457,7 @@ export default function ConsentSnapshotPrepareScreen() {
               never failure.
             </Text>
           </View>
+          {/* Three independent intentional toggles — save gated on all true. */}
           <ConsentAffirmRow
             pointId="snapshot_soft_signal_ack"
             label="I understand Soft Signal stops everything immediately"
@@ -442,6 +521,7 @@ export default function ConsentSnapshotPrepareScreen() {
         </Text>
       ) : null}
 
+      {/* Mid-flow nav: back/continue; intro uses Begin; save has its own primary + back. */}
       {step !== "intro" && step !== "save" ? (
         <View style={styles.nav}>
           <Button
@@ -468,6 +548,14 @@ export default function ConsentSnapshotPrepareScreen() {
   );
 }
 
+/**
+ * WHAT: Theme-bound styles for prepare screen layout and protective chrome.
+ * WHY: useThemedStyles requires a pure factory from AppColors.
+ * CONSENT: Not a consent surface — presentation only.
+ * EDGE CASES: none — pure style map.
+ * NEVER: Do not encode consent state only in color (copy remains primary).
+ * NOTE: `radius` import retained for theme parity with sibling screens; unused here is pre-existing.
+ */
 function makeStyles(colors: AppColors) {
   return {
     progress: {

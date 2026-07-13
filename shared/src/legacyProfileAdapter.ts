@@ -1,3 +1,14 @@
+/**
+ * Legacy Chapter 2 profile → Chapter 3 ConsentProfileVersion adapter.
+ *
+ * WHAT: Read-time merge of TouchLanguageProfile + ConsentPreference into engine rules.
+ * WHY: Compatibility engine only understands ConsentProfileVersion; storage may still hold split shapes.
+ * CONSENT: Transform is prepare/compute only — never writes storage or seals dual consent.
+ * EDGE CASES: Diverged touch/consent versions throw; hardStops force off_limits; missing speed omitted.
+ * NEVER: Widen soft_limit to welcomed; invent rules when parse fails; log private notes.
+ * SEE: docs/adr/0002-legacy-profile-adapter.md · consentEngine
+ */
+
 import { z } from "zod";
 import {
   ConsentPreferenceSchema,
@@ -12,6 +23,13 @@ import {
   type ConsentRule,
 } from "./consentEngine.ts";
 
+/**
+ * WHAT: Map legacy duration enums to maxDurationMinutes on duration rules.
+ * WHY: Engine duration dimension expects minutes or null for decide_together.
+ * CONSENT: Duration preference is not session start consent.
+ * EDGE CASES: decide_together → null (no automatic cap invented).
+ * NEVER: Treat brief as auto Soft Signal; use as safety score.
+ */
 const durationMinutes: Record<TouchLanguageProfile["duration"], number | null> =
   {
     brief: 15,
@@ -20,10 +38,17 @@ const durationMinutes: Record<TouchLanguageProfile["duration"], number | null> =
   };
 
 /**
- * Documented in docs/adr/0002-legacy-profile-adapter.md. Combines the
- * Chapter 2 persisted touch and consent shapes into the single canonical
- * Chapter 3 ConsentProfileVersion the compatibility engine understands.
- * Read-time transform only: never writes to storage.
+ * WHAT: Combine persisted touch + consent shapes into ConsentProfileVersion for compatibility.
+ * WHY: Chapter 3 engine single profile; Chapter 2 storage dual documents (ADR 0002).
+ * CONSENT: Read-time only — success does not mean mutual snapshot confirm or contact OK.
+ * EDGE CASES:
+ *   - invalid uuids / createdAt → zod throw
+ *   - touchVersion !== consentVersion → throw touch_and_consent_versions_diverged
+ *   - hardStops → off_limits rules with canReceive/canOffer false
+ *   - private notes joined; empty → null
+ * NEVER: Write back to storage; coerce soft_limit to off_limits silently without engine support;
+ *        treat returned profile as dual-sealed snapshot fingerprint.
+ * SEE: docs/adr/0002-legacy-profile-adapter.md
  */
 export function toConsentProfileVersion(input: {
   touchId: string;
@@ -37,6 +62,7 @@ export function toConsentProfileVersion(input: {
   z.uuid().parse(input.touchId);
   z.uuid().parse(input.userId);
   z.iso.datetime({ offset: true }).parse(input.createdAt);
+  // Fail closed: diverged versions would mis-state what the person currently affirms.
   if (input.touchVersion !== input.consentVersion)
     throw new Error("touch_and_consent_versions_diverged");
   const touch: TouchLanguageProfile = TouchLanguageProfileSchema.parse(
@@ -46,6 +72,13 @@ export function toConsentProfileVersion(input: {
     input.consent,
   );
   const rules: ConsentRule[] = [];
+  /**
+   * WHAT: Map one body zone preference into an engine ConsentRule.
+   * WHY: Body zones are first-class dimensions for dual-profile intersection.
+   * CONSENT: canReceive/canOffer true here still intersect with peer; hardStops override later.
+   * EDGE CASES: soft_limit remains first-class (care zone, not full exclusion).
+   * NEVER: Drop pressure; map unset zone as welcomed.
+   */
   const bodyZoneRule = (zone: BodyZonePreference): ConsentRule => ({
     dimension: "body_zone",
     value: zone.zone,
@@ -63,6 +96,7 @@ export function toConsentProfileVersion(input: {
     rules.push({
       dimension: "body_zone",
       value: hardStop,
+      // Hard stops are absolute off_limits with no offer/receive for contact.
       state: "off_limits",
       canReceive: false,
       canOffer: false,
@@ -120,6 +154,7 @@ export function toConsentProfileVersion(input: {
     pressure: null,
     maxDurationMinutes: durationMinutes[touch.duration],
   });
+  // Private notes stay private fields — never used as public match copy.
   const notes = [
     touch.privateNervousSystemNotes,
     consent.privateNervousSystemNotes,

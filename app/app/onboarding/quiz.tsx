@@ -17,11 +17,20 @@ import { hapticService } from "../../services/hapticService";
 import { vibeQuestionsForMode } from "../../lib/quizPaths";
 
 /**
- * Onboarding Vibe path.
- * Demo / Neurodivergent Mode use the calm short (~10) set so the phone-visible
- * walkthrough stays light. Real account onboarding uses the full bank so
- * profile archetype remains a fuller first-pass signal — never consent.
- * Short + Deep are always available again under the Quizzes tab.
+ * WHAT: Onboarding Vibe path (`/onboarding/quiz`) — scene-by-scene weather answers.
+ * WHY: Collect social-weather answers for archetype mix. Demo / ND use short (~10);
+ *   real account onboarding defaults deep (100) unless ND/reduced stimulation.
+ * CONSENT: Each Choice is `onboard_vibe_answer` (inform). Weather only — never
+ *   consent to touch, safety score, auto-match, or dual-seal.
+ * EDGE CASES:
+ *   - Empty question bank → recovery copy (no blank dead end).
+ *   - Real user: hydrate draft answers + index from profileRepository; filter unknown ids.
+ *   - Mode switch mid-session: clamp index into new length.
+ *   - Re-tap same answer still advances after delay (choose always advances).
+ *   - First scene: Back control absent (placeholder) — no About You via this back.
+ *   - Reduce Motion: advance delay 0ms (else 140ms presence pause).
+ * NEVER: score_as_safety; auto_match_from_vibe; “correct” answers; Soft Signal required here.
+ * SEE: docs/ONBOARDING_CONSENT_FLOW.md §6 · CONSENT_POINTS.onboard_vibe_answer · quizPaths
  */
 export default function QuizScreen() {
   const styles = useThemedStyles(makeStyles);
@@ -31,6 +40,9 @@ export default function QuizScreen() {
   const { user, status } = useAuth();
   const { prefs, reducedStimulation } = useNeurodivergent();
 
+  // Demo, ND Mode, or reduced stimulation → short calm path (~10).
+  // Real account with ND off → deep first pass. Short+Deep remain under Quizzes anytime.
+  // Mode selection is comfort/load — NEVER consent weight or safety ranking.
   const useShortPath =
     status === "demo" || prefs.enabled || reducedStimulation;
   const questions = useMemo(
@@ -39,6 +51,7 @@ export default function QuizScreen() {
   );
 
   const [index, setIndex] = useState(0);
+  // Fail-closed index clamp: never read past end if set changes under us.
   const safeIndex = Math.min(index, Math.max(0, questions.length - 1));
   const question = questions[safeIndex];
   const total = questions.length;
@@ -50,12 +63,14 @@ export default function QuizScreen() {
   }, [questions.length]);
 
   useEffect(() => {
+    // Real accounts only: resume draft. Demo has no user → memory-only path.
     if (!user) return;
     profileRepository
       .getProgress(user.id)
       .then(({ draftProfile }) => {
         const saved = draftProfile.quizAnswers;
         if (Array.isArray(saved)) {
+          // Drop answers for questions not in current mode bank (short vs deep).
           const known = new Set(questions.map((q) => q.id));
           const filtered = (saved as typeof answers).filter((item) =>
             known.has(item.questionId),
@@ -69,9 +84,11 @@ export default function QuizScreen() {
           );
         }
       })
+      // Silent fail: draft is convenience, not eligibility. Never block quiz on network.
       .catch(() => undefined);
   }, [user?.id, questions]);
 
+  // Empty bank recovery — no silent blank screen (product law: no dead ends).
   if (!question || total === 0) {
     return (
       <Screen>
@@ -89,11 +106,20 @@ export default function QuizScreen() {
     (item) => item.questionId === question.id,
   )?.answerId;
 
+  /**
+   * WHAT: Fire-and-forget draft save for real users (answers + index + step label).
+   * WHY: Resume after kill mid-quiz; demo has no user so this is a no-op.
+   * CONSENT: Persist weather draft only — not consent, not adult eligibility.
+   * EDGE CASES: Network errors swallowed; never surface as hard fail mid-flow.
+   * NEVER: Log answer content as “safety evidence”; complete onboarding flag here.
+   * SEE: docs/ONBOARDING_CONSENT_FLOW.md §6.3 · profileRepository.saveProgress
+   */
   const persist = (
     updated: typeof answers,
     nextIndex: number,
     step: "vibe_quiz" | "vibe_result",
   ) => {
+    // Demo / no session: PrototypeContext memory only.
     if (!user) return;
     void profileRepository
       .saveProgress(user.id, step, {
@@ -103,6 +129,19 @@ export default function QuizScreen() {
       .catch(() => undefined);
   };
 
+  /**
+   * WHAT: Records one scene answer, presence haptic, optional draft save, advances.
+   * WHY: Immediate visual selection + short delay (unless reduced motion) before next
+   *   scene supports motor intentionality without grant-arm dwell (inform, not seal).
+   * CONSENT: `onboard_vibe_answer` — inform. Replacing an answer for the same questionId
+   *   is allowed; never seals snapshot or grants touch.
+   * EDGE CASES:
+   *   - Last scene → replace to result (no stack back into last question as “still taking”).
+   *   - delay 0 when reducedMotion; else 140ms.
+   *   - Re-tap same Choice still advances (choose always advances).
+   * NEVER: Rank “more evolved” answers; auto-match; treat vibe as session yes.
+   * SEE: docs/ONBOARDING_CONSENT_FLOW.md §6.3 · CONSENT_POINTS.onboard_vibe_answer
+   */
   const choose = (answer: QuizAnswer) => {
     const selectedAnswer = {
       questionId: question.id,
@@ -110,6 +149,7 @@ export default function QuizScreen() {
       scores: answer.scores,
     };
     setAnswer(selectedAnswer);
+    // Presence haptic (spec) — not confirmation-of-consent.
     void hapticService.play("presence");
     const updated = [
       ...answers.filter((item) => item.questionId !== question.id),
@@ -121,6 +161,7 @@ export default function QuizScreen() {
       isLast ? total : safeIndex + 1,
       isLast ? "vibe_result" : "vibe_quiz",
     );
+    // 140ms: brief selected-state visibility. 0 under Reduce Motion. Not grant arm (320ms).
     const delay = reducedMotion ? 0 : 140;
     setTimeout(() => {
       if (isLast) router.replace("/onboarding/result");
@@ -128,6 +169,14 @@ export default function QuizScreen() {
     }, delay);
   };
 
+  /**
+   * WHAT: Moves to previous scene without clearing prior answer.
+   * WHY: Allow revise; re-persist index for real-user draft resume.
+   * CONSENT: Navigation within inform path only.
+   * EDGE CASES: safeIndex <= 0 → no-op (first scene has no back control).
+   * NEVER: Clear answers on back; navigate to About You from this control.
+   * SEE: docs/ONBOARDING_CONSENT_FLOW.md §6.3
+   */
   const goBack = () => {
     if (safeIndex <= 0) return;
     const next = safeIndex - 1;
@@ -152,6 +201,7 @@ export default function QuizScreen() {
             <Text style={styles.backText}>← Back</Text>
           </Pressable>
         ) : (
+          // Layout placeholder so counter stays right-aligned on first scene.
           <View style={styles.backPlaceholder} />
         )}
         <Text style={styles.count}>
@@ -162,6 +212,7 @@ export default function QuizScreen() {
       <Text style={styles.theme} accessibilityLabel={`Theme: ${themeLabel}`}>
         {themeLabel}
       </Text>
+      {/* Mode copy always repeats: never consent to touch. */}
       {useShortPath ? (
         <Text style={styles.hint}>
           Short calm path for demo / Neurodivergent Mode ({total} scenes). Full
@@ -200,6 +251,14 @@ export default function QuizScreen() {
   );
 }
 
+/**
+ * WHAT: Theme styles for quiz chrome (back, progress, options, footer note).
+ * WHY: Stable layout for short/deep lengths and VoiceOver radiogroup.
+ * CONSENT: Not a consent surface.
+ * EDGE CASES: none — pure style factory.
+ * NEVER: Color-only “correct answer” styling (no answer is more evolved).
+ * SEE: docs/ONBOARDING_CONSENT_FLOW.md §6
+ */
 function makeStyles(colors: AppColors) {
   return {
     topRow: {

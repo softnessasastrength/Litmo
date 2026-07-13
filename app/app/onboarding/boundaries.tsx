@@ -21,6 +21,11 @@ import { fonts, radius, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useNeurodivergent } from "../../context/NeurodivergentContext";
 
+/**
+ * Zone status radios for `onboard_boundary_zone`.
+ * Labels always present — meaning never color-only.
+ * Authorizes preferred future snapshot input only; NEVER partner may touch now.
+ */
 const statuses: Array<{
   value: BoundaryStatus;
   label: string;
@@ -43,6 +48,10 @@ const statuses: Array<{
   },
 ];
 
+/**
+ * Linear boundary wizard steps. Zone groups are DemoBodyZoneGroup ids.
+ * Review + save is `onboard_boundary_save` → Home (still not session consent).
+ */
 type Step =
   | "intro"
   | DemoBodyZoneGroup
@@ -61,8 +70,23 @@ const stepOrder: Step[] = [
 ];
 
 /**
- * Expanded local body-zone + hard-stop setup for the phone-visible path.
- * Does not grant consent; values stay in PrototypeContext only.
+ * WHAT: Expanded local body-zone + hard-stop onboarding (`/onboarding/boundaries`).
+ * WHY: Phone-visible path builds a fuller map before Home; values live in
+ *   PrototypeContext (demo local). Real users may already have partial server
+ *   data from TL `completeProfile` — this screen still sets the demo-visible map.
+ * CONSENT: Points `onboard_boundary_zone`, `onboard_boundary_hard_stop`,
+ *   `onboard_boundary_private_note`, `onboard_boundary_save` — all prepare.
+ *   Map ≠ session Consent Snapshot. Unset/unlisted = off limits (fail-closed).
+ * EDGE CASES:
+ *   - Section Continue disabled until every zone in section has status or mark-remaining.
+ *   - Zero hard stops allowed; Continue still enabled.
+ *   - Empty private note allowed.
+ *   - Review unset zones counted as off limits; optional mark remaining ask first.
+ *   - Double-tap Save boundaries → replace home (idempotent nav).
+ *   - Soft Signal not armed as session stop during pure onboarding (copy only).
+ * NEVER: Ready to meet strangers; dual-seal; match/vibe/prior flip off_limits → welcomed;
+ *   public bio from private note; upload on demo save path.
+ * SEE: docs/ONBOARDING_CONSENT_FLOW.md §9 · PrototypeContext · CONSENT_POINTS onboard_boundary_*
  */
 export default function BoundariesScreen() {
   const styles = useThemedStyles(makeStyles);
@@ -96,23 +120,42 @@ export default function BoundariesScreen() {
   const askFirst = demoBodyZones.filter(
     (z) => bodyBoundaries[z.id] === "ask_first",
   );
+  // Fail-closed display: missing key counts as off limits in review summary.
   const offLimits = demoBodyZones.filter(
     (z) => bodyBoundaries[z.id] === "off_limits" || !bodyBoundaries[z.id],
   );
 
+  // Zone sections require every zone named; other steps never block on zone fill.
   const groupComplete =
     step !== "upper" && step !== "core" && step !== "lower"
       ? true
       : zonesForStep.every((z) => bodyBoundaries[z.id]);
 
+  /**
+   * WHAT: Advances wizard; on last step historically used for home but review has own save.
+   * WHY: Shared nav for intro → zones → hard stops → note → review.
+   * CONSENT: Navigation prepare only. Final home is `onboard_boundary_save` button.
+   * EDGE CASES: stepIndex at end → replace /home (defensive; review also saves explicitly).
+   * NEVER: Auto-seal snapshot on step advance.
+   * SEE: docs/ONBOARDING_CONSENT_FLOW.md §9
+   */
   const goNext = () => {
     if (stepIndex >= stepOrder.length - 1) {
+      // Defensive: last step should use explicit Save; replace avoids stack pile.
       router.replace("/home");
       return;
     }
     setStepIndex((i) => i + 1);
   };
 
+  /**
+   * WHAT: Previous step; no-op on intro.
+   * WHY: Allow revise without clearing later fields (state retained).
+   * CONSENT: Navigation only.
+   * EDGE CASES: stepIndex <= 0 → return.
+   * NEVER: Clear bodyBoundaries on back.
+   * SEE: docs/ONBOARDING_CONSENT_FLOW.md §9.2
+   */
   const goBack = () => {
     if (stepIndex <= 0) return;
     setStepIndex((i) => i - 1);
@@ -136,6 +179,7 @@ export default function BoundariesScreen() {
             This stays on device in the demo. Every real session still needs a
             fresh Consent Snapshot.
           </Body>
+          {/* Fail-closed product law — shown before any zone is named. */}
           <View style={styles.safety}>
             <Text style={styles.safetyTitle}>Fail closed by design</Text>
             <Text style={styles.safetyBody}>
@@ -150,6 +194,7 @@ export default function BoundariesScreen() {
             </Body>
           ) : null}
           <View style={styles.quickRow}>
+            {/* Bulk prepare: still not session grant. */}
             <Button
               variant="secondary"
               label="Mark all ask first"
@@ -181,6 +226,7 @@ export default function BoundariesScreen() {
               {zone.detail ? (
                 <Text style={styles.zoneDetail}>{zone.detail}</Text>
               ) : null}
+              {/* onboard_boundary_zone — exclusive status radios per zone. */}
               <View accessibilityRole="radiogroup" style={styles.choices}>
                 {statuses.map((status) => (
                   <Choice
@@ -195,6 +241,7 @@ export default function BoundariesScreen() {
             </View>
           ))}
           <View style={styles.quickRow}>
+            {/* ND escape hatch: fill only unset in this section — never overwrite. */}
             <Button
               variant="secondary"
               label="Mark remaining in this section ask first"
@@ -210,6 +257,7 @@ export default function BoundariesScreen() {
           </View>
           <View style={styles.navRow}>
             <Button variant="secondary" label="Back" onPress={goBack} />
+            {/* Fail-closed: Continue disabled until groupComplete; hint explains why. */}
             <Button
               label="Continue"
               disabled={!groupComplete}
@@ -231,6 +279,7 @@ export default function BoundariesScreen() {
             Tap anything that must never happen — even if a zone above said ask
             first. Hard stops win. You can select more than one.
           </Body>
+          {/* onboard_boundary_hard_stop — multi checkbox chips; zero selected allowed. */}
           <View style={styles.chipWrap}>
             {demoHardStopOptions.map((stop) => {
               const on = hardStops.includes(stop.id);
@@ -256,6 +305,7 @@ export default function BoundariesScreen() {
           </Body>
           <View style={styles.navRow}>
             <Button variant="secondary" label="Back" onPress={goBack} />
+            {/* Zero hard stops is allowed — product still fail-closed on unset zones. */}
             <Button label="Continue" onPress={goNext} />
           </View>
         </>
@@ -269,6 +319,7 @@ export default function BoundariesScreen() {
             Examples: “I need a minute before contact,” “No sudden from-behind
             approaches,” “I freeze when rushed.”
           </Body>
+          {/* onboard_boundary_private_note — never log body; max 400; empty ok. */}
           <TextInput
             value={boundaryNote}
             onChangeText={setBoundaryNote}
@@ -335,6 +386,7 @@ export default function BoundariesScreen() {
                     .join(" · ")
                 : "None selected"}
             </Text>
+            {/* Private note shown only to this user on review — not a share control. */}
             {boundaryNote.trim() ? (
               <>
                 <Text style={styles.summaryLabel}>Private note</Text>
@@ -351,6 +403,11 @@ export default function BoundariesScreen() {
           </View>
           <View style={styles.navRow}>
             <Button variant="secondary" label="Back" onPress={goBack} />
+            {/*
+              onboard_boundary_save — prepare: open Home with local map.
+              NEVER: sealed snapshot; real matching; upload on demo (hint says so).
+              Landing on Home is not a consent event (§10).
+            */}
             <Button
               label="Save boundaries and continue"
               onPress={() => router.replace("/home")}
@@ -363,6 +420,14 @@ export default function BoundariesScreen() {
   );
 }
 
+/**
+ * WHAT: Theme styles for boundary wizard (zones, chips, note, review summary).
+ * WHY: Labels + structure carry meaning; chip on-state uses moss + check, not hue alone.
+ * CONSENT: Not a consent surface.
+ * EDGE CASES: none — pure style factory.
+ * NEVER: Off-limits styled as “available”; hide disabled Continue without a11yHint path.
+ * SEE: docs/ONBOARDING_CONSENT_FLOW.md §9.7–§14
+ */
 function makeStyles(colors: AppColors) {
   return {
     progress: {

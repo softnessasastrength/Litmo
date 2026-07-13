@@ -6,9 +6,18 @@ import { neuroTextScale, scaleStylesMap } from "../lib/neuroStyleScale";
 import type { AppColors } from "../theme";
 
 /**
- * Build StyleSheet values from the active theme palette.
- * When Neurodivergent Mode is on, scales readable text and tap targets app-wide.
- * Factory should be a stable module-level function.
+ * WHAT: Builds a StyleSheet from the active theme palette, optionally scaled for
+ *   Neurodivergent Mode (larger readable text and tap targets).
+ * WHY: One hook keeps color, dark mode, and ND scale consistent app-wide without
+ *   each screen re-implementing neuroStyleScale.
+ * CONSENT: Not a consent surface. ND scaling is accessibility comfort only —
+ *   never a clinical trait, match signal, or safety score.
+ * EDGE CASES:
+ *   - factory is expected module-stable; omitted from deps intentionally.
+ *   - prefs.enabled false → scale 1 (no growth).
+ *   - colors/shadow/isDark/scale change → recompute StyleSheet.
+ * NEVER: Encode consent authorization in style factories. Never use scale as “ready for strangers.”
+ * SEE: docs/ONBOARDING_CONSENT_FLOW.md law “ND calm by default (demo)” · app/lib/neuroStyleScale.ts
  */
 export function useThemedStyles(
   factory: (
@@ -21,6 +30,7 @@ export function useThemedStyles(
 ): any {
   const { colors, shadow, isDark } = useTheme();
   const { prefs } = useNeurodivergent();
+  // ND text/target scale: device preference presentation — not matching eligibility.
   const scale = neuroTextScale(prefs.enabled);
   return useMemo(() => {
     const raw = factory(colors, shadow, isDark);

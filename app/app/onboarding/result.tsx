@@ -21,13 +21,29 @@ import {
 import { fonts, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 
+/**
+ * WHAT: Vibe reveal screen (`/onboarding/result`) after onboarding quiz answers.
+ * WHY: Show playful archetype + mix model as social weather and offer keep/detour
+ *   paths without forcing clinical framing or safety ranking.
+ * CONSENT: Primary “Keep this Vibe Profile” is `onboard_vibe_keep` (prepare) —
+ *   weather save only. Detours (Quizzes hub, Deep Vibe, Change answers) are not
+ *   consent acts and can leave linear TL/boundaries path (documented product tension).
+ * EDGE CASES:
+ *   - Zero answers (deep-link) → model still runs; low confidence copy.
+ *   - Missing primary falls back to PrototypeContext archetypeId.
+ *   - Bar width floors tiny non-zero shares at 4% for visibility (not ranking “better”).
+ * NEVER: Diagnosis; safety score; consent to touch; “higher is better”; session seal.
+ * SEE: docs/ONBOARDING_CONSENT_FLOW.md §7 · CONSENT_POINTS.onboard_vibe_keep
+ */
 export default function ResultScreen() {
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { answers, archetypeId } = usePrototype();
+  // Pure recompute from answers — weather model only.
   const result = useMemo(() => runQuizModel(answers), [answers]);
   const vibe = archetypes[result.primary || archetypeId];
   const insights = topInsights(result, 5);
+  // Sort for display only — not match ranking or safety sort.
   const mixOrder = (Object.keys(archetypes) as ArchetypeId[]).sort(
     (a, b) => result.mixPercent[b] - result.mixPercent[a],
   );
@@ -64,6 +80,7 @@ export default function ResultScreen() {
                   style={[
                     styles.barFill,
                     {
+                      // Visibility floor for tiny non-zero shares — not a “boost score”.
                       width: `${Math.max(result.mixPercent[id], result.mixPercent[id] > 0 ? 4 : 0)}%`,
                       backgroundColor: archetypes[id].color,
                     },
@@ -119,14 +136,17 @@ export default function ResultScreen() {
         ) : null}
       </Card>
 
+      {/* Non-claim anchor required by ONBOARDING_CONSENT_FLOW §16. */}
       <Body muted center>
         Model-heavy under the hood, still just social weather. Not a diagnosis,
         safety score, or consent. A vibe never grants touch.
       </Body>
+      {/* onboard_vibe_keep — prepare: keep weather, continue toward TL on vibe hub. */}
       <Button
         label="Keep this Vibe Profile"
         onPress={() => router.push("/profile/vibe")}
       />
+      {/* Detours: still not session consent; may skip linear TL/boundaries before Home. */}
       <Button
         label="Browse Short & Deep Quizzes"
         variant="secondary"
@@ -144,6 +164,7 @@ export default function ResultScreen() {
         }
         accessibilityHint="Starts the full 100-scene Vibe on the Quizzes path. Progress saves on this device."
       />
+      {/* replace so stack does not pile result under quiz retake. */}
       <Button
         label="Change answers"
         variant="secondary"
@@ -153,6 +174,14 @@ export default function ResultScreen() {
   );
 }
 
+/**
+ * WHAT: Theme styles for weather mix bars, themes, and insights cards.
+ * WHY: Meaning uses labels + percents; color is secondary (not sole rank cue).
+ * CONSENT: Not a consent surface.
+ * EDGE CASES: none — pure style factory.
+ * NEVER: Imply higher mix % is safer or more consentable.
+ * SEE: docs/ONBOARDING_CONSENT_FLOW.md §7
+ */
 function makeStyles(colors: AppColors) {
   return {
     sectionLabel: {

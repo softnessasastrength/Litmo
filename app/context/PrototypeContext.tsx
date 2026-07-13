@@ -10,14 +10,26 @@ import type { AnswerScores } from "../lib/quizScoring";
 import { scoreQuiz } from "../lib/quizScoring";
 import { initialAboutYouAnswers, type AboutYouAnswers } from "../data/aboutYou";
 
-/** Local-only boundary language for the phone-visible demo path. */
+/**
+ * Local-only boundary language for the phone-visible demo path and onboarding UI.
+ * Product meanings:
+ * - welcomed — usually okay IF both confirm in a future session snapshot
+ * - ask_first — only with a clear, fresh ask in the moment
+ * - off_limits — not available; silence still means no
+ * Fail-closed: unset zones are treated as off_limits by consumers (boundaries review).
+ * NEVER: A status alone grants partner touch or seals Consent Snapshot.
+ * SEE: docs/ONBOARDING_CONSENT_FLOW.md §9.2 · onboard_boundary_zone
+ */
 export type BoundaryStatus = "welcomed" | "ask_first" | "off_limits";
 
+/** Body map section keys used by boundaries onboarding steps. */
 export type DemoBodyZoneGroup = "upper" | "core" | "lower";
 
 /**
- * Expanded platonic body-zone map for onboarding.
- * Unlisted areas stay off limits. Never sexual framing.
+ * Expanded platonic body-zone map for onboarding (12 named zones).
+ * Unlisted body areas stay off limits by product law.
+ * NEVER: Sexual framing; auto-flip off_limits to welcomed from match/vibe/prior.
+ * SEE: docs/ONBOARDING_CONSENT_FLOW.md §9 · onboard_boundary_zone
  */
 export const demoBodyZones = [
   {
@@ -96,7 +108,12 @@ export const demoBodyZones = [
 
 export type DemoBodyZoneId = (typeof demoBodyZones)[number]["id"];
 
-/** Absolute no-go tags (reinforce off limits; local demo only). */
+/**
+ * Absolute no-go tags (reinforce off limits; local demo / prepare inputs).
+ * Hard stops win over welcomed zones in product semantics.
+ * NEVER: Selecting zero hard stops means “open to everything” — unset zones still off limits.
+ * SEE: onboard_boundary_hard_stop · docs/ONBOARDING_CONSENT_FLOW.md §9.4
+ */
 export const demoHardStopOptions = [
   { id: "face", label: "Face / head contact" },
   { id: "neck", label: "Neck" },
@@ -112,6 +129,10 @@ export const demoHardStopOptions = [
 
 export type DemoHardStopId = (typeof demoHardStopOptions)[number]["id"];
 
+/**
+ * Section metadata for boundaries steps upper / core / lower.
+ * Titles are UI chrome only — not consent categories.
+ */
 export const demoBodyZoneGroups: Array<{
   id: DemoBodyZoneGroup;
   title: string;
@@ -134,6 +155,12 @@ export const demoBodyZoneGroups: Array<{
   },
 ];
 
+/**
+ * In-memory prototype bag for demo + onboarding UI before/without full server profile.
+ * CONSENT: Every mutator is prepare/inform storage — never dual-seal or Soft Signal.
+ * Demo: process memory only (lost on kill unless other stores write).
+ * Real: often mirrored via profileRepository / touchLanguageStore on later saves.
+ */
 type PrototypeState = {
   answers: AnswerScores[];
   archetypeId: ArchetypeId;
@@ -141,6 +168,7 @@ type PrototypeState = {
   touchChoices: Record<string, string>;
   bodyBoundaries: Partial<Record<DemoBodyZoneId, BoundaryStatus>>;
   hardStops: DemoHardStopId[];
+  /** Private nervous-system note — NEVER log body or treat as public bio. */
   boundaryNote: string;
   aboutYou: AboutYouAnswers;
   setAnswer: (answer: AnswerScores) => void;
@@ -157,14 +185,32 @@ type PrototypeState = {
 };
 const Context = createContext<PrototypeState | null>(null);
 
+/**
+ * WHAT: Holds local onboarding/demo prototype state (about-you, vibe answers, TL choices,
+ *   body zones, hard stops, private note) for the phone-visible path.
+ * WHY: Demo must work without Docker/Supabase; real onboarding still uses this bag
+ *   as UI state until profile/TL stores persist.
+ * CONSENT: Provider is not a consent surface. Values feed future snapshots as inputs
+ *   only. Unset zones remain fail-closed off limits at product edges.
+ * EDGE CASES:
+ *   - Kill app in demo → memory lost (expected).
+ *   - setAnswer replaces same questionId only (one answer per scene).
+ *   - setUnsetBodyBoundaries fills missing only — never overwrites existing statuses.
+ * NEVER: Upload private note as public bio; invent consent from empty bodyBoundaries;
+ *   treat selectedProfileId / vibe as partner safety.
+ * SEE: docs/ONBOARDING_CONSENT_FLOW.md §2.3 · ADR 0003 · boundaries / about-you / quiz screens
+ */
 export function PrototypeProvider({ children }: PropsWithChildren) {
   const [answers, setAnswers] = useState<AnswerScores[]>([]);
+  // Seeded fictional discovery peer for demo — not a real match or consent.
   const [selectedProfileId, selectProfile] = useState("maya");
   const [touchChoices, setTouchChoices] = useState<Record<string, string>>({});
+  // Partial map: missing keys = unset = off limits at review (fail-closed consumers).
   const [bodyBoundaries, setBodyBoundaries] = useState<
     Partial<Record<DemoBodyZoneId, BoundaryStatus>>
   >({});
   const [hardStops, setHardStops] = useState<DemoHardStopId[]>([]);
+  // Private note: never log content; max length enforced in UI.
   const [boundaryNote, setBoundaryNote] = useState("");
   const [aboutYou, setAboutYouState] = useState<AboutYouAnswers>(
     initialAboutYouAnswers,
@@ -172,6 +218,7 @@ export function PrototypeProvider({ children }: PropsWithChildren) {
   const value = useMemo<PrototypeState>(
     () => ({
       answers,
+      // Weather primary from scores — not safety ranking.
       archetypeId: scoreQuiz(answers),
       selectedProfileId,
       touchChoices,
@@ -179,24 +226,30 @@ export function PrototypeProvider({ children }: PropsWithChildren) {
       hardStops,
       boundaryNote,
       aboutYou,
+      // onboard_vibe_answer storage: one score row per questionId.
       setAnswer: (answer) =>
         setAnswers((current) => [
           ...current.filter((item) => item.questionId !== answer.questionId),
           answer,
         ]),
+      // Real-user draft resume — replace whole answer list.
       hydrateAnswers: setAnswers,
       resetQuiz: () => setAnswers([]),
       selectProfile,
+      // onboard_touch_language_* inputs — key is pressure|speed|duration|environment.
       setTouchChoice: (key, choice) =>
         setTouchChoices((current) => ({ ...current, [key]: choice })),
+      // onboard_boundary_zone — prepare only; does not notify peer.
       setBodyBoundary: (zone, status) =>
         setBodyBoundaries((current) => ({ ...current, [zone]: status })),
+      // Intro “Mark all ask first” — still not session consent.
       setAllBodyBoundaries: (status) =>
         setBodyBoundaries(
           Object.fromEntries(
             demoBodyZones.map((zone) => [zone.id, status]),
           ) as Record<DemoBodyZoneId, BoundaryStatus>,
         ),
+      // Review escape hatch: fill only unset; preserve explicit welcomed/off_limits.
       setUnsetBodyBoundaries: (status) =>
         setBodyBoundaries((current) => {
           const next = { ...current };
@@ -205,13 +258,16 @@ export function PrototypeProvider({ children }: PropsWithChildren) {
           }
           return next;
         }),
+      // onboard_boundary_hard_stop multi-select toggle.
       toggleHardStop: (id) =>
         setHardStops((current) =>
           current.includes(id)
             ? current.filter((item) => item !== id)
             : [...current, id],
         ),
+      // onboard_boundary_private_note — local; never default-share.
       setBoundaryNote,
+      // about-you patches (name, age self-report, gender, orientation).
       setAboutYou: (patch) =>
         setAboutYouState((current) => ({ ...current, ...patch })),
     }),
@@ -227,6 +283,15 @@ export function PrototypeProvider({ children }: PropsWithChildren) {
   );
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
+
+/**
+ * WHAT: Access PrototypeProvider state; throws if used outside provider.
+ * WHY: Fail loud on missing provider rather than silent empty consent-adjacent defaults.
+ * CONSENT: Not a consent surface — hook access only.
+ * EDGE CASES: Outside provider → throw (prevents undefined mutators).
+ * NEVER: Catch and invent empty welcomed zones as defaults at call sites.
+ * SEE: PrototypeProvider
+ */
 export function usePrototype() {
   const value = useContext(Context);
   if (!value)

@@ -1,3 +1,19 @@
+/**
+ * Session wrap-up screen — private post-session reflection after any end path.
+ *
+ * WHAT: Collect optional outcome + private note after a session ends (normal,
+ *       Soft Signal, pending sync, or not-active). Optionally offer reporting.
+ * WHY: Trauma-informed closure without public ratings, scores, or partner visibility.
+ * CONSENT: Reflection never grants, renews, or certifies consent or safety of a peer.
+ *          Soft Signal use is celebrated as self-trust, never framed as a penalty.
+ * EDGE CASES:
+ *   - demo / no sessionId → mock path; continue without persistence
+ *   - submit pending_sync → still navigate; durable local record exists
+ *   - peer lookup fails → report offer stays hidden (fail closed for report params)
+ * NEVER: Public ratings, partner-visible notes, or “this person is safe” claims.
+ * SEE: sessionWrapupService · docs/CODE_COMMENT_STANDARD.md
+ */
+
 import { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Text, TextInput, View } from "react-native";
@@ -17,6 +33,14 @@ import { sessionRepository } from "../../services/sessionRepository";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 
+/**
+ * WHAT: Radio options for private wrap-up outcome (product language, not scores).
+ * WHY: Fixed catalog so backend enums stay aligned and copy cannot drift into ratings.
+ * CONSENT: Choosing an outcome is reflection only — not a consent grant or peer label.
+ * EDGE CASES: safety_concern / felt_uncomfortable / soft_signal_used unlock report offer.
+ * NEVER: Treat outcomes as star ratings, compatibility scores, or public trust signals.
+ * SEE: WrapupOutcome in sessionWrapupServiceCore
+ */
 const outcomeChoices: Array<{
   value: WrapupOutcome;
   label: string;
@@ -49,6 +73,16 @@ const outcomeChoices: Array<{
   },
 ];
 
+/**
+ * WHAT: Default export route for `/session/wrap-up` after session end.
+ * WHY: Single private surface for all end kinds (soft-signal, normal, pending-sync).
+ * CONSENT: Post-session only. Does not re-open contact or seal a new snapshot.
+ * EDGE CASES:
+ *   - unauthenticated / demo → canPersist false; still allows Continue without save
+ *   - soft-signal / pending-sync copy affirms stop was correct and free
+ * NEVER: Block navigation on optional note; force explanation of Soft Signal.
+ * SEE: Phone-visible vertical slice wrap-up step
+ */
 export default function SessionWrapUpScreen() {
   const colors = useColors();
   const styles = useThemedStyles(makeStyles);
@@ -65,7 +99,9 @@ export default function SessionWrapUpScreen() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [peerUserId, setPeerUserId] = useState<string | null>(null);
+  // Real wrap-up persistence only for authenticated accounts with a session id.
   const canPersist = status === "authenticated" && !!sessionId;
+  // Report is optional support — only when we know the peer and outcome warrants offer.
   const showReportOffer =
     canPersist &&
     !!peerUserId &&
@@ -73,6 +109,16 @@ export default function SessionWrapUpScreen() {
       outcome === "safety_concern" ||
       outcome === "soft_signal_used");
 
+  /**
+   * WHAT: Resolve the other participant’s user id for optional report prefill.
+   * WHY: Report flow needs reportedId; wrap-up itself never needs peer identity.
+   * CONSENT: Peer id is for human-review routing only — not trust display.
+   * EDGE CASES:
+   *   - demo / missing session → peer null, report hidden
+   *   - user not on session → peer null (fail closed)
+   *   - unmount mid-fetch → cancelled flag ignores stale setState
+   * NEVER: Surface peer legal identity; log private note with peer id.
+   */
   useEffect(() => {
     if (!canPersist || !sessionId || !user?.id) {
       setPeerUserId(null);
@@ -83,6 +129,7 @@ export default function SessionWrapUpScreen() {
       .getSession(sessionId)
       .then((session) => {
         if (cancelled) return;
+        // Fail closed: only set peer when this user is exactly one side.
         const peer =
           session.userA === user.id
             ? session.userB
@@ -92,6 +139,7 @@ export default function SessionWrapUpScreen() {
         setPeerUserId(peer);
       })
       .catch(() => {
+        // Network/session errors hide report rather than invent a peer id.
         if (!cancelled) setPeerUserId(null);
       });
     return () => {
@@ -99,6 +147,17 @@ export default function SessionWrapUpScreen() {
     };
   }, [canPersist, sessionId, user?.id]);
 
+  /**
+   * WHAT: Persist private wrap-up (or skip persist in mock/demo) then open trust history.
+   * WHY: Durable reflection + offline-queue parity with emergency stop; never lose local save.
+   * CONSENT: Submit records private reflection only — not a consent grant or peer score.
+   * EDGE CASES:
+   *   - empty outcome → no-op (button already disabled)
+   *   - !canPersist → navigate without network write
+   *   - pending_sync from service still treated as success for navigation
+   * NEVER: Treat submit success as certifying the peer safe; share note with partner.
+   * SEE: sessionWrapupService.submit
+   */
   const save = async () => {
     if (!outcome) return;
     if (!canPersist) {
@@ -116,6 +175,7 @@ export default function SessionWrapUpScreen() {
       await sessionWrapupService.submit(sessionId!, outcome, note || null);
       router.push("/profile/trust-ledger");
     } catch (caught) {
+      // Stay on screen with recoverable error — do not discard typed note.
       setError(
         caught instanceof Error
           ? caught.message
@@ -126,6 +186,13 @@ export default function SessionWrapUpScreen() {
     }
   };
 
+  /**
+   * WHAT: Navigate to structured security report with session + peer prefilled.
+   * WHY: Separate report from reflection so soft concerns can escalate without conflating.
+   * CONSENT: Report is optional human review — never required after Soft Signal.
+   * EDGE CASES: Missing peer or sessionId → no-op (fail closed; no partial report).
+   * NEVER: Auto-submit report from wrap-up outcome alone; name-report the peer publicly.
+   */
   const openReport = () => {
     if (!peerUserId || !sessionId) return;
     router.push({
@@ -133,6 +200,7 @@ export default function SessionWrapUpScreen() {
       params: {
         reportedId: peerUserId,
         sessionId,
+        // Generic label — never invent real-name identity from wrap-up.
         displayName: "the other person",
       },
     });
@@ -269,6 +337,13 @@ export default function SessionWrapUpScreen() {
     </Screen>
   );
 }
+/**
+ * WHAT: Theme-driven styles for wrap-up layout (question, support, note, error).
+ * WHY: useThemedStyles factory keeps cream/ink tokens consistent with rest of app.
+ * CONSENT: Not a consent surface — presentation only.
+ * EDGE CASES: none — pure style object from AppColors.
+ * NEVER: Encode product meaning (safe/unsafe) via color alone without text.
+ */
 function makeStyles(colors: AppColors) {
   return {
     question: { gap: 14, marginTop: 18 },

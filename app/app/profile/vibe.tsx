@@ -8,6 +8,19 @@ import { useAuth } from "../../context/AuthContext";
 import { profileRepository } from "../../services/profileRepository";
 import { quizCatalog } from "../../data/quizCatalog";
 
+/**
+ * WHAT: Post-keep vibe hub (`/profile/vibe`) after `onboard_vibe_keep` from result.
+ * WHY: Bridge weather card to Touch Language onboarding (canonical next) or quiz detours
+ *   without treating the card as safety proof or touch permission.
+ * CONSENT: Not a new consent seal. Landing here means weather was kept for conversation
+ *   only. Canonical happy path: “Quick touch preferences (onboarding)” → TL → boundaries.
+ * EDGE CASES:
+ *   - Zero answers → model still runs; primary falls back to archetypeId.
+ *   - Retake clears local answers + real draft when user present.
+ *   - Detours (full TL editor, Quizzes) can leave linear boundaries gate (documented tension).
+ * NEVER: Vibe as consent; safety score; ready-for-strangers; Soft Signal required here.
+ * SEE: docs/ONBOARDING_CONSENT_FLOW.md §7.3 · onboard_vibe_keep · result.tsx
+ */
 export default function VibeProfileScreen() {
   const router = useRouter();
   const { user } = useAuth();
@@ -16,8 +29,17 @@ export default function VibeProfileScreen() {
   const vibeCount = quizCatalog.filter((q) => q.family === "vibe").length;
   const selfCount = quizCatalog.filter((q) => q.family === "self").length;
 
+  /**
+   * WHAT: Clears onboarding vibe answers (and real draft if signed in) then reopens quiz.
+   * WHY: Allow change-of-mind without implying prior weather was a commitment.
+   * CONSENT: Prepare reset only — does not revoke session consent (none from vibe).
+   * EDGE CASES: Draft save errors ignored; local reset still happens.
+   * NEVER: Delete Touch Language or boundaries as side effect of retake.
+   * SEE: docs/ONBOARDING_CONSENT_FLOW.md §7.3
+   */
   const retakeOnboarding = () => {
     resetQuiz();
+    // Real accounts: clear server draft so resume does not restore old scenes.
     if (user) {
       void profileRepository
         .saveProgress(user.id, "vibe_quiz", {
@@ -39,6 +61,7 @@ export default function VibeProfileScreen() {
         blendLabel={result.blendLabel}
         showHowYouMightShowUp
       />
+      {/* Non-claim: weather model ≠ consent (copy anchors §16). */}
       <Body muted>
         Built from your scenes with a multi-theme mix model ({result.modelVersion}
         ). Still only a conversation starter — never consent. Onboarding may use
@@ -53,6 +76,7 @@ export default function VibeProfileScreen() {
         onPress={() => router.push("/touch-language" as never)}
         accessibilityHint="Pressure, speed, duration, body map, hard and soft limits"
       />
+      {/* Canonical onboarding next after keep — onboard_touch_language_save path. */}
       <Button
         label="Quick touch preferences (onboarding)"
         variant="secondary"

@@ -15,9 +15,34 @@ import { fonts, radius, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 
+/**
+ * Product step id for About You. Order is fixed: name → age → gender → orientation.
+ * Each step maps to an onboard_* prepare/inform point — never session dual-seal.
+ */
 type Step = "name" | "age" | "gender" | "orientation";
+
+/** Canonical linear order; index 0 backs to prior screen (Entry on demo replace path). */
 const steps: Step[] = ["name", "age", "gender", "orientation"];
 
+/**
+ * WHAT: Four-step self-describe onboarding (`/onboarding/about-you`) for display
+ *   name, adult self-report age, gender, and orientation into PrototypeContext.
+ * WHY: Gather local (and later real-profile) starting points before vibe quiz
+ *   without treating any answer as safety, matching eligibility beyond 18+, or touch.
+ * CONSENT: Points `onboard_profile_name` (inform), `onboard_age_self_report` (prepare),
+ *   `onboard_profile_gender` (inform), `onboard_profile_orientation` (inform).
+ *   Authorizes profile/local state only. Age self-report ≠ Apple Declared Age Range.
+ * EDGE CASES:
+ *   - Whitespace-only name → Next disabled.
+ *   - Age under 18 or non-digit → Next disabled (`forbidden: allow_under_18_continue`).
+ *   - “Something else” without custom text → Next disabled (gender & orientation).
+ *   - Age paste with letters → stripped; leading zeros coerce via Number (018 → 18 ok).
+ *   - Last Next → quiz; no server write until real-user quiz/TL paths.
+ * NEVER: Legal name verification; public directory; government ID; birthday storage;
+ *   consent to touch; substitute for `/onboarding/age-gate` on real accounts;
+ *   attraction as safety signal.
+ * SEE: docs/ONBOARDING_CONSENT_FLOW.md §5 · CONSENT_POINTS onboard_profile_* / onboard_age_self_report
+ */
 export default function AboutYouScreen() {
   const colors = useColors();
   const styles = useThemedStyles(makeStyles);
@@ -26,6 +51,14 @@ export default function AboutYouScreen() {
   const [stepIndex, setStepIndex] = useState(0);
   const step = steps[stepIndex];
 
+  /**
+   * WHAT: Advances to next About You step, or pushes vibe quiz on the last step.
+   * WHY: Keeps linear prepare flow; quiz is weather only, still not touch.
+   * CONSENT: Last step press continues prepare path (`onboard_profile_orientation` → quiz inform).
+   * EDGE CASES: Only callable when canContinue true (primary disabled otherwise).
+   * NEVER: Skip age gate for real accounts; seal snapshot; mark onboarding complete server-side.
+   * SEE: docs/ONBOARDING_CONSENT_FLOW.md §5.4
+   */
   const next = () => {
     if (stepIndex === steps.length - 1) {
       router.push("/onboarding/quiz");
@@ -33,11 +66,23 @@ export default function AboutYouScreen() {
       setStepIndex((value) => value + 1);
     }
   };
+
+  /**
+   * WHAT: Goes to previous step, or router.back() on step 0.
+   * WHY: No dead ends; user can revise without clearing later fields (memory keeps them).
+   * CONSENT: Navigation only — does not revoke session consent (none exists yet).
+   * EDGE CASES: Demo replace from Entry may make step-0 back leave product path.
+   * NEVER: Clear age/gender on back (state preserved for re-edit).
+   * SEE: docs/ONBOARDING_CONSENT_FLOW.md §5.0
+   */
   const back = () => {
     if (stepIndex === 0) router.back();
     else setStepIndex((value) => value - 1);
   };
 
+  // Fail-closed step gates: Next stays disabled until the active step is valid.
+  // Age: digits only + Number >= 18 — self-report for demo/about-you ONLY.
+  // NEVER treat this as Apple Declared Age Range or production eligibility.
   const canContinue =
     step === "name"
       ? aboutYou.name.trim().length > 0
@@ -60,6 +105,7 @@ export default function AboutYouScreen() {
       <FadeIn key={step}>
         {step === "name" ? (
           <View style={styles.block}>
+            {/* onboard_profile_name — display name only, not legal identity. */}
             <Text style={styles.kicker} accessibilityRole="header">
               What should we call you?
             </Text>
@@ -69,6 +115,8 @@ export default function AboutYouScreen() {
               autoCapitalize="words"
               autoFocus
               value={aboutYou.name}
+              // Display name only — not legal identity, not matching eligibility, not consent.
+              // Empty trim is rejected by canContinue so we never treat whitespace-as-name as ready.
               onChangeText={(text) => setAboutYou({ name: text })}
               style={styles.input}
               placeholder="Your name"
@@ -78,6 +126,10 @@ export default function AboutYouScreen() {
         ) : null}
         {step === "age" ? (
           <View style={styles.block}>
+            {/*
+              onboard_age_self_report — prepare eligibility for demo/about-you path only.
+              Under 18: Next stays disabled. NEVER Apple range, ID, or production adult signal.
+            */}
             <Text style={styles.kicker} accessibilityRole="header">
               How many trips around the sun?
             </Text>
@@ -88,6 +140,8 @@ export default function AboutYouScreen() {
               keyboardType="number-pad"
               maxLength={3}
               value={aboutYou.age}
+              // Strip non-digits (paste safety). No upper adult cap beyond 3 digits in UI.
+              // Number(age) >= 18 is the only gate — real accounts still need age-gate later.
               onChangeText={(text) =>
                 setAboutYou({ age: text.replace(/[^0-9]/g, "") })
               }
@@ -99,6 +153,7 @@ export default function AboutYouScreen() {
         ) : null}
         {step === "gender" ? (
           <View style={styles.block}>
+            {/* onboard_profile_gender — inform; never medical classification or binary-only force. */}
             <Text style={styles.kicker} accessibilityRole="header">
               How do you describe your gender?
             </Text>
@@ -115,6 +170,7 @@ export default function AboutYouScreen() {
                 />
               ))}
             </View>
+            {/* Custom free-text only when “Something else”; empty custom blocks Next. */}
             {aboutYou.gender === "Something else" ? (
               <TextInput
                 accessibilityLabel="Describe your gender in your own words"
@@ -130,6 +186,10 @@ export default function AboutYouScreen() {
         ) : null}
         {step === "orientation" ? (
           <View style={styles.block}>
+            {/*
+              onboard_profile_orientation — inform.
+              Copy law: attraction helps understand preference, NEVER safety/trust score.
+            */}
             <Text style={styles.kicker} accessibilityRole="header">
               What&rsquo;s your sexual orientation?
             </Text>
@@ -162,6 +222,7 @@ export default function AboutYouScreen() {
           </View>
         ) : null}
       </FadeIn>
+      {/* Sharing is opt-in later — onboarding stores locally / profile path only. */}
       <Body muted center>
         You can change any of this later. None of it is shared until you choose
         to share it.
@@ -176,6 +237,7 @@ export default function AboutYouScreen() {
           />
         </View>
         <View style={styles.buttonFlex}>
+          {/* Grant arm dwell does NOT apply — onboarding Next is inform/prepare, not dual-seal. */}
           <Button
             label={
               stepIndex === steps.length - 1 ? "Continue to the quiz" : "Next"
@@ -188,6 +250,15 @@ export default function AboutYouScreen() {
     </Screen>
   );
 }
+
+/**
+ * WHAT: Theme styles for About You progress chrome, inputs, and dual nav buttons.
+ * WHY: Shared input height meets min touch target; radiogroup spacing for exclusive choices.
+ * CONSENT: Not a consent surface.
+ * EDGE CASES: none — pure style factory.
+ * NEVER: Color-only meaning for required fields (disabled state is on Button, not hue alone).
+ * SEE: docs/ONBOARDING_CONSENT_FLOW.md §14
+ */
 function makeStyles(colors: AppColors) {
   return {
     count: {
