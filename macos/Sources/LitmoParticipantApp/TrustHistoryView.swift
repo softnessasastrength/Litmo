@@ -34,7 +34,7 @@ struct TrustHistoryView: View {
                         .foregroundStyle(.secondary)
                 }
 
-                authorityBanner
+                ParticipantAuthorityBanner(text: PlatformAuthority.trustHistory)
 
                 content
                     .frame(maxWidth: 720, alignment: .leading)
@@ -42,7 +42,10 @@ struct TrustHistoryView: View {
                 Button("Refresh") {
                     Task { await model.load() }
                 }
-                .disabled(model.state == .loading)
+                .disabled({
+                    if case .loading = model.state { return true }
+                    return false
+                }())
                 .keyboardShortcut("r", modifiers: [.command])
             }
             .padding(32)
@@ -52,85 +55,38 @@ struct TrustHistoryView: View {
         .task { await model.load() }
     }
 
-    private var authorityBanner: some View {
-        GroupBox {
-            Label {
-                Text(PlatformAuthority.trustHistory)
-                    .foregroundStyle(.secondary)
-            } icon: {
-                Image(systemName: "lock.shield")
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(8)
-        }
-    }
-
     @ViewBuilder
     private var content: some View {
         switch model.state {
-        case .idle, .loading:
-            ProgressView("Loading your private signals…")
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, 24)
-        case .missingConfiguration(let message):
-            failClosedCard(title: "Server not configured", message: message, systemImage: "gearshape")
-        case .unauthenticated(let message):
-            failClosedCard(title: "Session not connected", message: message, systemImage: "person.crop.circle.badge.exclamationmark")
-        case .unavailable(let message):
-            failClosedCard(title: "Trust history unavailable", message: message, systemImage: "exclamationmark.triangle")
         case .loaded(let signals):
             loadedContent(signals)
-        }
-    }
-
-    private func failClosedCard(title: String, message: String, systemImage: String) -> some View {
-        GroupBox {
-            VStack(alignment: .leading, spacing: 10) {
-                Label(title, systemImage: systemImage)
-                    .font(.title2.bold())
-                Text(message)
-                    .foregroundStyle(.secondary)
-                Text("No participant trust data is fabricated when the server or session is unavailable.")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(12)
+        default:
+            model.state.failClosedContent(
+                loadingLabel: "Loading your private signals…",
+                unavailableTitle: "Trust history unavailable",
+                fabricationNote: "No participant trust data is fabricated when the server or session is unavailable."
+            )
         }
     }
 
     private func loadedContent(_ signals: MyTrustSignals) -> some View {
         VStack(alignment: .leading, spacing: 16) {
-            factRow(
+            ParticipantFactRow(
                 title: "Account age",
                 value: signals.accountAgeDays == 0
                     ? "Created today"
                     : "\(signals.accountAgeDays) day\(signals.accountAgeDays == 1 ? "" : "s")"
             )
-            factRow(title: "Profile complete", value: signals.profileComplete ? "Yes" : "Not yet")
-            factRow(title: "Adult confirmation", value: signals.adultEligible ? "Recorded" : "Not recorded")
-            factRow(title: "Completed sessions", value: "\(signals.completedSessions)")
-            factRow(title: "Soft Signal endings", value: "\(signals.softSignaledSessions)")
-            factRow(title: "Safety endings", value: "\(signals.safetyEndedSessions)")
+            ParticipantFactRow(title: "Profile complete", value: signals.profileComplete ? "Yes" : "Not yet")
+            ParticipantFactRow(title: "Adult confirmation", value: signals.adultEligible ? "Recorded" : "Not recorded")
+            ParticipantFactRow(title: "Completed sessions", value: "\(signals.completedSessions)")
+            ParticipantFactRow(title: "Soft Signal endings", value: "\(signals.softSignaledSessions)")
+            ParticipantFactRow(title: "Safety endings", value: "\(signals.safetyEndedSessions)")
 
             Text("Counts never prove someone is safe. Positive history never overrides a current Consent Snapshot.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .padding(.top, 4)
-        }
-    }
-
-    private func factRow(title: String, value: String) -> some View {
-        GroupBox {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title.uppercased())
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(.secondary)
-                Text(value)
-                    .font(.title2.weight(.semibold))
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(8)
         }
     }
 }

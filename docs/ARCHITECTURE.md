@@ -60,10 +60,10 @@ The Express consent-overlap service and early session/trust migrations remain in
 
 The native macOS workspace is generated from `macos/project.yml` and contains three targets with deliberately narrow responsibilities:
 
-- `Litmo` is the participant-facing app. It owns local Campfire state, honest read-only placeholders for unfinished surfaces, and the first server-backed self-only trust-history read.
+- `Litmo` is the participant-facing app. It owns local Campfire state, honest read-only placeholders for unfinished surfaces, and server-backed self-only trust-history and own-profile reads.
 - `LitmoOps` is a separately bundled staff app. It fails closed and exposes no action without future server-backed staff authentication and authorization.
-- `LitmoMacCore` contains presentation-safe local state and read-model decoding/clients. It does not duplicate the canonical TypeScript consent engine, session state machine, matching eligibility, or staff policy.
+- `LitmoMacCore` contains presentation-safe local state, shared fail-closed Supabase read transport, and read-model decoding/clients. It does not duplicate the canonical TypeScript consent engine, session state machine, matching eligibility, or staff policy.
 
 Active physical sessions and Soft Signal remain phone-first. Consent and authorization remain server-authoritative. The participant and Ops apps use different bundle identifiers and entitlement files and currently share no App Group or Keychain group. See ADR 0045.
 
-The first server-backed participant read on macOS is self-only trust history via `my_trust_signals` (ADR 0046). Swift decodes and displays server fields; it does not recompute trust scores or consent. Configuration and session absence fail closed. Passkey sign-in and broader participant read models remain future reviewed work.
+Server-backed participant reads on macOS currently include self-only trust history via `my_trust_signals` (ADR 0046) and the owner-RLS own profile row (ADR 0047). Shared transport and `ParticipantReadOutcome` keep fail-closed behavior consistent. Swift decodes and displays server fields; it does not recompute trust scores or consent. Configuration and session absence fail closed. Passkey sign-in and broader participant read models remain future reviewed work.

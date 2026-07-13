@@ -23,11 +23,17 @@ Choose the `Litmo` or `LitmoOps` scheme. Signing is automatic for local developm
 
 The participant app does not own active physical sessions or Soft Signal. The TypeScript/server domain remains authoritative for consent and authorization. Campfire is local and ephemeral. The Ops target has a different bundle identifier and entitlement file, shares no app group, and exposes no action until real staff authentication and server authorization exist.
 
-### Trust history (first server-backed read)
+### Server-backed participant reads
 
-The participant app can load **self-only** trust facts from the existing
-`my_trust_signals` RPC (ADR 0029 / ADR 0046). It does not recompute scores,
-grant consent, or invent rows when the server is unavailable.
+The participant app can load **self-only** server data when configured:
+
+| Surface | Contract | ADR |
+| --- | --- | --- |
+| Trust history | `my_trust_signals` RPC | 0046 |
+| Profile | owner-RLS `profiles` row | 0047 |
+
+Neither surface recomputes consent, invents rows when unavailable, or unlocks
+Ops. Shared fail-closed transport lives in `LitmoMacCore`.
 
 For local inspection only, supply:
 
