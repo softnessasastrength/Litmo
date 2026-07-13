@@ -16,6 +16,12 @@ mental model, and (2) propose a shape for the pieces Chapter 6
 (`docs/roadmap/CHAPTER_6_PRIVATE_ALPHA.md`) still needs and SAFETY-OPS-001 was
 asked to define.
 
+Founder review should be recorded in
+[`SAFETY_OPS_FOUNDER_DECISIONS.md`](SAFETY_OPS_FOUNDER_DECISIONS.md), which
+converts the open questions below into explicit options, recommended
+private-alpha defaults, review dependencies, and a completion gate. The
+worksheet does not itself approve any proposal.
+
 ## Design philosophy: data rights as an extension of consent, not a compliance bolt-on
 
 Litmo's founding rule for touch is that consent is explicit, current, revocable,
@@ -213,10 +219,9 @@ chapters or legal conclusions:
 
 ## Suggested next step
 
-Founder review of the "Open question" items above, in order of what blocks the
-most other work: (1) retention/deletion posture, since it blocks external
-TestFlight per `docs/RELEASE_AND_TESTFLIGHT.md` regardless of this doc; (2)
-who staffs escalation beyond the founder; (3) invite-issuance model. Once those
-are decided, this document should be split into per-feature ADRs the way
-Chapter 5's decisions were (one ADR per accepted decision), rather than
-implemented directly from this proposal doc.
+Founder completes the S1–S10 dispositions in
+`docs/SAFETY_OPS_FOUNDER_DECISIONS.md`, names the required external reviewers,
+and records which decisions remain provisional. Accepted decisions should then
+be split into focused ADRs the way Chapter 5's decisions were. Do not implement
+directly from either draft document, and do not promote Chapter 6 without a
+separate explicit human decision.
