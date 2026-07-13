@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-07-13 — Hardware haptics v2: VCM-first, Gentle Mode, Soft Signal descent
+
+### Summary
+
+Canonical dedicated-device haptic spec moved to **`docs/HARDWARE/HAPTICS.md`**
+(v2): wideband **VCM primary** + LRA secondary, device-wide warm field, **every
+pattern has Gentle / Sensory-Friendly Mode**, Soft Signal as long smooth
+**descending warm pulse**, connection rising heartbeat (gentle single throb),
+mutual consent double-pulse, positive feedback, nearby ambient, global
+Sensory-Friendly toggle, intensity + per-pattern presets, full off with
+visual/sound, vibe/sensory **suggestions** (confirm before apply).
+
+### User-visible impact
+
+- None in the current mobile app (hardware vision).
+
+### Developer impact
+
+- `docs/HARDWARE/HAPTICS.md` — new canonical authority.
+- `docs/HAPTIC_SYSTEM_DEVICE.md` — pointer only.
+- ADR 0057, DOCUMENTATION_MAP, phone haptic plan, KNOWN_LIMITATIONS updated.
+
 ## 2026-07-13 — Soft Edge haptic system refined (warm, EI, anti cold-tech)
 
 ### Summary

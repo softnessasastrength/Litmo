@@ -19,13 +19,13 @@ Soft Signal must be instant, unmistakable, and emotionally safe: a clear stop, n
 
 ## Decision
 
-1. Adopt a **dual-actuator** stack for the dedicated Litmo device: **wideband VCA + LRA**.
-2. Keep **semantic event names** shared with phone clients; implement richer waveforms only on device firmware.
-3. Map Soft Signal to a dual-actuator **“curtain close”** pattern with ≤ 30 ms start latency and state-commit-before-playback ordering.
-4. Forbid ERM as the primary Soft Signal path; forbid engagement, secret, or interpersonal-touch-imitation haptics.
-5. Adopt **Soft Edge** as the named tactile personality: warm, sparse, rounded envelopes, mid-low VCA body, emotional-intelligence guards (no fake mutual seal, no cold max-sharp UI as default). Full tables in `docs/HAPTIC_SYSTEM_DEVICE.md` v1.1+.
-6. Treat cold/tech haptics (reward ticks, alarm buzzes, continuous social pulses) as explicit anti-references — not design targets.
-## Alternatives considered
+1. Adopt a **dual-actuator** stack for the dedicated Litmo device: **high-fidelity wideband Voice Coil Motor (VCM/VCA) primary** + **LRA secondary** for soft-edged crisp accents only.
+2. Aim for **device-wide distributed** warm haptics (palm-coupled field; multi-actuator in phase when present).
+3. Keep **semantic event names** shared with phone clients; richer waveforms live on device firmware only.
+4. **Soft Signal (critical):** long, smooth **descending warm pulse** that fades (freedom/release) — not an alarm. Gentle Mode: extremely subtle slow low-amplitude fade. Start latency ≤ 30 ms; state commit before playback.
+5. **Every pattern** has a **Gentle / Sensory-Friendly** fallback. Global Sensory-Friendly Mode, intensity slider, per-pattern presets, and full off with strong visual (+ optional sound) are required.
+6. Forbid ERM-primary Soft Signal; forbid engagement, secret, and interpersonal-touch-imitation haptics.
+7. Full pattern library, accessibility, and vibe-based *suggestions* (never silent forced re-enable) are specified in **`docs/HARDWARE/HAPTICS.md`** (canonical).## Alternatives considered
 
 | Alternative | Why not (primary) |
 | --- | --- |
@@ -62,7 +62,8 @@ Soft Signal must be instant, unmistakable, and emotionally safe: a clear stop, n
 
 ## References
 
-- `docs/HAPTIC_SYSTEM_DEVICE.md`
+- `docs/HARDWARE/HAPTICS.md` (canonical)
+- `docs/HAPTIC_SYSTEM_DEVICE.md` (pointer)
 - `docs/roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md`
 - `docs/adr/0039-semantic-haptic-language.md`
 - Immersion, “The Haptic Stack – Hardware Layer” (actuator taxonomy: ERM, LRA, VCM, piezo)

@@ -4,7 +4,7 @@ Status: implementation-authorizing specification
 Owner: current coding agent
 Task: `HAPTIC-001`
 
-> **Dedicated-device haptics (VCA + LRA, Soft Signal curtain, consent/connection patterns)** are specified in [`docs/HAPTIC_SYSTEM_DEVICE.md`](../HAPTIC_SYSTEM_DEVICE.md) and [ADR 0057](../adr/0057-device-haptic-vca-lra-architecture.md). This document remains the **phone / Expo** implementation plan. Semantic event names must stay aligned across both.
+> **Dedicated-device haptics** (wideband VCM primary, LRA secondary, Soft Signal warm descent, Gentle / Sensory-Friendly Mode for every pattern) are specified in [`docs/HARDWARE/HAPTICS.md`](../HARDWARE/HAPTICS.md) and [ADR 0057](../adr/0057-device-haptic-vca-lra-architecture.md). This document remains the **phone / Expo** implementation plan. Semantic event names must stay aligned across both.
 
 ## Intent
 

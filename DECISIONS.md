@@ -28,12 +28,12 @@ Record decisions that materially affect architecture, security, privacy, operati
   - Safer rollback and review.
   - Explicit documentation of incomplete work.
 
-## ADR-0057 — Device haptics use dual VCA + LRA (Soft Edge)
+## ADR-0057 — Device haptics: VCM primary + LRA, Gentle Mode, Soft Signal descent
 
 - **Date:** 2026-07-13
 - **Status:** accepted (hardware vision)
-- **Context:** Dedicated Litmo hardware needs warm high-fidelity feedback; phone Expo haptics are limited. Soft Signal must feel instant and safe, not alarming.
-- **Decision:** Dual wideband voice-coil (VCA) + LRA stack; shared semantic events with phone; Soft Signal “curtain close”; full specs in `docs/HAPTIC_SYSTEM_DEVICE.md` and `docs/adr/0057-device-haptic-vca-lra-architecture.md`.
+- **Context:** Dedicated Litmo hardware needs warm high-fidelity, ND/sensory-first feedback; Soft Signal must feel free/safe, not alarming.
+- **Decision:** Wideband VCM primary + LRA secondary; distributed warm field; Soft Signal = long descending warm pulse with Gentle breath-fade; every pattern has Gentle Mode; Sensory-Friendly global + per-pattern presets; canonical spec `docs/HARDWARE/HAPTICS.md`.
 - **Consequences:** Device manufacturing is not private-alpha blocking; phone HAPTIC-001 remains shipping path; no ERM-primary Soft Signal.
 
 ## ADR template
