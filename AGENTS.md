@@ -38,37 +38,44 @@ Do not block the visible mobile experience on unfinished infrastructure when saf
 
 ## Current chapter assignment
 
-The explicitly active milestone is **BETA-001 — Integrated physical-iPhone validation**.
+No implementation milestone is currently active.
 
-Read and execute:
+BETA-001 is complete: Track A, Track B, and Track C passed, including the
+founder-owned physical B1–B26 walkthrough on 2026-07-13. Read
+`docs/PHYSICAL_BETA_WALKTHROUGH_RESULTS.md` for the evidence. The optional
+physical VoiceOver smoke remains tracked as ACCESS-001.
 
-- `TASKS.md`
-- `CURRENT_STATE.md`
-- `docs/PHYSICAL_BETA_WALKTHROUGH.md`
-- `docs/PHYSICAL_BETA_WALKTHROUGH_RESULTS.md`
-- `docs/TRACK_B_LOCAL.md`
+SAFETY-OPS-001 is **pending founder and reviewer decisions**. The current
+authorization is documentation and decision preparation only:
 
-HAPTIC-001 is complete (ADR 0039). Chapter 4 engineering is complete (`docs/CHAPTER_4_COMPLETION.md`). Chapter 5 trust/moderation foundation is merged (`docs/CHAPTER_5_NEXT_STEPS.md`).
+- `docs/SAFETY_OPS_DESIGN.md` records the implemented Chapter 5 ground truth and
+  proposed private-alpha operations shape.
+- `docs/SAFETY_OPS_FOUNDER_DECISIONS.md` is the explicit founder worksheet.
+- `TASKS.md`, `CURRENT_STATE.md`, and `project-state.json` are the current
+  execution state.
 
-**Track A Pass** (founder demo). **Track C Pass** (engineering a11y). **Track B automated backend Pass** (seed sign-in + pgTAP + integration); founder still owns B1–B26 on physical device(s). Do not invent new product chapters while BETA-001 UI walkthrough remains open unless a Fail forces a fix PR.
+Do not implement Chapter 6 or mark SAFETY-OPS-001 active merely because a draft
+or decision packet exists. A human must record the relevant decisions and
+explicitly promote the implementation milestone.
 
-The human directing this work has stated their concrete near-term goal is a build they can run on their own physical iPhone via Expo Go. **Demo path status (2026-07-12):** backend-free demo mode exists (`docs/adr/0003-demo-mode-entry-point.md`); Face ID is required only for real account sessions (ADR 0007 amendment), so Expo Go can walk the fictional path without Docker or `.env`. Documented in `docs/LOCAL_DEVELOPMENT.md`.
+The phone-visible demo remains available through Expo Go without Docker or
+`.env`. Face ID remains mandatory only for real account sessions; see
+`docs/LOCAL_DEVELOPMENT.md` and ADR 0007.
 
 Read these files before changing code:
 
 1. `README.md`
-2. `docs/CONCEPT.md`
-3. `docs/CONTINUITY_AND_STEWARDSHIP.md`
-4. `docs/CONSENT_FLOW.md`
-5. `docs/TRUST_SYSTEM.md`
-6. `docs/DOCUMENTATION_STANDARD.md`
-7. `docs/roadmap/README.md`
-8. `docs/roadmap/PHONE_VISIBLE_VERTICAL_SLICE.md`
-9. `docs/roadmap/CHAPTER_4_SESSION_LIFECYCLE.md`
-10. `docs/CHAPTER_3_COMPLETION.md`
-11. `docs/CHAPTER_4_NEXT_STEPS.md` — exact next deliverable and how to resume mid-chapter
-12. `docs/roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md` — completed (HAPTIC-001); reference only
-13. `docs/PHYSICAL_BETA_WALKTHROUGH.md` + `docs/TRACK_B_LOCAL.md` — active BETA-001
+2. `CURRENT_STATE.md`
+3. `TASKS.md`
+4. `project-state.json`
+5. `docs/CONCEPT.md`
+6. `docs/CONTINUITY_AND_STEWARDSHIP.md`
+7. `docs/CONSENT_FLOW.md`
+8. `docs/TRUST_SYSTEM.md`
+9. `docs/DOCUMENTATION_STANDARD.md`
+10. `docs/DOCUMENTATION_MAP.md`
+11. `docs/KNOWN_LIMITATIONS.md`
+12. the documents for the explicitly active or pending-decision task
 
 ## What “continue” means
 
