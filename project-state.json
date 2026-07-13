@@ -1,27 +1,28 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T23:30:00-04:00",
+  "updatedAt": "2026-07-13T16:10:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
     "status": "active"
   },
   "git": {
-    "branch": "agent/quizzes-section",
-    "latestCoherentCommit": "pending-share-001",
-    "workingTreeExpectedClean": false
+    "branch": "agent/macos-self-export-read",
+    "latestCoherentCommit": "5f1978a",
+    "workingTreeExpectedClean": true
   },
   "verification": {
     "status": "partial",
     "commands": [
-      "app typecheck — run after npm install litmo-local-share",
-      "localShareCore + localSharePreferenceCore unit tests — run with app suite",
-      "npm run state:check / full suite — run before PR land"
+      "xcodebuild -scheme Litmo test \u2014 33/33",
+      "xcodebuild -scheme LitmoOps build unsigned \u2014 success",
+      "npm run state:check \u2014 pass",
+      "Hosted macOS CI pending on PR"
     ],
     "failures": []
   },
-  "nextAction": "Verify typecheck/tests for NFC (ADR 0055) + Proximity + Nearby Share + Quizzes; commit; land PR when green. SAFETY-OPS external blockers remain.",
+  "nextAction": "Review/merge MACOS-005 export PR and rebased quiz PR #83. Ops stays locked.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
@@ -30,23 +31,14 @@
     "Optional: independent crypto review of quiz partner E2E and local share before external beta"
   ],
   "risks": [
-    "Partner quiz E2E is Signal-inspired 1:1 (not full multi-device Signal audit); peer package consents are self-asserted.",
-    "Nearby Multipeer share requires development build; Expo Go fail-soft; physical two-device smoke human-led.",
-    "Expo Go / simulator may fall back to Secure Store-only private keys without Enclave vault wrap.",
-    "Partner plaintext stays device-local; optional relay is ciphertext-only; own summaries may restore via ADR 0051.",
-    "macOS participant reads use developer env tokens; not production passkey sign-in.",
-    "A listed session request is never consent.",
-    "Litmo Ops remains non-operational until real staff authentication and authorization exist.",
-    "ACCESS-001 still requires a physical founder VoiceOver smoke before it can be closed."
+    "Self export is not legally complete data access.",
+    "macOS env tokens are not production passkey sign-in.",
+    "Litmo Ops remains locked until real staff auth.",
+    "ACCESS-001 VoiceOver smoke still pending."
   ],
   "notes": [
-    "PRs #72–#80 are merged on main.",
-    "ADR 0050 documents Quizzes tab, short/deep paths, local-first storage, four consent gates, Face ID.",
-    "ADR 0051 documents optional owner-only quiz_result_summaries backup.",
-    "ADR 0052 documents X3DH + Double Ratchet partner packages and ciphertext-only relay (038).",
-    "ADR 0053 documents Multipeer nearby share for discovery profiles and co-located snapshot review.",
-    "ADR 0054 / PROXIMITY_LAYER.md document opt-in anonymous radar, handshake, identity gates, Soft Signal.",
-    "ADR 0055 / NFC_FEATURES.md document NFC tag careful-connect, post-tap consent, QR/manual fallback.",
-    "QUIZ-001, QUIZ-002, SHARE-001, PROX-001, NFC-001 completed in TASKS.md."
+    "PRs #72\u2013#82 merged on main.",
+    "PR #83 rebased: 100-question quiz + vibe-mix-1.0.",
+    "MACOS-005 adds export_my_data read + local copy."
   ]
 }
