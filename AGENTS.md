@@ -38,44 +38,31 @@ Do not block the visible mobile experience on unfinished infrastructure when saf
 
 ## Current chapter assignment
 
-No implementation milestone is currently active.
+The active implementation milestone is **SAFETY-OPS-001 — Recommended
+private-alpha safety-operations foundation**.
 
-BETA-001 is complete: Track A, Track B, and Track C passed, including the
-founder-owned physical B1–B26 walkthrough on 2026-07-13. Read
-`docs/PHYSICAL_BETA_WALKTHROUGH_RESULTS.md` for the evidence. The optional
-physical VoiceOver smoke remains tracked as ACCESS-001.
+The founder selected the recommended directions in
+`docs/SAFETY_OPS_FOUNDER_DECISIONS.md` on 2026-07-13. Read:
 
-SAFETY-OPS-001 is **pending founder and reviewer decisions**. The current
-authorization is documentation and decision preparation only:
+- `docs/adr/0042-private-alpha-safety-operations.md`
+- `docs/SAFETY_OPS_DESIGN.md`
+- `docs/SAFETY_OPS_FOUNDER_DECISIONS.md`
+- `TASKS.md`
+- `CURRENT_STATE.md`
+- `project-state.json`
 
-- `docs/SAFETY_OPS_DESIGN.md` records the implemented Chapter 5 ground truth and
-  proposed private-alpha operations shape.
-- `docs/SAFETY_OPS_FOUNDER_DECISIONS.md` is the explicit founder worksheet.
-- `TASKS.md`, `CURRENT_STATE.md`, and `project-state.json` are the current
-  execution state.
+Implement engineering-safe, fail-closed foundations autonomously. Do not invent
+or claim legal, privacy, clinical, or safeguarding approval. Destructive
+retention, complete account deletion, jurisdiction policy, external referral,
+named backup staffing, and two-person permanent-ban approval remain blocked
+until the repository contains real qualified-review evidence or named human
+owners.
 
-Do not implement Chapter 6 or mark SAFETY-OPS-001 active merely because a draft
-or decision packet exists. A human must record the relevant decisions and
-explicitly promote the implementation milestone.
+BETA-001 remains complete. ACCESS-001's optional physical VoiceOver smoke
+remains pending and does not block documentation/database work.
 
 The phone-visible demo remains available through Expo Go without Docker or
-`.env`. Face ID remains mandatory only for real account sessions; see
-`docs/LOCAL_DEVELOPMENT.md` and ADR 0007.
-
-Read these files before changing code:
-
-1. `README.md`
-2. `CURRENT_STATE.md`
-3. `TASKS.md`
-4. `project-state.json`
-5. `docs/CONCEPT.md`
-6. `docs/CONTINUITY_AND_STEWARDSHIP.md`
-7. `docs/CONSENT_FLOW.md`
-8. `docs/TRUST_SYSTEM.md`
-9. `docs/DOCUMENTATION_STANDARD.md`
-10. `docs/DOCUMENTATION_MAP.md`
-11. `docs/KNOWN_LIMITATIONS.md`
-12. the documents for the explicitly active or pending-decision task
+`.env`. Face ID remains mandatory only for real account sessions.
 
 ## What “continue” means
 
