@@ -1,39 +1,42 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T00:00:00-04:00",
+  "updatedAt": "2026-07-13T10:30:00-04:00",
   "milestone": {
-    "id": "BETA-001",
-    "name": "Integrated physical-iPhone validation",
-    "status": "completed"
+    "id": "SAFETY-OPS-001",
+    "name": "Moderation and beta-operations design",
+    "status": "pending"
   },
   "git": {
-    "branch": "main",
-    "latestCoherentCommit": "55c713ce6c7fa4c39c2d3159085c5287fb5c32a8",
+    "branch": "agent/continuity-safety-ops-decisions",
+    "latestCoherentCommit": "42a1eed65b182c9880238eca26f3a53032ad5c43",
     "workingTreeExpectedClean": true
   },
   "verification": {
-    "status": "passed",
+    "status": "partial",
     "commands": [
-      "npm run test:integration — 5/5 (includes Track B seed lifecycle, merged #60)",
-      "npm run lint / typecheck / state:check pass on main",
-      "Physical Track B B1–B26 — Pass (founder, 2026-07-13, docs/PHYSICAL_BETA_WALKTHROUGH_RESULTS.md)"
+      "Documentation-only change; no runtime behavior changed",
+      "Baseline BETA-001 evidence remains: integration 5/5, lint/typecheck/state:check pass, physical B1-B26 Pass",
+      "Current branch state validator pending GitHub PR checks"
     ],
     "failures": []
   },
-  "nextAction": "No active milestone. Optional founder VoiceOver smoke (docs/ACCESSIBILITY_TRACK_C.md), or a human selects and marks active the next task in TASKS.md.",
-  "blockedBy": [],
+  "nextAction": "Founder reviews docs/SAFETY_OPS_FOUNDER_DECISIONS.md and records S1-S10 dispositions; Chapter 6 remains unauthorized until separately promoted.",
+  "blockedBy": [
+    "Founder decisions S1-S10",
+    "Legal/privacy review for eligibility, retention, deletion/export, and escalation",
+    "Named independent safety reviewer before external alpha"
+  ],
   "risks": [
-    "Real Consent Snapshot requires LAN-reachable snapshot backend and saved profiles.",
-    "External TestFlight remains blocked (deletion, staging, AASA, disclosures, independent review).",
-    "Simulator-only testing cannot validate Face ID, haptics, or real-device accessibility beyond what B1–B26 covered.",
-    "BETA-001 Pass is private validation only; it does not authorize external TestFlight or production-safety claims."
+    "SAFETY-OPS-001 is a pending design task, not approved policy or implementation authorization.",
+    "External TestFlight remains blocked by deletion/export, hosted staging, AASA, disclosures, independent review, and signed-release evidence.",
+    "Moderation currently has a founder-only operational single point of failure.",
+    "Physical VoiceOver validation remains pending under ACCESS-001."
   ],
   "notes": [
     "Repository artifacts are the source of truth.",
-    "HAPTIC-001 completed (ADR 0039).",
-    "integration/track-b-seed-accounts.test.mjs covers seed password + lifecycle (merged #60).",
-    "PHYSICAL_BETA_WALKTHROUGH.md is not external beta approval.",
-    "BETA-001 closed 2026-07-13: Track A/B/C all Pass, including physical B1-B26 on device. No Fail items recorded; no agent fix PRs pending."
+    "BETA-001 completed 2026-07-13 with Track A/B/C Pass and no Fail items.",
+    "Main baseline for this decision-preparation branch is 42a1eed65b182c9880238eca26f3a53032ad5c43.",
+    "docs/SAFETY_OPS_FOUNDER_DECISIONS.md is a worksheet; selections must be promoted into ADRs before implementation."
   ]
 }
