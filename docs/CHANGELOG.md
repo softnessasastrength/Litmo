@@ -5,7 +5,7 @@
 ### Summary
 
 Founder selected the recommended SAFETY-OPS directions. Added ADR 0042,
-migration 035, and pgTAP coverage for staff-issued hashed invitations,
+migration 036, and pgTAP coverage for staff-issued hashed invitations,
 seven-day expiry, private-alpha membership gates, a scoped matching pause,
 minimal unblock tombstones, non-destructive cleanup, and self data export.
 
