@@ -1,5 +1,5 @@
 begin;
-select plan(15);
+select plan(17);
 
 -- Existing accounts are the initial named cohort.
 set local role authenticated;
