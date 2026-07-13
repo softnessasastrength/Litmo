@@ -129,6 +129,16 @@ Follow `docs/DOCUMENTATION_STANDARD.md` strictly.
 
 Documentation is not optional cleanup. Every meaningful code change must update the relevant documentation in the same workstream.
 
+### In-code comments — maximum intentionality (standing order)
+
+Follow `docs/CODE_COMMENT_STANDARD.md` on **every** new or modified line of product code.
+
+- Every function ships with WHAT / WHY / CONSENT / EDGE CASES / NEVER (and SEE when linked).
+- Every safety-relevant branch explains fail-closed reasoning inline.
+- Consent, Soft Signal, age, auth, boundaries, and encryption code use the strictest bar.
+- No “obvious” free pass on consent surfaces. Hand-waving is a defect.
+- Bring touched files up to the comment standard in the same workstream.
+
 At minimum:
 
 - Never knowingly leave documentation stale.
