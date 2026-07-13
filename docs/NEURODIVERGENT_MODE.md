@@ -1,62 +1,55 @@
-# Neurodivergent Mode
+# Neurodivergent Mode (global)
 
 ## Purpose
 
-Neurodivergent Mode is a **device-local accessibility preference** that optimizes
-Vibe Quiz, partner invite/compare, and Guided Learning for reduced stimulation,
-clearer language, easy navigation, save/resume, read-aloud, and dictation aids.
+A **device-local global toggle** that optimizes the entire Litmo app experience:
+
+- **Larger text** and tap targets (style scale via `useThemedStyles`)
+- **Reduced motion** (no FadeIn motion; quieter haptics by default)
+- **One question / step at a time** (quiz + learning)
+- **Voice aids** (read-aloud + keyboard-dictation option numbers)
+- **Easy saves** (mid-quiz resume; learning progress)
 
 It is **not** a diagnosis, competence score, trust signal, or consent gate.
-Turning it on never changes who may match, what a Consent Snapshot contains, or
-whether Soft Signal works.
 
 ## How to enable
 
-**Settings → Neurodivergent Mode** (toggle). Preference key:
-`litmo.neurodivergent.prefs.v1` (AsyncStorage only).
+**Settings → Neurodivergent Mode** (master switch).
 
-**Demo mode** turns Neurodivergent Mode **on by default** when you enter the
-fictional demo from the entry screen (calm phone-visible walkthrough). Change
-anytime in Settings.
+- Key: `litmo.neurodivergent.prefs.v1` (AsyncStorage only)
+- **Demo mode** turns it on by default from the entry screen
 
-When enabled, the optimized bundle turns on:
+## What “global” means
 
-| Feature | Behavior |
-| ------- | -------- |
-| Reduced stimulation | No quiz fade motion; skip decorative glyphs; quiet haptics by default; honor system Reduce Motion |
-| Clear language | Shorter chrome copy for quiz, partner, and learning (consent meaning unchanged) |
-| Easy navigation | Jump lists, numbered options, explicit progress labels, larger targets |
-| Save / resume | Mid-quiz save is **always** on for Quizzes; ND Mode surfaces it more clearly. Learning already resumes. |
-| Read aloud | `expo-speech` when available; else `AccessibilityInfo.announceForAccessibility` |
-| Voice input aids | Option-number field for keyboard dictation; partner package paste still works |
+| Area | Behavior when on |
+| ---- | ---------------- |
+| App-wide styles | ~18% scale on font sizes, line heights, and min tap heights through `useThemedStyles` |
+| Motion | `FadeIn` becomes instant; system Reduce Motion still honored |
+| Haptics | Off by default; user may re-enable in Settings |
+| Quizzes | One question UI, numbered options, resume card, read aloud, dictate option # |
+| Guided Learning | One step, jump optional, read aloud, dictate scenario option #, save hint |
+| Partner invite | Clear language chrome (existing) |
+| Language | Shorter chrome copy where wired (`clearLanguage`) |
 
-Turning **on** also sets haptics off by default. Users may re-enable haptics in
-Settings without turning ND mode off.
-
-## Surfaces
-
-- **Quizzes hub / Learn hub** — status banner or soft link to Settings
-- **Quiz play** — resume card, jump list, read aloud, dictate option number, auto-save
-- **Partner share** — plain-language labels, optional read instructions
-- **Learning modules** — jump-to-step, read step aloud, larger scenario targets
-
-## Constitution / trauma-informed notes
-
-- Accessibility preferences never appear in discovery, trust history, or export
-  as “neuro type.”
-- Clear language never softens fail-closed consent (four gates, Soft Signal, etc.).
-- Read-aloud stays on-device; spoken text is not uploaded.
-- Dictation uses the **device keyboard microphone**, not a Litmo cloud STT.
-- Module and quiz completion still never prove safety or readiness.
+Consent gates, Soft Signal, and matching authority are **unchanged**.
 
 ## Architecture
 
 - `neurodivergentPreferenceCore.ts` / `neurodivergentPreference.ts`
-- `NeurodivergentContext` (provider in root layout)
-- `quizPlayProgress.ts`, `speechService.ts`, `lib/clearLanguage.ts`
+- `NeurodivergentContext` — `enabled`, `textScale`, `reducedStimulation`, `oneAtATime`, `voiceAids`, `easySaves`
+- `lib/neuroStyleScale.ts` — pure scale helpers
+- `hooks/useThemedStyles.ts` — applies scale when enabled
+- `speechService.ts` — TTS / accessibility announce
+- `quizPlayProgress.ts` — mid-quiz save
+
+## Constitution
+
+- Preference never appears in discovery, trust history, or export as “neuro type”
+- Fail-closed consent still requires explicit mutual gates
+- Dictation uses the **device keyboard**, not Litmo cloud STT
+- Spoken content is not uploaded
 
 ## Future work
 
-- Fine-grained sub-toggles in Settings UI (currently master switch enables all)
-- Optional larger base type scale beyond Dynamic Type
-- Physical VoiceOver + Switch Control smoke for ND-optimized paths
+- Optional fine-grained sub-toggles in Settings UI
+- Physical VoiceOver + Switch Control smoke on ND paths

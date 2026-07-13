@@ -15,12 +15,23 @@ import {
   neurodivergentPreference,
   type NeurodivergentPrefs,
 } from "../services/neurodivergentPreference";
+import { neuroTextScale } from "../lib/neuroStyleScale";
 
 type NeuroState = {
   prefs: NeurodivergentPrefs;
   ready: boolean;
+  /** Master Neurodivergent Mode switch. */
+  enabled: boolean;
   /** Combined ND reducedStimulation + system Reduce Motion. */
   reducedStimulation: boolean;
+  /** Larger text/tap scaling factor applied in useThemedStyles. */
+  textScale: number;
+  /** One question/step at a time (always true when ND on). */
+  oneAtATime: boolean;
+  /** Voice / dictation aids + read-aloud. */
+  voiceAids: boolean;
+  /** Easy device-local saves (quiz + learning progress). */
+  easySaves: boolean;
   setEnabled: (enabled: boolean) => Promise<void>;
 };
 
@@ -54,18 +65,23 @@ export function NeurodivergentProvider({ children }: PropsWithChildren) {
     }
   }, []);
 
-  const value = useMemo<NeuroState>(
-    () => ({
+  const value = useMemo<NeuroState>(() => {
+    const enabled = prefs.enabled;
+    return {
       prefs,
       ready,
+      enabled,
       reducedStimulation: effectiveReducedStimulation(
         prefs,
         systemReduceMotion,
       ),
+      textScale: neuroTextScale(enabled),
+      oneAtATime: enabled || prefs.easyNavigation,
+      voiceAids: enabled || prefs.voiceInputAids || prefs.readAloud,
+      easySaves: true, // quiz/learning always save; ND makes it explicit
       setEnabled,
-    }),
-    [prefs, ready, setEnabled, systemReduceMotion],
-  );
+    };
+  }, [prefs, ready, setEnabled, systemReduceMotion]);
 
   return (
     <NeurodivergentContext.Provider value={value}>
@@ -81,7 +97,12 @@ export function useNeurodivergent(): NeuroState {
     return {
       prefs: defaultNeurodivergentPrefs,
       ready: true,
+      enabled: false,
       reducedStimulation: false,
+      textScale: 1,
+      oneAtATime: false,
+      voiceAids: false,
+      easySaves: true,
       setEnabled: async () => {},
     };
   }

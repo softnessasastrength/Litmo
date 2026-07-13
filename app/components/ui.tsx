@@ -13,6 +13,7 @@ import { useEffect, useRef } from "react";
 import { fonts, radius, type AppColors, type lightShadow } from "../theme";
 import { useThemedStyles } from "../hooks/useThemedStyles";
 import { useReducedMotion } from "../hooks/useReducedMotion";
+import { useNeurodivergent } from "../context/NeurodivergentContext";
 
 function makeUiStyles(
   colors: AppColors,
@@ -71,6 +72,7 @@ function makeUiStyles(
       fontSize: 17,
       fontWeight: "800" as const,
       textAlign: "center" as const,
+      // Dynamic Type: ND Mode further scales via useThemedStyles.
     },
     secondaryText: { color: colors.moss },
     disabled: { opacity: 0.45 },
@@ -167,9 +169,10 @@ export function Screen({
   );
 }
 export function FadeIn({ children }: PropsWithChildren) {
-  // System Reduce Motion; Neurodivergent Mode also forces reducedStimulation
-  // at call sites by skipping FadeIn when needed.
-  const reduced = useReducedMotion();
+  // System Reduce Motion + Neurodivergent Mode reduced stimulation.
+  const systemReduced = useReducedMotion();
+  const { reducedStimulation: ndReduced } = useNeurodivergent();
+  const reduced = systemReduced || ndReduced;
   const opacity = useRef(new Animated.Value(reduced ? 1 : 0)).current;
   const offset = useRef(new Animated.Value(reduced ? 0 : 12)).current;
   useEffect(() => {

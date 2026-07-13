@@ -53,11 +53,43 @@ function SettingsContent() {
   return (
     <Screen>
       <Eyebrow>SETTINGS</Eyebrow>
-      <Title>Not much here yet.</Title>
+      <Title>Your device, your comfort.</Title>
       <Body muted>
-        Manage access without passwords. Security changes require a fresh
-        device-owner check.
+        Preferences stay on this phone. Security changes need a fresh device
+        owner check. Nothing here is a score or consent gate.
       </Body>
+
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
+        <View style={{ flex: 1, gap: 6 }}>
+          <Body>
+            {neuroPrefs.enabled
+              ? "Neurodivergent Mode on"
+              : "Neurodivergent Mode off"}
+          </Body>
+          <Body muted>
+            Global for the whole app: larger text and tap targets, reduced
+            motion, one question or learning step at a time, clear language,
+            easy on-device saves, read-aloud, and keyboard-dictation voice aids
+            on Quizzes and Guided Learning. Device-local only. Never matching,
+            trust, or consent authority. Turning on quiets haptics by default —
+            re-enable below if you want them.
+          </Body>
+        </View>
+        <Switch
+          accessibilityLabel="Neurodivergent Mode"
+          accessibilityHint="Turns on larger text, reduced motion, one step at a time, easy saves, read aloud, and voice dictation aids across the app"
+          trackColor={{ false: colors.line, true: colors.mossSoft }}
+          thumbColor={neuroPrefs.enabled ? colors.moss : colors.white}
+          ios_backgroundColor={colors.line}
+          onValueChange={(next) => {
+            void setNeuroEnabled(next).then(() => {
+              if (next) setHapticsOn(false);
+            });
+          }}
+          value={neuroPrefs.enabled}
+        />
+      </View>
+
       <Button
         variant="secondary"
         label={
@@ -77,35 +109,6 @@ function SettingsContent() {
             ? "Dark mode softens the surface for low light. Safety colors stay distinct; meaning is never color-only."
             : "Light mode is the default cream journal surface. Switch anytime on this device only."}
       </Body>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
-        <View style={{ flex: 1, gap: 6 }}>
-          <Body>
-            {neuroPrefs.enabled
-              ? "Neurodivergent Mode on"
-              : "Neurodivergent Mode off"}
-          </Body>
-          <Body muted>
-            Quieter screens, clear language, easy step navigation, mid-quiz
-            save/resume, read-aloud, and keyboard-dictation aids for Quizzes,
-            partner invites, and Guided Learning. Stays on this device only.
-            Never a score or consent gate. Turning on also quiets haptics by
-            default — you can turn haptics back on below.
-          </Body>
-        </View>
-        <Switch
-          accessibilityLabel="Neurodivergent Mode"
-          accessibilityHint="Optimizes quizzes, partner flow, and learning for reduced stimulation, clear language, save and resume, read aloud, and voice dictation aids"
-          trackColor={{ false: colors.line, true: colors.mossSoft }}
-          thumbColor={neuroPrefs.enabled ? colors.moss : colors.white}
-          ios_backgroundColor={colors.line}
-          onValueChange={(next) => {
-            void setNeuroEnabled(next).then(() => {
-              if (next) setHapticsOn(false);
-            });
-          }}
-          value={neuroPrefs.enabled}
-        />
-      </View>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
         <View style={{ flex: 1, gap: 6 }}>
           <Body>{hapticsOn ? "Haptics on" : "Haptics off"}</Body>

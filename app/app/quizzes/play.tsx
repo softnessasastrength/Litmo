@@ -18,7 +18,8 @@ import { hapticService } from "../../services/hapticService";
 export default function QuizPlayScreen() {
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
-  const { prefs, reducedStimulation } = useNeurodivergent();
+  const { prefs, reducedStimulation, voiceAids, oneAtATime, easySaves } =
+    useNeurodivergent();
   const { quizId } = useLocalSearchParams<{ quizId: string }>();
   const entry = getQuizEntry(String(quizId ?? ""));
   const questions = useMemo(() => entry?.questions() ?? [], [entry]);
@@ -211,7 +212,7 @@ const questionBlock = (
     <>
       <Text style={styles.kicker}>{entry.title}</Text>
 
-      {prefs.readAloud ? (
+      {voiceAids || prefs.readAloud ? (
         <Pressable
           onPress={readQuestion}
           accessibilityRole="button"
@@ -235,7 +236,9 @@ const questionBlock = (
           <Choice
             key={answer.id}
             label={
-              prefs.easyNavigation ? `${i + 1}. ${answer.label}` : answer.label
+              oneAtATime || prefs.easyNavigation
+                ? `${i + 1}. ${answer.label}`
+                : answer.label
             }
             detail={answer.detail}
             glyph={reducedStimulation ? undefined : answer.glyph}
@@ -254,7 +257,7 @@ const questionBlock = (
           <Text style={styles.ndBannerText}>
             {plain
               ? clearLanguage.ndModeOn
-              : "Neurodivergent Mode is on for this quiz."}
+              : "Neurodivergent Mode: larger text, reduced motion, one question at a time, easy saves, voice aids."}
           </Text>
         </View>
       ) : null}
@@ -326,8 +329,13 @@ const questionBlock = (
 
       <Progress current={index + 1} total={total} />
 
-      {prefs.easyNavigation ? (
+      {oneAtATime || prefs.easyNavigation ? (
         <View style={styles.navTools}>
+          <Text style={styles.oneAtATimeHint} accessibilityLiveRegion="polite">
+            {plain
+              ? clearLanguage.quizProgress(index + 1, total)
+              : `One question at a time · ${index + 1} of ${total}`}
+          </Text>
           <Pressable
             onPress={() => setNavOpen((v) => !v)}
             accessibilityRole="button"
@@ -355,7 +363,7 @@ const questionBlock = (
         </View>
       ) : null}
 
-      {navOpen && prefs.easyNavigation ? (
+      {navOpen && (oneAtATime || prefs.easyNavigation) ? (
         <View style={styles.jumpList} accessibilityRole="list">
           {questions.map((q, i) => {
             const answered = answers.some((a) => a.questionId === q.id);
@@ -391,7 +399,7 @@ const questionBlock = (
         <FadeIn key={question.id}>{questionBlock}</FadeIn>
       )}
 
-      {prefs.voiceInputAids ? (
+      {voiceAids || prefs.voiceInputAids ? (
         <View style={styles.voiceBlock}>
           <Text style={styles.voiceHint}>
             {plain
@@ -425,11 +433,13 @@ const questionBlock = (
         </View>
       ) : null}
 
-      <Text style={styles.savedHint} accessibilityLiveRegion="polite">
-        {plain
-          ? clearLanguage.quizSaved
-          : "Progress saves on this device as you go. Leave anytime and resume later."}
-      </Text>
+      {easySaves ? (
+        <Text style={styles.savedHint} accessibilityLiveRegion="polite">
+          {plain
+            ? clearLanguage.quizSaved
+            : "Easy save: progress stays on this device. Leave anytime and resume later."}
+        </Text>
+      ) : null}
 
       <View style={styles.disclaimerBlock} accessible>
         <Text style={styles.disclaimerTitle}>
@@ -554,6 +564,12 @@ function makeStyles(colors: AppColors) {
       color: colors.moss,
       fontWeight: "700" as const,
       fontSize: 15,
+    },
+    oneAtATimeHint: {
+      width: "100%" as const,
+      color: colors.moss,
+      fontSize: 14,
+      fontWeight: "700" as const,
     },
     navTools: {
       flexDirection: "row" as const,

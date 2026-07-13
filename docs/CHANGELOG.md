@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-13 — Global Neurodivergent Mode (app-wide)
+
+### Summary
+
+Neurodivergent Mode is a global Settings toggle: larger text/tap targets across
+themed styles, reduced motion, one-at-a-time quiz/learning, voice aids, and
+easy on-device saves. Applied to Vibe Quiz and Guided Learning.
+
+### Developer impact
+
+- `useThemedStyles` scales with ND Mode; `neuroStyleScale` helpers + tests.
+- Context exposes `enabled`, `textScale`, `oneAtATime`, `voiceAids`, `easySaves`.
+- Learning scenarios gain dictation option numbers.
+
 ## 2026-07-13 — Full Guided Learning lived-lesson track
 
 ### Summary

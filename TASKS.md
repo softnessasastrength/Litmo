@@ -60,16 +60,18 @@ None recorded. External credentials, signing, App Store configuration, or policy
   package-asserted; ND/demo prefs device-local only.
 - **Related:** QUIZ-001–003, ACCESS-002, ADR 0050/0052.
 
-### ACCESS-002 — Neurodivergent Mode (quiz, partner, learning)
+### ACCESS-002 — Global Neurodivergent Mode
 
 - **Status:** completed
-- **Result:** Settings master toggle; reduced stimulation + clear language +
-  easy nav + save/resume + read-aloud + dictation aids across Vibe Quiz,
-  partner share, and Guided Learning. Device-local only; not a consent/safety
-  score. Docs in `docs/NEURODIVERGENT_MODE.md`.
-- **Verification:** preference unit tests; app typecheck; full app test suite.
-- **Boundary:** never gates consent; dictation is device keyboard; optional
-  expo-speech falls back to accessibility announce.
+- **Result:** Global Settings toggle optimizes the entire app: larger text via
+  themed style scale, reduced motion, one question/step at a time, voice
+  read-aloud + dictation aids, easy on-device saves. Applied to Vibe Quiz and
+  Guided Learning (and clear language on partner). Demo enables by default.
+  Docs: `docs/NEURODIVERGENT_MODE.md`.
+- **Verification:** preference + neuroStyleScale unit tests; app typecheck;
+  full app test suite.
+- **Boundary:** never gates consent; not a score; dictation is device keyboard;
+  expo-speech optional with accessibility announce fallback.
 - **Related:** ACCESS-001 VoiceOver smoke still optional for physical device.
 
 ### LEARN-004 — Lived-lesson modules + Vibe Quiz pairing

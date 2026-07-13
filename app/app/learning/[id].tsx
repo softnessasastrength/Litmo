@@ -1,6 +1,6 @@
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { findLearningModule } from "../../data/learningModules";
 import { getQuizEntry } from "../../data/quizCatalog";
 import { useNeurodivergent } from "../../context/NeurodivergentContext";
@@ -15,12 +15,14 @@ export default function LearningModuleScreen() {
   const styles = useThemedStyles(makeStyles);
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { prefs, reducedStimulation } = useNeurodivergent();
+  const { prefs, reducedStimulation, voiceAids, easySaves, oneAtATime } =
+    useNeurodivergent();
   const module = useMemo(() => findLearningModule(id), [id]);
   const [stepIndex, setStepIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [jumpOpen, setJumpOpen] = useState(false);
+  const [voiceDraft, setVoiceDraft] = useState("");
   const presencePlayedRef = useRef(false);
   const attentionStepRef = useRef<number | null>(null);
 
@@ -372,7 +374,10 @@ export default function LearningModuleScreen() {
                   key={option.label}
                   accessibilityRole="button"
                   accessibilityState={{ selected }}
-                  onPress={() => setSelectedOption(index)}
+                  onPress={() => {
+                    setSelectedOption(index);
+                    setVoiceDraft("");
+                  }}
                   style={[
                     styles.option,
                     selected && styles.optionSelected,
@@ -385,7 +390,7 @@ export default function LearningModuleScreen() {
                       selected && styles.optionLabelSelected,
                     ]}
                   >
-                    {prefs.easyNavigation
+                    {oneAtATime || prefs.easyNavigation
                       ? `${index + 1}. ${option.label}`
                       : option.label}
                   </Text>
@@ -395,7 +400,69 @@ export default function LearningModuleScreen() {
                 </Pressable>
               );
             })}
+            {voiceAids && step.scenario.options.length > 0 ? (
+              <View style={styles.voiceBlock}>
+                <Text style={styles.voiceHint}>
+                  {plain
+                    ? clearLanguage.quizVoiceHint
+                    : "Type or dictate option number (1, 2, 3…), then Go. Or tap a button."}
+                </Text>
+                <View style={styles.voiceRow}>
+                  <TextInput
+                    value={voiceDraft}
+                    onChangeText={setVoiceDraft}
+                    keyboardType="number-pad"
+                    placeholder={
+                      plain
+                        ? clearLanguage.quizVoicePlaceholder
+                        : "Option number"
+                    }
+                    placeholderTextColor={styles.placeholder.color}
+                    style={styles.voiceInput}
+                    accessibilityLabel="Choose scenario option by number"
+                    returnKeyType="go"
+                    onSubmitEditing={() => {
+                      const n = Number.parseInt(voiceDraft.trim(), 10);
+                      if (
+                        Number.isFinite(n) &&
+                        n >= 1 &&
+                        n <= step.scenario!.options.length
+                      ) {
+                        setSelectedOption(n - 1);
+                        setVoiceDraft("");
+                      }
+                    }}
+                  />
+                  <Pressable
+                    onPress={() => {
+                      const n = Number.parseInt(voiceDraft.trim(), 10);
+                      if (
+                        Number.isFinite(n) &&
+                        n >= 1 &&
+                        n <= step.scenario!.options.length
+                      ) {
+                        setSelectedOption(n - 1);
+                        setVoiceDraft("");
+                      }
+                    }}
+                    style={styles.voiceGo}
+                    accessibilityRole="button"
+                    accessibilityLabel="Submit option number"
+                  >
+                    <Text style={styles.voiceGoText}>Go</Text>
+                  </Pressable>
+                </View>
+              </View>
+            ) : null}
           </View>
+        ) : null}
+
+        {easySaves ? (
+          <Text style={styles.savedHint} accessibilityLiveRegion="polite">
+            {plain
+              ? "Your place in this module saves on this device."
+              : "Progress saves privately on this device as you go."}
+          </Text>
         ) : null}
 
         <View style={styles.actions}>
@@ -556,6 +623,40 @@ function makeStyles(colors: AppColors) {
     optionLabel: { color: colors.ink, fontSize: 16, fontWeight: "600" },
     optionLabelSelected: { color: colors.moss },
     feedback: { color: colors.moss, fontSize: 14, lineHeight: 20 },
+    voiceBlock: { gap: 8, marginTop: 4 },
+    voiceHint: { color: colors.muted, fontSize: 13, lineHeight: 19 },
+    voiceRow: { flexDirection: "row", gap: 8, alignItems: "center" },
+    voiceInput: {
+      flex: 1,
+      minHeight: 52,
+      borderWidth: 1.5,
+      borderColor: colors.line,
+      borderRadius: 12,
+      paddingHorizontal: 14,
+      backgroundColor: colors.paper,
+      color: colors.ink,
+      fontSize: 17,
+    },
+    placeholder: { color: colors.muted },
+    voiceGo: {
+      minWidth: 64,
+      minHeight: 52,
+      borderRadius: 12,
+      backgroundColor: colors.moss,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    voiceGoText: {
+      color: colors.white,
+      fontWeight: "800",
+      fontSize: 16,
+    },
+    savedHint: {
+      color: colors.moss,
+      fontSize: 13,
+      fontWeight: "600",
+      textAlign: "center",
+    },
     relatedCard: {
       backgroundColor: colors.paper,
       borderRadius: radius.md,
