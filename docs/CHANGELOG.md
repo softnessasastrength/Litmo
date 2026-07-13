@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-13 — Auth ceremony Edge ops + device-bound consent
+
+### Summary
+
+WebAuthn remains Supabase Auth; new Edge Function `auth-ceremony` adds rate
+limiting and non-sensitive audit. Migration 040: `auth_audit_events`,
+`auth_ceremony_rate_limits`, `require_bound_auth_device` on consent snapshot
+confirm. Client wires gate into passkey/OTP/device register. Canonical
+architecture rewritten in `docs/AUTHENTICATION.md` (ADR 0056).
+
+### Migrations
+
+- `040_auth_passkey_ops.sql`
+
 ## 2026-07-13 — Passkey-primary authentication polish
 
 ### Summary

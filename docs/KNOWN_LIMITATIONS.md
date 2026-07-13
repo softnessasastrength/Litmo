@@ -20,6 +20,18 @@
   missing governance policies and complete legal/distribution review before
   public launch.
 
+## Authentication (passkeys + Edge)
+
+- Real passkeys require an **iOS development build**, Associated Domains, and
+  Supabase Auth WebAuthn. Expo Go cannot complete ceremonies.
+- Edge Function `auth-ceremony` must be **deployed** for production rate limits
+  and audit. Locally, if the function is missing, the client fails open so
+  demos work; explicit 429 still fails closed.
+- Human recovery without a passkey is **not deployed** — accounts stay locked
+  rather than accepting email-only proof.
+- Consent snapshot confirmation requires a **bound device**; restored phones
+  must passkey sign-in again before confirming consent.
+
 ## Encrypted QR fallback
 
 - QR payloads use short TTL (~3 min) AES-GCM envelopes. Co-located mode embeds

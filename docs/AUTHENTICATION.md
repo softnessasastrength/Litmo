@@ -1,180 +1,278 @@
-# Litmo authentication
+# Litmo authentication architecture
 
-**Canonical product documentation for how real accounts sign in.**  
-Passkeys (WebAuthn) are the **primary and only routine** method for production
-accounts. Face ID / Touch ID / device passcode provide user verification on
-Apple platforms. Demo mode remains account-free.
+**Canonical architecture for real-account sign-in and device trust.**  
+Passkeys (WebAuthn) are the **primary and only routine** production method.
+Supabase Auth verifies credentials; **custom Edge Functions** add rate limiting
+and audit; **device binding** ties installations to passkey sessions and gates
+consent confirmation.
 
 | Related | Purpose |
 | --- | --- |
 | [ADR 0010](adr/0010-passkey-first-authentication.md) | Passkey-first decision |
+| [ADR 0056](adr/0056-auth-ceremony-edge-ops.md) | Edge rate limit + audit + consent gate |
 | [ADR 0007](adr/0007-mandatory-face-id-lock.md) | Local Face ID lock (not server auth) |
 | [ADR 0011](adr/0011-device-bound-sensitive-data-encryption.md) | Device vault |
 | [ADR 0041](adr/0041-development-seed-password-sign-in.md) | Dev seed passwords only |
-| [PASSKEY_AUTHENTICATION.md](PASSKEY_AUTHENTICATION.md) | Deployment & threat detail |
-| [SENSITIVE_DATA_ENCRYPTION.md](SENSITIVE_DATA_ENCRYPTION.md) | Sensitive vault usage |
+| [PASSKEY_AUTHENTICATION.md](PASSKEY_AUTHENTICATION.md) | Deployment / AASA detail |
+| [CONSENT_FLOW.md](CONSENT_FLOW.md) | Consent confirmation product flow |
 
 ---
 
 ## 1. Principles
 
-1. **No passwords** for real product accounts.  
-2. **Passkeys first** — discoverable Apple platform credentials.  
-3. **Email OTP** only proves ownership at account creation (not a login).  
-4. **Face ID / Touch ID** (or device passcode) for WebAuthn user verification
-   and for local sensitive-screen locks — Litmo never receives biometric data.  
-5. **Device registration** after every successful passkey session — hashed
-   installation secret, fail-closed on restore.  
-6. **Demo mode** needs no account and no passkey.  
-7. **Recovery never weakens** the model (no email magic-link login, no password
-   reset as a back door).
+1. **No production passwords.**  
+2. **Passkeys first** — Apple platform WebAuthn, user verification required.  
+3. **Email OTP** only for ownership bootstrap (create account), never login.  
+4. **Face ID / Touch ID / passcode** for UV and local sensitive locks — Litmo
+   never receives biometric templates.  
+5. **Device binding** after every successful passkey session (hashed secret).  
+6. **Rate limit + audit** on ceremonies via Edge Function (no secrets in logs).  
+7. **Consent requires a bound device** — fail closed without registration.  
+8. **Graceful fallbacks** that never weaken security (demo, dev seed, retry).  
+9. **Recovery never becomes email+password.**  
 
 ---
 
-## 2. Stack
+## 2. System diagram
 
 ```text
-iOS app
-  ├─ AuthenticationServices (native litmo-passkeys)
-  │    Face ID / Touch ID / passcode · UV required
-  ├─ Supabase Auth (WebAuthn / passkey API)
-  │    startRegistration / verifyRegistration
-  │    startAuthentication / verifyAuthentication
-  │    list / delete passkeys
-  ├─ Expo SecureStore (session + device secret)
-  │    WHEN_PASSCODE_SET_THIS_DEVICE_ONLY
-  └─ deviceRegistrationService
-       register / verify / list / revoke (SHA-256 digests server-side)
+┌─────────────────────────────────────────────────────────────────┐
+│ iOS Litmo app                                                    │
+│  litmo-passkeys (AuthenticationServices, UV required)            │
+│  authService → Supabase Auth WebAuthn                            │
+│  authCeremonyClient → Edge Function auth-ceremony                │
+│  deviceRegistrationService → register_auth_device RPC            │
+│  sessionRepository.confirmSnapshot → confirm_session_snapshot    │
+└───────────────┬───────────────────────────┬─────────────────────┘
+                │                           │
+                ▼                           ▼
+     Supabase Auth (WebAuthn)      Edge: auth-ceremony
+     start/verify registration     • assert_auth_ceremony_rate_limit
+     start/verify authentication   • log_auth_audit_event
+     list/delete passkeys          • no WebAuthn crypto here
+                │                           │
+                └───────────┬───────────────┘
+                            ▼
+                   Postgres (public)
+                   auth_devices (hashes only)
+                   auth_audit_events
+                   auth_ceremony_rate_limits
+                   consent_snapshot_confirmations
+                   (+ require_bound_auth_device gate)
 ```
 
-Relying-party ID: **`softnessasastrength.com`** (immutable without a planned
-migration). Associated Domains: `webcredentials:softnessasastrength.com`.
+**Relying party:** `softnessasastrength.com`  
+**Associated Domains:** `webcredentials:softnessasastrength.com`
 
 ---
 
-## 3. User journeys
+## 3. Layers
 
-### 3.1 Create account (smooth registration)
+### 3.1 Credential layer — Supabase Auth WebAuthn
 
-1. **Email + display name** → Supabase `signInWithOtp` (create user).  
-2. **One-time code** → `verifyOtp` (bootstrap session only).  
-3. **Passkey registration** → Supabase challenge → native AS registration with
-   **userVerification = required** (Face ID sheet).  
-4. **Device registration** → random installation id + secret in Keychain;
-   server stores digest only.  
-5. Onboarding → age gate → authenticated app.
+| Operation | API |
+| --- | --- |
+| Register options | `auth.passkey.startRegistration()` |
+| Register verify | `auth.passkey.verifyRegistration()` |
+| Auth options | `auth.passkey.startAuthentication()` |
+| Auth verify | `auth.passkey.verifyAuthentication()` |
+| Manage | `auth.passkey.list()` / `delete()` |
 
-If the person cancels Face ID, the bootstrap session is cleared and they can
-retry without a sticky global error screen.
+Native bridge: `app/modules/litmo-passkeys` (ASAuthorization platform passkeys).
 
-### 3.2 Sign in (default for real accounts)
+Supabase holds **public** credential material only. Private keys stay in Apple
+Secure Enclave / iCloud Keychain.
 
-1. Tap **Sign in with passkey** (no email field on the happy path).  
-2. Supabase `startAuthentication` → native assertion with Face ID.  
-3. `verifyAuthentication` → session.  
-4. `deviceRegistrationService.register()` rotates/restores this installation.  
-5. Session restore loads profile, age eligibility, safety reconciles.
+### 3.2 Ceremony ops layer — Edge Function `auth-ceremony`
 
-### 3.3 Add another passkey
+Path: `supabase/functions/auth-ceremony/`
 
-Settings → **Passkeys and registered devices** (behind `SensitiveAccessGate`) →
-**Add another passkey**. Uses the same registration ceremony while already
-authenticated. Removing the last passkey is blocked.
+| Responsibility | Detail |
+| --- | --- |
+| Rate limiting | `assert_auth_ceremony_rate_limit(subject_hash, action)` |
+| Audit | `log_auth_audit_event(...)` non-sensitive metadata only |
+| Subject hashing | `sha256(user:id)` or `sha256(ip|ua|ceremony)` — never raw email in DB |
+| Fail mode | Explicit **429 rate_limited** fails closed; missing Edge **fails open** for local/dev so demos still work |
 
-### 3.4 Fallbacks (ordered, honest)
+**POST body:**
 
-| Fallback | When | Notes |
+```json
+{
+  "phase": "start" | "complete",
+  "ceremony": "register" | "authenticate" | "otp_request" | "device_register",
+  "outcome": "succeeded" | "failed" | "cancelled",
+  "deviceId": "uuid-optional",
+  "platform": "ios",
+  "errorCode": "auth_cancelled"
+}
+```
+
+**Never logged:** secrets, OTPs, challenges, credentials, biometrics, consent
+snapshot contents, refresh tokens.
+
+### 3.3 Device binding layer
+
+| Piece | Role |
+| --- | --- |
+| Local Keychain | installation `id` + high-entropy `secret` |
+| `register_auth_device` | stores **SHA-256** of secret only |
+| `verify_auth_device` | session restore fail-closed |
+| `revoke_auth_device` | immediate install revoke |
+
+After every successful passkey register/sign-in, the client calls
+`deviceRegistrationService.register()` (also audited via Edge).
+
+### 3.4 Consent integration
+
+`confirm_session_snapshot` calls `require_bound_auth_device()` first:
+
+- User must have a **non-revoked** `auth_devices` row.  
+- That implies a prior passkey session on this (or restored) installation.  
+- Demo mode does not use this RPC path for real confirmations.
+
+This ties **account auth + device trust** to **session-specific consent**
+without treating passkey as consent itself.
+
+---
+
+## 4. User journeys
+
+### 4.1 Registration
+
+1. Edge `otp_request` start (rate limit).  
+2. Email OTP (ownership only).  
+3. Verify OTP → bootstrap session.  
+4. Edge `register` start → Supabase startRegistration → Face ID sheet →
+   verifyRegistration → Edge complete.  
+5. Device register (+ Edge) → onboarding → age gate.
+
+### 4.2 Sign-in (default)
+
+1. Edge `authenticate` start.  
+2. Supabase startAuthentication → Face ID → verifyAuthentication.  
+3. Edge complete success.  
+4. Device register/rotate.  
+5. Restore profile + safety reconciles.
+
+### 4.3 Consent confirm
+
+1. User authenticated with passkey.  
+2. Device verified on restore.  
+3. `confirm_session_snapshot` requires bound device.  
+4. Both parties confirm → session `ready` (still not touch until active).
+
+### 4.4 Fallbacks (ordered)
+
+| Order | Path | Notes |
 | --- | --- | --- |
-| Retry passkey | Cancel / network blip | Primary |
-| Other Apple device + iCloud Keychain | Lost phone | Synced passkey; new device secret |
-| Second enrolled passkey | Multiple credentials | Settings enrollment |
-| Development seed password | `APP_ENV=development` only | ADR 0041 — not production |
-| Demo mode | No backend / Expo Go | No account |
-| Human-reviewed recovery | No trusted device left | **Not deployed** — account stays locked |
-
-There is **no** production email+password or magic-link sign-in.
+| 1 | Retry passkey | Cancel / blip |
+| 2 | Other Apple device + iCloud Keychain | New device secret after passkey |
+| 3 | Second enrolled passkey | Settings → Add passkey |
+| 4 | Dev seed password | `APP_ENV=development` only |
+| 5 | Demo mode | No account |
+| 6 | Human recovery | **Not deployed** — stay locked |
 
 ---
 
-## 4. Integration with privacy & devices
+## 5. Rate limits (ceremony)
 
-| Feature | Integration |
+| Action | Window | Max |
+| --- | --- | --- |
+| passkey_register_start / complete | 15 min | 8 |
+| passkey_auth_start / complete | 15 min | 20 |
+| otp_request | 1 hour | 6 |
+| device_register | 1 hour | 12 |
+
+Message is non-revealing: *“You're doing that too often — try again later.”*
+
+Abuse limits for sessions/reports/blocks remain in ADR 0028 / migration 026.
+
+---
+
+## 6. Audit model
+
+Table `auth_audit_events`:
+
+- `user_id`, optional `device_id`  
+- `event_type`, `outcome`  
+- `metadata` jsonb stripped of secret-like keys  
+
+Owners: `list_my_auth_audit_events(limit)`.  
+Staff full export: future safety-ops only; not a public trust score.
+
+---
+
+## 7. Client map
+
+| File | Role |
 | --- | --- |
-| Session storage | SecureStore / Keychain, passcode-required, non-migrating |
-| Device secret | Registered after passkey; verified on restore; revoke fails closed |
-| SensitiveAccessGate | Local Face ID before security/privacy screens |
-| Sensitive vault (ADR 0011) | CryptoKit / LitmoPasskeys encrypt on-device; distinct from passkey private keys |
-| Soft Signal / sessions | Unrelated to auth method; require authenticated session for real data |
-| Logs | Never log challenges, credentials, device secrets, or biometrics |
+| `app/services/authServiceCore.ts` | Ceremonies + exclusive lock + gate hooks |
+| `app/services/authService.ts` | Supabase + passkeys + Edge gate |
+| `app/services/authCeremonyClient.ts` | Edge invoke |
+| `app/services/deviceRegistrationService*.ts` | Binding + Edge on register |
+| `app/modules/litmo-passkeys` | Native WebAuthn + sensitive vault |
+| `app/context/AuthContext.tsx` | Status machine, restore, cancel calm |
+| `app/app/auth/*` | Sign-in / sign-up / recovery UI |
+| `app/app/security/devices.tsx` | Passkeys + devices |
+| `supabase/functions/auth-ceremony` | Rate limit + audit |
+| `supabase/migrations/040_auth_passkey_ops.sql` | Tables + consent gate |
 
 ---
 
-## 5. Client modules
+## 8. Local / staging / production
 
-| Module | Role |
+| Env | Behavior |
 | --- | --- |
-| `app/services/authServiceCore.ts` | Pure ceremony orchestration + exclusive lock |
-| `app/services/authService.ts` | Supabase + litmo-passkeys wiring |
-| `app/modules/litmo-passkeys` | AuthenticationServices + sensitive vault |
-| `app/context/AuthContext.tsx` | Status machine, restore, device register hooks |
-| `app/app/auth/sign-in.tsx` | Primary passkey UI + dev seed fallback |
-| `app/app/auth/sign-up.tsx` | 3-step create flow |
-| `app/app/auth/recovery.tsx` | Honest recovery ladder |
-| `app/app/security/devices.tsx` | Passkeys list + add + device revoke |
+| Expo Go | Passkeys unavailable; demo works; Edge call soft-fails open |
+| Local Supabase | `supabase db reset`; `supabase functions serve auth-ceremony` for full gate |
+| Staging/Prod | Functions deployed; AASA live; passkeys required for real accounts |
 
----
-
-## 6. Platform & deployment checklist
-
-1. iOS **development build** (not Expo Go) with `litmo-passkeys`.  
-2. Associated Domains `webcredentials:softnessasastrength.com` (paid team).  
-3. Serve AASA at  
-   `https://softnessasastrength.com/.well-known/apple-app-site-association`.  
-4. Supabase Auth passkeys / WebAuthn enabled for the project.  
-5. Free Personal Team builds may omit Associated Domains — passkeys will not
-   complete; demo mode remains available (`LITMO_FREE_TIER_BUILD`).  
-
-See [PASSKEY_AUTHENTICATION.md](PASSKEY_AUTHENTICATION.md) and
-[MACHINE_SETUP.md](MACHINE_SETUP.md).
-
----
-
-## 7. Threat model (summary)
-
-**Mitigates:** password phishing/reuse, backup extraction of plain tokens,
-credential logging, expired challenge replay, restored tokens without device
-secret, racing native ceremonies.
-
-**Relies on:** Apple platform integrity, iCloud Keychain recovery model,
-TLS/DNS for RP ID, Supabase challenge correctness, RLS.
-
-**Out of scope:** compromised unlocked OS, coerced device-owner auth, full
-server compromise. Recovery operator workflow still pending.
-
----
-
-## 8. Testing
+Deploy Edge:
 
 ```bash
-cd app
-npm test -- services/authService.test.ts
-npm run typecheck
+npx supabase functions deploy auth-ceremony
 ```
-
-Physical device: register passkey → sign out → sign in with Face ID → confirm
-device appears under Settings → add second passkey → revoke other installation
-if available.
 
 ---
 
-## 9. What “done” means for private alpha
+## 9. Threat model (summary)
 
-- [x] Passkey registration after OTP bootstrap  
-- [x] Discoverable passkey sign-in  
-- [x] Device registration after passkey  
-- [x] Local Face ID lock for sensitive UI  
-- [x] Dev-only seed password fallback  
-- [x] Demo without account  
-- [x] Add passkey from Settings  
-- [ ] Deployed human recovery operator (blocked — intentional)  
+| Threat | Control |
+| --- | --- |
+| Password phishing | No production passwords |
+| Ceremony spam | Edge rate limits |
+| Audit leakage | Strip secrets; no consent content |
+| Stolen backup token | Device secret non-migrating Keychain + verify |
+| Consent without device trust | `require_bound_auth_device` |
+| Racing Face ID sheets | Exclusive ceremony lock |
+
+**Out of scope:** compromised unlocked OS, coerced biometrics, full server
+compromise, undeployed human recovery.
+
+---
+
+## 10. Testing
+
+```bash
+cd app && npm test -- services/authService.test.ts services/authCeremonyClient.test.ts
+# with local DB:
+npx supabase db reset
+# pgTAP includes auth_passkey_ops.test.sql when integration suite runs
+```
+
+Physical: register passkey → sign out → sign in → confirm device → confirm
+snapshot only after device bound → revoke device and ensure consent fails closed
+until re-register.
+
+---
+
+## 11. Status checklist
+
+- [x] Passkey primary registration + sign-in (Supabase WebAuthn)  
+- [x] Device binding after passkey  
+- [x] Edge rate limit + audit  
+- [x] Consent confirmation requires bound device  
+- [x] Graceful fallbacks (demo / dev seed / cancel calm)  
+- [x] Canonical docs (`AUTHENTICATION.md`)  
+- [ ] Deployed human recovery operator (blocked intentionally)  
 - [ ] Android passkey parity (future)  

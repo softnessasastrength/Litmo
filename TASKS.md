@@ -45,13 +45,24 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 ## Completed
 
+### AUTH-003 — Passkey Edge ops (rate limit, audit, consent device gate)
+
+- **Status:** completed (engineering foundation)
+- **Result:** Migration 040 (`auth_audit_events`, ceremony rate limits,
+  `require_bound_auth_device` on `confirm_session_snapshot`); Edge Function
+  `auth-ceremony`; client `authCeremonyClient` wired into passkey/OTP/device
+  register; full `docs/AUTHENTICATION.md` + ADR 0056.
+- **Verification:** unit tests (authService ceremony gate, error codes);
+  typecheck. pgTAP `auth_passkey_ops.test.sql` when DB suite runs.
+- **Boundary:** deploy Edge for staging/prod; human recovery still blocked;
+  Expo Go cannot complete WebAuthn.
+
 ### AUTH-002 — Passkey-primary WebAuthn polish
 
 - **Status:** completed (engineering foundation already existed; polished)
-- **Result:** `docs/AUTHENTICATION.md`; soft native passkey load; platform
-  readiness; calm cancel; 3-step sign-up; Face ID-forward sign-in; add passkey
-  + list on devices screen; recovery ladder; device registration still after
-  every successful passkey; dev seed remains development-only fallback.
+- **Result:** soft native passkey load; platform readiness; calm cancel;
+  3-step sign-up; Face ID-forward sign-in; add passkey on devices; recovery
+  ladder; device registration after passkey.
 - **Verification:** authService tests; typecheck.
 - **Boundary:** human recovery operator still not deployed; Expo Go cannot
   complete WebAuthn; Associated Domains required for real devices.

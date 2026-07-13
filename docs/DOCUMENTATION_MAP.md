@@ -40,7 +40,7 @@ Use these documents when modifying or reviewing implemented behavior:
 - [`PROXIMITY_LAYER.md`](PROXIMITY_LAYER.md) — opt-in anonymous radar, handshake, identity gates, Soft Signal
 - [`NFC_FEATURES.md`](NFC_FEATURES.md) — NFC tag careful-connect, post-tap consent, QR/manual fallback
 - [`PRIVACY_POLICY_DRAFT.md`](PRIVACY_POLICY_DRAFT.md)
-- [`AUTHENTICATION.md`](AUTHENTICATION.md) — canonical passkey-first auth (WebAuthn + Supabase + Face ID)
+- [`AUTHENTICATION.md`](AUTHENTICATION.md) — canonical passkey auth architecture (WebAuthn + Edge rate/audit + device-bound consent)
 - [`PASSKEY_AUTHENTICATION.md`](PASSKEY_AUTHENTICATION.md) — deployment detail and threat model for passkeys
 - [`SENSITIVE_DATA_ENCRYPTION.md`](SENSITIVE_DATA_ENCRYPTION.md)
 - [`CONSENT_WITHDRAWAL_AND_EMERGENCY_STOP.md`](CONSENT_WITHDRAWAL_AND_EMERGENCY_STOP.md)

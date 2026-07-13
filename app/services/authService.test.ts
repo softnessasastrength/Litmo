@@ -66,6 +66,20 @@ test("account bootstrap sends an OTP without a password", async () => {
   });
 });
 
+test("ceremony gate is invoked around passkey sign-in", async () => {
+  const calls: string[] = [];
+  const deps = dependencies();
+  await createAuthService(
+    { auth: deps.auth } as never,
+    deps.native,
+    async (input) => {
+      calls.push(`${input.phase}:${input.ceremony}:${input.outcome ?? ""}`);
+    },
+  ).signInWithPasskey();
+  assert.ok(calls.some((c) => c.startsWith("start:authenticate")));
+  assert.ok(calls.some((c) => c.includes("complete:authenticate:succeeded")));
+});
+
 test("successful passkey sign-in returns the verified session", async () => {
   const deps = dependencies();
   const result = await createAuthService(

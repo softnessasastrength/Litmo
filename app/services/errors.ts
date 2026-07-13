@@ -5,8 +5,10 @@ export type PublicErrorCode =
   | "auth_cancelled"
   | "auth_request_in_progress"
   | "auth_passkey_unavailable"
+  | "auth_rate_limited"
   | "auth_revoked"
   | "auth_recovery_required"
+  | "auth_device_required"
   | "network_unavailable"
   | "request_timeout"
   | "permission_denied"
@@ -61,6 +63,24 @@ export function mapExternalError(error: unknown): PublicAppError {
     return new PublicAppError(
       "auth_passkey_unavailable",
       "Passkey domain setup is incomplete for this build. Use a paid-team development build with Associated Domains, or demo mode.",
+    );
+  if (
+    message.includes("too often") ||
+    message.includes("rate limit") ||
+    candidate?.code === "P0001"
+  )
+    return new PublicAppError(
+      "auth_rate_limited",
+      "You're doing that too often — try again later.",
+      true,
+    );
+  if (
+    message.includes("registered device is required") ||
+    message.includes("sign in with a passkey on this phone")
+  )
+    return new PublicAppError(
+      "auth_device_required",
+      "Confirm consent only from a passkey-registered device on this phone. Sign in with your passkey, then try again.",
     );
   if (message.includes("invalid login credentials"))
     return new PublicAppError(

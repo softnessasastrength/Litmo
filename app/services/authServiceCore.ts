@@ -9,18 +9,28 @@ type NativePasskeys = {
   isAvailable?(): Promise<boolean>;
 };
 
+export type CeremonyGate = (input: {
+  phase: "start" | "complete";
+  ceremony: "register" | "authenticate" | "otp_request" | "device_register";
+  outcome?: "succeeded" | "failed" | "cancelled" | "started" | "rate_limited";
+  deviceId?: string | null;
+  errorCode?: string | null;
+}) => Promise<unknown>;
+
 /**
- * Passkey-first auth against Supabase Auth WebAuthn (experimental passkey API).
+ * Passkey-first auth against Supabase Auth WebAuthn + optional Edge ceremony gate.
  *
- * Product rules (ADR 0010):
+ * Product rules (ADR 0010 / AUTH-003):
  * - Passkeys are the only routine sign-in for real accounts.
  * - Email OTP is ownership bootstrap only — never a password or recovery login.
- * - Development seed passwords are gated outside this module by callers.
+ * - Edge Function rate-limits and audits ceremony events (no secrets).
+ * - Device registration after passkey binds the installation for consent.
  * - Ceremonies are exclusive (no racing native sheets).
  */
 export function createAuthService(
   client: Pick<SupabaseClient, "auth">,
   nativePasskeys: NativePasskeys,
+  ceremonyGate: CeremonyGate | null = null,
 ) {
   let ceremony: Promise<unknown> | null = null;
   const exclusive = async <T>(work: () => Promise<T>): Promise<T> => {
@@ -50,17 +60,19 @@ export function createAuthService(
     }
   };
 
+  const gate = async (
+    input: Parameters<CeremonyGate>[0],
+  ): Promise<void> => {
+    if (!ceremonyGate) return;
+    await ceremonyGate(input);
+  };
+
   return {
-    /**
-     * Whether the native WebAuthn bridge is present (not Expo Go).
-     * Does not prove Associated Domains / AASA are configured.
-     */
     async isPasskeyPlatformReady(): Promise<boolean> {
       try {
         if (typeof nativePasskeys.isAvailable === "function") {
           return await nativePasskeys.isAvailable();
         }
-        // Assume ready if methods exist (tests inject stubs without isAvailable).
         return typeof nativePasskeys.register === "function";
       } catch {
         return false;
@@ -68,14 +80,31 @@ export function createAuthService(
     },
 
     async requestAccountCode(email: string, displayName: string) {
-      const { error } = await client.auth.signInWithOtp({
-        email: email.trim(),
-        options: {
-          shouldCreateUser: true,
-          data: { display_name: displayName.trim() },
-        },
-      });
-      if (error) throw mapExternalError(error);
+      await gate({ phase: "start", ceremony: "otp_request" });
+      try {
+        const { error } = await client.auth.signInWithOtp({
+          email: email.trim(),
+          options: {
+            shouldCreateUser: true,
+            data: { display_name: displayName.trim() },
+          },
+        });
+        if (error) throw mapExternalError(error);
+        await gate({
+          phase: "complete",
+          ceremony: "otp_request",
+          outcome: "succeeded",
+        });
+      } catch (error) {
+        const mapped = mapExternalError(error);
+        await gate({
+          phase: "complete",
+          ceremony: "otp_request",
+          outcome: "failed",
+          errorCode: mapped.code,
+        });
+        throw mapped;
+      }
     },
 
     async confirmAccountCode(email: string, token: string) {
@@ -88,85 +117,131 @@ export function createAuthService(
       return data.session;
     },
 
-    /**
-     * Register a platform passkey (Face ID / Touch ID / device passcode UV).
-     * Used after OTP bootstrap and when adding another passkey while signed in.
-     */
     registerPasskey() {
       return exclusive(async () => {
         await ensureNative();
-        const started = await client.auth.passkey.startRegistration();
-        if (started.error || !started.data)
-          throw mapExternalError(started.error);
-        const { options } = started.data;
-        let credential: Record<string, unknown>;
+        await gate({ phase: "start", ceremony: "register" });
         try {
-          credential = await nativePasskeys.register({
-            relyingPartyId: options.rp.id,
-            challenge: options.challenge,
-            userId: options.user.id,
-            userName: options.user.name,
-            userDisplayName: options.user.displayName,
-            excludeCredentialIds: options.excludeCredentials?.map(
-              (item) => item.id,
-            ),
+          const started = await client.auth.passkey.startRegistration();
+          if (started.error || !started.data)
+            throw mapExternalError(started.error);
+          const { options } = started.data;
+          let credential: Record<string, unknown>;
+          try {
+            credential = await nativePasskeys.register({
+              relyingPartyId: options.rp.id,
+              challenge: options.challenge,
+              userId: options.user.id,
+              userName: options.user.name,
+              userDisplayName: options.user.displayName,
+              excludeCredentialIds: options.excludeCredentials?.map(
+                (item) => item.id,
+              ),
+            });
+          } catch (error) {
+            const mapped = mapExternalError(error);
+            await gate({
+              phase: "complete",
+              ceremony: "register",
+              outcome:
+                mapped.code === "auth_cancelled" ? "cancelled" : "failed",
+              errorCode: mapped.code,
+            });
+            throw mapped;
+          }
+          const verified = await client.auth.passkey.verifyRegistration({
+            challengeId: started.data.challenge_id,
+            credential: credential as never,
           });
+          if (verified.error || !verified.data)
+            throw mapExternalError(verified.error);
+          await gate({
+            phase: "complete",
+            ceremony: "register",
+            outcome: "succeeded",
+          });
+          return verified.data;
         } catch (error) {
-          throw mapExternalError(error);
+          const mapped = mapExternalError(error);
+          if (
+            mapped.code !== "auth_cancelled" &&
+            mapped.code !== "auth_rate_limited"
+          ) {
+            await gate({
+              phase: "complete",
+              ceremony: "register",
+              outcome: "failed",
+              errorCode: mapped.code,
+            });
+          }
+          throw mapped;
         }
-        const verified = await client.auth.passkey.verifyRegistration({
-          challengeId: started.data.challenge_id,
-          credential: credential as never,
-        });
-        if (verified.error || !verified.data)
-          throw mapExternalError(verified.error);
-        return verified.data;
       });
     },
 
-    /** Alias for registerPasskey — product language for Settings. */
     addPasskey() {
       return this.registerPasskey();
     },
 
-    /**
-     * Discoverable passkey sign-in. Apple prompts Face ID / Touch ID / passcode.
-     * No email field for the happy path.
-     */
     signInWithPasskey() {
       return exclusive(async () => {
         await ensureNative();
-        const started = await client.auth.passkey.startAuthentication();
-        if (started.error || !started.data)
-          throw mapExternalError(started.error);
-        const { options } = started.data;
-        let credential: Record<string, unknown>;
+        await gate({ phase: "start", ceremony: "authenticate" });
         try {
-          credential = await nativePasskeys.authenticate({
-            relyingPartyId: options.rpId,
-            challenge: options.challenge,
-            allowedCredentialIds: options.allowCredentials?.map(
-              (item) => item.id,
-            ),
+          const started = await client.auth.passkey.startAuthentication();
+          if (started.error || !started.data)
+            throw mapExternalError(started.error);
+          const { options } = started.data;
+          let credential: Record<string, unknown>;
+          try {
+            credential = await nativePasskeys.authenticate({
+              relyingPartyId: options.rpId,
+              challenge: options.challenge,
+              allowedCredentialIds: options.allowCredentials?.map(
+                (item) => item.id,
+              ),
+            });
+          } catch (error) {
+            const mapped = mapExternalError(error);
+            await gate({
+              phase: "complete",
+              ceremony: "authenticate",
+              outcome:
+                mapped.code === "auth_cancelled" ? "cancelled" : "failed",
+              errorCode: mapped.code,
+            });
+            throw mapped;
+          }
+          const verified = await client.auth.passkey.verifyAuthentication({
+            challengeId: started.data.challenge_id,
+            credential: credential as never,
           });
+          if (verified.error || !verified.data.session)
+            throw mapExternalError(verified.error);
+          await gate({
+            phase: "complete",
+            ceremony: "authenticate",
+            outcome: "succeeded",
+          });
+          return verified.data.session;
         } catch (error) {
-          throw mapExternalError(error);
+          const mapped = mapExternalError(error);
+          if (
+            mapped.code !== "auth_cancelled" &&
+            mapped.code !== "auth_rate_limited"
+          ) {
+            await gate({
+              phase: "complete",
+              ceremony: "authenticate",
+              outcome: "failed",
+              errorCode: mapped.code,
+            });
+          }
+          throw mapped;
         }
-        const verified = await client.auth.passkey.verifyAuthentication({
-          challengeId: started.data.challenge_id,
-          credential: credential as never,
-        });
-        if (verified.error || !verified.data.session)
-          throw mapExternalError(verified.error);
-        return verified.data.session;
       });
     },
 
-    /**
-     * Development / Track B only: email + password for local seed accounts.
-     * Production and staging must not call this — passkeys remain the product
-     * path (ADR 0010 / 0041).
-     */
     async signInWithPassword(email: string, password: string) {
       const { data, error } = await client.auth.signInWithPassword({
         email: email.trim(),

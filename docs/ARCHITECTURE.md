@@ -57,6 +57,14 @@ Material touch/consent changes call `save_profile_versions` transactionally. An 
 
 The Express consent-overlap service and early session/trust migrations remain intact. Chapter 2 does not expand the consent engine or session lifecycle; those are Chapter 3 and Chapter 4.
 
+## Authentication (passkey-first)
+
+Real accounts use **WebAuthn passkeys** via Supabase Auth (UV via Face ID /
+Touch ID). Custom Edge Function `auth-ceremony` rate-limits and audits
+ceremonies without holding private keys. Device binding (`auth_devices`) runs
+after every successful passkey session. Consent snapshot confirmation requires
+a non-revoked bound device. See `docs/AUTHENTICATION.md` and ADR 0056.
+
 ## Quizzes tab (local-first + partner E2E)
 
 The **Quizzes** tab is a phone-first self-understanding surface (ADR 0050), separate from onboarding’s profile vibe write and from Consent Snapshot / session authority. Partner comparison uses device-local X3DH + Double Ratchet (ADR 0052). Own summaries may optionally back up when authenticated (ADR 0051).
