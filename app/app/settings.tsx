@@ -137,7 +137,9 @@ function SettingsContent() {
               <Button
                 variant="secondary"
                 label="Safety operations (staff)"
-                onPress={() => router.push("/security/staff-operations" as never)}
+                onPress={() =>
+                  router.push("/security/staff-operations" as never)
+                }
                 accessibilityHint="Staff-only private-alpha invitations and global matching pause"
               />
               <Button
@@ -179,4 +181,3 @@ function SettingsContent() {
     </Screen>
   );
 }
-
