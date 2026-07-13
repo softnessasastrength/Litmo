@@ -26,9 +26,9 @@ None. This is build verification only.
 
 ### Verification
 
-- iOS Native Build run #4 passed with Xcode 26.5 and produced both artifacts.
-- The final workflow restores strict CocoaPods deployment mode against the
-  synchronized lockfile.
+- iOS Native Build run #5 passed on the final implementation head with Xcode
+  26.5 and strict CocoaPods deployment mode.
+- The run produced a 39.8 MB simulator `.app` and the full Xcode build log.
 
 ### Related work
 
