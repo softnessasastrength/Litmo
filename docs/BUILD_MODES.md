@@ -24,22 +24,27 @@ The **public iOS App Store** rejects or delays apps that look like continuous ne
 
 ---
 
-## 2. Two orthogonal axes
+## 2. Platform law + environment axis
 
-| Axis | Env / flag | Values |
-| ---- | ---------- | ------ |
-| **Environment** | `EXPO_PUBLIC_APP_ENV` | `development` · `staging` · `production` |
-| **Build mode** | `EXPO_PUBLIC_LITMO_BUILD_MODE` | `maximum` · `app_store` |
+| Platform | Default mode | Compile flags |
+| -------- | ------------ | ------------- |
+| **macOS** | **MAXIMUM_MODE** | `MAXIMUM_MODE` / `maximum` |
+| **Linux** | **MAXIMUM_MODE** | same |
+| **iOS** | **APP_STORE_SAFE** | `APP_STORE_SAFE` / `app_store` |
 
-Examples:
+Orthogonal environment: `EXPO_PUBLIC_APP_ENV` = development · staging · production.
 
-| Host | APP_ENV | BUILD_MODE | Result |
-| ---- | ------- | ---------- | ------ |
-| Mac laptop Expo | development | maximum (default) | Full experience + demo |
-| Linux CI | development | maximum | Full unit/integration |
-| EAS `production` iOS | production | **app_store** | Store-safe binary |
-| EAS `development` iOS | development | maximum | Internal full phone |
-| EAS `production_maximum_internal` | production | maximum | Internal full, not store |
+| Host | Default mode | Notes |
+| ---- | ------------ | ----- |
+| Mac Expo / native | MAXIMUM | Full experience |
+| Linux CI | MAXIMUM | Full tests |
+| Any iOS (unset env) | **APP_STORE_SAFE** | Auto-tame |
+| EAS `development` / `device_beta` | MAXIMUM (explicit env) | Internal full phone |
+| EAS `production` / `preview` | APP_STORE_SAFE | Store path |
+| EAS `production_maximum_internal` | MAXIMUM | Internal; do not submit |
+
+Full architecture + consent flow tables: [`DUAL_MODE_ARCHITECTURE.md`](DUAL_MODE_ARCHITECTURE.md).  
+Swift SPM: `packages/LitmoBuildMode/`.
 
 ---
 

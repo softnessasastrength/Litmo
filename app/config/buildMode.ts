@@ -1,119 +1,113 @@
 /**
  * Litmo dual-mode architecture — compile-time build mode resolution.
  *
- * WHAT: Resolves whether this binary is Maximum Mode or App Store Safe Mode,
- *       and exposes frozen constants for feature gates and copy selection.
- * WHY:  One repository holds the full autistic consent experience. iOS App
- *       Review builds must auto-tame risky surfaces and sensitive strings
- *       without forking the consent engine or deleting Maximum code.
- * CONSENT: Mode never disables Soft Signal stop authority, dual-seal
- *       fail-closed rules, age eligibility, or “profile ≠ consent” truth.
- *       Mode only changes presentation intensity and optional discovery
- *       surfaces that increase App Review risk (proximity RF, NFC, etc.).
- * EDGE CASES:
- *   - Explicit EXPO_PUBLIC_LITMO_BUILD_MODE wins over heuristics.
- *   - Unknown mode string throws at module load (fail loud, not silent max).
- *   - iOS + production/staging defaults to app_store when unset.
- *   - macOS / Linux / web / android / development default to maximum.
- * NEVER: Runtime user toggle to “upgrade” App Store binary into Maximum
- *       (would violate store binary integrity). Ship separate builds.
- * SEE: docs/BUILD_MODES.md, docs/adr/0060-dual-build-modes.md,
- *      app/config/features.ts, app/config/copy/*
+ * ============================================================================
+ * PLATFORM → MODE (product law)
+ * ============================================================================
+ *
+ *   macOS  ──────────────────────────────► MAXIMUM_MODE
+ *   Linux  ──────────────────────────────► MAXIMUM_MODE
+ *   iOS    ──────────────────────────────► APP_STORE_SAFE
+ *   (android/web default maximum unless forced)
+ *
+ * Explicit EXPO_PUBLIC_LITMO_BUILD_MODE always wins (internal Maximum iOS
+ * builds use production_maximum_internal EAS profile).
+ *
+ * Aliases exported for agents and native parity:
+ *   MAXIMUM_MODE     === mode === "maximum"
+ *   APP_STORE_SAFE   === mode === "app_store"
+ *
+ * WHAT: Resolve frozen build mode + boolean flags for the JS/TS client.
+ * WHY:  One monorepo; iOS Review binary must auto-tame; desktop keeps full
+ *       autistic consent system. No runtime “upgrade” toggle.
+ * CONSENT: Mode never disables Soft Signal stop, dual-seal fail-closed,
+ *       age gate, or profile≠consent. Mode changes copy + optional RF/NFC.
+ * SEE: docs/DUAL_MODE_ARCHITECTURE.md, docs/BUILD_MODES.md, ADR 0060,
+ *      packages/LitmoBuildMode (Swift SPM mirror).
  */
 
 /**
- * WHAT: Closed set of product build modes.
- * WHY:  Orthogonal to AppEnvironment (dev/staging/prod).
- * CONSENT: maximum = full grammar; app_store = same safety core, tamer skin.
+ * Canonical mode ids (string form used in env + Expo extra).
+ * Swift SPM uses the same raw values: "maximum" | "app_store".
  */
 export type LitmoBuildMode = "maximum" | "app_store";
 
-/**
- * WHAT: Human labels for diagnostics and Settings about-this-build.
- * WHY:  Reviewers and founders must see which binary they hold.
- * NEVER: Label is not a trust or safety score.
- */
 export const BUILD_MODE_LABELS: Record<LitmoBuildMode, string> = {
-  maximum: "Maximum Mode (full consent experience)",
-  app_store: "App Store Safe Mode (review-sanitized)",
+  maximum: "MAXIMUM_MODE — full unhinged consent system",
+  app_store: "APP_STORE_SAFE — review-sanitized iOS binary",
 };
 
 /**
- * WHAT: Parse explicit env override.
- * WHY:  CI and EAS must pin mode without relying on platform heuristics.
- * EDGE CASES: empty/undefined → null (use heuristic); invalid → throw.
- * CONSENT: Misconfiguration fails the build rather than shipping wrong mode.
+ * WHAT: Parse EXPO_PUBLIC_LITMO_BUILD_MODE / LITMO_BUILD_MODE.
+ * WHY:  CI and EAS pin mode without heuristics.
+ * EDGE CASES: empty → null; invalid → throw (fail loud).
  */
 export function parseBuildModeEnv(
   raw: string | undefined | null,
 ): LitmoBuildMode | null {
   if (raw == null || raw === "") return null;
-  const normalized = raw.trim().toLowerCase();
-  // Accept aliases so CI scripts stay readable.
+  const normalized = raw.trim().toLowerCase().replace(/-/g, "_");
   if (
     normalized === "maximum" ||
     normalized === "max" ||
     normalized === "full" ||
-    normalized === "unhinged"
+    normalized === "unhinged" ||
+    normalized === "maximum_mode"
   ) {
     return "maximum";
   }
   if (
     normalized === "app_store" ||
     normalized === "appstore" ||
-    normalized === "app-store" ||
     normalized === "store" ||
     normalized === "ios_safe" ||
-    normalized === "review"
+    normalized === "review" ||
+    normalized === "app_store_safe" ||
+    normalized === "appstoresafe"
   ) {
     return "app_store";
   }
   throw new Error(
-    `invalid_litmo_build_mode:${raw} (expected maximum|app_store)`,
+    `invalid_litmo_build_mode:${raw} (expected maximum|app_store / MAXIMUM_MODE|APP_STORE_SAFE)`,
   );
 }
 
 /**
- * WHAT: Platform + environment heuristic when env override is absent.
- * WHY:  Local Expo on Mac should feel Maximum; EAS iOS production should
- *       default Safe without every engineer remembering the flag.
- * CONSENT: Heuristic never turns off Soft Signal — only mode for copy/features.
+ * WHAT: Platform-primary mode resolution (product law).
+ * WHY:  User rule: macOS/Linux = Maximum; iOS = App Store Safe automatically.
+ * CONSENT: Heuristic never turns off Soft Signal.
  * EDGE CASES:
- *   - platform ios + production|staging → app_store
- *   - platform ios + development → maximum (internal device builds stay full)
- *   - macos, linux, web, android, unknown → maximum
- * NEVER: Use heuristic to hide that production iOS store must set env explicitly
- *       in EAS (we still set it in eas.json for auditability).
+ *   - explicit envMode wins (internal Maximum iOS)
+ *   - platform ios|iphoneos|iphonesimulator → app_store
+ *   - macos|darwin|linux|android|web|unknown → maximum
  */
 export function resolveBuildMode(input: {
   envMode: string | undefined | null;
-  appEnvironment: "development" | "staging" | "production";
   /**
-   * Platform string: ios | android | web | macos | linux | windows | unknown.
-   * From EXPO_PUBLIC_LITMO_PLATFORM or Platform.OS at runtime fallback.
+   * Kept for logging / future env-specific gates; mode is platform-primary.
+   * Staging vs production no longer flips iOS away from app_store.
    */
+  appEnvironment: "development" | "staging" | "production";
   platform: string;
 }): LitmoBuildMode {
   const fromEnv = parseBuildModeEnv(input.envMode);
   if (fromEnv) return fromEnv;
 
   const platform = input.platform.toLowerCase();
-  // iOS release-class environments auto-tame unless explicitly overridden.
+  // iOS family → App Store Safe unless explicit override above.
   if (
-    platform === "ios" &&
-    (input.appEnvironment === "production" ||
-      input.appEnvironment === "staging")
+    platform === "ios" ||
+    platform === "iphoneos" ||
+    platform === "iphonesimulator" ||
+    platform === "ipados" ||
+    platform === "tvos"
   ) {
     return "app_store";
   }
-  // macOS, Linux desktop, Android, web, and iOS development stay Maximum.
+  // macOS, Linux, Android, web, unknown → Maximum (full experience).
   return "maximum";
 }
 
-/**
- * Compile-time / bundle-time inputs.
- * EXPO_PUBLIC_* is inlined by Metro for client bundles.
- */
 const appEnvironmentRaw = process.env.EXPO_PUBLIC_APP_ENV ?? "development";
 const appEnvironment = (
   ["development", "staging", "production"] as const
@@ -121,59 +115,55 @@ const appEnvironment = (
   ? (appEnvironmentRaw as "development" | "staging" | "production")
   : "development";
 
-/**
- * Platform hint for static resolution in Node (tests, app.config).
- * At RN runtime, prefer Platform.OS via resolveBuildModeRuntime().
- */
 const platformHint =
   process.env.EXPO_PUBLIC_LITMO_PLATFORM ??
   process.env.LITMO_PLATFORM ??
-  // Node host when evaluating app.config / tests on a Mac CI box.
   (typeof process !== "undefined" && process.platform === "darwin"
     ? "macos"
     : typeof process !== "undefined" && process.platform === "linux"
       ? "linux"
       : "unknown");
 
-/**
- * WHAT: Frozen build mode for this JS bundle (primary export).
- * WHY:  Feature matrix and copy facades import one constant.
- * CONSENT: See resolveBuildMode.
- */
+/** Frozen mode for this JS bundle. */
 export const LITMO_BUILD_MODE: LitmoBuildMode = resolveBuildMode({
-  envMode: process.env.EXPO_PUBLIC_LITMO_BUILD_MODE,
+  envMode:
+    process.env.EXPO_PUBLIC_LITMO_BUILD_MODE ?? process.env.LITMO_BUILD_MODE,
   appEnvironment,
   platform: platformHint,
 });
 
-/** True when full unhinged consent experience is active. */
+/** True when full unhinged consent system is compiled in. */
 export const IS_MAXIMUM_BUILD: boolean = LITMO_BUILD_MODE === "maximum";
 
-/** True when App Store Safe sanitization is active. */
+/** True when App Store Safe sanitization is compiled in. */
 export const IS_APP_STORE_BUILD: boolean = LITMO_BUILD_MODE === "app_store";
 
 /**
- * WHAT: Runtime re-resolve using React Native Platform.OS when available.
- * WHY:  app.config / Node may say macos while the phone simulator is ios;
- *       screens can re-check for diagnostics. Bundle env still wins if set.
- * CONSENT: Same rules as resolveBuildMode.
- * EDGE CASES: Platform import optional so Node tests do not need RN.
+ * Compile-time style aliases (requested product vocabulary).
+ * Prefer these in new code for cross-language parity with Swift:
+ *   #if MAXIMUM_MODE / #if APP_STORE_SAFE
+ */
+export const MAXIMUM_MODE: boolean = IS_MAXIMUM_BUILD;
+export const APP_STORE_SAFE: boolean = IS_APP_STORE_BUILD;
+
+/**
+ * WHAT: Runtime re-resolve (diagnostics) using Platform.OS when available.
+ * WHY:  Node app.config may say macos while simulator is ios.
  */
 export function resolveBuildModeRuntime(
   platformOs: string = platformHint,
 ): LitmoBuildMode {
   return resolveBuildMode({
-    envMode: process.env.EXPO_PUBLIC_LITMO_BUILD_MODE,
+    envMode:
+      process.env.EXPO_PUBLIC_LITMO_BUILD_MODE ?? process.env.LITMO_BUILD_MODE,
     appEnvironment,
     platform: platformOs,
   });
 }
 
-/**
- * WHAT: Assert mode is one of the allowed set (CI guard).
- * WHY:  release:check and unit tests can fail closed on drift.
- */
-export function assertValidBuildMode(mode: string): asserts mode is LitmoBuildMode {
+export function assertValidBuildMode(
+  mode: string,
+): asserts mode is LitmoBuildMode {
   if (mode !== "maximum" && mode !== "app_store") {
     throw new Error(`invalid_litmo_build_mode:${mode}`);
   }

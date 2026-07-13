@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-07-14 — Dual-mode architecture (MAXIMUM_MODE / APP_STORE_SAFE + SPM)
+
+### Summary
+
+Platform law: macOS/Linux → MAXIMUM_MODE; iOS → APP_STORE_SAFE (explicit env
+override for internal Maximum iOS). Swift Package `packages/LitmoBuildMode`
+mirrors TS flags/copy; XcodeGen wires MAXIMUM_MODE into macOS apps. Consent
+flow matrix in `consentFlowsByMode.ts` + `docs/DUAL_MODE_ARCHITECTURE.md`.
+
+### Developer impact
+
+- `MAXIMUM_MODE` / `APP_STORE_SAFE` boolean aliases in `buildMode.ts`
+- SPM: BuildMode, FeatureFlags, SoftSignalCopy, ConsentFlowNotes
+- `macos/project.yml` package dependency + compilation conditions
+- Extreme architecture doc with step-level consent flow tables
+
 ## 2026-07-14 — Dual build modes (Maximum vs App Store Safe)
 
 ### Summary

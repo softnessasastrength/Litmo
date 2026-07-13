@@ -3,33 +3,46 @@ options:
   bundleIdPrefix: com.litmo
   deploymentTarget:
     macOS: "15.0"
+# Swift packages: dual-mode flags (MAXIMUM_MODE on macOS).
+# Path is relative to this project.yml (macos/) → repo packages/LitmoBuildMode.
+packages:
+  LitmoBuildMode:
+    path: ../packages/LitmoBuildMode
 settings:
   base:
     SWIFT_VERSION: "6.0"
     MACOSX_DEPLOYMENT_TARGET: "15.0"
     CODE_SIGN_STYLE: Automatic
     DEVELOPMENT_TEAM: FHZSE6U4R5
+    # Explicit Maximum on all macOS targets (parity with Package.swift macOS define).
+    SWIFT_ACTIVE_COMPILATION_CONDITIONS: MAXIMUM_MODE
 targets:
   LitmoMacCore:
     type: framework
     platform: macOS
     sources: [Sources/LitmoMacCore]
+    dependencies:
+      - package: LitmoBuildMode
+        product: LitmoBuildMode
     info:
       path: Configs/LitmoMacCore-Info.plist
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.litmo.macos.core
         DEFINES_MODULE: YES
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: MAXIMUM_MODE
   Litmo:
     type: application
     platform: macOS
     sources: [Sources/LitmoParticipantApp]
     dependencies:
       - target: LitmoMacCore
+      - package: LitmoBuildMode
+        product: LitmoBuildMode
     info:
       path: Configs/Litmo-Info.plist
       properties:
-        CFBundleDisplayName: Litmo
+        CFBundleDisplayName: Litmo Max
         LSApplicationCategoryType: public.app-category.lifestyle
     entitlements:
       path: Configs/Litmo.entitlements
@@ -40,12 +53,15 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.litmo.macos
         PRODUCT_NAME: Litmo
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: MAXIMUM_MODE
   LitmoOps:
     type: application
     platform: macOS
     sources: [Sources/LitmoOpsApp]
     dependencies:
       - target: LitmoMacCore
+      - package: LitmoBuildMode
+        product: LitmoBuildMode
     info:
       path: Configs/LitmoOps-Info.plist
       properties:
@@ -60,12 +76,18 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.litmo.ops
         PRODUCT_NAME: Litmo Ops
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: MAXIMUM_MODE
   LitmoMacCoreTests:
     type: bundle.unit-test
     platform: macOS
     sources: [Tests/LitmoMacCoreTests]
     dependencies:
       - target: LitmoMacCore
+      - package: LitmoBuildMode
+        product: LitmoBuildMode
+    settings:
+      base:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: MAXIMUM_MODE
 schemes:
   Litmo:
     build:

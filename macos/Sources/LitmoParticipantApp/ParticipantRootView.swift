@@ -1,5 +1,6 @@
 import SwiftUI
 import LitmoMacCore
+import LitmoBuildMode
 
 private enum ParticipantDestination: String, CaseIterable, Identifiable {
     case home = "Home"
@@ -32,7 +33,10 @@ struct ParticipantRootView: View {
             List(ParticipantDestination.allCases, selection: $selection) { destination in
                 Label(destination.rawValue, systemImage: destination.icon).tag(destination)
             }
-            .navigationTitle("Litmo")
+            // macOS is always MAXIMUM_MODE (see packages/LitmoBuildMode + project.yml).
+            .navigationTitle(
+                LitmoBuildModeRuntime.isMaximumMode ? "Litmo Max" : "Litmo"
+            )
             .navigationSplitViewColumnWidth(min: 180, ideal: 210)
         } detail: {
             switch selection ?? .campfire {
@@ -53,8 +57,25 @@ private struct HomeView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 Text("A calmer place to prepare").font(.largeTitle.bold())
+                // Dual-mode stamp — macOS compiles MAXIMUM_MODE (SPM + XcodeGen).
+                if LitmoFeatureFlags.current.showBuildModeBadge {
+                    Text(LitmoBuildModeRuntime.active.label)
+                        .font(.caption.weight(.heavy))
+                        .foregroundStyle(.green)
+                        .textCase(.uppercase)
+                }
                 Text("Use Campfire locally, or review participant information without turning this Mac into an active-session controller.")
                     .font(.title3).foregroundStyle(.secondary)
+                authorityCard(
+                    title: "Build mode · consent authority",
+                    text: ConsentFlowNotes.domainAuthorityDisclaimer,
+                    icon: "switch.2"
+                )
+                authorityCard(
+                    title: "Soft Signal (shell note)",
+                    text: ConsentFlowNotes.softSignalShellBehavior,
+                    icon: "hand.raised.fill"
+                )
                 authorityCard(title: "Phone-first safety", text: PlatformAuthority.activeSessions, icon: "iphone")
                 authorityCard(title: "Server authority", text: PlatformAuthority.server, icon: "lock.shield")
             }

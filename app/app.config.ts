@@ -41,11 +41,10 @@ const selected = settings[environment as keyof typeof settings];
 const freeTierBuild = process.env.LITMO_FREE_TIER_BUILD === "1";
 
 /**
- * Dual-mode resolution at config time.
- * - Explicit EXPO_PUBLIC_LITMO_BUILD_MODE wins (set by EAS profiles).
- * - Else heuristic: iOS+staging/production → app_store; else maximum.
- * Platform for config-time heuristic: prefer EXPO_PUBLIC_LITMO_PLATFORM,
- * else assume ios when EAS_BUILD_PLATFORM=ios, else host OS.
+ * Dual-mode resolution at config time (platform law).
+ * - Explicit EXPO_PUBLIC_LITMO_BUILD_MODE wins (internal Maximum iOS).
+ * - Else: any iOS family → app_store; macOS/Linux/other → maximum.
+ * Platform hint: EXPO_PUBLIC_LITMO_PLATFORM, else EAS_BUILD_PLATFORM, else host OS.
  */
 const easPlatform = process.env.EAS_BUILD_PLATFORM; // ios | android when on EAS
 const platformHint =

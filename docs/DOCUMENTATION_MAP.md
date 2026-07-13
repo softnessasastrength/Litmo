@@ -53,7 +53,8 @@ Use these documents when modifying or reviewing implemented behavior:
 - [`CONSENT_MICROINTERACTIONS.md`](CONSENT_MICROINTERACTIONS.md) — Apple-level consent timing, weight, catalog, phase machines
 - [`ONBOARDING_CONSENT_FLOW.md`](ONBOARDING_CONSENT_FLOW.md) — first-open onboarding consent flow (frame-by-frame, every control)
 - [`CODE_COMMENT_STANDARD.md`](CODE_COMMENT_STANDARD.md) — mandatory in-code WHAT/WHY/CONSENT/EDGE/NEVER documentation bar
-- [`BUILD_MODES.md`](BUILD_MODES.md) — Maximum vs App Store Safe dual-mode architecture (ADR 0060)
+- [`BUILD_MODES.md`](BUILD_MODES.md) — Maximum vs App Store Safe dual-mode operator manual (ADR 0060)
+- [`DUAL_MODE_ARCHITECTURE.md`](DUAL_MODE_ARCHITECTURE.md) — full folder tree, SPM, flags, consent flows by mode
 - [`SOFT_SIGNAL.md`](SOFT_SIGNAL.md) — Soft Signal product system (app, hardware contract, private log)
 - [`LOCAL_FIRST.md`](LOCAL_FIRST.md) — local-first personal vault + optional encrypted cloud backup
 - [`TRAUMA_INFORMED_SAFETY.md`](TRAUMA_INFORMED_SAFETY.md) — panic, quick exit, timeout, verification, reflection

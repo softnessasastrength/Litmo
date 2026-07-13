@@ -9,6 +9,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  APP_STORE_SAFE,
+  MAXIMUM_MODE,
   parseBuildModeEnv,
   resolveBuildMode,
 } from "./buildMode.ts";
@@ -19,6 +21,7 @@ import {
   featuresForMode,
 } from "./features.ts";
 import { copyForMode } from "./copy/index.ts";
+import { assertSafetyCorePresentInFlowCatalog } from "./consentFlowsByMode.ts";
 
 test("parseBuildModeEnv accepts aliases", () => {
   assert.equal(parseBuildModeEnv("maximum"), "maximum");
@@ -53,26 +56,29 @@ test("explicit env overrides platform heuristic", () => {
   );
 });
 
-test("ios staging/production default to app_store when env unset", () => {
+test("platform law: any iOS family → app_store when env unset", () => {
+  for (const env of ["development", "staging", "production"] as const) {
+    assert.equal(
+      resolveBuildMode({
+        envMode: undefined,
+        appEnvironment: env,
+        platform: "ios",
+      }),
+      "app_store",
+      `ios + ${env}`,
+    );
+  }
   assert.equal(
     resolveBuildMode({
       envMode: undefined,
-      appEnvironment: "production",
-      platform: "ios",
-    }),
-    "app_store",
-  );
-  assert.equal(
-    resolveBuildMode({
-      envMode: undefined,
-      appEnvironment: "staging",
-      platform: "ios",
+      appEnvironment: "development",
+      platform: "iphonesimulator",
     }),
     "app_store",
   );
 });
 
-test("macos linux and ios development default to maximum", () => {
+test("platform law: macos and linux → maximum when env unset", () => {
   assert.equal(
     resolveBuildMode({
       envMode: undefined,
@@ -89,10 +95,13 @@ test("macos linux and ios development default to maximum", () => {
     }),
     "maximum",
   );
+});
+
+test("explicit maximum overrides ios app_store default (internal builds)", () => {
   assert.equal(
     resolveBuildMode({
-      envMode: undefined,
-      appEnvironment: "development",
+      envMode: "maximum",
+      appEnvironment: "production",
       platform: "ios",
     }),
     "maximum",
@@ -143,4 +152,15 @@ test("maximum soft signal copy is sacred; app store is calmer", () => {
   assert.match(store.button, /End session/i);
   assert.match(max.bannerBody, /sacred/i);
   assert.ok(!/sacred/i.test(store.bannerBody));
+});
+
+test("consent flow catalog keeps Soft Signal in both modes", () => {
+  const { ok, errors } = assertSafetyCorePresentInFlowCatalog();
+  assert.equal(ok, true, errors.join("; "));
+});
+
+test("MAXIMUM_MODE and APP_STORE_SAFE aliases are boolean duals", () => {
+  assert.equal(MAXIMUM_MODE, !APP_STORE_SAFE || MAXIMUM_MODE === APP_STORE_SAFE);
+  // Exactly one of the two is true for a given binary (xor).
+  assert.equal(MAXIMUM_MODE !== APP_STORE_SAFE, true);
 });

@@ -7,6 +7,22 @@ This directory is the source of truth for two native SwiftUI targets:
 
 The Xcode project is generated with [XcodeGen](https://github.com/yonaskolb/XcodeGen), keeping the reviewable YAML and Swift sources canonical.
 
+## Dual mode (MAXIMUM_MODE)
+
+macOS builds are **always MAXIMUM_MODE** (full consent prepare/practice honesty):
+
+- Swift package: `../packages/LitmoBuildMode` (SPM)
+- `project.yml` sets `SWIFT_ACTIVE_COMPILATION_CONDITIONS: MAXIMUM_MODE`
+- Home shows build-mode badge + domain-authority disclaimer (`ConsentFlowNotes`)
+
+iOS App Store Safe mode lives in the Expo app (`app/`), not in this Mac shell.
+See `docs/DUAL_MODE_ARCHITECTURE.md`.
+
+```sh
+# Package unit tests
+cd ../packages/LitmoBuildMode && swift test
+```
+
 ## Generate and run
 
 On a Mac with Xcode and XcodeGen installed:
