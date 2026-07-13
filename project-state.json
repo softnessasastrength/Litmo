@@ -13,7 +13,7 @@
     "workingTreeExpectedClean": true
   },
   "verification": {
-    "status": "passed",
+    "status": "partial",
     "commands": [
       "xcodebuild -scheme Litmo test \u2014 33/33",
       "xcodebuild -scheme LitmoOps build unsigned \u2014 success",
@@ -27,7 +27,8 @@
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
     "Named independent backup reviewer before external alpha and two-person permanent bans",
-    "Apple signing credentials and reviewed staging configuration for a signed device/TestFlight build"
+    "Apple signing credentials and reviewed staging configuration for a signed device/TestFlight build",
+    "Optional: independent crypto review of quiz partner E2E and local share before external beta"
   ],
   "risks": [
     "Self export is not legally complete data access.",

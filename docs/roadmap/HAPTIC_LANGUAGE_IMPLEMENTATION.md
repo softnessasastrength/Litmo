@@ -29,13 +29,13 @@ Haptics must reinforce visible and spoken meaning. They must never become the on
 
 Keep the first release to five semantic events.
 
-| Event | Meaning | Suggested platform expression | Initial use |
-|---|---|---|---|
-| `presence` | “You are here; pause and arrive.” | one gentle/light impact | onboarding entry, grounding transition |
-| `attention` | “This deserves a deliberate look.” | two soft impacts with a short interval | consent checkpoint introduction |
-| `confirmation` | “Your local action registered.” | success notification or medium impact | lesson completion, saved preference |
-| `softSignal` | “The stop/exit signal registered.” | immediate distinct warning pattern, strong enough to notice but not alarming | fictional practice and active-session Soft Signal |
-| `emergencyStop` | “Emergency stop registered.” | strongest available error/warning notification pattern | emergency-stop acknowledgement only |
+| Event           | Meaning                            | Suggested platform expression                                                | Initial use                                       |
+| --------------- | ---------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------- |
+| `presence`      | “You are here; pause and arrive.”  | one gentle/light impact                                                      | onboarding entry, grounding transition            |
+| `attention`     | “This deserves a deliberate look.” | two soft impacts with a short interval                                       | consent checkpoint introduction                   |
+| `confirmation`  | “Your local action registered.”    | success notification or medium impact                                        | lesson completion, saved preference               |
+| `softSignal`    | “The stop/exit signal registered.” | immediate distinct warning pattern, strong enough to notice but not alarming | fictional practice and active-session Soft Signal |
+| `emergencyStop` | “Emergency stop registered.”       | strongest available error/warning notification pattern                       | emergency-stop acknowledgement only               |
 
 Do not add additional patterns until these five have been tested on a physical iPhone for recognizability, comfort, and confusion.
 
@@ -73,11 +73,7 @@ Prefer a narrow interface such as:
 
 ```ts
 export type HapticEvent =
-  | 'presence'
-  | 'attention'
-  | 'confirmation'
-  | 'softSignal'
-  | 'emergencyStop';
+  "presence" | "attention" | "confirmation" | "softSignal" | "emergencyStop";
 
 export interface HapticService {
   play(event: HapticEvent): Promise<void>;

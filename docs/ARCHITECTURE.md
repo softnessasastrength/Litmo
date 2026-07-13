@@ -15,6 +15,8 @@ UI/API adapters
 
 `shared/` owns framework-independent types, enum values, runtime schemas, and validated serialization. UI components do not call Supabase directly. `profileRepository` owns profile persistence, timeouts, boundary parsing, and safe error translation.
 
+Quizzes are local-first: `quizResultsStore` holds AsyncStorage summaries and partner invites/E2E keys stay in SecureStore. `quizResultsRepository` optionally backs up **own** result summaries through owner-only `quiz_result_summaries` / `upsert_own_quiz_result_summary` when authenticated (ADR 0051). Partner comparison uses X3DH + Double Ratchet (ADR 0052); optional Supabase relay is ciphertext-only. Failures fall back to local data and never invent results.
+
 Chapter 3 adds the canonical pure consent engine to `shared/`. It models receive/offer direction, produces deterministic conservative overlap and explanations, and creates exact-version snapshot records. Compatibility and consent remain different states: engine output cannot activate consent. `previewProfileChange` reuses the same engine to diff a not-yet-saved profile version against the saved one, both against the same counterpart, so a user can see the practical effect of an edit before it becomes a new immutable version. The preview never persists a version and never grants consent.
 
 `toConsentProfileVersion` (`docs/adr/0002-legacy-profile-adapter.md`) is a read-time adapter that maps Chapter 2's persisted touch/consent shapes onto the canonical `ConsentProfileVersion` the engine expects. `backend/routes/compatibility.js` exposes it as `POST /api/consent/compatibility`, the canonical replacement for the deprecated `/api/consent/overlap` POC route. The mobile `app/app/match/consent-snapshot.tsx` screen calls the same adapter and `computeCompatibility` directly against fixed mock fixtures (`app/data/mockConsentProfiles.ts`) and formats the result with the pure, unit-tested `app/lib/consentSnapshotView.ts`. This proves the real engine end-to-end in the UI while both participants remain mock until Chapter 4 wires live discovery and sessions.
@@ -55,6 +57,94 @@ Material touch/consent changes call `save_profile_versions` transactionally. An 
 
 The Express consent-overlap service and early session/trust migrations remain intact. Chapter 2 does not expand the consent engine or session lifecycle; those are Chapter 3 and Chapter 4.
 
+## Authentication (passkey-first)
+
+Real accounts use **WebAuthn passkeys** via Supabase Auth (UV via Face ID /
+Touch ID). Custom Edge Function `auth-ceremony` rate-limits and audits
+ceremonies without holding private keys. Device binding (`auth_devices`) runs
+after every successful passkey session. Consent snapshot confirmation requires
+a non-revoked bound device. See `docs/AUTHENTICATION.md` and ADR 0056.
+
+## Quizzes tab (local-first + partner E2E)
+
+The **Quizzes** tab is a phone-first self-understanding surface (ADR 0050), separate from onboarding’s profile vibe write and from Consent Snapshot / session authority. Partner comparison uses device-local X3DH + Double Ratchet (ADR 0052). Own summaries may optionally back up when authenticated (ADR 0051).
+
+```text
+Quizzes tab catalog (quizCatalog)
+  → play short/deep vibe or self quizzes (quizPaths / selfQuizzes)
+  → score locally (quizScoring / quizModel)
+  → save local-first (quizResultsStore / AsyncStorage via quizResultsRepository)
+  → optional owner-only summary backup (quiz_result_summaries + upsert RPC; ADR 0051)
+  → optional private result view (SensitiveAccessGate on real accounts)
+  → optional partner invite (quizInviteStore / Secure Store)
+       → identity + SPK in Secure Store / optional CryptoKit vault wrap
+       → X3DH + Double Ratchet (doubleRatchetCore / quizE2eSession)
+       → encrypt result only after local share consent
+       → out-of-band JSON package (public keys + ciphertext only)
+       → optional opaque relay (quiz_e2e_relay claim codes; ciphertext only)
+       → compare only after four consents + both decrypted results
+```
+
+Boundaries:
+
+- Partner plaintext weather never goes to the server. Optional relay stores opaque ciphertext only.
+- Own result summaries may leave the device only as owner-RLS backup rows (never peer-readable, never discovery/trust inputs).
+- Hub shows only non-sensitive “saved privately” status; private archetype/mix stay behind Face ID step-up on real accounts.
+- Quiz weather is never an input to discovery ranking, trust signals, matching eligibility, or session activation.
+- Comparison always carries the non-authority reminder that shared weather is not consent to touch and does not replace a Consent Snapshot.
+- Partner E2E is Signal-inspired 1:1 (ADR 0052), not a full multi-device Signal client.
+
+macOS has no Quizzes surface in this milestone; Campfire and participant reads remain the desktop scope.
+
+## Nearby local share (Multipeer)
+
+AirDrop-style intentional exchange of discovery-safe profiles or co-located
+Consent Snapshot review rows (ADR 0053). Transport is Multipeer Connectivity
+(`litmo-local-share`); application crypto is ephemeral X25519 + AES-GCM
+(`localShareCore`). Master opt-in is off by default; radio only while
+`/share/local` is open. Never activates a session or grants touch consent.
+
+```text
+Settings master opt-in (default off)
+  → /share/local offer or receive
+  → Multipeer advertise/browse (service litmo-share)
+  → mutual invitation accept
+  → ephemeral ECDH hello + AES-GCM payload
+  → review on device → Stop / timeout / leave screen
+```
+
+## Proximity social layer
+
+Opt-in anonymous nearby discovery and gated handshake (ADR 0054,
+`docs/PROXIMITY_LAYER.md`). Beacons carry only coarse weather axes; resonance is
+local and non-authoritative. Identity requires mutual interest and mutual
+reveal. Soft Signal tears down radio and keys. Practice demo works without
+native Multipeer.
+
+```text
+Master opt-in (default off)
+  → /proximity/radar anonymous Multipeer radar (m=px beacon)
+  → optional handshake → ECDH channel
+  → mutual interest → mutual identity reveal
+  → optional ADR 0053 deeper share
+  → Soft Signal / timeout / leave → off
+```
+
+## NFC careful-connect
+
+Tag-based NFC bootstrap for a single careful intent (ADR 0055,
+`docs/NFC_FEATURES.md`). Core NFC NDEF read/write when available; same protocol
+over deep link, Share sheet, and manual code. **Post-tap Accept is mandatory.**
+Ephemeral X25519 + AES-GCM seals profile / snapshot-review / key-exchange
+payloads. Snapshot path never activates a session.
+
+```text
+Create offer (ephemeral keys)
+  → write NDEF tag OR share litmo://nfc/v1/…
+  → peer scans → post-tap Accept/Decline
+  → accept link → host seals AES-GCM package
+  → peer opens only after accept → Soft clear anytime
+```
 
 ## Native macOS boundary
 

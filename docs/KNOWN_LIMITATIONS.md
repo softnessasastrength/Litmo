@@ -10,7 +10,6 @@
 - The participant and Ops targets intentionally share no App Group or Keychain group. Signing, notarization, hardened-runtime distribution validation, and physical accessibility review remain outstanding.
 - Hosted CI artifacts are unsigned arm64 inspection builds. They are not notarized, installable distribution releases, or evidence of production entitlements.
 
-
 ## Licensing and governance
 
 - Litmo is licensed under MPL-2.0, but contributor attestation, a trademark
@@ -21,6 +20,63 @@
   history and make no implied trademark grant. Removal criterion: publish the
   missing governance policies and complete legal/distribution review before
   public launch.
+
+## Authentication (passkeys + Edge)
+
+- Real passkeys require an **iOS development build**, Associated Domains, and
+  Supabase Auth WebAuthn. Expo Go cannot complete ceremonies.
+- Edge Function `auth-ceremony` must be **deployed** for production rate limits
+  and audit. Locally, if the function is missing, the client fails open so
+  demos work; explicit 429 still fails closed.
+- Human recovery without a passkey is **not deployed** — accounts stay locked
+  rather than accepting email-only proof.
+- Consent snapshot confirmation requires a **bound device**; restored phones
+  must passkey sign-in again before confirming consent.
+
+## Encrypted QR fallback
+
+- QR payloads use short TTL (~3 min) AES-GCM envelopes. Co-located mode embeds
+  the media key in the QR (ease); split mode requires the unlock code.
+- On-screen QR is generated in-app; camera-based scanning of foreign QR apps is
+  not required — paste/deep link works. OS Camera may open `litmo://` links when
+  registered on a development build.
+- A successful QR decode still requires **explicit Accept** before content use.
+
+## NFC careful-connect
+
+- Real NFC read/write needs an **iOS development build** with Core NFC and the
+  `litmo-nfc` module. Expo Go uses encrypted QR/share/manual paste.
+- iOS third-party apps **cannot** do general phone-to-phone NFC P2P; Litmo uses
+  NDEF **tags** plus deep-link fallbacks. Do not claim AirDrop-like phone bumps.
+- Offers expire (~3 minutes). Post-tap Accept is mandatory; a scan alone never
+  opens identity or snapshot content.
+- Snapshot NFC intent is review-only and never activates a session.
+- Physical tag smoke tests are human-led; Android HCE peer path is deferred.
+
+## Proximity social layer
+
+- Proximity radar real radio requires an **iOS development build** with
+  `startProximityAsync`. Expo Go uses a **practice demo** path only.
+- Anonymous beacons still emit RF while the screen is open — users who need zero
+  presence must leave radio off. Tokens are ephemeral, not account IDs.
+- Weather resonance is **not** safety, trust, or consent. Physical two-device
+  Multipeer smoke is human-led. Android deferred.
+- Soft Signal on proximity tears down nearby radio; it does not replace Soft
+  Signal on an active physical session screen.
+
+## Nearby local share (Multipeer)
+
+- Nearby Share requires an **iOS development build** with the `litmo-local-share`
+  module. Expo Go reports unavailable and does not advertise or browse.
+- Multipeer radio behavior depends on Local Network permission, device proximity,
+  and OS policy. Two-device physical smoke is not fully automated in CI.
+- Android nearby share is not implemented in this milestone.
+- Snapshot nearby share is **review only**; it does not activate sessions or
+  record consent confirmations. Profiles shared nearby never include private
+  nervous-system notes.
+- Application-layer crypto is ephemeral ECDH; Multipeer also uses required
+  transport encryption. Independent crypto review before external beta is still
+  recommended (same class as quiz E2E).
 
 ## Campfire Mode
 
@@ -63,6 +119,123 @@
   holds, destructive retention, jurisdiction policy, external-referral policy,
   backup reviewer staffing, and two-person permanent-ban approval remain
   blocked.
+
+## GDPR / privacy tooling
+
+- In-app Privacy Policy, Data Protection, export, and erase/wipe screens exist
+  (`docs/GDPR.md`). They are **engineering alignment**, not certified legal
+  compliance or a finalized public notice.
+- `docs/ISO27701.md` is a **PIMS roadmap**, not ISO/IEC 27701 certification.
+  A formal ISMS (ISO 27001 base), DPAs, DPIA sign-off, and hard-delete fulfillment
+  remain open.
+- `request_account_erasure` records a **pending queue** only. Complete
+  automated destruction of `auth.users` and all related rows is **not**
+  implemented — blocked until legal/ops name owners (see Agents.md).
+- Device wipe is immediate for known local stores; residual Secure Store keys
+  for ad-hoc ratchet sessions may remain until app uninstall.
+- Export does **not** include E2E private keys or partner plaintext.
+- Controller identity, DPO, EU representative, and supervisory complaint
+  contacts are placeholders until legal review.
+
+## Neurodivergent Mode
+
+- Preference is **device-local** only (AsyncStorage). It is not synced, not
+  exported as a profile trait, and not a matching or consent input.
+- Master toggle enables a fixed optimization bundle; fine-grained sub-toggles
+  are not yet in Settings UI (prefs model supports them for later).
+- Read-aloud uses `expo-speech` when the native module is available; otherwise
+  system accessibility announce. Quality varies by device language and VoiceOver
+  state. Spoken content is not sent to Litmo servers.
+- “Voice input” aids use **keyboard dictation** (option number field) — not a
+  custom cloud speech-to-text model. Accuracy depends on the OS keyboard.
+- Mid-quiz save/resume is local; reinstall or clearing app data drops it.
+  Learning progress already had local resume; ND mode adds jump lists and
+  read-aloud on top.
+- Enabling ND mode turns haptics off by default; users can re-enable haptics
+  without leaving ND mode.
+
+## Guided learning lived lessons
+
+- Six **lived-lesson** modules (consent language, nervous system safety,
+  boundaries, recovering from violation, partner communication, self-compassion)
+  are short, private, device-local content. They are **not therapy**, not crisis
+  care, and not safety certification. Recovering-from-violation is non-graphic
+  and tool-focused (Soft Signal, block, report); it does not force processing.
+- Optional quiz pairings after soft-close never require completion and never
+  treat weather as consent. Progress stays on-device (no server learning table).
+
+## Partner invite & shared comparison (demo + real)
+
+- **Demo path (single device):** Quizzes → Partner invites → Create invite →
+  **Practice with fictional partner (demo)** → consent to **share** (after
+  taking the quiz) → consent to **compare** → Open shared comparison. Face ID
+  is skipped in demo. The fictional peer is educational only and still arrives
+  via real X3DH + Double Ratchet ciphertext; local human consents are never
+  auto-granted.
+- **Real dual-device path:** Host creates invite → share public package → peer
+  joins and shares encrypted result → host imports → both complete share +
+  compare → comparison opens. Optional claim-code relay when signed in.
+- Comparison requires **four gates** (local share, local compare, partner share,
+  partner compare) plus both decrypted results. Missing any gate fails closed.
+
+## Quizzes section, partner E2E, and optional own-summary backup
+
+- The Quizzes tab (ADR 0050 / **0052**) is **local-first self-understanding**.
+  Results live in AsyncStorage (`quizResultsStore`); callers use
+  `quizResultsRepository`. Invites, identity keys, and Double Ratchet state live
+  in Secure Store (`quizInviteStore` / `quizE2eIdentity` / `quizE2eSession`).
+- Partner packages use **X3DH + Double Ratchet** (AES-256-GCM message keys).
+  Portable packages carry **public keys and ciphertext only** — no `sealKey`,
+  no private keys. Supabase optional relay (`quiz_e2e_relay`, migration 038)
+  stores **opaque ciphertext** with refuse-list checks; it never decrypts.
+- Optional **owner-only** server backup of own result summaries
+  (`quiz_result_summaries`, ADR 0051) runs when Supabase is configured and the
+  user is authenticated. Demo/unauthenticated use stays local-only. Backup
+  failure never blocks local save and never invents results. Partner comparison
+  plaintext never lives on the server.
+- Without authentication/config, reinstall or storage clear drops local results,
+  invites, and ratchet sessions. With authentication, own summaries may restore;
+  invites/partner packages do not. Multi-device partner-compare sync remains
+  absent beyond one-shot opaque relay claim codes.
+- Short (~10) and deep (100) Vibe paths plus Soft Capacity, Boundary Voice,
+  Comfort & Care, and Connection Pace are playful weather/self quizzes only.
+  They are never diagnosis, a safety rating, matching eligibility, trust
+  signals, or consent to touch. Impact: users may still over-read similarity.
+  Mitigation: catalog, hub, result, and comparison copy always remind that
+  weather is conversation-only and never replaces a Consent Snapshot.
+- Partner comparison requires **four consents** (local share, local compare,
+  partner share, partner compare) plus both decrypted results. Host share
+  consent is effective only with ciphertext + local plaintext. Missing any gate
+  fails closed. Primary exchange is out-of-band paste; optional claim codes when
+  signed in.
+- Peer share/compare flags in portable packages are **self-asserted**, not
+  server-attested dual opt-in. Impact: a forged package can claim consents the
+  peer never gave in-app. Mitigation: OOB trust + fail-closed decrypt; ciphertext
+  without device private keys is useless. Removal criterion: server-mediated
+  mutual opt-in before multi-device external beta if review requires it.
+- Results persist in **AsyncStorage** (unencrypted at rest); E2E keys/ratchets
+  use Secure Store and optionally CryptoKit vault wrap (Secure Enclave path on
+  real iOS builds). Impact: device backup/forensics may still expose local
+  weather. Mitigation: Face ID step-up on private result/share; hub shows only
+  “saved privately.” Removal criterion: encrypt real-account results at rest if
+  privacy review requires it.
+- E2E crypto is **Signal-inspired, not a full audited Signal client** (no OPKs,
+  sequential quiz messages only, no multi-device identity). X25519 keys cannot
+  live *inside* Secure Enclave (P-256 only); real builds wrap them with the
+  CryptoKit vault (biometry ACL / SE-evaluated access). Expo Go / simulator may
+  fall back to Secure Store–only private keys. Public-invite packages are bearer
+  invitations — only share with the intended partner. Impact: residual protocol
+  and platform limits. Mitigation: host-device binding, AAD host binding, unit
+  tests for outsider decrypt fail-closed and dual consent; ADR 0052. Removal
+  criterion: independent crypto review before external beta.
+- Face ID step-up (`SensitiveAccessGate`) protects private **result** and
+  **partner share** screens on real account sessions only. The catalog hub and
+  play flow are not gated; demo mode skips biometrics so Expo Go can walk the
+  path. Hub/list screens never show archetype labels outside that gate.
+- Server-backed own summaries appear in `export_my_data()` under
+  `quiz_result_summaries`. Local invites/ratchets wipe and relay purge on
+  account deletion remain incomplete. Production retention beyond cascade is
+  undecided.
 
 ## Appearance
 

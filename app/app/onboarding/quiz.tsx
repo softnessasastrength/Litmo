@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 import { Choice, FadeIn, Progress, Screen } from "../../components/ui";
@@ -8,6 +8,7 @@ import {
   type QuizAnswer,
 } from "../../data/quiz";
 import { usePrototype } from "../../context/PrototypeContext";
+import { useNeurodivergent } from "../../context/NeurodivergentContext";
 import { fonts, type AppColors } from "../../theme";
 import { useAuth } from "../../context/AuthContext";
 import { profileRepository } from "../../services/profileRepository";
@@ -15,12 +16,19 @@ import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
 import { hapticService } from "../../services/hapticService";
 
+/**
+ * Onboarding Vibe path.
+ * Demo / Neurodivergent Mode use the calm short (~10) set so the phone-visible
+ * walkthrough stays light. Real account onboarding still uses the full bank so
+ * profile archetype remains a fuller first-pass signal — never consent.
+ */
 export default function QuizScreen() {
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const reducedMotion = useReducedMotion();
   const { answers, setAnswer, hydrateAnswers } = usePrototype();
-  const { user } = useAuth();
+  const { user, status } = useAuth();
+  const { prefs, reducedStimulation } = useNeurodivergent();
   const [index, setIndex] = useState(0);
   const question = quizQuestions[index];
   const total = quizQuestions.length;
@@ -41,7 +49,7 @@ export default function QuizScreen() {
           setIndex(
             Math.min(
               Number(draftProfile.questionIndex ?? 0),
-              quizQuestions.length - 1,
+              Math.max(0, questions.length - 1),
             ),
           );
         }
@@ -128,6 +136,12 @@ export default function QuizScreen() {
       <Text style={styles.theme} accessibilityLabel={`Theme: ${themeLabel}`}>
         {themeLabel}
       </Text>
+      {status === "demo" || prefs.enabled ? (
+        <Text style={styles.hint}>
+          Short calm path for demo / Neurodivergent Mode. Full deep Vibe lives
+          under Quizzes anytime — never consent to touch.
+        </Text>
+      ) : null}
       <FadeIn key={question.id}>
         <View style={styles.header}>
           <Text style={styles.kicker}>{question.kicker}</Text>

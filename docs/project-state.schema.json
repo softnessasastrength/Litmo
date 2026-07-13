@@ -3,7 +3,17 @@
   "$id": "https://softnessasastrength.github.io/Litmo/project-state.schema.json",
   "title": "Litmo Project State",
   "type": "object",
-  "required": ["version", "updatedAt", "milestone", "git", "verification", "nextAction", "blockedBy", "risks", "notes"],
+  "required": [
+    "version",
+    "updatedAt",
+    "milestone",
+    "git",
+    "verification",
+    "nextAction",
+    "blockedBy",
+    "risks",
+    "notes"
+  ],
   "properties": {
     "version": { "type": "integer", "minimum": 1 },
     "updatedAt": { "type": "string" },
@@ -13,13 +23,19 @@
       "properties": {
         "id": { "type": "string", "minLength": 1 },
         "name": { "type": "string", "minLength": 1 },
-        "status": { "enum": ["pending", "active", "blocked", "completed", "abandoned"] }
+        "status": {
+          "enum": ["pending", "active", "blocked", "completed", "abandoned"]
+        }
       },
       "additionalProperties": false
     },
     "git": {
       "type": "object",
-      "required": ["branch", "latestCoherentCommit", "workingTreeExpectedClean"],
+      "required": [
+        "branch",
+        "latestCoherentCommit",
+        "workingTreeExpectedClean"
+      ],
       "properties": {
         "branch": { "type": "string", "minLength": 1 },
         "latestCoherentCommit": { "type": "string", "minLength": 7 },

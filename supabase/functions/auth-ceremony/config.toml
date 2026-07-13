@@ -1,0 +1,5 @@
+# Auth ceremony edge function — invoked with anon or user JWT.
+# verify_jwt = false so pre-auth passkey starts can rate-limit by subject hash;
+# the function still prefers user JWT when present.
+[functions.auth-ceremony]
+verify_jwt = false

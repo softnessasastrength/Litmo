@@ -37,6 +37,14 @@ type Dependencies = {
   };
   randomUUID(): string;
   platform: string;
+  /** Optional Edge ceremony gate for rate-limit + audit. */
+  ceremonyGate?: (input: {
+    phase: "start" | "complete";
+    ceremony: "device_register";
+    outcome?: "succeeded" | "failed" | "started";
+    deviceId?: string | null;
+    errorCode?: string | null;
+  }) => Promise<unknown>;
 };
 
 export function createDeviceRegistrationService({
@@ -44,6 +52,7 @@ export function createDeviceRegistrationService({
   client,
   randomUUID,
   platform,
+  ceremonyGate,
 }: Dependencies) {
   const makeSecret = () => `${randomUUID()}${randomUUID()}`;
   const localIdentity = async (): Promise<DeviceIdentity | null> => {
@@ -66,13 +75,39 @@ export function createDeviceRegistrationService({
         id: randomUUID(),
         secret: makeSecret(),
       };
+      if (ceremonyGate) {
+        await ceremonyGate({
+          phase: "start",
+          ceremony: "device_register",
+          deviceId: identity.id,
+        });
+      }
       const { error } = await client.rpc("register_auth_device", {
         p_id: identity.id,
         p_secret: identity.secret,
         p_display_name: `${platform === "ios" ? "Apple" : "Mobile"} device`,
       });
-      if (error) throw mapExternalError(error);
+      if (error) {
+        if (ceremonyGate) {
+          await ceremonyGate({
+            phase: "complete",
+            ceremony: "device_register",
+            outcome: "failed",
+            deviceId: identity.id,
+            errorCode: "register_failed",
+          });
+        }
+        throw mapExternalError(error);
+      }
       await storage.set(JSON.stringify(identity));
+      if (ceremonyGate) {
+        await ceremonyGate({
+          phase: "complete",
+          ceremony: "device_register",
+          outcome: "succeeded",
+          deviceId: identity.id,
+        });
+      }
       return identity.id;
     },
     async verify() {

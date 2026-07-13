@@ -16,7 +16,7 @@ review. Private free text is already application-encrypted elsewhere
   reference**, optional **encrypted private note**, and coarse
   **reporter-visible status** (`submitted` / `under_review` / `closed`).
 - Writes only via `submit_report` (security definer). Idempotent per reporter
-  + key.
+  - key.
 - Reported party has **no** select access (RLS + no RPCs).
 - `list_my_reports` returns only safe fields — never the private note or
   internal triage.

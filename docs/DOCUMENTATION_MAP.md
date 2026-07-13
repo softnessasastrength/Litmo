@@ -34,7 +34,14 @@ Use these documents when modifying or reviewing implemented behavior:
 - [`TRUST_SYSTEM.md`](TRUST_SYSTEM.md)
 - [`SECURITY_MODEL.md`](SECURITY_MODEL.md)
 - [`DATA_CLASSIFICATION.md`](DATA_CLASSIFICATION.md)
-- [`PASSKEY_AUTHENTICATION.md`](PASSKEY_AUTHENTICATION.md)
+- [`GDPR.md`](GDPR.md) — engineering GDPR alignment (not certified legal compliance)
+- [`ISO27701.md`](ISO27701.md) — ISO/IEC 27701 PIMS roadmap for a small team
+- [`LOCAL_SHARE.md`](LOCAL_SHARE.md) — AirDrop-style Multipeer nearby share (profiles / snapshot review)
+- [`PROXIMITY_LAYER.md`](PROXIMITY_LAYER.md) — opt-in anonymous radar, handshake, identity gates, Soft Signal
+- [`NFC_FEATURES.md`](NFC_FEATURES.md) — NFC tag careful-connect, post-tap consent, QR/manual fallback
+- [`PRIVACY_POLICY_DRAFT.md`](PRIVACY_POLICY_DRAFT.md)
+- [`AUTHENTICATION.md`](AUTHENTICATION.md) — canonical passkey auth architecture (WebAuthn + Edge rate/audit + device-bound consent)
+- [`PASSKEY_AUTHENTICATION.md`](PASSKEY_AUTHENTICATION.md) — deployment detail and threat model for passkeys
 - [`SENSITIVE_DATA_ENCRYPTION.md`](SENSITIVE_DATA_ENCRYPTION.md)
 - [`CONSENT_WITHDRAWAL_AND_EMERGENCY_STOP.md`](CONSENT_WITHDRAWAL_AND_EMERGENCY_STOP.md)
 - [`LEARNING_SYSTEM.md`](LEARNING_SYSTEM.md)

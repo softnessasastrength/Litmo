@@ -15,6 +15,7 @@ import {
   safetyOpsService,
   type MyDataExport,
 } from "../../services/safetyOpsService";
+import { collectLocalInventory } from "../../services/localDataInventory";
 import { type AppColors } from "../../theme";
 
 export default function DataExportScreen() {
@@ -29,37 +30,71 @@ function DataExportContent() {
   const styles = useThemedStyles(makeStyles);
   const { status } = useAuth();
   const [busy, setBusy] = useState(false);
-  const [payload, setPayload] = useState<MyDataExport | null>(null);
+  const [payload, setPayload] = useState<Record<string, unknown> | null>(null);
   const [error, setError] = useState("");
 
-  if (status !== "authenticated") {
-    return (
-      <Screen>
-        <Eyebrow>YOUR DATA</Eyebrow>
-        <Title>Sign in to export.</Title>
-      </Screen>
-    );
-  }
+  const generate = async () => {
+    setBusy(true);
+    setError("");
+    try {
+      const local = await collectLocalInventory();
+      let server: MyDataExport | null = null;
+      if (status === "authenticated") {
+        try {
+          server = await safetyOpsService.exportMyData();
+        } catch (caught) {
+          setError(
+            caught instanceof Error
+              ? `Server export: ${caught.message}. Local inventory still included.`
+              : "Server export failed. Local inventory still included.",
+          );
+        }
+      }
+      setPayload({
+        export_schema: "litmo.portability.v1",
+        gdpr_note:
+          "Portability package for the data subject. Not a guarantee of legal completeness. See docs/GDPR.md.",
+        sensitive_categories_priority: [
+          "touch_profile_versions",
+          "consent_preference_versions",
+          "sessions_and_snapshots_via_sessions",
+          "device_local_partner_e2e_not_exported_as_keys",
+        ],
+        server,
+        device_local: local,
+      });
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const json = payload ? JSON.stringify(payload, null, 2) : "";
+
   return (
     <Screen>
       <Eyebrow>YOUR DATA</Eyebrow>
       <Title>Portable, private, yours.</Title>
       <Body muted>
-        Generate a structured JSON copy of account data already available to
-        you. The export is created on demand and stays on this device until you
-        choose where to share it.
+        Generate a structured JSON copy for access and portability. Server
+        categories require sign-in. Device-local inventory is always included.
+        Encryption private keys are never exported.
       </Body>
       <Card>
         <Body>
-          Includes your profile, touch-profile and consent-preference versions,
-          sessions, submitted reports without private notes, and trust events.
+          Server (when signed in): profile, touch-profile versions, consent
+          preference versions, sessions, reports (without private notes), trust
+          events, quiz summaries when available.
+        </Body>
+        <Body muted>
+          Device-local: quiz result counts, learning progress counts, mid-quiz
+          save presence, partner invite presence, ND mode flag, privacy notice
+          acknowledgment — not plaintext partner packages or E2E secrets.
         </Body>
       </Card>
       <Body muted>
-        This private-alpha export is a portability tool, not a legal statement
-        that every possible category is complete.
+        Prioritizes sensitive touch and consent categories. This is an
+        engineering portability tool aligned with GDPR access/portability
+        intent; it is not a final legal attestation.
       </Body>
       <Button
         label={
@@ -70,33 +105,18 @@ function DataExportContent() {
               : "Generate export"
         }
         disabled={busy}
-        onPress={() => {
-          void (async () => {
-            setBusy(true);
-            setError("");
-            try {
-              setPayload(await safetyOpsService.exportMyData());
-            } catch (caught) {
-              setError(
-                caught instanceof Error
-                  ? caught.message
-                  : "Your export could not be generated.",
-              );
-            } finally {
-              setBusy(false);
-            }
-          })();
-        }}
+        onPress={() => void generate()}
       />
+      {status !== "authenticated" ? (
+        <Body muted>
+          You are not signed in — export will include device-local inventory
+          only.
+        </Body>
+      ) : null}
       {payload ? (
         <>
           <Card>
-            <Text style={styles.meta}>
-              Generated{" "}
-              {typeof payload.generated_at === "string"
-                ? new Date(payload.generated_at).toLocaleString()
-                : "just now"}
-            </Text>
+            <Text style={styles.meta}>Ready to share from this device</Text>
             <Body muted>{json.length.toLocaleString()} characters of JSON</Body>
           </Card>
           <Button
@@ -125,7 +145,7 @@ function makeStyles(colors: AppColors) {
   return {
     meta: {
       color: colors.ink,
-      fontWeight: "800",
+      fontWeight: "800" as const,
       fontSize: 16,
       marginBottom: 6,
     },

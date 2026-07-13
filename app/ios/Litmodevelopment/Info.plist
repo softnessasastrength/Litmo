@@ -47,6 +47,19 @@
     </dict>
     <key>NSFaceIDUsageDescription</key>
     <string>Allow Litmo to protect credentials with Face ID.</string>
+    <key>NFCReaderUsageDescription</key>
+    <string>Litmo uses NFC only when you intentionally write or scan a careful-connect invite. A tap is never consent to touch. You always confirm or decline after a scan.</string>
+    <key>com.apple.developer.nfc.readersession.formats</key>
+    <array>
+      <string>NDEF</string>
+    </array>
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>Litmo uses the local network only when you intentionally start Nearby Share to exchange a discovery profile or Consent Snapshot review with someone next to you. Sharing is off by default and never grants consent to touch.</string>
+    <key>NSBonjourServices</key>
+    <array>
+      <string>_litmo-share._tcp</string>
+      <string>_litmo-share._udp</string>
+    </array>
     <key>NSUserActivityTypes</key>
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>

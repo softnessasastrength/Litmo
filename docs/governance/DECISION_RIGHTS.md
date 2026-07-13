@@ -26,20 +26,20 @@ Executes an approved release process and records the result. Release authority i
 
 ## Decision matrix
 
-| Change class | AI may propose | AI may implement | Human approval before merge | ADR |
-|---|---:|---:|---:|---:|
-| Routine bug fix inside established behavior | Yes | Yes | Normal PR review | When durable architecture changes |
-| Tests, docs, tooling, CI, developer experience | Yes | Yes | Normal PR review | When difficult to reverse or policy-relevant |
-| UI polish without semantic change | Yes | Yes | Normal PR review | Usually no |
-| Accessibility improvement | Yes | Yes | Required when behavior or meaning changes | When establishing a durable pattern |
-| Consent or session-state semantics | Yes | Only from approved specification | Explicit | Required |
-| Trust, scoring, matching, verification | Yes | Only from approved specification | Explicit | Required |
-| Privacy, retention, analytics, data sharing | Yes | Only from approved specification | Explicit | Required |
-| Authentication, encryption, secrets, identity | Yes | Only from approved specification | Explicit | Required |
-| Moderation, reporting, blocking, eligibility | Yes | Only from approved specification | Explicit | Required |
-| Legal, medical, therapeutic, or safety claims | Draft only | No autonomous publication | Explicit qualified review | Required when adopted |
-| Governance or protected principles | Draft only | Documentation only | Founder approval | Required |
-| Production release or destructive migration | Prepare only | Only with explicit authorization | Explicit | As applicable |
+| Change class                                   | AI may propose |                 AI may implement |               Human approval before merge |                                          ADR |
+| ---------------------------------------------- | -------------: | -------------------------------: | ----------------------------------------: | -------------------------------------------: |
+| Routine bug fix inside established behavior    |            Yes |                              Yes |                          Normal PR review |            When durable architecture changes |
+| Tests, docs, tooling, CI, developer experience |            Yes |                              Yes |                          Normal PR review | When difficult to reverse or policy-relevant |
+| UI polish without semantic change              |            Yes |                              Yes |                          Normal PR review |                                   Usually no |
+| Accessibility improvement                      |            Yes |                              Yes | Required when behavior or meaning changes |          When establishing a durable pattern |
+| Consent or session-state semantics             |            Yes | Only from approved specification |                                  Explicit |                                     Required |
+| Trust, scoring, matching, verification         |            Yes | Only from approved specification |                                  Explicit |                                     Required |
+| Privacy, retention, analytics, data sharing    |            Yes | Only from approved specification |                                  Explicit |                                     Required |
+| Authentication, encryption, secrets, identity  |            Yes | Only from approved specification |                                  Explicit |                                     Required |
+| Moderation, reporting, blocking, eligibility   |            Yes | Only from approved specification |                                  Explicit |                                     Required |
+| Legal, medical, therapeutic, or safety claims  |     Draft only |        No autonomous publication |                 Explicit qualified review |                        Required when adopted |
+| Governance or protected principles             |     Draft only |               Documentation only |                          Founder approval |                                     Required |
+| Production release or destructive migration    |   Prepare only | Only with explicit authorization |                                  Explicit |                                As applicable |
 
 ## Approval is specific
 

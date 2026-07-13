@@ -110,7 +110,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 `;
 
-const DIRECT_WINDOW_CREATION = /\n#if os\(iOS\) \|\| os\(tvOS\)\n\s*window = UIWindow\(frame: UIScreen\.main\.bounds\)\n\s*factory\.startReactNative\(\n\s*withModuleName: "main",\n\s*in: window,\n\s*launchOptions: launchOptions\)\n#endif\n/;
+const DIRECT_WINDOW_CREATION =
+  /\n#if os\(iOS\) \|\| os\(tvOS\)\n\s*window = UIWindow\(frame: UIScreen\.main\.bounds\)\n\s*factory\.startReactNative\(\n\s*withModuleName: "main",\n\s*in: window,\n\s*launchOptions: launchOptions\)\n#endif\n/;
 
 function withSceneDelegate(config) {
   return withAppDelegate(config, (config) => {
@@ -142,7 +143,10 @@ function withSceneDelegate(config) {
   });
 }
 
-function withPodDeploymentTargetFloor(config, { minimumVersion = "17.0" } = {}) {
+function withPodDeploymentTargetFloor(
+  config,
+  { minimumVersion = "17.0" } = {},
+) {
   return withPodfile(config, (config) => {
     let contents = config.modResults.contents;
     if (contents.includes("IPHONEOS_DEPLOYMENT_TARGET pod floor fix")) {
@@ -180,7 +184,10 @@ function withPodDeploymentTargetFloor(config, { minimumVersion = "17.0" } = {}) 
   });
 }
 
-function withAppTargetDeploymentTargetFloor(config, { minimumVersion = "17.0" } = {}) {
+function withAppTargetDeploymentTargetFloor(
+  config,
+  { minimumVersion = "17.0" } = {},
+) {
   return withXcodeProject(config, (config) => {
     // Pods get bumped to this floor by withPodDeploymentTargetFloor above;
     // the app's own target must match or Swift refuses to compile against
@@ -197,6 +204,8 @@ module.exports = function withIOSXcode27Fixes(config) {
   config = withSceneManifest(config);
   config = withSceneDelegate(config);
   config = withPodDeploymentTargetFloor(config, { minimumVersion: "17.0" });
-  config = withAppTargetDeploymentTargetFloor(config, { minimumVersion: "17.0" });
+  config = withAppTargetDeploymentTargetFloor(config, {
+    minimumVersion: "17.0",
+  });
   return config;
 };

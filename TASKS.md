@@ -28,6 +28,7 @@ Only one implementation task should normally be `active`. Every status change mu
 - **Goal:** Validate VoiceOver, Dynamic Type, reduced motion, focus order, contrast, large touch targets, and non-color-only meaning.
 - **Acceptance criteria:** screen-by-screen findings; severity; reproducible steps; fixes and regression tests for material failures.
 - **Notes:** BETA-001 Track C covered engineering-level accessibility criteria (Pass); the optional founder VoiceOver smoke (`docs/ACCESSIBILITY_TRACK_C.md`) is the only physical-device item still outstanding. **Progress 2026-07-13 (agent, PR #61):** static-analysis-only audit of screens Track C didn't cover, fixing a VoiceOver bug in `boundaries.tsx` (radiogroup collapsed under a stray `accessible` prop) and a dark-mode contrast bug across auth/profile screens. **Progress 2026-07-13 (agent):** standardized the remaining deferred semantics fixes: moderation-queue filters now expose selected state, and Settings haptics uses a real switch instead of a button. Physical VoiceOver smoke remains pending.
+- **Progress 2026-07-13 (agent):** full checklist + Vibe Quiz audit in `docs/ACCESSIBILITY.md` (root pointer `ACCESSIBILITY.md`). Implemented P0/P1: question-change VoiceOver announces, Progress ND motion + value text, Eyebrow demoted from header, Choice option position labels, Screen keyboard persist for dictation, Dynamic Type on Title/Body/quiz prompts, result note labels. Remaining: physical VoiceOver smoke on device.
 
 ### DOCS-002 — Keep documentation synchronized
 
@@ -36,6 +37,7 @@ Only one implementation task should normally be `active`. Every status change mu
 - **Goal:** Treat documentation as part of each implementation unit.
 - **Acceptance criteria:** update current state, task ledger, changelog, known limitations, architecture, ADRs, and release docs whenever behavior changes.
 - **Progress 2026-07-13:** founder selected MPL-2.0. ADR 0044, the canonical `LICENSE`, package metadata, and public license copy record the file-level copyleft decision. Contributor attestation, trademark policy, third-party notice audit, and qualified legal review remain follow-up governance work.
+- **Progress 2026-07-13 (quizzes docs):** ADR 0050 strengthened (short/deep, local-first vs partner-local, four consent gates, Face ID, seal posture, hub non-disclosure). Living docs aligned with ADR 0051 optional owner-only backup. `docs/KNOWN_LIMITATIONS.md`, `docs/ARCHITECTURE.md`, `docs/CHANGELOG.md`, `CURRENT_STATE.md`, and `project-state.json` updated.
 
 ## Blocked
 
@@ -92,7 +94,6 @@ None recorded. External credentials, signing, App Store configuration, or policy
 - **Verification:** macOS Native Build run #2 passed on `macos-26` with Xcode 26.5; four Campfire invariant tests passed, both arm64 apps compiled unsigned, and the workflow uploaded both `.app` bundles and Xcode logs.
 - **Boundary:** active physical sessions and Soft Signal remain phone-first; consent and staff authority remain server-side; no participant data is fabricated; the two apps share no App Group or Keychain group; unsigned CI artifacts are not distributable releases.
 - **Related decision:** ADR 0045.
-
 
 ### IOS-CI-001 — Hosted unsigned native iOS build
 

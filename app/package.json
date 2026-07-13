@@ -10,13 +10,16 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test lib/*.test.ts context/*.test.ts services/*.test.ts",
+    "test": "node --experimental-strip-types --test lib/*.test.ts context/*.test.ts services/*.test.ts data/*.test.ts",
     "build": "expo export --platform ios --output-dir dist",
     "format:check": "prettier --check \"**/*.{ts,tsx,json,md}\""
   },
   "dependencies": {
     "@expo/metro-runtime": "~55.0.11",
     "@litmo/domain": "*",
+    "@noble/ciphers": "^1.3.0",
+    "@noble/curves": "^1.9.7",
+    "@noble/hashes": "^1.8.0",
     "@react-native-async-storage/async-storage": "^3.1.1",
     "@supabase/supabase-js": "^2.110.2",
     "expo": "~55.0.27",
@@ -29,9 +32,13 @@
     "expo-notifications": "~55.0.24",
     "expo-router": "~55.0.16",
     "expo-secure-store": "~55.0.15",
+    "expo-speech": "^57.0.0",
     "expo-status-bar": "~55.0.0",
     "litmo-age-range": "file:modules/litmo-age-range",
+    "litmo-local-share": "file:modules/litmo-local-share",
+    "litmo-nfc": "file:modules/litmo-nfc",
     "litmo-passkeys": "file:modules/litmo-passkeys",
+    "qrcode": "^1.5.4",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-native": "0.83.6",
@@ -39,6 +46,7 @@
     "react-native-screens": "~4.23.0"
   },
   "devDependencies": {
+    "@types/qrcode": "^1.5.5",
     "@types/react": "19.2.2",
     "prettier": "^3.9.5",
     "typescript": "~5.9.2"

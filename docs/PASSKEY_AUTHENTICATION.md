@@ -1,5 +1,7 @@
 # Passkey-first authentication
 
+> **Start here for product overview:** [AUTHENTICATION.md](AUTHENTICATION.md)
+
 ## Decision
 
 Litmo's account interface is passwordless. Apple passkeys stored and synced by

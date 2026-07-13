@@ -2,7 +2,7 @@
 
 **Speaker:** Branden | **Runtime:** ~15-17 minutes
 
-> *"Touch is not a transaction. It is a language."*
+> _"Touch is not a transaction. It is a language."_
 >
 > ---
 >

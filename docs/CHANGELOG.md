@@ -137,7 +137,6 @@ binary toggle.
 
 - `TASKS.md` ACCESS-001 (still pending physical founder VoiceOver smoke)
 
-
 ## 2026-07-13 — Native macOS participant and Ops foundations
 
 ### Summary
@@ -162,7 +161,6 @@ Added two native SwiftUI macOS targets generated from one reviewable XcodeGen sp
 - MACOS-001
 - ADR 0045
 - PR #76
-
 
 ## 2026-07-13 — Hosted native iOS compile gate
 

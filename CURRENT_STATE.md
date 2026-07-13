@@ -30,6 +30,8 @@
 3. Keep Campfire local-only; keep destructive retention/deletion blocked.
 4. Optional founder VoiceOver smoke.
 5. Name independent backup reviewer before external alpha.
+6. Independent crypto review of quiz E2E and local share before external beta (KNOWN_LIMITATIONS / ADR 0052 / 0053).
+7. Optional: two-device Multipeer physical smoke for Nearby Share.
 
 ## Verification baseline
 
@@ -44,6 +46,8 @@ npm run build
 ```
 
 macOS: `cd macos && xcodegen generate` then unsigned `xcodebuild` test/build.
+
+Quizzes unit coverage includes `doubleRatchetCore`, `quizShareCore`, `quizPaths`, `quizScoring`, and `quizResultsRepositoryCore` tests under `app/`.
 
 ## Known limitations and risks
 

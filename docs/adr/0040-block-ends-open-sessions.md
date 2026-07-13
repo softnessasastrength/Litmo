@@ -26,7 +26,7 @@ On `block_user` between A and B (rate limit unchanged):
 ## Alternatives considered
 
 - Leave active sessions to Soft Signal only. Rejected: residual contact risk.
-- End *all* of the blocked user’s sessions. Rejected: only the pair is relevant.
+- End _all_ of the blocked user’s sessions. Rejected: only the pair is relevant.
 
 ## Consequences
 

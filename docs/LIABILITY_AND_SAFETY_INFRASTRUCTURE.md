@@ -24,7 +24,7 @@ Litmo cannot guarantee:
 - that harm cannot occur once two people are physically together;
 - that a Trust Ledger entry predicts future conduct.
 
-The gap between these two lists is the subject of this document. Consent infrastructure reduces ambiguity and coercion that arises from *unclear expectations*. It does not screen for bad actors who understand the rules and intend to violate them anyway. Any product communication, marketing, or internal narrative that implies otherwise is a liability risk in itself and should be treated as a defect.
+The gap between these two lists is the subject of this document. Consent infrastructure reduces ambiguity and coercion that arises from _unclear expectations_. It does not screen for bad actors who understand the rules and intend to violate them anyway. Any product communication, marketing, or internal narrative that implies otherwise is a liability risk in itself and should be treated as a defect.
 
 ## Identity verification
 

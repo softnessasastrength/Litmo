@@ -128,8 +128,8 @@ export default function HomeTabScreen() {
       <Eyebrow>{status === "demo" ? "DEMO MODE" : "HOME"}</Eyebrow>
       <Title>Good to see you.</Title>
       <Body muted>
-        A quiet landing spot. Discovery and trust history live in their own
-        tabs. Open sessions can be resumed here after a restart.
+        A quiet landing spot. Discovery, Quizzes, and trust history live in
+        their own tabs. Open sessions can be resumed here after a restart.
       </Body>
 
       {status === "authenticated" && openSessions.length > 0
@@ -196,6 +196,44 @@ export default function HomeTabScreen() {
           </View>
         ) : null}
       </Card>
+      <Button
+        variant="secondary"
+        label="Proximity (anonymous nearby radar)"
+        onPress={() => router.push("/proximity/radar" as never)}
+        accessibilityHint="Opens opt-in proximity layer: anonymous weather radar, encrypted handshake, mutual consent before any name. Soft Signal exits anytime. Never consent to touch."
+      />
+      <Button
+        variant="secondary"
+        label="NFC careful connect (tap / QR / code)"
+        onPress={() => router.push("/nfc/connect" as never)}
+        accessibilityHint="NFC tag, QR, or manual invite for profile share, snapshot review invite, or key exchange. Explicit accept after every tap. Never consent to touch."
+      />
+      <Button
+        variant="secondary"
+        label="Explore Quizzes (short or deep Vibe)"
+        onPress={() => router.push("/(tabs)/quizzes" as never)}
+        accessibilityHint="Opens self-understanding quizzes. Results are never consent to touch."
+      />
+      <Button
+        variant="secondary"
+        label={
+          status === "demo"
+            ? "Guided Learning (lived lessons · demo)"
+            : "Guided Learning"
+        }
+        onPress={() => router.push("/(tabs)/learn" as never)}
+        accessibilityHint="Opens private short modules on consent language, boundaries, recovery, and more. Never a safety score."
+      />
+      <Button
+        variant="secondary"
+        label={
+          status === "demo"
+            ? "Partner invite practice (demo)"
+            : "Partner invite & comparison"
+        }
+        onPress={() => router.push("/quizzes/share" as never)}
+        accessibilityHint="Opens encrypted partner invite and mutual-consent comparison. Never auto-opens."
+      />
       <Button
         variant="secondary"
         label="Meet the mock community"

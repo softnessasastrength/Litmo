@@ -10,6 +10,7 @@ import {
   Title,
 } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
+import { useNeurodivergent } from "../context/NeurodivergentContext";
 import { fonts, type AppColors } from "../theme";
 import { runtimeConfig } from "../config/runtime";
 import { environmentError } from "../services/supabase";
@@ -19,6 +20,7 @@ export default function EntryScreen() {
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { enterDemoMode } = useAuth();
+  const { setEnabled: setNeuroEnabled } = useNeurodivergent();
 
   return (
     <Screen style={styles.screen}>
@@ -38,32 +40,43 @@ export default function EntryScreen() {
         <Card style={styles.card}>
           <Text style={styles.cardTitle}>Demo mode</Text>
           <Body>
-            Walk through Touch Language onboarding, boundaries, discovery,
-            consent, a practice session, Soft Signal, and private wrap-up.
+            Walk a calm path: Touch Language onboarding, boundaries, discovery,
+            Quizzes (short ~10 or deep 100 Vibe scenes), full Guided Learning
+            (lived lessons + foundations), partner invite with a fictional
+            encrypted peer, consent, Soft Signal, and wrap-up. Demo turns on
+            Neurodivergent Mode by default — change anytime in Settings.
           </Body>
           <View style={styles.notice} accessible accessibilityRole="text">
             <Text style={styles.noticeTitle}>Important</Text>
             <Text style={styles.noticeBody}>
-              Compatibility and trust examples are educational signals only.
-              They do not establish consent or prove that anyone is safe.
+              Compatibility, quizzes, and trust examples are educational signals
+              only. They do not establish consent or prove that anyone is safe.
+              Partner comparison still needs your share and compare consents —
+              even with a fictional demo partner. Some progress (quiz place,
+              learning modules) may stay on this device only — never an account
+              and never real matching.
             </Text>
           </View>
           <Button
             label="Enter the fictional demo"
             onPress={() => {
               enterDemoMode();
+              // Calm default for the phone-visible demo path (device-local only).
+              void setNeuroEnabled(true);
               router.replace("/onboarding/about-you");
             }}
-            accessibilityHint="Starts the Litmo prototype with fictional local data. No account is created and nothing is saved."
+            accessibilityHint="Starts the fictional demo with no account. Neurodivergent Mode turns on for a quieter walkthrough. Local quiz or learning progress may remain on this device only."
           />
         </Card>
       ) : null}
 
       <Card style={styles.card}>
-        <Text style={styles.cardTitle}>Account sign-in</Text>
+        <Text style={styles.cardTitle}>Real account · passkeys</Text>
         <Body muted>
-          Sign in or create a real account. Your general profile, touch
-          preferences, and consent boundaries persist across visits.
+          Real accounts use WebAuthn passkeys (Face ID / Touch ID) through
+          Supabase Auth — no passwords. Your general profile, touch preferences,
+          and consent boundaries persist across visits. Sensitive screens still
+          require a fresh device-owner check.
         </Body>
         {environmentError ? (
           <View style={styles.notice} accessible accessibilityRole="text">
@@ -75,10 +88,17 @@ export default function EntryScreen() {
           </View>
         ) : null}
         <Button
-          label="Sign in with an account"
+          label="Sign in with passkey"
           onPress={() => router.push("/auth/sign-in")}
           variant="secondary"
-          accessibilityHint="Opens sign-in for a real, persistent account"
+          accessibilityHint="Opens passkey-first sign-in for a real, persistent account"
+          disabled={Boolean(environmentError)}
+        />
+        <Button
+          label="Create account with passkey"
+          onPress={() => router.push("/auth/sign-up")}
+          variant="secondary"
+          accessibilityHint="Opens passkey registration after a one-time email ownership code"
           disabled={Boolean(environmentError)}
         />
       </Card>

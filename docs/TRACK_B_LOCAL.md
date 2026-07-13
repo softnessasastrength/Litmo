@@ -20,19 +20,19 @@ step fails with HTTP 500 and a `confirmation_token` scan error, re-check
 
 Password for all: `LitmoDemo123!`
 
-| Email | Role |
-|-------|------|
-| `maya.demo@litmo.local` | Account A |
-| `eli.demo@litmo.local` | Account B |
-| `eli-persona.demo@litmo.local` | Extra discovery persona |
+| Email                            | Role                    |
+| -------------------------------- | ----------------------- |
+| `maya.demo@litmo.local`          | Account A               |
+| `eli.demo@litmo.local`           | Account B               |
+| `eli-persona.demo@litmo.local`   | Extra discovery persona |
 | `jonah-persona.demo@litmo.local` | Extra discovery persona |
 
 Sign-in → **Sign in with seed account** (development only; ADR 0041).
 
 ## Physical phone
 
-1. Copy `app/.env.lan.example` values into `app/.env` (LAN IP, not 127.0.0.1).  
-2. Restart Metro.  
+1. Copy `app/.env.lan.example` values into `app/.env` (LAN IP, not 127.0.0.1).
+2. Restart Metro.
 3. Face ID still required for real account privacy lock (ADR 0007).
 
 ## Automated proof (no UI)

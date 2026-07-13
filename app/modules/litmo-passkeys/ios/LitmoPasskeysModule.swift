@@ -11,6 +11,12 @@ public final class LitmoPasskeysModule: Module {
   public func definition() -> ModuleDefinition {
     Name("LitmoPasskeys")
 
+    /// Platform can present AuthenticationServices; biometrics may still be
+    /// unavailable (passcode-only). JS uses this for calm UX, not as a guarantee.
+    AsyncFunction("isAvailableAsync") { () -> Bool in
+      return true
+    }
+
     AsyncFunction("registerAsync") { (options: [String: Any], promise: Promise) in
       guard !self.coordinator.isPending else {
         return promise.reject("ERR_PASSKEY_REQUEST_IN_PROGRESS", "A passkey request is already in progress.")

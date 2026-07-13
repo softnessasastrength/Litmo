@@ -23,20 +23,20 @@ required before the corresponding release claims or destructive workflows.
 
 ## Decision summary
 
-| ID | Decision | Recommended private-alpha default | Founder selection | External review required |
-| --- | --- | --- | --- | --- |
-| S1 | Alpha access | Founder-issued, single-use invitations | Accepted* | Safety/product |
-| S2 | Invite expiry | 7 days; revoke at any time | Accepted* | No |
-| S3 | Eligibility and geography | Named adults only; smallest reviewed jurisdiction set | Accepted* | Legal/privacy |
-| S4 | Kill-switch scope | Pause discovery and new requests; preserve stop/wrap-up | Accepted* | Safety/product |
-| S5 | Data lifecycle | Bounded provisional windows below | Accepted* | Legal/privacy |
-| S6 | Account deletion and export | Immediate access disable; reviewed deletion/export workflow | Accepted* | Legal/privacy/security |
-| S7 | Review staffing | Founder plus independent backup before external alpha | Accepted* | Safety/governance |
-| S8 | Escalation | Human decisions; no automatic external referral except legal duty | Accepted* | Legal/safeguarding |
-| S9 | Block-history tombstone | Minimal 90-day abuse-control tombstone | Accepted* | Privacy/safety |
-| S10 | Permanent-ban authority | Staff-only; two-person confirmation when staffing permits | Accepted* | Safety/governance |
+| ID  | Decision                    | Recommended private-alpha default                                 | Founder selection | External review required |
+| --- | --------------------------- | ----------------------------------------------------------------- | ----------------- | ------------------------ |
+| S1  | Alpha access                | Founder-issued, single-use invitations                            | Accepted*         | Safety/product           |
+| S2  | Invite expiry               | 7 days; revoke at any time                                        | Accepted*         | No                       |
+| S3  | Eligibility and geography   | Named adults only; smallest reviewed jurisdiction set             | Accepted*         | Legal/privacy            |
+| S4  | Kill-switch scope           | Pause discovery and new requests; preserve stop/wrap-up           | Accepted*         | Safety/product           |
+| S5  | Data lifecycle              | Bounded provisional windows below                                 | Accepted*         | Legal/privacy            |
+| S6  | Account deletion and export | Immediate access disable; reviewed deletion/export workflow       | Accepted*         | Legal/privacy/security   |
+| S7  | Review staffing             | Founder plus independent backup before external alpha             | Accepted*         | Safety/governance        |
+| S8  | Escalation                  | Human decisions; no automatic external referral except legal duty | Accepted*         | Legal/safeguarding       |
+| S9  | Block-history tombstone     | Minimal 90-day abuse-control tombstone                            | Accepted*         | Privacy/safety           |
+| S10 | Permanent-ban authority     | Staff-only; two-person confirmation when staffing permits         | Accepted*         | Safety/governance        |
 
-*Accepted means the recommended product direction is authorized. It does not convert an external-review requirement into legal, privacy, clinical, or safeguarding approval.*
+_Accepted means the recommended product direction is authorized. It does not convert an external-review requirement into legal, privacy, clinical, or safeguarding approval._
 
 ## S1 — Who can issue invitations?
 
@@ -112,14 +112,14 @@ explicit, staff-audit-logged, and visually distinguished from routine pause.
 The values below are **recommended engineering defaults**, not claims about
 legal sufficiency:
 
-| Data | Recommended provisional lifetime | Notes |
-| --- | --- | --- |
-| Unredeemed invitation | Delete 30 days after expiry/revocation | Keep only minimal audit fact if abuse investigation requires it |
-| Rate-limit events | 30 days | Operational abuse control only |
-| Block tombstone after unblock | 90 days | Pair identifiers + timestamps only; never user-visible |
-| Resolved reports/cases/notes | 12 months after final appeal resolution | Subject to scoped legal/safety hold |
-| Trust events | 12 months, then delete or irreversibly aggregate | Never convert into a public score |
-| Product diagnostics | 30 days | Exclude consent, notes, reports, precise location, and message content |
+| Data                          | Recommended provisional lifetime                 | Notes                                                                  |
+| ----------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------- |
+| Unredeemed invitation         | Delete 30 days after expiry/revocation           | Keep only minimal audit fact if abuse investigation requires it        |
+| Rate-limit events             | 30 days                                          | Operational abuse control only                                         |
+| Block tombstone after unblock | 90 days                                          | Pair identifiers + timestamps only; never user-visible                 |
+| Resolved reports/cases/notes  | 12 months after final appeal resolution          | Subject to scoped legal/safety hold                                    |
+| Trust events                  | 12 months, then delete or irreversibly aggregate | Never convert into a public score                                      |
+| Product diagnostics           | 30 days                                          | Exclude consent, notes, reports, precise location, and message content |
 
 Alternatives are shorter windows, longer explicitly justified windows, or no
 collection for a category. "Keep forever" is not an acceptable silent default.
