@@ -1,15 +1,22 @@
 # Litmo Dedicated Hardware — Haptic System
 
 **Status:** design specification (hardware vision — not a shipping SKU)  
-**Version:** 2.0 · 2026-07-13  
+**Version:** 3.0 · 2026-07-13  
 **Canonical path:** `docs/HARDWARE/HAPTICS.md`  
-**Related:** [ADR 0057](../adr/0057-device-haptic-vca-lra-architecture.md) · [Phone haptics](../roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md) · [ADR 0039](../adr/0039-semantic-haptic-language.md) · [Consent flow](../CONSENT_FLOW.md) · [Neurodivergent mode](../NEURODIVERGENT_MODE.md)
+**Related:** [ADR 0057](../adr/0057-device-haptic-vca-lra-architecture.md) · [Phone haptics](../roadmap/HAPTIC_LANGUAGE_IMPLEMENTATION.md) · [ADR 0039](../adr/0039-semantic-haptic-language.md) · [Consent flow](../CONSENT_FLOW.md) · [Neurodivergent mode](../NEURODIVERGENT_MODE.md) · UX philosophy
 
 > Litmo does not buzz at people.  
-> It **answers** them — warmly, sparsely, and in a way a sensitive nervous system can refuse or reduce at any moment.  
-> Soft Signal must say: *you stopped — you are free* — never *danger* or *you failed*.
+> It **answers** them — warmly, sparsely, and in a way a sensitive nervous system can refuse, reduce, or replace with vision at any moment.  
+> Soft Signal must say: *you stopped — you are free* — never *danger* or *you failed*.  
+> **If haptics are off, the meaning still lands** — through calm, beautiful, unmistakable visuals (and optional sound).
 
-This document is the **authoritative** haptic specification for the dedicated Litmo companion device: philosophy, actuators, distributed feel, full pattern library with **Gentle / Sensory-Friendly** fallbacks, accessibility, personalization (including Vibe / sensory profile suggestions), software interfaces, and validation.
+This document is the **authoritative** specification for the dedicated Litmo companion’s tactile + multi-modal feedback system:
+
+- Tech stack (wideband VCM primary, LRA secondary, device-wide warm field)  
+- Philosophy (caring, never jarring)  
+- **Every pattern:** Primary haptic · Gentle / Sensory-Friendly haptic · **Full Visual Fallback** · optional sound  
+- Global accessibility controls  
+- Waveforms, visual design specs, rationale, validation  
 
 ---
 
@@ -17,21 +24,22 @@ This document is the **authoritative** haptic specification for the dedicated Li
 
 | Goal | Meaning |
 | --- | --- |
-| **Warm** | Mid–low body energy, rounded envelopes, palm-coupled “alive” feel — not metallic needle-ticks |
-| **Emotionally safe** | Caring acknowledgement; never jarring, shaming, punishing, sexualized, or alarm-like |
-| **High-fidelity** | Wideband voice-coil primary; LRA only for soft-edged crisp accents |
-| **ND / sensory-first** | Every pattern has a Gentle Mode; global Sensory-Friendly Mode; full off + strong visual/sound |
-| **Alive device-wide** | Distributed actuation so the whole soft-edged body feels coherent, not a corner rattle |
-| **Honest** | Haptics never fake mutual consent, partner emotion, or safety of another person |
+| **Warm** | Mid–low body energy, rounded envelopes, palm-coupled “alive” feel |
+| **Emotionally safe** | Never jarring, shaming, punishing, sexualized, or alarm-like |
+| **High-fidelity** | Wideband VCM primary; LRA only for soft crisp accents |
+| **ND / sensory-first** | Gentle Mode + **full visual fallback** on every pattern; one-tap Sensory-Friendly; full disable |
+| **Alive device-wide** | Distributed actuation — coherent soft-edged body, not corner rattle |
+| **Honest** | Haptics never fake mutual consent, partner emotion, or another person’s safety |
+| **Vision is not secondary** | Visual fallbacks are designed as first-class experiences, not grey error states |
 
 ### 1.1 Non-goals
 
-- Engagement, streaks, FOMO, or “nudge again” haptics  
-- Inter-device secret codes or imitation of human skin contact  
-- Soft Signal delayed by playback (safety state always commits first)  
-- Sensitive telemetry of haptic events  
+- Engagement, streaks, FOMO, “nudge again”  
+- Secret inter-device haptic codes or fake human touch  
+- Soft Signal delayed by haptic or animation playback (state commits first)  
+- Sensitive telemetry of Soft Signal / consent moments  
 - ERM-primary Soft Signal  
-- Patterns that only work if the user can tolerate strong vibration  
+- Meaning that only exists in vibration  
 
 ---
 
@@ -39,42 +47,57 @@ This document is the **authoritative** haptic specification for the dedicated Li
 
 ### 2.1 Caring and safe by default
 
-All haptics must feel **caring and safe, never jarring**.
-
 | Principle | Implementation |
 | --- | --- |
-| **Answer, don’t demand** | Haptics acknowledge *local* state; they do not demand attention like notifications culture |
-| **Silence is the default** | Most interactions produce no haptic |
-| **Soft Signal is freedom** | Long smooth descending warm pulse that *releases* — not a siren, error, or slap |
-| **Gentle Mode is first-class** | Every pattern has a Gentle / Sensory-Friendly fallback — not an afterthought |
-| **Opt-down is easy** | Global Sensory-Friendly Mode + intensity + per-pattern presets + full off, reachable quickly |
-| **Multi-modal parity** | Visual (and optional sound) always carry full meaning without haptics |
-| **Fail kind** | Actuator failure → silence + UI; stop still works |
+| **Answer, don’t demand** | Acknowledge local state; do not harass for attention |
+| **Silence is default** | Most UI taps produce no haptic |
+| **Soft Signal is freedom** | Long descending warm pulse — release, not siren |
+| **Gentle is first-class** | Every pattern has Gentle haptic mode |
+| **Visual is first-class** | Every pattern has a **full Visual Fallback** (always available; automatic when haptics off/failed) |
+| **One-tap calm** | Sensory-Friendly Mode reachable from anywhere |
+| **Opt all the way down** | Intensity, per-pattern presets, complete disable |
+| **Fail kind** | Actuator fault → visual fallback; Soft Signal still ends session |
 
-### 2.2 Emotional intelligence checks
+### 2.2 Multi-modal stack (required per event)
 
-Before shipping any pattern:
+```text
+┌─────────────────────────────────────────────────────────┐
+│  MEANING (semantic event)                               │
+│    e.g. softSignal, connectionRequest, mutualConsent    │
+└─────────────────────────────────────────────────────────┘
+           │
+           ├─► Haptic Primary     (Default profile)
+           ├─► Haptic Gentle      (Sensory-Friendly / per-pattern Gentle)
+           ├─► Visual Fallback    (ALWAYS designed; auto when haptics off,
+           │                        preset=visual_only, or actuator fail)
+           └─► Sound Optional     (user opt-in; default off in Sensory-Friendly)
+```
 
-1. **Whose action?** If not this user’s local action (or a true mutual protocol seal), do not play “success.”  
-2. **Feeling after?** Prefer grounded, free, complete — never dopamine, shame, or panic.  
-3. **Worst day test?** Acceptable for someone overloaded, autistic, PTSD-activated, or sensory-avoidant in Gentle Mode.  
-4. **Can silence hold it?** If yes, prefer silence.  
-5. **Soft Signal still clearest “end” word?** Nothing outranks it except true emergency (still not a siren).
+**Rule:** Product meaning must be complete with **visual alone**. Haptics and sound only reinforce.
 
-### 2.3 Contrast to cold tech haptics
+### 2.3 Emotional intelligence checks
 
-| Cold / tech default | Litmo Soft Edge (this system) |
+1. **Whose action?** No “success” feel for peer-only or ambiguous states.  
+2. **Feeling after?** Grounded, free, complete — not dopamine, shame, panic.  
+3. **Worst day?** Gentle haptic + calm visual both acceptable when overloaded.  
+4. **Can silence hold it?** Prefer silence for non-critical UI.  
+5. **Soft Signal still the clearest “end”?** Visually and haptically.  
+
+### 2.4 Visual design language (all fallbacks)
+
+| Do | Don’t |
 | --- | --- |
-| Frequent micro-clicks | Sparse; most taps silent |
-| Hard attack, square envelopes | Soft attack, smooth release, descending fades |
-| High-frequency grit | Wideband VCM warm body (≈ 45–90 Hz energy focus) |
-| Triple-alert / error buzz for stop | Descending warm Soft Signal fade |
-| Social “someone’s here” pressure | Optional nearby; Gentle = almost nothing |
-| One intensity for all | Global Sensory-Friendly + per-pattern presets |
+| Warm cream / amber / soft rose tones | Aggressive red emergency (except true emergency path, still calm) |
+| Slow breathing motion (≈ 4–6 s cycle where looping) | Fast strobe, seizure-risk flash rates |
+| Large, legible type; clear verbs | Cryptic icons alone |
+| Respect reduced motion → crossfade / opacity only | Forced large motion when reduced-motion is on |
+| Soft edges, rounded geometry matching hardware | Harsh chrome, glitch, game HUD |
 
-### 2.4 Tagline
+**Reduced motion:** All looping “breathing” animations become **static emphasis + one soft crossfade**. Meaning text remains.
 
-*Warm enough to feel alive. Gentle enough for a sensitive day. Clear enough to end safely.*
+### 2.5 Tagline
+
+*Warm enough to feel alive. Gentle enough for a sensitive day. Clear enough to end safely — even in silence.*
 
 ---
 
@@ -84,390 +107,407 @@ Before shipping any pattern:
 
 | Role | Technology | Job |
 | --- | --- | --- |
-| **Primary** | **High-fidelity wideband Voice Coil Motor (VCM / VCA)** | Device-wide warmth, breath, descending Soft Signal, ambient throbs, “alive” body |
-| **Secondary** | **LRA** | Soft-edged crisp accents only (never the only Soft Signal path) |
+| **Primary** | **High-fidelity wideband Voice Coil Motor (VCM / VCA)** | Warm body, descent, breath, ambient throb, “alive” field |
+| **Secondary** | **LRA** | Soft-edged crisp accents only (often **off** in Gentle) |
 
-**Rationale:** LRAs are efficient but narrow and often “cold.” Wideband VCM carries the emotional character — mass, warmth, smooth fades. LRA may add a *very soft* leading or trailing edge when clarity helps; in Gentle Mode, LRA is often **off**.
+**Rationale:** Warmth and long smooth fades need broadband VCM. LRA alone reads cold/tech. Soft Signal character is **VCM descent**, not LRA slap.
 
-**Forbidden as primary Soft Signal:** ERM (muddy, slow, phone-buzz).
+**Forbidden as Soft Signal primary:** ERM.
 
 ### 3.2 Device-wide distributed haptics
 
-Goal: the rounded device feels **coherent and alive in the palm**, not a single buzzing corner.
-
 | Element | Spec |
 | --- | --- |
-| **Primary VCM** | Center / palm coupling plate under soft-touch shell |
-| **Optional satellite VCM or haptic channels** | Symmetrical left/right or edge modules driven **in phase** for whole-body field (v1 may be one VCM + mechanical distribution via chassis) |
-| **LRA** | Near Soft Signal physical control for optional crisp accent (Default/Clear profiles only) |
-| **Isolation** | Soft mounts so shell does not chatter; energy reads as pressure bloom |
-| **Phase** | Multi-actuator drive locked in phase unless a deliberate spatial pattern is designed (v1: mono field) |
+| Primary VCM | Palm coupling under soft-touch shell |
+| Optional multi-module | Left/right or edge channels **in phase** for whole-body field |
+| LRA | Near Soft Signal control (Full profile accent only) |
+| Isolation | Soft mounts; no shell chatter; ring ≤ 40 ms after zero |
+| Phase | v1 mono field preferred |
 
-**“Alive” criteria:** slow amplitude envelopes, slight frequency glide (e.g. 72→55 Hz on Soft Signal), no hard mute mid-body when avoidable — prefer **smooth fade to zero**.
+**“Alive” criteria:** slow envelopes, optional gentle frequency glide, smooth fade to zero — energy feels absorbed into the object.
 
-### 3.3 Drive electronics (targets)
+### 3.3 Drive targets
 
 | Item | Spec |
 | --- | --- |
-| VCM path | Broadband amp, stream ≥ 8 kHz, soft-start current limit |
-| LRA path | Auto-resonance capable driver; optional for accents |
-| Soft Signal start latency | **≤ 30 ms** p95 to first motion (even with long fade after) |
-| Routine UI latency | ≤ 50 ms p95 |
-| Soft Signal energy | Budget per product power model; long fade is low peak, not high average |
-| Continuous watchdog | Abort continuous drive > **1200 ms** (Soft Signal long fade is the longest allowed intentional continuous) |
-| Hardware mute | Factory + user off |
+| VCM stream | ≥ 8 kHz, soft-start current limit |
+| Soft Signal first motion | **≤ 30 ms** p95 after accept |
+| Routine UI | ≤ 50 ms p95 |
+| Continuous watchdog | Abort > **1200 ms** continuous (Soft Signal long fade is max intentional) |
+| Hardware mute | Factory + user software off |
 
-### 3.4 Dual-actuator mix (default vs gentle)
+### 3.4 Mix: Full vs Gentle
 
-| Layer | Default / Clear | Gentle / Sensory-Friendly |
+| Pattern family | Full (Primary) | Gentle |
 | --- | --- | --- |
-| Soft Signal | VCM long descending pulse; optional soft LRA onset ≤ sharpness 0.35 | **VCM only**, very low amplitude, slower fade |
-| Positive feedback | VCM glow + soft LRA click | VCM micro-pulse **or visual-only** |
-| Nearby | VCM ambient throb | Single micro-pulse **or visual + optional sound only** |
-| Mutual consent | Dual soft pulse (VCM; light LRA optional) | One extended VCM pulse |
+| Soft Signal | VCM long descent; optional soft LRA onset | VCM only, very low amp, slower fade |
+| Connection | VCM rising soft throbs | Single slow VCM throb |
+| Mutual consent | VCM double-pulse; micro LRA optional | One extended VCM pulse |
+| Positive | VCM glow + soft LRA click | Micro VCM only |
+| Nearby | VCM ambient throb | Micro VCM or haptic off → visual |
 
 ---
 
-## 4. Modes and personalization
+## 4. Global accessibility
 
-### 4.1 Global Sensory-Friendly Mode
+### 4.1 Sensory-Friendly Mode (one-tap from anywhere)
 
 | Property | Spec |
 | --- | --- |
-| **Name** | Sensory-Friendly Mode (UI may also say “Gentle haptics”) |
-| **Access** | Settings + **quick access** (hardware shortcut and/or persistent in-session control; not buried) |
-| **Effect** | Forces **Gentle** fallback for every pattern; lowers global intensity ceiling; prefers VCM-only |
-| **Persistence** | Device-local; not remotely settable by another user |
-| **ND Mode link** | Enabling Neurodivergent Mode **suggests** Sensory-Friendly (user can decline) |
+| **Access** | **One tap** from: session chrome, system sheet, hardware quiet button (if present), and Settings |
+| **Effect** | All patterns → **Gentle** haptics; lower intensity ceiling; prefer VCM-only; sound defaults off unless user enabled |
+| **Visual** | Full Visual Fallbacks remain active and may be **slightly stronger** when Sensory-Friendly is on (vision carries more) |
+| **Persistence** | Device-local; not remotely controllable |
+| **ND Mode** | Enabling Neurodivergent Mode **suggests** Sensory-Friendly (user can decline) |
 
-### 4.2 Intensity
+### 4.2 Customization
 
-| Control | Range | Notes |
-| --- | --- | --- |
-| Global intensity slider | 0–100% (mapped to safe peak) | 0 with haptics “on” still allows optional micro-pulses only if user wants; recommend pairing 0 with Off |
-| Soft Signal floor | Optional “keep Soft Signal slightly clearer” | Never forces above user Soft Signal preset; never forces haptics if fully off |
-
-### 4.3 Per-pattern presets
-
-For each semantic pattern family:
-
-| Preset | Meaning |
+| Control | Spec |
 | --- | --- |
-| **Full** | Primary pattern at global intensity |
-| **Gentle** | Sensory-Friendly fallback |
-| **Visual only** | No haptic (and optional sound per user) |
-| **Off** | No haptic for this family |
+| Master haptics | On / Off |
+| Global intensity | 0–100% (safe clamp) |
+| Per-pattern preset | **Full** · **Gentle** · **Visual only** · **Off** (Off = no haptic; visual still runs) |
+| Sound | Global opt-in; per-event optional |
+| Reduced motion | System + in-app; calms visual motion |
+| Soft Signal visual always | Cannot fully “off” Soft Signal **meaning** — only haptic/sound layers |
 
-Stored locally. UI lists human names (Soft Signal, Connection request, …).
+**Note:** Pattern preset **Off** still shows Visual Fallback for safety-critical and consent-critical events. “Off” never means silent Soft Signal with no UI.
 
-### 4.4 Full haptics off
+### 4.3 Automatic visual fallback
 
-| Requirement | Spec |
+Visual Fallback **always runs** in parallel when:
+
+| Condition | Behavior |
 | --- | --- |
-| Master toggle | Off silences **all** haptics including Soft Signal acknowledgement |
-| Soft Signal still works | Session ends immediately; **strong visual** Soft Signal state + optional **sound** (user-controlled) |
-| Connection / consent | Full visual timelines; optional chimes only if sound enabled |
+| Master haptics off | Visual only (+ optional sound) |
+| Per-pattern Visual only / Off | Visual only |
+| Sensory-Friendly + Gentle too subtle for user preference | Visual primary emphasis |
+| Actuator fault / timeout | Visual only; no retry spam |
+| Full + Gentle haptics on | Visual **may** run softer companion motion (not competing) — for Soft Signal, visual **always** appears |
 
-### 4.5 Automatic suggestions (Vibe Quiz / sensory profile)
+**Soft Signal special rule:** Visual Soft Signal **always** displays when Soft Signal fires, even if Primary haptic plays — so meaning is never haptic-only.
 
-**Suggestion only — never silent forced change without user confirmation** (except first-run optional onboarding apply).
+### 4.4 Vibe / sensory suggestions
 
-| Signal | Suggested default |
-| --- | --- |
-| Vibe / sensory answers favoring quiet, low stimulus, “window nook,” overload | Sensory-Friendly Mode **on**, intensity low, nearby → visual-only |
-| Vibe favoring clear structure / “need a plan” | Default haptics, Soft Signal Full, positive feedback Gentle |
-| Explicit sensory preference in onboarding (if collected) | Map to Sensory-Friendly or Full |
-| User previously disabled haptics | Never auto-re-enable |
-
-```text
-suggestion = f(vibeThemes, sensoryAnswers, neuroMode, lastUserChoice)
-apply only after: user confirms OR user opted into “apply calm defaults”
-```
-
-Do **not** claim clinical sensing. Do **not** infer trauma. Quiz = preference weather, not diagnosis.
+Suggest Sensory-Friendly, low intensity, or visual-heavy nearby — **confirm before apply**. Never re-enable haptics after user chose Off. Not clinical.
 
 ---
 
 ## 5. Pattern library
 
-Every pattern below has:
+Every pattern includes:
 
-- **Primary** — Default / Clear profiles  
-- **Gentle Mode** — Sensory-Friendly / Quiet  
-- **Rationale**  
-- **Accessibility**  
-- **Must not mean**  
+1. **Primary haptic** (waveform)  
+2. **Gentle Mode haptic**  
+3. **Full Visual Fallback** (layout, motion, copy, reduced-motion variant)  
+4. **Optional sound**  
+5. **Rationale**  
+6. **Must not mean**  
 
-Intensity values are **relative seeds** (0–1). Physical calibration required.
+Relative intensity seeds 0–1; calibrate on hardware.
 
-### 5.1 Soft Signal (critical)
+---
 
-| | Primary | Gentle Mode |
-| --- | --- | --- |
-| **Feel** | Long, smooth **descending warm pulse** that gently fades to silence | Extremely subtle, slow, low-amplitude fade — almost a soft breath / light presence leaving |
-| **Emotional intent** | *I stopped. It stopped. I am free.* | Same meaning, minimal sensory load |
-| **Actuators** | VCM primary; optional soft LRA onset only in Full | **VCM only** |
-| **Duration** | ~600–900 ms fade envelope (peak early, long release) | ~700–1100 ms, peak ≤ 30% of Primary |
-| **Must not** | Alarm, error triple-buzz, rising escalation, slap | Still must be **noticeable enough** when haptics on — if user cannot feel Gentle Soft Signal, rely on visual + optional sound |
+### 5.1 Soft Signal (most critical)
 
-#### Waveform — Primary `softSignal.primary` (“warm descent”)
+| Layer | Spec |
+| --- | --- |
+| **Emotional intent** | *I stopped. It stopped. I am free.* |
+| **Primary haptic** | Long, smooth **descending warm pulse** that gently fades |
+| **Gentle haptic** | Extremely subtle, slow, low-amplitude fade |
+| **Visual Fallback** | Large calm **pulsing border** + gentle **screen fade** to soft color + clear text **“Session ended via Soft Signal”** with **breathing** animation |
+| **Must not** | Alarm, error, shame, red panic, third “alert” beat |
+
+#### Haptic — Primary `softSignal.primary` (“warm descent”)
 
 ```text
 Intent: Freedom through release — energy leaves the hand.
 
 t = 0 ms
-  - Preempt all patterns
-  - Optional: LRA soft onset  int 0.25  sharp ≤ 0.30  dur 12 ms  (Full only)
-  - VCM start ~ 72–78 Hz, intensity ramp 0 → peak (0.55–0.70) in 40–60 ms (soft attack)
+  - Preempt all other haptics
+  - Optional Full-only: LRA soft onset  int 0.25  sharp ≤ 0.30  dur 12 ms
+  - VCM ~72–78 Hz, soft attack 40–60 ms to peak int 0.55–0.70
 
 t = 40–120 ms
-  - Hold near peak briefly (≤ 80 ms) — “registered”
+  - Brief near-peak hold (≤ 80 ms) — “registered”
 
-t = 120–800 ms  (core Soft Signal character)
-  - Smooth descending amplitude envelope (ease-out cubic or exponential)
-  - Optional gentle frequency glide 75 Hz → 52 Hz (warm settling)
-  - No secondary sharp slap at the end
+t = 120–800 ms
+  - Smooth descending amplitude (ease-out cubic / exponential)
+  - Optional frequency glide 75 → 52 Hz
+  - No end slap
 
 t = end
-  - Amplitude → 0 cleanly; no residual rattle > 40 ms mechanical ring
+  - Clean zero; mechanical ring ≤ 40 ms
 ```
 
-#### Waveform — Gentle `softSignal.gentle` (“breath leave”)
+#### Haptic — Gentle `softSignal.gentle` (“breath leave”)
 
 ```text
-t = 0 ms     VCM only; peak intensity ≤ 0.22
-t = 0–100    Very soft attack to peak
-t = 100–900  Slow descending fade (almost linear soft ease)
-             f ≈ 58–65 Hz (narrower, warmer, less “buzzy”)
-t = end      Silence; visual Soft Signal must already show ended
+t = 0        VCM only; peak ≤ 0.22
+t = 0–100    Soft attack
+t = 100–900  Slow descending fade; f ≈ 58–65 Hz
+t = end      Silence (visual already shows ended)
 ```
 
-#### Safety ordering (mandatory)
+#### Visual Fallback — Soft Signal (always on Soft Signal fire)
+
+| Element | Spec |
+| --- | --- |
+| **Border** | Full-viewport inset border (or device bezel glow), **large**, warm cream/amber; opacity pulses calmly ~0.35↔0.75 |
+| **Breathing rate** | ~5 s full cycle (or 4–6 s); ease-in-out; never strobe |
+| **Screen field** | Gentle fade of background toward soft color (e.g. warm cream `#F6EFE2` / soft rose-cream — **not** emergency red) |
+| **Typography** | Large, calm: **“Session ended via Soft Signal”** |
+| **Subcopy** | “You can stop. You don’t need a reason.” (or equivalent constitution-aligned) |
+| **Iconography** | Optional simple Soft Signal mark; never skull/warning triangle |
+| **Duration** | Enter within 100 ms of commit; hold readable ≥ 2 s; user can dismiss to wrap-up |
+| **Reduced motion** | No continuous pulse: single soft border + static soft field + full text; one crossfade in |
+| **Contrast** | WCAG-minded large text on soft field; test light/dark shells |
+
+**Timing with safety:**
 
 ```text
-1. Accept Soft Signal input (short press preferred; never long-press trap)
+1. Accept Soft Signal (short press; no long-press trap)
 2. Commit session → ended_soft_signal
-3. Update UI / peers / radio per product rules
-4. Haptic play fire-and-forget (Primary or Gentle per mode)
+3. Show Visual Fallback immediately (mandatory)
+4. Play haptic Primary/Gentle fire-and-forget
+5. Optional sound if enabled
 ```
 
-Playback failure must not undo stop. Extra presses ≤ 800 ms do not stack chaos.
+#### Optional sound
+
+Soft descending low chime (~400–600 ms), never alarm klaxon. Default **off** in Sensory-Friendly.
 
 #### Rationale
 
-A **descending** warm pulse matches emotional release better than a hard dual-click “alarm.” Long fade is still high-fidelity VCM territory; LRA alone cannot do this kindly. Gentle Mode preserves dignity for sensory-sensitive users without removing Soft Signal’s *identity* as the stop word (visual remains primary carrier when needed).
+Descending VCM = release. Visual border + breath + explicit sentence guarantees ND/sensory users and haptics-off users get the same **freedom** message. Soft color avoids trauma-coded “you did something wrong.”
 
 ---
 
 ### 5.2 Connection request
 
-| | Primary | Gentle Mode |
-| --- | --- | --- |
-| **Feel** | Gentle **rising** heartbeat-like rhythm (2–3 soft throbs, rising slightly) | Single slow, very low-amplitude warm throb |
-| **When** | Careful-connect / invite needs **explicit** accept (NFC, QR, proximity offer) | Same |
-| **Actuators** | VCM (LRA off preferred) | VCM only |
-| **Duration** | ~450–700 ms total | ~200–350 ms single throb |
-| **Must not** | Romance, urgency, sexualized pound, continuous heartbeat while waiting | — |
+| Layer | Spec |
+| --- | --- |
+| **Emotional intent** | *Something careful arrived; you may choose.* |
+| **Primary haptic** | Gentle **rising** heartbeat-like rhythm (2–3 soft throbs) |
+| **Gentle haptic** | Single slow, very low-amplitude warm throb |
+| **Visual Fallback** | Warm **glowing pulse around the contact card** + subtle **breathing** + soft **notification banner** |
+| **Must not** | Romance pressure, sexualized pound, looping heart while waiting, escalating intensity |
 
-#### Waveform — Primary `connectionRequest.primary`
+#### Haptic — Primary `connectionRequest.primary`
 
 ```text
-Three soft throbs, each a small VCM envelope; amplitude rises slightly 1 → 2 → 3
-  throb: attack 30, sustain 40, release 70, base int 0.28 / 0.34 / 0.40
-  gap between throbs: 90–110 ms
-  f ≈ 60–70 Hz
-Max 1 play per invite; never loop while user decides
+2–3 soft VCM throbs; amplitude rises slightly (e.g. 0.28 → 0.34 → 0.40)
+  each: attack 30, sustain 40, release 70; gap 90–110 ms; f ≈ 60–70 Hz
+Play once per invite; never loop
 ```
 
-#### Waveform — Gentle `connectionRequest.gentle`
+#### Haptic — Gentle `connectionRequest.gentle`
 
 ```text
 Single VCM throb: attack 50, sustain 60, release 120, int ≤ 0.18, f ≈ 58 Hz
-Or: Visual only + optional soft chime if sound on
 ```
+
+#### Visual Fallback — Connection request
+
+| Element | Spec |
+| --- | --- |
+| **Contact card** | Soft warm glow along card edge; pulse opacity / outer glow radius slowly |
+| **Breathing** | Glow breathe ~5 s cycle; reduced motion → static warm rim + one fade-in |
+| **Banner** | Soft top/bottom notification: e.g. “Careful connect request” + Accept / Decline / Not now |
+| **Color** | Amber-soft / cream glow — not urgent red |
+| **Persistence** | Until user acts or request expires; no increasingly aggressive animation |
+
+#### Optional sound
+
+Soft double-tap wood tone, once. No repeat.
 
 #### Rationale
 
-“Heartbeat” here means **organic rhythm**, not panic or intimacy performance. Rising slightly says “something arrived that may need a choice” without demand. Gentle collapses to one throb or non-haptic.
+Organic rhythm without demand. Visual card glow keeps choice in context; banner aids Attention / VoiceOver.
 
-**Coercion rule:** Never increase rate/intensity if the user ignores the request.
+**Coercion rule:** Never speed up pulse or brighten indefinitely if ignored.
 
 ---
 
 ### 5.3 Mutual consent confirmed
 
-| | Primary | Gentle Mode |
-| --- | --- | --- |
-| **Feel** | Soft **synchronized double-pulse** | One extended, very gentle confirmation pulse |
-| **When** | Consent engine reports **mutual seal** only | Same |
-| **Actuators** | VCM (+ optional micro LRA on each pulse in Full) | VCM only |
-| **Must not** | “This person is safe,” fanfare, celebration buzz | Fake mutual if only one side affirmed |
+| Layer | Spec |
+| --- | --- |
+| **Emotional intent** | *Both of you affirmed the same map — for this session.* |
+| **Primary haptic** | Soft **synchronized double-pulse** |
+| **Gentle haptic** | One extended, very gentle confirmation pulse |
+| **Visual Fallback** | Beautiful **expanding ripple** + warm color flash + **affirming text animation** |
+| **Must not** | “This person is safe,” fireworks engagement, fake mutual |
 
-#### Waveform — Primary `mutualConsent.primary`
+#### Haptic — Primary `mutualConsent.primary`
 
 ```text
 Pulse A: VCM int 0.35, attack 25, release 80, f ~65 Hz
 Silence 70–90 ms
-Pulse B: VCM int 0.38, attack 25, release 90  (equal partners, not escalating)
-Optional: LRA int ≤ 0.22 sharp ≤ 0.28 with each pulse
+Pulse B: VCM int 0.38, attack 25, release 90  (equal, not escalating)
+Optional micro LRA ≤ 0.22 sharp ≤ 0.28 with each pulse (Full only)
 ```
 
-#### Waveform — Gentle `mutualConsent.gentle`
+#### Haptic — Gentle `mutualConsent.gentle`
 
 ```text
-One extended VCM pulse: attack 40, sustain 50, release 160, int ≤ 0.20
+One extended VCM: attack 40, sustain 50, release 160, int ≤ 0.20
 ```
 
-#### EmotionalGuard
+#### Visual Fallback — Mutual consent
 
-Refuse `mutualConsent` unless protocol state is mutually sealed. Otherwise silence or fail-closed UI only.
+| Element | Spec |
+| --- | --- |
+| **Ripple** | Soft expanding circular ripple from center (or between two soft nodes representing “both”); 1–2 waves max; ease-out |
+| **Warm flash** | Brief warm color wash (cream/amber) peaking ≤ 200 ms then settling — **not** strobe |
+| **Text** | Affirming animation: e.g. “Consent Snapshot sealed” / “You both affirmed this map” |
+| **Subcopy** | “This is not a guarantee of safety. Soft Signal is always available.” |
+| **Reduced motion** | No multi-ripple: single opacity fade + static seal mark + full text |
+| **Gate** | Only if consent engine reports mutual seal |
+
+#### Optional sound
+
+Two soft equal notes (not fanfare).
 
 #### Rationale
 
-Double-pulse = *two sides met* without a party. Gentle = one quiet “your device registered the seal.”
+Double-pulse = two sides. Visual ripple + humble copy prevents over-trust.
+
+**EmotionalGuard:** Refuse event if not mutually sealed.
 
 ---
 
 ### 5.4 Positive feedback (local confirmation)
 
-| | Primary | Gentle Mode |
-| --- | --- | --- |
-| **Feel** | Pleasant **rising click/glow** | Barely noticeable warm micro-pulse **or visual-only** |
-| **When** | Local save, local affirm, settings toggle on, non-critical success | Same |
-| **Must not** | Imply peer agreed; reward farming | — |
+| Layer | Spec |
+| --- | --- |
+| **Emotional intent** | *Your local action registered.* |
+| **Primary haptic** | Pleasant **rising click/glow** |
+| **Gentle haptic** | Barely noticeable warm micro-pulse |
+| **Visual Fallback** | Soft **checkmark** with **expanding glow** + gentle **particle burst** (calm, sparse) |
+| **Must not** | Peer agreement, streak, addictive reward |
 
-#### Waveform — Primary `positiveFeedback.primary`
+#### Haptic — Primary `positiveFeedback.primary`
 
 ```text
-VCM short rising glow: f 55→70 Hz, attack 20, release 60, int peak 0.32
+VCM rising glow: f 55→70 Hz, attack 20, release 60, peak int 0.32
 Optional LRA soft click: int 0.30 sharp 0.28 dur 14 at onset
 ```
 
-#### Waveform — Gentle `positiveFeedback.gentle`
+#### Haptic — Gentle `positiveFeedback.gentle`
 
 ```text
 VCM micro-pulse int ≤ 0.12, total < 80 ms
-OR visual-only (recommended default under Sensory-Friendly for non-critical UI)
 ```
+
+#### Visual Fallback — Positive feedback
+
+| Element | Spec |
+| --- | --- |
+| **Checkmark** | Soft rounded check; scale 0.92→1.0 ease-out |
+| **Expanding glow** | Soft circular glow under icon, expands and fades ~300–450 ms |
+| **Particles** | Sparse, slow, warm particles (≤ 12); optional; **off** under reduced motion / Sensory-Friendly optional density reduction |
+| **Context** | Adjacent to the control that was saved/confirmed |
+| **Reduced motion** | Static check + single opacity flash, no particles |
+
+#### Optional sound
+
+Single soft tick.
+
+#### Rationale
+
+Local only. Particles stay gentle — never confetti casino.
 
 ---
 
 ### 5.5 Nearby / incoming notification
 
-| | Primary | Gentle Mode |
-| --- | --- | --- |
-| **Feel** | Light **ambient throb** | Extremely subtle single pulse **or visual + optional sound only** |
-| **When** | Opt-in radar first nearby; or incoming careful invite (if not using connectionRequest) | Same |
-| **Constraints** | Max 1 / 30 s; never during Soft Signal; radio off → never | Prefer visual-only in Sensory-Friendly |
+| Layer | Spec |
+| --- | --- |
+| **Emotional intent** | *Optional awareness — no demand.* |
+| **Primary haptic** | Light **ambient throb** |
+| **Gentle haptic** | Extremely subtle single pulse |
+| **Visual Fallback** | Soft **ambient glow on screen edge** + optional **subtle floating indicator** |
+| **Must not** | Stalking pressure, continuous field, consent |
 
-#### Waveform — Primary `nearby.primary`
+#### Haptic — Primary `nearby.primary`
 
 ```text
-VCM single ambient envelope: attack 40, sustain 50, release 120, int 0.22, f ~60 Hz
+VCM ambient: attack 40, sustain 50, release 120, int 0.22, f ~60 Hz
+Max 1 / 30 s; never during Soft Signal; radio off → never
 ```
 
-#### Waveform — Gentle `nearby.gentle`
+#### Haptic — Gentle `nearby.gentle`
 
 ```text
 VCM int ≤ 0.10, total < 100 ms
-OR no haptic — visual badge + optional chime
 ```
 
----
+#### Visual Fallback — Nearby / incoming
 
-### 5.6 Additional patterns (same Gentle requirement)
-
-| Event | Primary | Gentle |
-| --- | --- | --- |
-| `presence` / arrive | Soft breath-in VCM | Micro breath or silence |
-| `attention` / pause | Soft double glow | Single micro glow or visual |
-| `consentLocalAffirm` | positiveFeedback family | Gentle positive / visual |
-| `consentRevokedLocal` | Short warm descent (family of Soft Signal, lower peak) | Micro descent or visual |
-| `linkFailed` | Single muted soft tick (not alarm) | Visual only preferred |
-| `emergencyStop` | Firmer warm descent + slightly stronger peak — **still not a siren** | Soft Signal Gentle + strong visual/sound |
-| `softSignalRemoteEnded` | Softer descent than local Soft Signal | Micro fade or visual |
-
----
-
-## 6. Semantic map (stable names)
-
-| Semantic event | Pattern family | Priority |
-| --- | --- | --- |
-| `softSignal` | Soft Signal | safety |
-| `emergencyStop` | Emergency (firm descent) | safety |
-| `consentRevokedLocal` | Short descent | safety |
-| `carefulTapPrompt` / connection invite | Connection request | normal |
-| `consentMutualSealed` | Mutual consent | normal |
-| `confirmation` / local save | Positive feedback | normal |
-| `consentLocalAffirm` | Positive feedback | normal |
-| `nearbyAware` | Nearby | low |
-| `presence` | Presence breath | low |
-| `linkFailed` | Fail tick | normal |
-
-Phone clients keep ADR 0039 five-event subset; device implements full map with Primary/Gentle variants.
-
----
-
-## 7. Accessibility (ND & sensory-sensitive)
-
-### 7.1 Required features
-
-| Feature | Spec |
+| Element | Spec |
 | --- | --- |
-| **Sensory-Friendly Mode** | Global; easy access; maps all patterns to Gentle |
-| **Intensity slider** | Global 0–100% with safe clamp |
-| **Per-pattern presets** | Full / Gentle / Visual-only / Off |
-| **Full disable** | Master off + strong Soft Signal visual + optional sound |
-| **Profile suggestions** | From Vibe / sensory answers — confirm before apply |
-| **No remote control** | Partner cannot change haptic settings |
-| **No long-press Soft Signal** | Short press; discoverable control |
-| **Reduced motion** | Does not auto-kill haptics; user toggles win |
-| **VoiceOver / large type** | Full meaning without haptics |
-| **Self-test** | Optional settings “feel Soft Signal (Gentle/Full)” only when user starts it |
+| **Edge glow** | Soft ambient light along one screen edge (or bezel); low contrast; slow breathe or static under reduced motion |
+| **Floating indicator** | Optional small soft orb/dot near radar/nearby UI; does not chase the eye |
+| **Copy** | If banner used: calm “Someone nearby (opt-in radar)” — never “Match waiting!” |
+| **Sensory-Friendly default** | Prefer edge glow static + no haptic for nearby |
 
-### 7.2 Sensory safety limits
+#### Optional sound
 
-| Limit | Value |
-| --- | --- |
-| Max sharpness (LRA) Default | ≤ 0.35 Soft Signal onset; ≤ 0.40 positive click |
-| Max sharpness Gentle | LRA off |
-| Max peak int Gentle Soft Signal | ≤ 0.22 (seed) |
-| No looping patterns | Connection request plays once |
-| No escalating ignore-punishment | Intensity never rises because user delayed |
-| Ban list | Purr, horror heartbeat, triple alarm, continuous nearby field |
+Single soft tick, rare; default off in Sensory-Friendly.
 
-### 7.3 Visual & sound alternatives (when haptics Gentle/off)
+#### Rationale
 
-| Event | Visual | Optional sound |
-| --- | --- | --- |
-| Soft Signal | Full-screen / unmistakable Soft Signal state, calm color, clear copy | Soft low chime descending (user opt-in) |
-| Connection request | Card + accept/decline | Soft double tap tone |
-| Mutual consent | Seal confirmation UI | Soft two-note |
-| Nearby | Badge / radar mark | Single soft tick |
-| Fail | Plain error, no red panic | Single muted tone |
-
-Sound defaults **off** in Sensory-Friendly unless user enables.
+Ambient, not alarm. Visual edge glow works when pocketed device is glanced at later.
 
 ---
 
-## 8. Software architecture
+### 5.6 Additional events (same three-layer rule)
 
-### 8.1 Layers
+| Event | Primary haptic | Gentle | Visual Fallback (summary) |
+| --- | --- | --- | --- |
+| `presence` | Soft breath-in VCM | Micro breath / none | Soft screen settle / dim glow |
+| `attention` | Soft double glow | Single micro | Soft highlight ring on focus target |
+| `consentLocalAffirm` | Positive family | Gentle positive | Check + “You affirmed (waiting for them)” |
+| `consentRevokedLocal` | Short warm descent | Micro descent | Calm banner “You withdrew consent” |
+| `linkFailed` | Soft muted tick | None | Plain fail UI, no panic red |
+| `emergencyStop` | Firmer descent (still not siren) | Soft Signal Gentle | Soft Signal visual family + “Emergency stop registered” |
+| `softSignalRemoteEnded` | Softer descent | Micro / none | “Session ended” calm state — never blame |
+
+---
+
+## 6. Semantic map & priority
+
+| Event | Pattern family | Priority | Visual always? |
+| --- | --- | --- | --- |
+| `softSignal` | Soft Signal | safety | **Yes** |
+| `emergencyStop` | Emergency descent | safety | **Yes** |
+| `consentRevokedLocal` | Short descent | safety | **Yes** |
+| `connectionRequest` / careful tap | Connection request | normal | **Yes** when invite visible |
+| `consentMutualSealed` | Mutual consent | normal | **Yes** |
+| `confirmation` | Positive feedback | normal | Soft companion OK |
+| `nearbyAware` | Nearby | low | Edge glow preferred |
+
+---
+
+## 7. Software architecture
+
+### 7.1 Layers
 
 ```text
 Session / consent / proximity FSMs
-  → HapticSemantic.play(event, opts)
-      → EmotionalGuard (mutual seal, radio gates, off)
-          → ModeResolver (Sensory-Friendly? per-pattern preset? intensity?)
-              → PatternBank soft_edge_v2 (primary | gentle | none)
-                  → DistributedVcmMixer (+ optional LRA accent)
-                      → Drivers
+  → FeedbackSemantic.emit(event)
+      → EmotionalGuard
+          → ModeResolver (Sensory-Friendly, presets, intensity, reduced motion)
+              ├─► HapticBank  (primary | gentle | none)
+              ├─► VisualBank  (always select variant; density by mode)
+              └─► SoundBank   (optional)
 ```
 
-### 8.2 Interface sketch
+### 7.2 Interface sketch
 
 ```ts
-export type HapticEvent =
+export type FeedbackEvent =
   | "softSignal"
   | "emergencyStop"
   | "connectionRequest"
@@ -483,102 +523,92 @@ export type HapticEvent =
 
 export type PatternPreset = "full" | "gentle" | "visual_only" | "off";
 
-export interface HapticUserSettings {
-  masterEnabled: boolean;
-  sensoryFriendlyMode: boolean;
+export interface FeedbackUserSettings {
+  masterHapticsEnabled: boolean;
+  sensoryFriendlyMode: boolean; // one-tap global
   globalIntensity: number; // 0..1
-  patternPresets: Partial<Record<HapticEvent, PatternPreset>>;
+  patternPresets: Partial<Record<FeedbackEvent, PatternPreset>>;
   soundEnabled: boolean;
+  reducedMotion: boolean | "system";
   acceptCalmDefaultsFromVibe: boolean;
 }
 
-export interface HapticService {
-  play(event: HapticEvent, opts?: { source: string }): Promise<void>;
-  cancelAll(): void;
-  getSettings(): HapticUserSettings;
-  setSettings(patch: Partial<HapticUserSettings>): void;
-  /** Suggestion only — does not apply without confirm unless user opted in. */
-  suggestFromVibe(profile: VibeSensoryHints): HapticUserSettings;
+export interface FeedbackService {
+  /** Commits no safety state — callers commit first for Soft Signal. */
+  emit(event: FeedbackEvent, opts?: { source: string }): Promise<void>;
+  cancelHaptics(): void;
+  getSettings(): FeedbackUserSettings;
+  setSettings(patch: Partial<FeedbackUserSettings>): void;
+  /** Opens Sensory-Friendly in one action (from anywhere). */
+  enableSensoryFriendlyMode(): void;
 }
 ```
 
-### 8.3 Soft Signal ordering
+### 7.3 Soft Signal ordering
 
 ```text
-commit stop → UI/peers → play(softSignal) fire-and-forget
+accept → commit ended_soft_signal → Visual Soft Signal (mandatory)
+       → haptic fire-and-forget → optional sound
 ```
 
-### 8.4 Pattern bank file
+### 7.4 Pattern / visual bank files
 
-`firmware/patterns/soft_edge_v2.json` (or equivalent):
-
-```json
-{
-  "version": 2,
-  "personality": "soft_edge_warm",
-  "events": {
-    "softSignal": {
-      "primary": "warmDescent",
-      "gentle": "breathLeave",
-      "priority": "safety"
-    },
-    "connectionRequest": {
-      "primary": "risingHeartSoft",
-      "gentle": "singleWarmThrob"
-    },
-    "consentMutualSealed": {
-      "primary": "doublePulseSync",
-      "gentle": "extendedConfirm"
-    },
-    "confirmation": {
-      "primary": "risingClickGlow",
-      "gentle": "microPulseOrNone"
-    },
-    "nearbyAware": {
-      "primary": "ambientThrob",
-      "gentle": "microOrVisual"
-    }
-  }
-}
+```text
+firmware/patterns/soft_edge_v3.json     # haptic primary/gentle
+app/feedback/visual/soft_edge_v3.ts     # visual fallback components + tokens
+app/feedback/sound/soft_edge_v3.json    # optional
 ```
+
+---
+
+## 8. Design tokens (visual fallback examples)
+
+Suggested product tokens (align with site cream/amber language):
+
+| Token | Example | Use |
+| --- | --- | --- |
+| `--feedback-warm-field` | `#F6EFE2` | Soft Signal field |
+| `--feedback-warm-border` | `#B5602C` @ 40–70% | Pulsing border |
+| `--feedback-glow` | `#D68A52` soft | Card / positive glow |
+| `--feedback-text` | ink on cream | Primary sentences |
+| `--feedback-breath-ms` | `5000` | Default breathe cycle |
+| `--feedback-motion-ease` | cubic-bezier soft | All feedback motion |
 
 ---
 
 ## 9. Validation
 
-### 9.1 Bench
+### 9.1 Bench (haptic)
 
 | Test | Pass |
 | --- | --- |
-| Soft Signal latency to first motion | ≤ 30 ms p95 |
-| Soft Signal fade smoothness | No hard steps; spectrogram continuous descent |
-| Gentle Soft Signal peak | ≤ configured cap; still measurable on fixture |
-| Preempt | Soft Signal cancels other patterns immediately |
-| Distributed phase | Multi-actuator phase error within mech budget |
-| Ring | ≤ 40 ms after zero command |
+| Soft Signal first motion | ≤ 30 ms p95 |
+| Descent smoothness | Continuous amplitude fall; no hard steps |
+| Gentle peak | ≤ cap; fixture-measurable |
+| Preempt | Soft Signal cancels lower patterns |
+| Ring | ≤ 40 ms after zero |
 
-### 9.2 Sensory & emotional study
+### 9.2 Visual / a11y
 
-Include sensory-sensitive and ND-identifying adults (opt-in, stop anytime):
+| Test | Pass |
+| --- | --- |
+| Soft Signal haptics off | Full visual + text alone; session ended correctly |
+| Sensory-Friendly one-tap | ≤ 1 action from session UI |
+| Reduced motion | No continuous pulse; text complete |
+| Contrast | Soft Signal sentence readable |
+| Photosensitive | No flash > 3 Hz; Soft Signal breathe ≤ 0.25 Hz |
 
-1. Soft Signal labels: want *stopped / free / released*, not *alarm / error*  
-2. Gentle Mode usable for a full session without overload  
-3. Connection “heartbeat” not read as sexual or coercive  
-4. Mutual seal not read as “safe person”  
-5. Sensory-Friendly discoverability (< 2 steps from session UI)  
-6. Full off + visual Soft Signal alone is sufficient  
+### 9.3 Sensory & emotional study
 
-**Hard fail:** majority experience Soft Signal Primary as alarming → lower peak, longer fade, less LRA — do not “fix” by getting louder.
+Include ND / sensory-sensitive opt-in participants:
 
-### 9.3 Accessibility regression
+1. Soft Signal → “free / stopped / done” not “alarm”  
+2. Visual Soft Signal alone sufficient  
+3. Connection heart not sexual/coercive  
+4. Mutual seal not “safe person”  
+5. Particle density not overwhelming in Full  
 
-- Master off  
-- Sensory-Friendly on  
-- Per-pattern visual-only  
-- Actuator fault  
-- Soft Signal multi-press  
-- EmotionalGuard false mutual  
-- Suggestion never overrides prior Off without consent  
+**Hard fail:** Soft Signal Primary mostly labeled danger → lower peak / longer fade / warmer visual, not louder.
 
 ---
 
@@ -586,15 +616,15 @@ Include sensory-sensitive and ND-identifying adults (opt-in, stop anytime):
 
 | Phase | Deliverable |
 | --- | --- |
-| **H0** | This document (v2) + ADR alignment |
-| **H1** | Phone semantic haptics (existing path) |
-| **H2** | Soft Edge simulator (VCM envelopes + audio proxy) |
-| **H3** | VCM (+ LRA) bench; Soft Signal warm descent latency |
-| **H4** | Gentle Mode pack + sensory user study |
-| **H5** | Settings: Sensory-Friendly, intensity, per-pattern, vibe suggestions |
-| **H6** | Distributed multi-actuator (if multi-module hardware) |
+| **H0** | This v3 spec |
+| **H1** | Phone semantic haptics (existing) |
+| **H2** | Visual fallback components (RN/device UI) for Soft Signal first |
+| **H3** | VCM bench + warm descent |
+| **H4** | Gentle pack + Sensory-Friendly one-tap |
+| **H5** | Full pattern set + visual banks + vibe suggestions |
+| **H6** | Distributed multi-actuator (if multi-module) |
 
-Not on private-alpha critical path. Phone remains the real shipping surface until hardware exists.
+Not private-alpha blocking. Phone remains real surface until hardware ships.
 
 ---
 
@@ -602,12 +632,12 @@ Not on private-alpha critical path. Phone remains the real shipping surface unti
 
 | Risk | Mitigation |
 | --- | --- |
-| Long Soft Signal feels weak / missed | Visual primary; optional Soft Signal floor; self-test |
-| Long Soft Signal feels like alarm if peak too high | Low peak, descent character; study gate |
-| Heartbeat misread as intimate/sexual | Soft, short, non-looping; Gentle single throb; copy |
-| Sensory-Friendly hidden | Quick access control required |
-| Auto vibe suggestions feel controlling | Confirm before apply; never re-enable after Off |
-| Distributed rattle | Mech isolation; mono phase v1 |
+| Long Soft Signal missed | Mandatory visual; optional sound; self-test |
+| Soft Signal as alarm | Descent character; soft color field; study gate |
+| Heartbeat misread | Soft non-loop; Gentle single; copy |
+| Particles overwhelm | Sparse; off under reduced motion / optional SF |
+| Visual distraction mid-session | Soft Signal full-screen only on end; connection scoped to card |
+| Auto suggestions pushy | Confirm; never re-enable after Off |
 
 ---
 
@@ -615,26 +645,32 @@ Not on private-alpha critical path. Phone remains the real shipping surface unti
 
 | Doc | Role |
 | --- | --- |
-| **`docs/HARDWARE/HAPTICS.md`** | **Canonical** dedicated-device haptic system |
-| `docs/HAPTIC_SYSTEM_DEVICE.md` | Pointer / historical Soft Edge notes → prefer this file |
-| ADR 0057 | VCM primary + LRA secondary architecture |
-| ADR 0039 + phone plan | Mobile subset |
-| Website `/litmo#hardware` | Product vision language only |
+| **`docs/HARDWARE/HAPTICS.md`** | **Canonical** multi-modal haptic + visual system |
+| `docs/HAPTIC_SYSTEM_DEVICE.md` | Pointer |
+| ADR 0057 | VCM + LRA architecture |
+| ADR 0039 / phone plan | Mobile subset |
+| Website `/litmo#hardware` | Vision only |
 
 ---
 
 ## 13. Quick reference
 
 ```text
-Stack:     Wideband VCM primary · LRA secondary accents · distributed warm field
-Mode:      Sensory-Friendly → all Gentle; intensity; per-pattern; full off + visual/sound
-Soft Signal: long smooth DESCENDING warm pulse · Gentle = breath-leave · after state commit
-Connection: rising soft heartthrobs · Gentle = one slow throb
-Mutual:     double soft pulse · Gentle = one extended pulse · only if sealed
-Positive:   rising click/glow · Gentle = micro or visual-only
-Nearby:     ambient throb · Gentle = micro or visual+sound
-Suggest:   from Vibe/sensory — confirm before apply
+Stack:     Wideband VCM primary · LRA accents · distributed warm field
+Layers:    Primary haptic · Gentle haptic · Full Visual Fallback · optional sound
+SF Mode:   One-tap · all Gentle · vision carries more
+Soft Signal: descending warm pulse · Gentle breath-fade
+             Visual: pulsing border + soft field + “Session ended via Soft Signal” + breath
+Connection: rising soft heart · Gentle one throb
+             Visual: card glow + breath + banner
+Mutual:     double pulse · Gentle one pulse · sealed only
+             Visual: ripple + warm flash + affirming text
+Positive:   rising click/glow · Gentle micro
+             Visual: check + glow + sparse particles
+Nearby:     ambient throb · Gentle micro
+             Visual: edge glow + optional float
+Off:        haptics silent · visuals still complete for critical meaning
 ```
 
 **Tagline:**  
-*Warm enough to feel alive. Gentle enough for a sensitive day. Clear enough to end safely.*
+*Warm enough to feel alive. Gentle enough for a sensitive day. Clear enough to end safely — even in silence.*

@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-07-13 — Hardware haptics v3: full visual fallbacks + multi-modal Soft Edge
+
+### Summary
+
+Expanded **`docs/HARDWARE/HAPTICS.md`** to **v3.0**: every pattern now specifies
+Primary haptic, Gentle Mode, and a **full Visual Fallback** (Soft Signal pulsing
+border + soft field + explicit “Session ended via Soft Signal” breath text;
+connection card glow; mutual seal ripple; positive check + particles; nearby
+edge glow). Sensory-Friendly is **one-tap from anywhere**; automatic visual
+fallback when haptics are off/failed; optional sound; reduced-motion rules.
+
+### User-visible impact
+
+- None on current phone app (hardware vision). Specs ready for device UI + firmware.
+
+### Developer impact
+
+- `docs/HARDWARE/HAPTICS.md` v3 multi-modal authority.
+
 ## 2026-07-13 — Hardware haptics v2: VCM-first, Gentle Mode, Soft Signal descent
 
 ### Summary
