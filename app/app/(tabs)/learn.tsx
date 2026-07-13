@@ -99,14 +99,14 @@ export default function LearningHomeScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.eyebrow}>GUIDED PRACTICE</Text>
+      <Text style={styles.eyebrow}>GUIDED LEARNING</Text>
       <Text style={styles.title} accessibilityRole="header">
         Learn the language before you need it.
       </Text>
       <Text style={styles.intro}>
-        Short, private modules — product foundations and hard-earned relational
-        lessons. Trauma-informed, interactive, never scored. Completing a module
-        never proves anyone is safe.
+        A full private section: hard-earned lived lessons plus Litmo
+        foundations. Short interactive steps, trauma-informed, never scored.
+        Completing a module never proves anyone is safe.
       </Text>
 
       {prefs.enabled ? (
@@ -190,9 +190,11 @@ export default function LearningHomeScreen() {
           Lived lessons
         </Text>
         <Text style={styles.sectionHint}>
-          Hard-learned skills: consent language, nervous system safety,
-          boundaries, recovery, communication, and self-compassion. Stay as long
-          as you need — leave anytime.
+          Six hard-learned modules: Consent as Language, Nervous System Safety,
+          Boundaries, Recovering from Violation, Partner Communication, and
+          Self-Compassion. Short sections, interactive practice, private
+          progress. Several pair with a Vibe or self quiz — optional, never a
+          grade. Leave anytime.
         </Text>
       </View>
 

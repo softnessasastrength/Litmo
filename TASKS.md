@@ -75,12 +75,14 @@ None recorded. External credentials, signing, App Store configuration, or policy
 ### LEARN-004 — Lived-lesson modules + Vibe Quiz pairing
 
 - **Status:** completed
-- **Result:** Six short private modules (consent language, nervous system
-  safety, boundaries, recovering from violation, partner communication,
-  self-compassion) with scenarios; Learn hub tracks; soft-close optional quiz
-  CTAs; Quizzes ↔ Learn links; curriculum tests.
+- **Result:** Full Guided Learning lived track: six expanded short modules
+  (Consent as Language, Nervous System Safety, Boundaries, Recovering from
+  Violation, Partner Communication, Self-Compassion) with frame steps +
+  interactive scenarios; Learn hub labeled Guided Learning; Home + demo entry;
+  quiz result → related modules; soft-close quiz CTAs; private progress.
 - **Verification:** `learningModules.test.ts` + app typecheck/tests.
-- **Boundary:** not therapy; not safety certification; weather ≠ consent.
+- **Boundary:** not therapy; not safety certification; weather ≠ consent;
+  recovering module non-graphic and exit-friendly.
 - **Related docs:** `docs/LEARNING_SYSTEM.md`.
 
 ### QUIZ-003 — Partner invite & shared comparison flow

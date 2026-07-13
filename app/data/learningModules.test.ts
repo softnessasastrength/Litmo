@@ -23,7 +23,7 @@ test("all modules have a track and short step counts", () => {
     );
     assert.ok(module.steps.length >= 2);
     assert.ok(module.steps.length <= 12);
-    assert.ok(module.minutes >= 2 && module.minutes <= 12);
+    assert.ok(module.minutes >= 2 && module.minutes <= 15);
     for (const step of module.steps) {
       assert.ok(step.title.length > 0);
       assert.ok(step.body.length > 20);

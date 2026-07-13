@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-13 — Full Guided Learning lived-lesson track
+
+### Summary
+
+Expanded the six hard-learned lived lessons into a complete private Guided
+Learning track (frame + short sections + scenarios), with stronger Vibe Quiz
+integration on result screens and Home/demo entry points.
+
+### User-visible impact
+
+- Learn tab presents a full section: Lived lessons first, then foundations.
+- Each lived module is short, interactive, trauma-informed, leave-anytime.
+- Quiz results link related modules; Home opens Guided Learning.
+
 ## 2026-07-13 — Vibe Quiz review + calm demo path
 
 ### Summary

@@ -206,6 +206,16 @@ export default function HomeTabScreen() {
         variant="secondary"
         label={
           status === "demo"
+            ? "Guided Learning (lived lessons · demo)"
+            : "Guided Learning"
+        }
+        onPress={() => router.push("/(tabs)/learn" as never)}
+        accessibilityHint="Opens private short modules on consent language, boundaries, recovery, and more. Never a safety score."
+      />
+      <Button
+        variant="secondary"
+        label={
+          status === "demo"
             ? "Partner invite practice (demo)"
             : "Partner invite & comparison"
         }

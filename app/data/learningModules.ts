@@ -395,18 +395,26 @@ export const learningModules: LearningModule[] = [
   },
 
   // —— Lived lessons: hard-earned relational skills (private, short, interactive) ——
+  // Full Guided Learning track: six modules, short sections, trauma-informed.
+  // Completing them never certifies safety, readiness, or consent skill.
 
   {
     id: "consent-as-language",
     title: "Consent as Language",
     summary:
       "Treat consent as something you speak and hear — not a vibe, smile, or past yes.",
-    minutes: 4,
+    minutes: 5,
     track: "lived-lessons",
     relatedQuizId: "vibe-short",
     relatedQuizPrompt:
-      "Optional: the short Vibe Quiz names weather, not permission. Consent still needs words.",
+      "Optional: short Vibe Quiz names weather only. Consent still needs words — try it privately after this module.",
     steps: [
+      {
+        id: "cal-frame",
+        title: "A language you practice",
+        body: "Consent is not a vibe check or a personality trait. It is a living language: ask, answer, revise, stop. This module stays private on your device. Completing it does not make anyone “safe to touch.”",
+        takeaway: "Practice the words. Never claim certification.",
+      },
       {
         id: "cal-words-not-weather",
         title: "Weather is not a yes",
@@ -423,7 +431,8 @@ export const learningModules: LearningModule[] = [
             "You both affirmed a short, light side hug. They seem relaxed. You want to linger. What is language-first?",
           options: [
             {
-              label: "Ask for a clear yes about longer contact before changing anything",
+              label:
+                "Ask for a clear yes about longer contact before changing anything",
               feedback:
                 "Yes. New duration is a new sentence. Wait for an explicit yes — or stop if unsure.",
             },
@@ -445,6 +454,26 @@ export const learningModules: LearningModule[] = [
         title: "Hearing no as complete",
         body: "No, not now, I need space, and Soft Signal are finished sentences. They do not require a debate, a better offer, or proof that you are still a good person. Your job is to stop, leave room, and regulate yourself without making their boundary manage your feelings.",
         takeaway: "A complete no needs no defense.",
+        scenario: {
+          prompt: "They say “not today” after you invite a session. Best reply?",
+          options: [
+            {
+              label: "Thank them and leave the door open without pressure",
+              feedback:
+                "Yes. No is complete. Warmth without pursuit respects the language.",
+            },
+            {
+              label: "Ask three more times with different times or activities",
+              feedback:
+                "Repeated asks can feel like pressure. One clear answer is enough.",
+            },
+            {
+              label: "Share your Vibe result so they see you are a good match",
+              feedback:
+                "Weather is not persuasion. Matching quizzes never override a no.",
+            },
+          ],
+        },
       },
     ],
   },
@@ -453,12 +482,18 @@ export const learningModules: LearningModule[] = [
     title: "Nervous System Safety",
     summary:
       "Notice capacity, freeze, and aftercare — without diagnosing yourself or anyone else.",
-    minutes: 4,
+    minutes: 5,
     track: "lived-lessons",
     relatedQuizId: "soft-capacity",
     relatedQuizPrompt:
-      "Optional: Soft Capacity is a private weather check for energy and “enough.”",
+      "Optional: Soft Capacity is a private check for energy and “enough” — not a diagnosis.",
     steps: [
+      {
+        id: "nss-frame",
+        title: "Bodies keep score quietly",
+        body: "This is not clinical advice and not a trauma screen. It is a short practice in noticing capacity so consent can stay free. Leave anytime if the topic is too much.",
+        takeaway: "You can exit this module the same way you can exit a session.",
+      },
       {
         id: "nss-capacity-first",
         title: "Capacity is consent-relevant",
@@ -475,7 +510,8 @@ export const learningModules: LearningModule[] = [
             "Mid-session they go quiet and still. You feel awkward. Safest move?",
           options: [
             {
-              label: "Pause, lower intensity, and offer an easy stop without pressure",
+              label:
+                "Pause, lower intensity, and offer an easy stop without pressure",
               feedback:
                 "Yes. Create room. Soft Signal and space are available. Do not fill silence with more touch.",
             },
@@ -505,12 +541,18 @@ export const learningModules: LearningModule[] = [
     title: "Boundaries",
     summary:
       "Name limits early, hold them kindly, and refuse the trap of earning rest or safety.",
-    minutes: 4,
+    minutes: 5,
     track: "lived-lessons",
     relatedQuizId: "boundary-voice",
     relatedQuizPrompt:
-      "Optional: Boundary Voice is a short private practice in naming limits with warmth.",
+      "Optional: Boundary Voice practices naming limits with warmth — private only.",
     steps: [
+      {
+        id: "bnd-frame",
+        title: "Limits are information",
+        body: "A boundary is data about what works for you today. It is not a rejection of someone’s worth. Short practice: early, clear, kind, changeable.",
+        takeaway: "Clarity is a form of care.",
+      },
       {
         id: "bnd-early-clear",
         title: "Early and clear is kind",
@@ -527,7 +569,8 @@ export const learningModules: LearningModule[] = [
             "Someone pushes after you already said a clear limit. What honors your boundary?",
           options: [
             {
-              label: "Repeat once if needed, then stop contact or Soft Signal — no essay required",
+              label:
+                "Repeat once if needed, then stop contact or Soft Signal — no essay required",
               feedback:
                 "Yes. You already answered. Escalation is not your homework.",
             },
@@ -557,29 +600,38 @@ export const learningModules: LearningModule[] = [
     title: "Recovering from Violation",
     summary:
       "After a boundary is crossed: your pace, your tools, and the truth that repair is never owed.",
-    minutes: 4,
+    minutes: 5,
     track: "lived-lessons",
     relatedQuizId: "soft-capacity",
     relatedQuizPrompt:
       "Optional: Soft Capacity can help you notice energy after hard moments — privately.",
     steps: [
       {
+        id: "rfv-frame",
+        title: "Careful room",
+        body: "This section is non-graphic and optional. It does not replace crisis care, counseling, or trusted people in your life. If this topic is too much, exit now — that is self-trust, not failure.",
+        takeaway: "You choose whether and when to continue.",
+      },
+      {
         id: "rfv-believe-yourself",
         title: "Believe your own no",
         body: "If something crossed a line, you do not need the other person to agree before it counts. Minimizing (“maybe I overreacted”) is common after harm. You can name it privately first: that was too much, too fast, or not what I agreed to. Your timeline for naming it is yours.",
-        takeaway: "Your experience does not require their validation to be real.",
+        takeaway:
+          "Your experience does not require their validation to be real.",
       },
       {
         id: "rfv-tools-not-performance",
         title: "Tools, not performance",
         body: "Litmo offers Soft Signal, block, report, and private wrap-up. Use what you need. You are not required to educate the person who crossed a line, accept an apology, or “process together” for their relief. Human review of reports is private. This module is not clinical care — if you are in ongoing distress, outside support can matter.",
-        takeaway: "Safety tools exist so you do not have to fix this alone in the room.",
+        takeaway:
+          "Safety tools exist so you do not have to fix this alone in the room.",
         scenario: {
           prompt:
             "A session went past what you affirmed. You feel shaken. What is a valid next step?",
           options: [
             {
-              label: "Leave, Soft Signal if still open, and use block/report if you want distance or review",
+              label:
+                "Leave, Soft Signal if still open, and use block/report if you want distance or review",
               feedback:
                 "Yes. Exit first. Tools are available without a perfect narrative.",
             },
@@ -589,7 +641,8 @@ export const learningModules: LearningModule[] = [
                 "You do not owe a calm seminar to keep yourself safe. Exit is enough.",
             },
             {
-              label: "Wait to see if they apologize before deciding it was a problem",
+              label:
+                "Wait to see if they apologize before deciding it was a problem",
               feedback:
                 "Their apology does not define whether your boundary was crossed. You can decide on your own evidence.",
             },
@@ -609,17 +662,23 @@ export const learningModules: LearningModule[] = [
     title: "Partner Communication",
     summary:
       "Check in, repair small misses, and keep comparison or weather talk from becoming pressure.",
-    minutes: 4,
+    minutes: 5,
     track: "lived-lessons",
     relatedQuizId: "connection-pace",
     relatedQuizPrompt:
       "Optional: Connection Pace names how fast closeness feels good — privately, for you.",
     steps: [
       {
+        id: "pc-frame",
+        title: "Talk is part of touch culture",
+        body: "Platonic connection still needs language. This module is about check-ins and small repairs — not debate skills for winning.",
+        takeaway: "Curiosity without pressure is the skill.",
+      },
+      {
         id: "pc-check-ins",
         title: "Short check-ins beat mind reading",
         body: "“How is this pressure?” and “Want to pause?” are gifts. Wait for a real answer. Pair words with an easy out. Shared Vibe weather or quiz comparison can be conversation fuel only after mutual consent to share and compare — never a script that someone must match.",
-        takeaway: "Curiosity without pressure is the skill.",
+        takeaway: "Ask, wait, accept the answer.",
       },
       {
         id: "pc-small-repair",
@@ -631,7 +690,8 @@ export const learningModules: LearningModule[] = [
             "You want to share Vibe weather with a partner. What keeps it safe?",
           options: [
             {
-              label: "Invite only, wait for explicit share and compare consent, accept no",
+              label:
+                "Invite only, wait for explicit share and compare consent, accept no",
               feedback:
                 "Yes. Partner quiz share on Litmo requires dual consent. No is complete.",
             },
@@ -661,12 +721,18 @@ export const learningModules: LearningModule[] = [
     title: "Self-Compassion",
     summary:
       "After awkwardness, stops, or hard lessons — speak to yourself without cruelty.",
-    minutes: 3,
+    minutes: 4,
     track: "lived-lessons",
     relatedQuizId: "comfort-care",
     relatedQuizPrompt:
-      "Optional: Comfort & Care is a soft private map of what settles you.",
+      "Optional: Comfort & Care maps what settles you — a soft private mirror.",
     steps: [
+      {
+        id: "sc-frame",
+        title: "Kindness is not complacency",
+        body: "Self-compassion is how you stay teachable without self-attack. It does not excuse harm to others. It does not require you to “stay open” after a stop.",
+        takeaway: "You can be firm with others and gentle with yourself.",
+      },
       {
         id: "sc-human-not-broken",
         title: "Awkward is human",
@@ -679,10 +745,12 @@ export const learningModules: LearningModule[] = [
         body: "If you used Soft Signal, you protected something important. If someone else did, their stop is not a verdict on your worth. Private wrap-up is for gentle reflection, not a trial transcript. Rest before you re-enter discovery or partner share.",
         takeaway: "A stop can be success at honesty.",
         scenario: {
-          prompt: "You feel embarrassed after a session ended early. Kindest next step?",
+          prompt:
+            "You feel embarrassed after a session ended early. Kindest next step?",
           options: [
             {
-              label: "Pause contact, tend to your body, and revisit only when you want to",
+              label:
+                "Pause contact, tend to your body, and revisit only when you want to",
               feedback:
                 "Yes. Self-compassion includes time and care — not forcing a rebound session.",
             },

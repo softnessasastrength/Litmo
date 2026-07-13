@@ -27,18 +27,23 @@ The learning system uses short, step-by-step modules inspired by station trainin
 5. **Blocking and reporting** — block is immediate and private; report starts human review.
 6. **Your trust signals, not a score** — peer-visible facts are not a rating.
 
-### Lived lessons (hard-earned relational skills)
+### Lived lessons (hard-earned relational skills) — full track
 
-Short, interactive modules (≈3–4 minutes each) with at least one scenario:
+Six short, interactive modules (≈4–5 minutes each). Frame step + teaching +
+scenario practice. Trauma-informed, private, leave-anytime. At least one
+scenario per module; some include two.
 
 | Module | Focus | Optional private quiz |
 | ------ | ----- | --------------------- |
-| **Consent as Language** | Words over weather/vibe; specific, revocable yes | Vibe Quiz — Short |
-| **Nervous System Safety** | Capacity, freeze as data, private aftercare | Soft Capacity |
-| **Boundaries** | Early clarity; limits are not earned | Boundary Voice |
+| **Consent as Language** | Words over weather/vibe; specific, revocable yes; hearing no | Vibe Quiz — Short |
+| **Nervous System Safety** | Capacity, freeze as data, private aftercare (not clinical) | Soft Capacity |
+| **Boundaries** | Early clarity; limits are not earned; change either way | Boundary Voice |
 | **Recovering from Violation** | Believe yourself; tools not performance; repair optional | Soft Capacity |
-| **Partner Communication** | Check-ins; small repair; pace; dual-consent quiz share | Connection Pace |
-| **Self-Compassion** | Awkwardness without cruelty; rest is curriculum | Comfort & Care |
+| **Partner Communication** | Check-ins; small repair; dual-consent quiz share; pace | Connection Pace |
+| **Self-Compassion** | Awkwardness without cruelty; after stops; rest is curriculum | Comfort & Care |
+
+**Vibe Quiz integration:** soft-close quiz CTAs after modules; quiz result screen
+lists related lived lessons; Learn ↔ Quizzes hub links.
 
 Safety-critical foundation modules are labeled as recommended before a first session. This implementation does not hard-block session creation (separate product/accessibility decision).
 

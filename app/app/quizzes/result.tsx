@@ -14,6 +14,7 @@ import { SensitiveAccessGate } from "../../components/SensitiveAccessGate";
 import { VibeCard } from "../../components/VibeCard";
 import { getQuizEntry } from "../../data/quizCatalog";
 import { archetypes, type ArchetypeId } from "../../data/quiz";
+import { modulesLinkedToQuiz } from "../../data/learningModules";
 import {
   quizResultsRepository,
   type StoredQuizResult,
@@ -184,6 +185,42 @@ function ResultBody() {
         </Body>
 
         <Text style={styles.disclaimer}>{entry.disclaimer}</Text>
+
+        {modulesLinkedToQuiz(entry.id).length > 0 ? (
+          <Card>
+            <Text style={styles.sectionLabel}>Guided Learning (optional)</Text>
+            <Text style={styles.sectionHint}>
+              Private short modules that pair with this weather. Never required,
+              never a competence score, never consent to touch.
+            </Text>
+            {modulesLinkedToQuiz(entry.id).map((mod) => (
+              <Button
+                key={mod.id}
+                label={mod.title}
+                variant="secondary"
+                accessibilityHint={`Opens ${mod.title}, about ${mod.minutes} minutes`}
+                onPress={() =>
+                  router.push({
+                    pathname: "/learning/[id]",
+                    params: { id: mod.id },
+                  } as never)
+                }
+              />
+            ))}
+            <Button
+              label="Browse all Guided Learning"
+              variant="secondary"
+              onPress={() => router.push("/(tabs)/learn" as never)}
+            />
+          </Card>
+        ) : (
+          <Button
+            label="Guided Learning"
+            variant="secondary"
+            accessibilityHint="Opens private lived lessons and foundations"
+            onPress={() => router.push("/(tabs)/learn" as never)}
+          />
+        )}
 
         <Button
           label="Back to Quizzes"

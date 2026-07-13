@@ -41,10 +41,10 @@ export default function EntryScreen() {
           <Text style={styles.cardTitle}>Demo mode</Text>
           <Body>
             Walk a calm path: Touch Language onboarding, boundaries, discovery,
-            Quizzes (short ~10 or deep 100 Vibe scenes), partner invite with a
-            fictional encrypted peer, Guided Learning, consent, Soft Signal, and
-            wrap-up. Demo turns on Neurodivergent Mode by default (quieter
-            screens, save/resume, clear language) — change anytime in Settings.
+            Quizzes (short ~10 or deep 100 Vibe scenes), full Guided Learning
+            (lived lessons + foundations), partner invite with a fictional
+            encrypted peer, consent, Soft Signal, and wrap-up. Demo turns on
+            Neurodivergent Mode by default — change anytime in Settings.
           </Body>
           <View style={styles.notice} accessible accessibilityRole="text">
             <Text style={styles.noticeTitle}>Important</Text>
