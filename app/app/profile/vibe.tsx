@@ -15,14 +15,13 @@ export default function VibeProfileScreen() {
       <Title>A little shorthand for your social weather.</Title>
       <VibeCard
         archetypeId={result.primary || archetypeId}
-        secondaryId={result.secondary}
+        secondaryId={result.isCloseBlend ? result.secondary : null}
         blendLabel={result.blendLabel}
         showHowYouMightShowUp
       />
       <Body muted>
         This card is designed to feel shareable, but sharing is not enabled in
-        this prototype. Your vibe may suggest conversation—not consent. People
-        are more nuanced than any quiz, including this longer one.
+        this prototype. Your vibe may suggest conversation—not consent.
       </Body>
       <Button
         label="Name my touch language"

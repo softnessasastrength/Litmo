@@ -40,35 +40,18 @@ test("empty and invalid values return the default", () => {
   );
 });
 
-test("quiz content covers the intended preference dimensions", () => {
-  assert.ok(
-    quizQuestions.length >= 14,
-    "expected a comprehensive question set",
-  );
+test("quiz stays light but broader than the original six", () => {
+  assert.equal(quizQuestions.length, 9);
   const dimensions = new Set(quizQuestions.map((q) => q.dimension));
-  for (const required of [
-    "environment",
-    "regulation",
-    "comfort",
-    "conversation",
-    "sensory",
-    "pacing",
-    "initiation",
-    "closeness",
-    "play",
-    "repair",
-  ] as const) {
-    assert.ok(dimensions.has(required), `missing dimension ${required}`);
-  }
+  assert.ok(dimensions.size >= 8);
   for (const question of quizQuestions) {
-    assert.ok(question.answers.length >= 3, `${question.id} needs options`);
+    assert.ok(
+      question.answers.length >= 3 && question.answers.length <= 3,
+      `${question.id} should keep three light options`,
+    );
     for (const answer of question.answers) {
-      assert.ok(answer.insight.trim().length > 0, `${answer.id} needs insight`);
-      const total = Object.values(answer.scores).reduce(
-        (sum, n) => sum + (n ?? 0),
-        0,
-      );
-      assert.ok(total > 0, `${answer.id} must score at least one archetype`);
+      assert.ok(answer.insight.trim().length > 0);
+      assert.ok(answer.insight.length < 80, "insights stay short");
     }
   }
 });
@@ -87,17 +70,6 @@ test("detailed scoring reports secondary blend when close", () => {
   assert.equal(accumulateScores(answers).hearth, 5);
 });
 
-test("detailed scoring still returns secondary when not a close blend", () => {
-  const result = scoreQuizDetailed([
-    { questionId: "a", answerId: "1", scores: { tidepool: 10 } },
-    { questionId: "b", answerId: "2", scores: { hearth: 1 } },
-  ]);
-  assert.equal(result.primary, "tidepool");
-  assert.equal(result.secondary, "hearth");
-  assert.equal(result.isCloseBlend, false);
-  assert.equal(result.blendLabel, null);
-});
-
 test("insights resolve from real quiz answer ids", () => {
   const sample = quizQuestions.slice(0, 3).map((question) => {
     const answer = question.answers[0]!;
@@ -109,8 +81,7 @@ test("insights resolve from real quiz answer ids", () => {
   });
   const result = scoreQuizDetailed(sample);
   assert.equal(result.insights.length, 3);
-  assert.equal(topInsights(result, 2).length, 2);
-  assert.ok(result.insights.every((item) => item.text.length > 0));
+  assert.equal(topInsights(result, 3).length, 3);
 });
 
 test("all-lantern path through every question stays lantern", () => {

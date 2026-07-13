@@ -62,7 +62,7 @@ export function VibeCard({
         </View>
       ) : null}
       <Text style={styles.note}>
-        A conversation starter, never the whole story—and never consent.
+        A conversation starter, never the whole story.
       </Text>
     </View>
   );

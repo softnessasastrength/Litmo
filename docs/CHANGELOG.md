@@ -1,29 +1,25 @@
 # Changelog
 
-## 2026-07-13 — Comprehensive vibe personality quiz
+## 2026-07-13 — Light-but-fuller vibe personality quiz
 
 ### Summary
 
-Expanded the onboarding vibe quiz from a short six-question path into a
-sixteen-question social-weather set covering environment, regulation, comfort,
-conversation, sensory preference, pacing, initiation, closeness, play, and
-repair—still playful and non-clinical.
+Expanded the onboarding vibe quiz from six to **nine** breezy scenes with a
+little more social-weather texture, while keeping the experience short,
+playful, and non-clinical.
 
 ### User-visible impact
 
-- More scenarios and four-option answers on many items for finer preference
-  texture.
-- Result screen shows primary archetype, optional close blend, “how you might
-  show up,” answer-derived insights, and playful score weather.
-- Stronger copy that a vibe is not diagnosis, ranking, or consent.
+- Covers place, rest, talk, senses, comfort, pace, first step, play, and
+  nearness without turning into a long questionnaire.
+- Result shows the vibe card, optional close blend, two “how you might show
+  up” lines, and three light notes—not score charts or dense analysis.
+- Still framed as a conversation starter, never diagnosis or consent.
 
 ### Developer impact
 
-- `app/data/quiz.ts` gains dimensions, insights, and richer archetype copy.
-- `scoreQuizDetailed` / `topInsights` in `app/lib/quizScoring.ts` power the
-  fuller reveal while `scoreQuiz` remains the primary-id helper.
-- Quiz scoring tests cover content coverage, blends, and lantern-path
-  determinism.
+- `app/data/quiz.ts` and `scoreQuizDetailed` support a light reveal.
+- Quiz tests lock the nine-question length and three-option format.
 
 ### Related work
 
@@ -88,7 +84,6 @@ binary toggle.
 
 - `TASKS.md` ACCESS-001 (still pending physical founder VoiceOver smoke)
 
-
 ## 2026-07-13 — Native macOS participant and Ops foundations
 
 ### Summary
@@ -113,7 +108,6 @@ Added two native SwiftUI macOS targets generated from one reviewable XcodeGen sp
 - MACOS-001
 - ADR 0045
 - PR #76
-
 
 ## 2026-07-13 — Hosted native iOS compile gate
 
