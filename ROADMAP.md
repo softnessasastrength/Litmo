@@ -66,7 +66,8 @@ Status: **implemented**
 - [x] Fictional scenario feedback
 - [x] Private device-local progress and resume behavior
 - [x] Deterministic progress tests
-- [ ] Full fictional two-person practice session
+- [x] Full fictional two-person practice session (LEARN-002)
+- [x] Blocking, reporting, and trust-signal literacy modules (LEARN-003)
 - [ ] Physical-device accessibility validation
 - [ ] Product decision on first-session learning gates
 

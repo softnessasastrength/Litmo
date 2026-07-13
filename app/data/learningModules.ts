@@ -252,6 +252,121 @@ export const learningModules: LearningModule[] = [
       },
     ],
   },
+  {
+    id: "blocking-and-reporting",
+    title: "Blocking and reporting",
+    summary:
+      "Know what blocking actually does, when to report something, and what happens after you do.",
+    minutes: 4,
+    steps: [
+      {
+        id: "block-is-immediate-and-private",
+        title: "Blocking is immediate and private",
+        body: "Blocking someone takes effect right away. They are never told who blocked them or that a block happened. Any pending request between you is cancelled, and an open or active session between you ends.",
+        takeaway:
+          "You do not need permission, a reason, or a conversation to block.",
+      },
+      {
+        id: "report-is-not-a-public-verdict",
+        title: "Reporting starts a private, human review",
+        body: "A report is a short, categorized note to Litmo — harassment, boundary violation, unsafe behavior, and similar categories — with an optional private note only you can write. The reported person is never shown who reported them or what was said.",
+        takeaway:
+          "Reporting is between you and human review, not a public dispute.",
+      },
+      {
+        id: "block-vs-report-scenario",
+        title: "Choosing block, report, or both",
+        body: "Blocking removes someone from your discovery and requests. Reporting brings a concern to human staff who can restrict an account. They are independent — you can block without reporting, report without blocking, or do both.",
+        takeaway:
+          "Pick the tool that matches what you need: distance, review, or both.",
+        scenario: {
+          prompt:
+            "Someone made you uncomfortable during a session, but you don’t think anyone else is in danger. What’s a reasonable first step?",
+          options: [
+            {
+              label: "Block them and leave it there",
+              feedback:
+                "Often enough. Blocking ends contact immediately with no explanation owed to anyone.",
+            },
+            {
+              label: "Report them so staff have the pattern on record",
+              feedback:
+                "Also reasonable, especially if you want it reviewed even without ongoing contact. You can report and not block.",
+            },
+            {
+              label: "Wait and see if it happens again before doing anything",
+              feedback:
+                "You’re never required to wait out a pattern before you’re allowed to block or report. Acting the first time is not an overreaction.",
+            },
+          ],
+        },
+      },
+      {
+        id: "what-staff-can-and-cannot-do",
+        title: "What review can and cannot do",
+        body: "A human reviews every report — restrictions are never applied automatically just because a report exists or a rate limit was hit. If an account is restricted, that person can appeal, and a different human decides whether the restriction is upheld or lifted.",
+        takeaway:
+          "Restriction is a human decision with a human-reviewed appeal, not an algorithm.",
+      },
+    ],
+  },
+  {
+    id: "trust-signals",
+    title: "Your trust signals, not a score",
+    summary:
+      "Understand the handful of facts Litmo shows about account history — and why it deliberately stops there.",
+    minutes: 4,
+    steps: [
+      {
+        id: "facts-not-a-score",
+        title: "Facts, not a score",
+        body: "When you view someone in Discover, you may see how long their account has existed and how many sessions they’ve completed. That’s the whole list. There is no rating, ranking, percentage, or badge — because none of those would actually tell you whether a session will be safe.",
+        takeaway:
+          "A longer history is a fact about time, not a guarantee about a person.",
+      },
+      {
+        id: "your-private-signals",
+        title: "What only you can see about yourself",
+        body: "In Settings, your own private signals show a little more: profile completeness, adult-eligibility status, and counts of completed, Soft Signaled, and safety-ended sessions. This view is self-only — it is never shown to anyone else, and it is still never a public score.",
+        takeaway: "Your fuller history stays yours. No one else sees it.",
+      },
+      {
+        id: "trust-signal-scenario",
+        title: "Using signals responsibly",
+        body: "Peer-visible facts can support a decision to request a session, but they cannot substitute for one. Every session still needs its own real, current Consent Snapshot.",
+        takeaway: "History can inform a choice. It cannot authorize one.",
+        scenario: {
+          prompt:
+            "Someone has a long account history and many completed sessions. What does that tell you?",
+          options: [
+            {
+              label: "They’re verified as safe to be around",
+              feedback:
+                "No. Litmo never claims that a history — however long — proves safety. Treat it as one input, not a guarantee.",
+            },
+            {
+              label:
+                "They’ve used Litmo for a while and finished sessions before",
+              feedback:
+                "Yes — that’s the literal fact being shown, and nothing more than that.",
+            },
+            {
+              label: "You can skip reviewing the Consent Snapshot with them",
+              feedback:
+                "No. Every session still requires its own current, mutual snapshot, regardless of anyone’s history.",
+            },
+          ],
+        },
+      },
+      {
+        id: "if-you-are-restricted",
+        title: "If your account is restricted",
+        body: "A restriction — a temporary matching hold or a permanent one — only happens after a human reviews a report. If it happens to you, Litmo tells you that matching is paused and lets you submit an appeal, which a different staff member reviews.",
+        takeaway:
+          "A restriction always comes with a human-reviewed way to respond.",
+      },
+    ],
+  },
 ];
 
 export function findLearningModule(id: string | undefined) {

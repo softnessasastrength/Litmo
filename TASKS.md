@@ -40,6 +40,12 @@ None recorded. External credentials, signing, App Store configuration, or policy
 
 ## Completed
 
+### LEARN-003 — Blocking, reporting, and trust-signal learning modules
+
+- **Status:** completed
+- **Result:** Two new content-only modules — `blocking-and-reporting` (block is immediate/unilateral/non-disclosing; reporting starts private human review; restrictions are always human-decided with human-reviewed appeal, never automatic) and `trust-signals` (peer-visible facts are not a score; a fuller self-only view exists; history informs but never substitutes for a current Consent Snapshot). Teaches real, already-shipped Chapter 5 behavior — no new product surface. Addresses `docs/LEARNING_SYSTEM.md`'s documented future-work items "privacy" and "the Trust Ledger."
+- **Verification:** `npm run lint` / `typecheck` pass; `npm test` pass (147/147, no learning-module tests needed changes — progress tracking is keyed generically by module id).
+
 ### BETA-001 — Integrated physical-iPhone validation
 
 - **Status:** completed
