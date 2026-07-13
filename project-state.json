@@ -1,7 +1,7 @@
 {
   "$schema": "./docs/project-state.schema.json",
   "version": 1,
-  "updatedAt": "2026-07-13T23:55:00-04:00",
+  "updatedAt": "2026-07-14T00:30:00-04:00",
   "milestone": {
     "id": "SAFETY-OPS-001",
     "name": "Recommended private-alpha safety-operations foundation",
@@ -9,37 +9,36 @@
   },
   "git": {
     "branch": "main",
-    "latestCoherentCommit": "70131cb",
+    "latestCoherentCommit": "bf66995",
     "workingTreeExpectedClean": true
   },
   "verification": {
     "status": "partial",
     "commands": [
-      "npm run typecheck — pass (swarm closeout)",
-      "learningModules + traumaSafety unit tests — pass",
-      "Five-agent FEATURE_SWARM audit — complete"
+      "shared constitutionInvariants tests — 11/11",
+      "app typecheck — pass",
+      "learningModules + touchLanguageCore tests — pass",
+      "NUCLEAR-001 six-agent swarm — shipped"
     ],
     "failures": []
   },
-  "nextAction": "Physical smokes (Soft Signal offline, Multipeer, NFC, VoiceOver) or TL server soft_limit/speed mapping when prioritized. SAFETY-OPS-001 external reviews only with named owners. Ops stays locked.",
+  "nextAction": "War path: physical Soft Signal chaos + VoiceOver; crypto review (named); dual-agreed session duration; optional soft_limit as engine-native state. SAFETY-OPS external only with named owners.",
   "blockedBy": [
     "Legal/privacy/security review for destructive retention and deletion",
     "Qualified safeguarding/legal review for external escalation",
     "Named independent backup reviewer before external alpha and two-person permanent bans",
-    "Apple signing credentials and reviewed staging configuration for a signed device/TestFlight build",
-    "Optional: independent crypto review of quiz partner E2E and local share before external beta"
+    "Apple signing credentials and reviewed staging for signed TestFlight",
+    "Optional: independent crypto review of quiz E2E and local share before external beta"
   ],
   "risks": [
-    "Product not production-ready for stranger meetings.",
-    "Hardware Device OS is design-only (not a SKU).",
-    "Local session timeout not dual-agreed on server snapshot yet.",
-    "ACCESS-001 VoiceOver smoke still pending.",
-    "Litmo Ops remains locked until real staff auth."
+    "Not production-ready for stranger meetings.",
+    "Hardware Device OS is design-only.",
+    "soft_limit still maps to ask_first on server engine (conservative).",
+    "ACCESS-001 VoiceOver smoke pending."
   ],
   "notes": [
-    "SWARM-001 complete: TL, Consent Snapshot, Soft Signal, Proximity/NFC, Learning shipped; Device OS design-only.",
-    "Tracker: docs/FEATURE_SWARM_TRACKER.md",
-    "Closeout: sticky Soft Signal, presence haptic, proximity teardown, aftercare scenario.",
-    "Local-first ADR 0058; trauma safety ADR 0059 on main."
+    "NUCLEAR-001: Living Constitution machine invariants + learning module.",
+    "Command center: docs/NUCLEAR_SWARM.md + CONSTITUTION_ENFORCEMENT.md",
+    "EmotionalOS hard limits hardened; Soft Signal sacred copy; Device SS matrix."
   ]
 }
