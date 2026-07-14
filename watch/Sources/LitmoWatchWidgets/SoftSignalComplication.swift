@@ -43,6 +43,7 @@ struct LitmoWatchWidgets: WidgetBundle {
   var body: some Widget {
     SoftSignalWidget()
     ReassuranceComplication()
+    DualBindComplication()
   }
 }
 

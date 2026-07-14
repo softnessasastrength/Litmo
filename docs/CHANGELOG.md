@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-13 — Auto-debrief bridge + dual-bind Watch + Watch simulator build
+
+Store-level protocol → Private Debrief Lab auto-ingest (10 protocols).
+Dual-bind Watch complication registered in WidgetBundle. Fixed
+LitmoTapticPlayer style mapping. Watch simulator BUILD SUCCEEDED
+(LitmoWatch + LitmoWatchExtension). Physical Watch QA still open.
+
 ## 2026-07-13 — Containment batch 10–16 v0.2 nuclear
 
 Deepened batch: Reconcile denser steps + when/anti-pattern; Parallel Play

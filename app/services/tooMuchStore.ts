@@ -28,5 +28,10 @@ export const tooMuchStore = {
     } catch {
       // ignore
     }
+    const { privateDebriefStore } = await import("./privateDebriefStore.ts");
+    const { debriefFromTooMuch } = await import(
+      "../lib/protocolDebriefBridge.ts"
+    );
+    void privateDebriefStore.ingest(debriefFromTooMuch(entry));
   },
 };

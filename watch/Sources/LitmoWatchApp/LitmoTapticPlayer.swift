@@ -32,20 +32,17 @@ public final class LitmoTapticPlayer: @unchecked Sendable {
     let device = WKInterfaceDevice.current()
     // Map Litmo styles onto available WatchKit haptic types.
     // Soft Signal uses notification-like patterns; presence uses click.
+    // Must match packages/LitmoWatchHaptics LitmoTapticStyle cases exactly.
     switch style {
-    case .softSignalTriple, .stop, .failure:
+    case .softSignalTriple, .stop:
       device.play(.notification)
     case .directionDown:
       device.play(.directionDown)
     case .directionUp:
       device.play(.directionUp)
-    case .success:
-      device.play(.success)
-    case .retry:
-      device.play(.retry)
-    case .start:
-      device.play(.start)
-    case .click, .clickSoft, .nudge, .strokeSegment, .heartbeat, .none:
+    case .click, .clickSoft, .nudge, .strokeSegment, .heartbeat:
+      device.play(.click)
+    case .none:
       device.play(.click)
     }
     // intensity reserved for future Core Haptics continuous; WK types are discrete.

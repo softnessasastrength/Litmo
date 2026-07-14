@@ -31,5 +31,10 @@ export const morningCuddleStore = {
     } catch {
       // Session still usable in memory.
     }
+    const { privateDebriefStore } = await import("./privateDebriefStore.ts");
+    const { debriefFromMorning } = await import(
+      "../lib/protocolDebriefBridge.ts"
+    );
+    void privateDebriefStore.ingest(debriefFromMorning(entry));
   },
 };

@@ -25,7 +25,7 @@ Pair a physical Apple Watch for Taptic feel validation. Simulator is not accepta
 | Target | Role |
 | ------ | ---- |
 | **LitmoWatch** | Main app: Soft Signal, presence, co-regulation, check-in |
-| **LitmoWatchWidgets** | Soft Signal complication (no social chrome) |
+| **LitmoWatchWidgets** | Soft Signal · Reassurance · Dual-bind complications (no social chrome) |
 
 Depends on `packages/LitmoWatchHaptics` (Swift Taptic language).
 
@@ -35,6 +35,22 @@ Depends on `packages/LitmoWatchHaptics` (Swift Taptic language).
 - Wire `WatchConnectivity` on phone via `litmo-watch-haptics` + `watchHapticBridge`.
 - Soft Signal on phone already raises haptic interrupt; delivery to Watch is best-effort and must never block stop.
 
+## Build (simulator)
+
+```bash
+export DEVELOPER_DIR=/Volumes/SSD/Xcode-beta.app/Contents/Developer   # or your Xcode
+cd watch && xcodegen generate
+xcodebuild -project LitmoWatch.xcodeproj -scheme LitmoWatch \
+  -sdk watchsimulator -destination 'generic/platform=watchOS Simulator' build
+xcodebuild -project LitmoWatch.xcodeproj -scheme LitmoWatchExtension \
+  -sdk watchsimulator -destination 'generic/platform=watchOS Simulator' build
+```
+
+Simulator proves compile; **physical Watch + paired iPhone** is still required for Taptic feel QA.
+Physical deploy needs signing, companion app id `com.litmo.app`, and a real device.
+
 ## Status
 
-Scaffold for development. Full App Store / TestFlight Watch binary needs signing, companion entitlement, and paired device QA.
+- **2026-07-13:** Simulator build **SUCCEEDED** for LitmoWatch + LitmoWatchExtension (Xcode 27 beta).
+- Complications: Soft Signal, Reassurance, Dual Bind (WidgetBundle).
+- Physical Watch deploy + Taptic feel validation still open (signing + paired device).

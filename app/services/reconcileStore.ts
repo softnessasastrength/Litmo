@@ -26,5 +26,10 @@ export const reconcileStore = {
     } catch {
       // ignore
     }
+    const { privateDebriefStore } = await import("./privateDebriefStore.ts");
+    const { debriefFromReconcile } = await import(
+      "../lib/protocolDebriefBridge.ts"
+    );
+    void privateDebriefStore.ingest(debriefFromReconcile(entry));
   },
 };

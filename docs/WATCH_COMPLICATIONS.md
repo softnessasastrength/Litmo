@@ -12,7 +12,7 @@ Soft Signal access + daily reassurance on the wrist. Fail-closed. Offline-first.
 | ------------ | ------ | -------- |
 | **Soft Signal** | Circular / Graphic Corner / Rectangular | One-tap Soft Signal entry. Always visible priority. Never buried under FOMO. |
 | **Reassurance Pulse** | Modular / Inline / Circular | Cycles local soft lines hourly. No partner status. |
-| **Dual-bind reminder** (intent) | Modular small | “Need ∧ Leave-fear can coexist” — not notification spam. |
+| **Dual-bind reminder** | Rectangular / Inline / Circular | “Need ∧ Leave-fear can coexist” — 2h calm rotation, not notification spam. |
 | **Containment Hub** (intent) | Extra large | Shortcut into phone hub via Watch Connectivity. |
 
 ### Soft Signal rules
@@ -55,11 +55,12 @@ Soft Signal access + daily reassurance on the wrist. Fail-closed. Offline-first.
 | Path | Role |
 | ---- | ---- |
 | `watch/Sources/LitmoWatchWidgets/SoftSignalComplication.swift` | Soft Signal widget + **WidgetBundle** (`@main`) |
-| `watch/Sources/LitmoWatchWidgets/ReassuranceComplication.swift` | Reassurance complication (registered in bundle) |
+| `watch/Sources/LitmoWatchWidgets/ReassuranceComplication.swift` | Reassurance complication |
+| `watch/Sources/LitmoWatchWidgets/DualBindComplication.swift` | Dual-bind both/and reminder |
 | `docs/WATCH_INTEGRATION.md` | Broader Watch architecture |
 | ADR 0064 | Co-regulation principles |
 
-### WidgetBundle (v0.2 fix)
+### WidgetBundle (v0.3)
 
 ```swift
 @main
@@ -67,6 +68,7 @@ struct LitmoWatchWidgets: WidgetBundle {
   var body: some Widget {
     SoftSignalWidget()
     ReassuranceComplication()
+    DualBindComplication()
   }
 }
 ```

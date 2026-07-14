@@ -26,5 +26,10 @@ export const parallelPlayStore = {
     } catch {
       // ignore
     }
+    const { privateDebriefStore } = await import("./privateDebriefStore.ts");
+    const { debriefFromParallel } = await import(
+      "../lib/protocolDebriefBridge.ts"
+    );
+    void privateDebriefStore.ingest(debriefFromParallel(entry));
   },
 };

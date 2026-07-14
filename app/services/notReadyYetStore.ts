@@ -31,5 +31,10 @@ export const notReadyYetStore = {
     } catch {
       // ignore
     }
+    const { privateDebriefStore } = await import("./privateDebriefStore.ts");
+    const { debriefFromNotReady } = await import(
+      "../lib/protocolDebriefBridge.ts"
+    );
+    void privateDebriefStore.ingest(debriefFromNotReady(entry));
   },
 };

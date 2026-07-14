@@ -28,5 +28,10 @@ export const needScaredStore = {
     } catch {
       // ignore
     }
+    const { privateDebriefStore } = await import("./privateDebriefStore.ts");
+    const { debriefFromNeedScared } = await import(
+      "../lib/protocolDebriefBridge.ts"
+    );
+    void privateDebriefStore.ingest(debriefFromNeedScared(entry));
   },
 };

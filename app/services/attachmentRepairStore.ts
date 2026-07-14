@@ -32,5 +32,10 @@ export const attachmentRepairStore = {
     } catch {
       // Session still usable in memory.
     }
+    const { privateDebriefStore } = await import("./privateDebriefStore.ts");
+    const { debriefFromRepair } = await import(
+      "../lib/protocolDebriefBridge.ts"
+    );
+    void privateDebriefStore.ingest(debriefFromRepair(entry));
   },
 };

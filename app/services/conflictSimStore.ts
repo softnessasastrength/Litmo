@@ -31,5 +31,10 @@ export const conflictSimStore = {
     } catch {
       // in-memory still ok
     }
+    const { privateDebriefStore } = await import("./privateDebriefStore.ts");
+    const { debriefFromConflict } = await import(
+      "../lib/protocolDebriefBridge.ts"
+    );
+    void privateDebriefStore.ingest(debriefFromConflict(entry));
   },
 };

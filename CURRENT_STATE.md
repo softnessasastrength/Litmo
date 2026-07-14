@@ -66,12 +66,10 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
-- Done: batch 10–16 **v0.2 nuclear** (reconcile denser, parallel 7 modes, Watch
-  Reassurance in WidgetBundle, constitution proposal/ratify, masochist wiring,
-  debrief insights, manifesto).
+- Done: batch 10–16 v0.2 + **auto-debrief bridge** (all protocol stores) +
+  **DualBindComplication** + Watch **simulator BUILD SUCCEEDED**.
+- Physical Watch + paired iPhone Taptic QA still open (signing + device).
 - Follow `docs/REAL_PURPOSE.md` · manifesto: `docs/SELF_ROAST_SELF_LOVE_MANIFESTO.md`.
-- Optional next: wire more protocols into debrief auto-ingest; dual-bind Watch
-  complication; physical Watch build if hardware available.
 
 ## Verification baseline
 

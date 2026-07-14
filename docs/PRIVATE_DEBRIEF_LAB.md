@@ -67,10 +67,26 @@ We never store:
 
 ---
 
-## Auto-ingest
+## Auto-ingest (store-level bridge)
 
-Reconcile + Parallel Play append debriefs on complete/Soft Signal.  
-Other protocols may append with their own sources.
+Every containment history `store.append` fires a unified debrief via
+`app/lib/protocolDebriefBridge.ts` → `privateDebriefStore.ingest`.
+
+| Protocol store | Source |
+| -------------- | ------ |
+| spooningStore | `spooning` |
+| morningCuddleStore | `morning_cuddle` |
+| conflictSimStore | `conflict_sim` |
+| tooMuchStore | `too_much` |
+| needScaredStore | `need_scared` |
+| interestReStore | `interest_re` |
+| attachmentRepairStore | `attachment_repair` |
+| notReadyYetStore | `not_ready_yet` |
+| reconcileStore | `reconcile` |
+| parallelPlayStore | `parallel_play` |
+
+Manual entries still use `/debrief-lab` UI (`source: manual`).  
+Ingest is best-effort; protocol history remains the source of truth for that ritual.
 
 ---
 
@@ -80,7 +96,9 @@ Other protocols may append with their own sources.
 | ---- | ---- |
 | `docs/PRIVATE_DEBRIEF_LAB.md` | Spec |
 | `app/lib/privateDebriefCore.ts` | Pure logic |
-| `app/services/privateDebriefStore.ts` | Persist |
+| `app/lib/protocolDebriefBridge.ts` | Protocol → unified debrief maps |
+| `app/lib/protocolDebriefBridge.test.ts` | Bridge tests |
+| `app/services/privateDebriefStore.ts` | Persist + ingest |
 | `app/app/debrief-lab/index.tsx` | UI |
 | `app/services/localDataWipe.ts` | Wipe key |
 

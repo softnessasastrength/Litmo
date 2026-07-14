@@ -17,8 +17,6 @@ import {
 } from "../../lib/reconcileCore";
 import { reconcileStore } from "../../services/reconcileStore";
 import { softSignalService } from "../../services/softSignalService";
-import { privateDebriefStore } from "../../services/privateDebriefStore";
-import { createManualDebrief } from "../../lib/privateDebriefCore";
 import { masochistModeStore } from "../../services/masochistModeStore";
 import {
   masochistBanner,
@@ -77,20 +75,8 @@ export default function ReconcileScreen() {
       stepsDone: step + 1,
       endedAt: new Date().toISOString(),
       endReason,
-      note: "",
+      note: arch.sampleLine,
     });
-    await privateDebriefStore.append(
-      createManualDebrief({
-        title: `Reconcile: ${arch.label}`,
-        regulation: endReason === "soft_signal" ? 3 : 4,
-        worked: arch.sampleLine,
-        didnt: "",
-        tags: ["repair", "conflict", ...(snap.denser ? ["ceremony"] : [])],
-        softSignalUsed: endReason === "soft_signal",
-        source: "reconcile",
-        again: endReason === "completed",
-      }),
-    );
     setPhase("hub");
     setSnap(null);
     setDraft({

@@ -16,8 +16,6 @@ import {
 } from "../../lib/parallelPlayCore";
 import { parallelPlayStore } from "../../services/parallelPlayStore";
 import { softSignalService } from "../../services/softSignalService";
-import { privateDebriefStore } from "../../services/privateDebriefStore";
-import { createManualDebrief } from "../../lib/privateDebriefCore";
 import { masochistModeStore } from "../../services/masochistModeStore";
 import {
   defaultMasochistPrefs,
@@ -80,20 +78,8 @@ export default function ParallelPlayScreen() {
       endedAt: new Date().toISOString(),
       endReason,
       feltConnected: felt,
-      note: "",
+      note: findParallel(snap.modeId).sacredRule,
     });
-    await privateDebriefStore.append(
-      createManualDebrief({
-        title: `Parallel: ${findParallel(snap.modeId).label}`,
-        regulation: felt ? 4 : 3,
-        worked: findParallel(snap.modeId).sacredRule,
-        didnt: "",
-        tags: ["parallel", ...(snap.ceremonial ? ["ceremony"] : [])],
-        softSignalUsed: endReason === "soft_signal",
-        source: "parallel_play",
-        again: felt,
-      }),
-    );
     setActive(false);
     setSnap(null);
   };

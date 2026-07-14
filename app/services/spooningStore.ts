@@ -28,6 +28,11 @@ export const spooningStore = {
     } catch {
       // Session still usable in memory.
     }
+    const { privateDebriefStore } = await import("./privateDebriefStore.ts");
+    const { debriefFromSpoon } = await import(
+      "../lib/protocolDebriefBridge.ts"
+    );
+    void privateDebriefStore.ingest(debriefFromSpoon(entry));
   },
 
   async hasHistory(): Promise<boolean> {

@@ -27,4 +27,12 @@ export const privateDebriefStore = {
       // ignore
     }
   },
+  /** Fire-and-forget auto-ingest from protocol history (never throws). */
+  async ingest(entry: UnifiedDebriefEntry): Promise<void> {
+    try {
+      await this.append(entry);
+    } catch {
+      // ignore — protocol history is source of truth for that protocol
+    }
+  },
 };
