@@ -57,6 +57,11 @@ import {
 import { softSignalService } from "../../services/softSignalService";
 import { morningCuddleStore } from "../../services/morningCuddleStore";
 import { hapticService } from "../../services/hapticService";
+import { relationshipModelStore } from "../../services/relationshipModelStore";
+import {
+  modelBannerLine,
+  type RelationshipModel,
+} from "../../lib/relationshipModelCore";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
@@ -81,6 +86,8 @@ export default function MorningCuddleScreen() {
   const [sealError, setSealError] = useState("");
   const [checkInFlash, setCheckInFlash] = useState<string | null>(null);
   const [peeBanner, setPeeBanner] = useState(false);
+  /** Bond map for hub banner only — never auto-changes phase; not consent. */
+  const [relModel, setRelModel] = useState<RelationshipModel | null>(null);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const peeFired = useRef(false);
 
@@ -90,6 +97,12 @@ export default function MorningCuddleScreen() {
 
   useEffect(() => {
     void reloadHistory();
+    // WHAT: Load Relationship Model for hub banner. WHY: Surface bond climate
+    // without auto-driving morning phase. CONSENT: Model is not consent.
+    // NEVER: Auto-change morning phase from model.
+    void relationshipModelStore.load().then((b) => {
+      if (b?.model) setRelModel(b.model);
+    });
   }, [reloadHistory]);
 
   useEffect(() => {
@@ -712,6 +725,38 @@ export default function MorningCuddleScreen() {
           <Body muted>{MORNING_COPY.philosophy}</Body>
           <Body muted>{MORNING_COPY.comedy}</Body>
         </Card>
+        {relModel ? (
+          <Card>
+            <Body muted>Bond map: {modelBannerLine(relModel)}</Body>
+            {relModel.closenessStyle === "touch_primary" ? (
+              <Body muted>
+                Touch-primary closeness — morning cuddle matches this bond
+                language. Model is not consent. Soft Signal free.
+              </Body>
+            ) : (
+              <Body muted>
+                Banner only — model does not seal or start a cuddle. Soft Signal
+                free.
+              </Body>
+            )}
+            <Button
+              variant="secondary"
+              label="Open Relationship Model"
+              onPress={() => router.push("/relationship-model" as never)}
+            />
+          </Card>
+        ) : (
+          <Card>
+            <Body muted>
+              No Relationship Model yet — optional bond map. Soft Signal free.
+            </Body>
+            <Button
+              variant="secondary"
+              label="Open Relationship Model"
+              onPress={() => router.push("/relationship-model" as never)}
+            />
+          </Card>
+        )}
         <Card>
           <Body>• 30-second negotiation (energy · duration · style · zones)</Body>
           <Body>• Soft Signal sacred · silly check-in · Good Morning Haptic</Body>

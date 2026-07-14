@@ -48,6 +48,11 @@ import {
 } from "../../lib/notReadyYetCore";
 import { softSignalService } from "../../services/softSignalService";
 import { notReadyYetStore } from "../../services/notReadyYetStore";
+import { relationshipModelStore } from "../../services/relationshipModelStore";
+import {
+  modelBannerLine,
+  type RelationshipModel,
+} from "../../lib/relationshipModelCore";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
@@ -78,6 +83,8 @@ export default function NotReadyYetScreen() {
   const [pendingEnd, setPendingEnd] = useState<
     "completed" | "soft_signal" | "im_up" | null
   >(null);
+  /** Bond map for hub banner only — never auto-changes phase; not consent. */
+  const [relModel, setRelModel] = useState<RelationshipModel | null>(null);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const reloadHistory = useCallback(async () => {
@@ -86,6 +93,12 @@ export default function NotReadyYetScreen() {
 
   useEffect(() => {
     void reloadHistory();
+    // WHAT: Load Relationship Model for hub banner. WHY: Light bond context on
+    // snooze hub without driving snooze phase. CONSENT: Model is not consent.
+    // NEVER: Auto-change not-ready phase from model.
+    void relationshipModelStore.load().then((b) => {
+      if (b?.model) setRelModel(b.model);
+    });
   }, [reloadHistory]);
 
   useEffect(() => {
@@ -490,6 +503,37 @@ export default function NotReadyYetScreen() {
           <Body muted>{NOT_READY_COPY.purpose}</Body>
           <Body muted>{NOT_READY_COPY.comedy}</Body>
         </Card>
+        {relModel ? (
+          <Card>
+            <Body muted>Bond map: {modelBannerLine(relModel)}</Body>
+            {relModel.closenessStyle === "touch_primary" ? (
+              <Body muted>
+                Touch-primary closeness — more hold before up can match this
+                language. Model is not consent. Soft Signal free.
+              </Body>
+            ) : (
+              <Body muted>
+                Banner only — model does not seal a snooze. Soft Signal free.
+              </Body>
+            )}
+            <Button
+              variant="secondary"
+              label="Open Relationship Model"
+              onPress={() => router.push("/relationship-model" as never)}
+            />
+          </Card>
+        ) : (
+          <Card>
+            <Body muted>
+              No Relationship Model yet — optional bond map. Soft Signal free.
+            </Body>
+            <Button
+              variant="secondary"
+              label="Open Relationship Model"
+              onPress={() => router.push("/relationship-model" as never)}
+            />
+          </Card>
+        )}
         <Button
           label="Negotiate snooze"
           onPress={() => setPhase("negotiate")}

@@ -57,9 +57,6 @@ Phase changes and axis updates append a local event log (last 100).
 | **Need-Scared** | Bond map banner + link; high need/fear (≥4) finish + phase was `steady` → `flood_protect` locally |
 | **Reconcile** | Banner + link; **completed** (not Soft Signal) while phase is `repair_needed` → `steady`; Soft Signal freeness unchanged |
 | **Conflict sim** | Banner + link only — Soft Signal / reschedule / complete never force phase |
-| **Spooning** | Hub banner + link; touch-primary note if closeness style matches — **no** auto phase change |
-| **Morning Cuddle** | Hub banner + link; touch-primary note if closeness style matches — **no** auto phase change |
-| **Not Ready Yet** | Hub banner + link; optional touch-primary note — **no** auto phase change |
 
 Links well with:
 
@@ -67,8 +64,7 @@ Links well with:
 - `/weather` — daily personal sky  
 - `/pre-renn` — before dump  
 - `/reconcile` — practice repair when safe  
-- `/conflict-sim` — practice conflict without dumping first  
-- `/spooning` · `/morning-cuddle` · `/not-ready-yet` — touch-adjacent protocols (banner only)
+- `/conflict-sim` — practice conflict without dumping first 
 
 ---
 

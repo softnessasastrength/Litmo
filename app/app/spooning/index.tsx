@@ -70,6 +70,11 @@ import {
 import { softSignalService } from "../../services/softSignalService";
 import { spooningStore } from "../../services/spooningStore";
 import { spooningHaptics } from "../../services/spooningHaptics";
+import { relationshipModelStore } from "../../services/relationshipModelStore";
+import {
+  modelBannerLine,
+  type RelationshipModel,
+} from "../../lib/relationshipModelCore";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
@@ -103,6 +108,8 @@ export default function SpooningProtocolScreen() {
   const [fiveMinBanner, setFiveMinBanner] = useState(false);
   const [checkInFlash, setCheckInFlash] = useState<string | null>(null);
   const [watchNote, setWatchNote] = useState("");
+  /** Bond map for hub banner only — never auto-changes phase; not consent. */
+  const [relModel, setRelModel] = useState<RelationshipModel | null>(null);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const reloadHistory = useCallback(async () => {
@@ -111,6 +118,12 @@ export default function SpooningProtocolScreen() {
 
   useEffect(() => {
     void reloadHistory();
+    // WHAT: Load Relationship Model for hub banner. WHY: Name bond climate without
+    // inventing product scores. CONSENT: Model is not consent; Soft Signal free.
+    // NEVER: Auto-change spoon phase from model.
+    void relationshipModelStore.load().then((b) => {
+      if (b?.model) setRelModel(b.model);
+    });
   }, [reloadHistory]);
 
   useEffect(() => {
@@ -801,6 +814,38 @@ export default function SpooningProtocolScreen() {
           <Body muted>{SPOONING_COPY.purpose}</Body>
           <Body muted>{SPOONING_COPY.comedy}</Body>
         </Card>
+        {relModel ? (
+          <Card>
+            <Body muted>Bond map: {modelBannerLine(relModel)}</Body>
+            {relModel.closenessStyle === "touch_primary" ? (
+              <Body muted>
+                Touch-primary closeness — spooning matches this bond language.
+                Model is not consent. Soft Signal free.
+              </Body>
+            ) : (
+              <Body muted>
+                Banner only — model does not seal or start a spoon. Soft Signal
+                free.
+              </Body>
+            )}
+            <Button
+              variant="secondary"
+              label="Open Relationship Model"
+              onPress={() => router.push("/relationship-model" as never)}
+            />
+          </Card>
+        ) : (
+          <Card>
+            <Body muted>
+              No Relationship Model yet — optional bond map. Soft Signal free.
+            </Body>
+            <Button
+              variant="secondary"
+              label="Open Relationship Model"
+              onPress={() => router.push("/relationship-model" as never)}
+            />
+          </Card>
+        )}
         <Card>
           <Body>
             • {positionCount()} positions (Jetpack, Koala Death Grip, Safety
