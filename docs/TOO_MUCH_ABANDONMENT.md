@@ -1,82 +1,58 @@
-# I'm Too Much / Fear of Abandonment Protocol v0.1
+# I'm Too Much / Fear of Abandonment Protocol v0.2
 
 **This is currently a personal emotional containment system, not a public product.**
 
 > **Because “too much” is a story the body tells when it is afraid of being left.**
 
 **Route:** `/too-much`  
-**UI metaphor:** Safe panic room — soft walls, Soft Signal always lit, no performance required.  
-**Core:** `app/lib/tooMuchCore.ts`
+**UI metaphor:** Safe panic room — door seal, soft walls, Soft Signal always lit.  
+**Core:** `app/lib/tooMuchCore.ts` (v0.2)
 
 ---
 
-## Purpose
+## Maximum autism layers
 
-Maximum autism on the loop:
+### 1. Detection triggers (13 + custom)
 
-- I am too much / too needy / too intense  
-- If they see the real amount, they will leave  
-- So I shrink, fawn, over-explain, or pre-abandon  
+Each has label, detect sentence, and **system** (what circuit is firing):
 
-…so that spiral has a **panic room** that is less likely to dump raw onto **Renn**.
+delayed reply · after I asked · after I shared · after conflict · after Soft Signal · morning exit · quiet room · praise trap · they seem fine · I took space · plan change · preemptive exit · comparison spiral · custom
 
-Not therapy. Not a diagnosis. Soft Signal is God Mode.
+**Co-triggers:** up to 4 secondary.
 
----
+**Intensity → track:** whisper/activated/high → **standard** containment; flooded → **flood** track.
 
-## Four layers
+### 2. Immediate containment
 
-### 1. Detection triggers
-Named situations that light up “too much / abandonment”:
+**Standard track (10 steps):** door seal, orient, gravity, name detector, detector≠verdict, breath, deep pressure, no fix required, optional phone face-down, exit choices.
 
-- Delayed reply / cold text  
-- After I asked for something  
-- After I shared a lot  
-- After conflict or Soft Signal  
-- Morning exit / leaving bed  
-- Quiet room (they’re fine, I’m spiraling)  
-- Praise that feels like a trap  
-- Custom  
+**Flood track (6 steps):** minimal cognition, body first, Soft Signal freeness.
 
-Intensity: whisper → flooded.
-
-### 2. Immediate containment (panic room)
-Fail-closed enter:
-
-1. Soft Signal acknowledged (always free)  
-2. Body locater  
-3. 60-second containment script (breathe / feet / name the story)  
-4. Optional: open Soft Signal practice / panic cover  
+Voluntary **delay raw dump** pledge at seal (not a law — a containment tool).
 
 ### 3. Reassurance ritual
-Optional after containment stabilizes:
 
-- Scripted “not too much” lines  
-- Care-seeker reframe  
-- Link to Attachment Repair / Spooning Care-Seeker Little  
-- Watch/presence haptic best-effort  
+Adaptive lines (full set vs flood set). Links to Attachment Repair.
 
-### 4. Long-term pattern tracking (local only)
-History of trigger → intensity → move → debrief.
+### 4. Long-term pattern tracking (private)
 
-Summaries (never public scores):
+- 7d / 30d volume  
+- Flooded rate · Soft Signal rate · named story · no-dump  
+- Top triggers  
+- Named-without-dump **streak**  
+- **Recommended next protocol** (cathedral / interest RE / conflict / spooning / soft signal)
 
-- Most common triggers  
-- Flooded rate  
-- Soft Signal use rate  
-- “Named story without dumping” count  
+Never a neediness score. Never discovery-visible.
 
 ---
 
-## Moves after containment
+## UI (panic room)
 
-| Move | Meaning |
-| ---- | ------- |
-| stay_in_room | More containment time |
-| reassurance | Run ritual lines |
-| soft_signal | Exit everything |
-| reach_small | One small honest ask (later, outside app) |
-| alone_ok | I can be with this alone for now |
+- Dark lobby / room frame  
+- **DOOR SEALED** banner when active  
+- Soft Signal dock always labeled lit  
+- Progress bar on containment steps  
+- Soft cream “inner walls”
 
 ---
 
@@ -85,7 +61,7 @@ Summaries (never public scores):
 | Path | Role |
 | ---- | ---- |
 | `docs/TOO_MUCH_ABANDONMENT.md` | Spec |
-| `app/lib/tooMuchCore.ts` | Triggers, flow, patterns |
+| `app/lib/tooMuchCore.ts` | Pure v0.2 |
 | `app/lib/tooMuchCore.test.ts` | Tests |
 | `app/services/tooMuchStore.ts` | History |
 | `app/app/too-much/index.tsx` | Panic-room UI |

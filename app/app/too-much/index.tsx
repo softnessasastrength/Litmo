@@ -1,6 +1,6 @@
 /**
- * I'm Too Much / Fear of Abandonment — safe panic room UI.
- * Soft Signal always lit. Pattern tracking private. Not a score.
+ * I'm Too Much / Fear of Abandonment v0.2 — maximum autism safe panic room.
+ * Dual containment tracks, Soft Signal always lit, private patterns, never a score.
  */
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -22,21 +22,22 @@ import {
 } from "../../components/ui";
 import { SoftSignalButton } from "../../components/SoftSignalButton";
 import {
-  CONTAINMENT_SCRIPT,
-  REASSURANCE_LINES,
   TOO_MUCH_COPY,
   TOO_MUCH_INTENSITIES,
   TOO_MUCH_TRIGGERS,
   canEnterPanicRoom,
   completeTooMuch,
+  containmentScriptFor,
   defaultTooMuchDebrief,
   defaultTooMuchDraft,
   findIntensity,
   findTrigger,
   moveLabel,
+  reassuranceFor,
   sealTooMuch,
   suggestedMoves,
   summarizePatterns,
+  toggleCoTrigger,
   type TooMuchBodySpot,
   type TooMuchDebrief,
   type TooMuchHistoryEntry,
@@ -107,6 +108,12 @@ export default function TooMuchScreen() {
 
   const gate = canEnterPanicRoom(draft);
   const patterns = summarizePatterns(history);
+  const script = snapshot
+    ? containmentScriptFor(snapshot.containmentTrack)
+    : containmentScriptFor("standard");
+  const reassureLines = snapshot
+    ? reassuranceFor(snapshot.containmentTrack)
+    : reassuranceFor("standard");
 
   const enterRoom = () => {
     const g = canEnterPanicRoom(draft);
@@ -164,52 +171,84 @@ export default function TooMuchScreen() {
     setPhase("debrief");
   };
 
+  const softSignalBlock = (
+    <View style={styles.softDock}>
+      <Text style={styles.softDockLabel}>SOFT SIGNAL · ALWAYS LIT</Text>
+      <SoftSignalButton
+        state={softState}
+        onPress={() => void fireSoftSignal()}
+        accessibilityHint="God Mode. Leave the panic room instantly."
+      />
+    </View>
+  );
+
   if (phase === "room" && snapshot) {
-    const line = CONTAINMENT_SCRIPT[scriptIndex] ?? CONTAINMENT_SCRIPT[0]!;
+    const line = script[scriptIndex] ?? script[0]!;
     return (
-      <Screen style={styles.roomScreen}>
+      <Screen style={styles.roomScreen} scroll={false}>
         <ScrollView contentContainerStyle={styles.scroll}>
-          <View style={styles.roomHeader}>
-            <Eyebrow>PANIC ROOM · CONTAINMENT</Eyebrow>
-            <Title>You are not required to be less.</Title>
+          <View style={styles.doorSeal}>
+            <Text style={styles.doorSealText}>{TOO_MUCH_COPY.doorSeal}</Text>
+            <Body muted>
+              Track: {snapshot.containmentTrack.toUpperCase()} ·{" "}
+              {findIntensity(snapshot.intensityId).label}
+            </Body>
           </View>
+          <Title>You are not required to be less.</Title>
           <Card style={styles.roomCard}>
             <Text style={styles.softBanner}>{TOO_MUCH_COPY.softSignal}</Text>
+            <Body>
+              {findTrigger(snapshot.triggerId).label}
+              {snapshot.coTriggers.length > 0
+                ? ` + ${snapshot.coTriggers.length} co-triggers`
+                : ""}
+            </Body>
             <Body muted>
-              Trigger: {findTrigger(snapshot.triggerId).label} ·{" "}
-              {findIntensity(snapshot.intensityId).label}
+              System: {findTrigger(snapshot.triggerId).system}
             </Body>
             <Body muted>Story: {snapshot.storySentence}</Body>
             <Body muted>Body: {snapshot.bodySpot}</Body>
+            {snapshot.delayDumpPledge ? (
+              <Body muted>
+                Pledge: no raw dump for a beat (voluntary, not a law).
+              </Body>
+            ) : null}
           </Card>
           <Card style={styles.roomCard}>
             <Text style={styles.scriptLine}>{line}</Text>
+            <View style={styles.progressTrack}>
+              <View
+                style={[
+                  styles.progressFill,
+                  {
+                    width: `${((scriptIndex + 1) / script.length) * 100}%`,
+                    backgroundColor: colors.moss,
+                  },
+                ]}
+              />
+            </View>
             <Body muted>
-              Step {scriptIndex + 1}/{CONTAINMENT_SCRIPT.length}
+              Step {scriptIndex + 1}/{script.length}
             </Body>
             <Button
               label={
-                scriptIndex < CONTAINMENT_SCRIPT.length - 1
+                scriptIndex < script.length - 1
                   ? "Next containment step"
                   : "Containment complete → moves"
               }
               onPress={() => {
-                if (scriptIndex < CONTAINMENT_SCRIPT.length - 1) {
+                if (scriptIndex < script.length - 1) {
                   setScriptIndex((i) => i + 1);
                   setContainmentSteps((n) => n + 1);
                   void hapticService.play("presence");
                 } else {
-                  setContainmentSteps(CONTAINMENT_SCRIPT.length);
+                  setContainmentSteps(script.length);
                   setPhase("move");
                 }
               }}
             />
           </Card>
-          <SoftSignalButton
-            state={softState}
-            onPress={() => void fireSoftSignal()}
-            accessibilityHint="God Mode. Leave the room instantly."
-          />
+          {softSignalBlock}
           <Button
             variant="secondary"
             label="Skip to moves"
@@ -226,27 +265,26 @@ export default function TooMuchScreen() {
   }
 
   if (phase === "reassurance" && snapshot) {
-    const line = REASSURANCE_LINES[reassureIndex] ?? REASSURANCE_LINES[0]!;
+    const line = reassureLines[reassureIndex] ?? reassureLines[0]!;
     return (
-      <Screen style={styles.roomScreen}>
+      <Screen style={styles.roomScreen} scroll={false}>
         <ScrollView contentContainerStyle={styles.scroll}>
-          <Eyebrow>REASSURANCE RITUAL</Eyebrow>
+          <View style={styles.doorSeal}>
+            <Text style={styles.doorSealText}>REASSURANCE CHAMBER</Text>
+          </View>
           <Title>Not a verdict. A reframe.</Title>
           <Card style={styles.roomCard}>
             <Text style={styles.scriptLine}>{line}</Text>
             <Button
               label="Next line"
               onPress={() => {
-                setReassureIndex((i) => (i + 1) % REASSURANCE_LINES.length);
+                setReassureIndex((i) => (i + 1) % reassureLines.length);
                 setReassuranceSteps((n) => n + 1);
                 void hapticService.play("confirmation");
               }}
             />
           </Card>
-          <SoftSignalButton
-            state={softState}
-            onPress={() => void fireSoftSignal()}
-          />
+          {softSignalBlock}
           <Button
             label="Done with ritual → moves"
             onPress={() => setPhase("move")}
@@ -262,11 +300,16 @@ export default function TooMuchScreen() {
   }
 
   if (phase === "move" && snapshot) {
-    const moves = suggestedMoves(snapshot.intensityId);
+    const moves = suggestedMoves(
+      snapshot.intensityId,
+      snapshot.triggerId,
+    );
     return (
-      <Screen style={styles.roomScreen}>
+      <Screen style={styles.roomScreen} scroll={false}>
         <ScrollView contentContainerStyle={styles.scroll}>
-          <Eyebrow>CHOOSE A MOVE</Eyebrow>
+          <View style={styles.doorSeal}>
+            <Text style={styles.doorSealText}>CHOOSE EXIT PATH</Text>
+          </View>
           <Title>What does the room need next?</Title>
           <Card style={styles.roomCard}>
             {moves.map((m) => (
@@ -277,10 +320,20 @@ export default function TooMuchScreen() {
                   if (m === "reassurance") {
                     setReassureIndex(0);
                     setPhase("reassurance");
+                    return;
                   }
                   if (m === "stay_in_room") {
                     setScriptIndex(0);
                     setPhase("room");
+                    return;
+                  }
+                  if (m === "link_cathedral") {
+                    router.push("/attachment-repair" as never);
+                    return;
+                  }
+                  if (m === "link_interest_re") {
+                    router.push("/interest-re" as never);
+                    return;
                   }
                 }}
                 style={[
@@ -295,10 +348,7 @@ export default function TooMuchScreen() {
               </Pressable>
             ))}
           </Card>
-          <SoftSignalButton
-            state={softState}
-            onPress={() => void fireSoftSignal()}
-          />
+          {softSignalBlock}
           <Button
             label="Leave room → debrief"
             disabled={moveId === "none"}
@@ -315,13 +365,13 @@ export default function TooMuchScreen() {
 
   if (phase === "debrief" && snapshot) {
     return (
-      <Screen style={styles.roomScreen}>
+      <Screen style={styles.roomScreen} scroll={false}>
         <ScrollView contentContainerStyle={styles.scroll}>
           <Eyebrow>EXIT DEBRIEF</Eyebrow>
           <Title>You left the room. Still not too much.</Title>
           <Body muted>
-            {findTrigger(snapshot.triggerId).label} · move:{" "}
-            {moveLabel(moveId)}
+            {findTrigger(snapshot.triggerId).label} · {moveLabel(moveId)} ·
+            track {snapshot.containmentTrack}
           </Body>
           <Card style={styles.roomCard}>
             <Toggle
@@ -375,6 +425,15 @@ export default function TooMuchScreen() {
               colors={colors}
               styles={styles}
             />
+            <Toggle
+              label="+1 Used the room without shame for needing it"
+              value={debrief.ledgerUsedRoomWithoutShame}
+              onChange={(v) =>
+                setDebrief({ ...debrief, ledgerUsedRoomWithoutShame: v })
+              }
+              colors={colors}
+              styles={styles}
+            />
           </Card>
           <Button
             label="Save & exit room"
@@ -392,20 +451,26 @@ export default function TooMuchScreen() {
 
   if (phase === "patterns") {
     return (
-      <Screen style={styles.roomScreen}>
+      <Screen style={styles.roomScreen} scroll={false}>
         <ScrollView contentContainerStyle={styles.scroll}>
-          <Eyebrow>PATTERN TRACKING</Eyebrow>
-          <Title>Private. Not a neediness score.</Title>
+          <Eyebrow>LONG-TERM PATTERN TRACKING</Eyebrow>
+          <Title>Private analytics. Not a neediness score.</Title>
           <Body muted>{TOO_MUCH_COPY.notScore}</Body>
           <Card style={styles.roomCard}>
             <Body>
-              Total runs: {patterns.total} · 7d: {patterns.last_7_days} · 30d:{" "}
+              Total: {patterns.total} · 7d: {patterns.last_7_days} · 30d:{" "}
               {patterns.last_30_days}
             </Body>
             <Body muted>
               Flooded: {patterns.flooded_count} · Soft Signal:{" "}
-              {patterns.soft_signal_count} · Named story:{" "}
-              {patterns.named_story_count}
+              {patterns.soft_signal_count}
+            </Body>
+            <Body muted>
+              Named story: {patterns.named_story_count} · No dump:{" "}
+              {patterns.no_dump_count}
+            </Body>
+            <Body muted>
+              Named-without-dump streak: {patterns.named_without_dump_streak}
             </Body>
           </Card>
           <Card style={styles.roomCard}>
@@ -420,6 +485,46 @@ export default function TooMuchScreen() {
               ))
             )}
           </Card>
+          <Card style={styles.roomCard}>
+            <Text style={styles.section}>Recommended next protocol</Text>
+            <Body>{patterns.recommended_protocol}</Body>
+            <Body muted>{patterns.recommended_reason}</Body>
+            {patterns.recommended_protocol === "attachment-repair" ? (
+              <Button
+                variant="secondary"
+                label="Open Cathedral"
+                onPress={() => router.push("/attachment-repair" as never)}
+              />
+            ) : null}
+            {patterns.recommended_protocol === "interest-re" ? (
+              <Button
+                variant="secondary"
+                label="Open Interest RE"
+                onPress={() => router.push("/interest-re" as never)}
+              />
+            ) : null}
+            {patterns.recommended_protocol === "conflict-sim" ? (
+              <Button
+                variant="secondary"
+                label="Open Conflict Sim"
+                onPress={() => router.push("/conflict-sim" as never)}
+              />
+            ) : null}
+            {patterns.recommended_protocol === "spooning" ? (
+              <Button
+                variant="secondary"
+                label="Open Spooning"
+                onPress={() => router.push("/spooning" as never)}
+              />
+            ) : null}
+            {patterns.recommended_protocol === "soft-signal" ? (
+              <Button
+                variant="secondary"
+                label="Soft Signal practice"
+                onPress={() => router.push("/soft-signal/practice" as never)}
+              />
+            ) : null}
+          </Card>
           <Button
             variant="secondary"
             label="Back"
@@ -432,19 +537,22 @@ export default function TooMuchScreen() {
 
   if (phase === "history") {
     return (
-      <Screen style={styles.roomScreen}>
+      <Screen style={styles.roomScreen} scroll={false}>
         <ScrollView contentContainerStyle={styles.scroll}>
           <Eyebrow>HISTORY</Eyebrow>
           <Title>Local only.</Title>
           {history.length === 0 ? (
-            <Body muted>No entries. Panic room is empty and available.</Body>
+            <Body muted>No entries. Panic room empty and available.</Body>
           ) : (
-            history.slice(0, 15).map((h) => (
-              <Card key={`${h.snapshot.id}-${h.endedAt}`} style={styles.roomCard}>
+            history.slice(0, 20).map((h) => (
+              <Card
+                key={`${h.snapshot.id}-${h.endedAt}`}
+                style={styles.roomCard}
+              >
                 <Body>{findTrigger(h.snapshot.triggerId).label}</Body>
                 <Body muted>
-                  {h.snapshot.intensityId} · {h.endReason} ·{" "}
-                  {moveLabel(h.moveId)}
+                  {h.snapshot.intensityId} · {h.snapshot.containmentTrack} ·{" "}
+                  {h.endReason} · {moveLabel(h.moveId)}
                 </Body>
               </Card>
             ))
@@ -461,14 +569,16 @@ export default function TooMuchScreen() {
 
   if (phase === "detect") {
     return (
-      <Screen style={styles.roomScreen}>
+      <Screen style={styles.roomScreen} scroll={false}>
         <ScrollView contentContainerStyle={styles.scroll}>
-          <Eyebrow>DETECTION</Eyebrow>
+          <View style={styles.doorSeal}>
+            <Text style={styles.doorSealText}>DETECTION · BEFORE DOOR SEAL</Text>
+          </View>
           <Title>What lit the fuse?</Title>
           <Body muted>{TOO_MUCH_COPY.panicRoom}</Body>
 
           <Card style={styles.roomCard}>
-            <Text style={styles.section}>Trigger</Text>
+            <Text style={styles.section}>Primary trigger</Text>
             {TOO_MUCH_TRIGGERS.filter((t) => t.id !== "undecided").map((t) => (
               <Pressable
                 key={t.id}
@@ -485,6 +595,7 @@ export default function TooMuchScreen() {
               >
                 <Text style={styles.roleTitle}>{t.label}</Text>
                 <Body muted>{t.detect}</Body>
+                <Body muted>System: {t.system}</Body>
               </Pressable>
             ))}
             {draft.triggerId === "custom" ? (
@@ -501,13 +612,39 @@ export default function TooMuchScreen() {
           </Card>
 
           <Card style={styles.roomCard}>
-            <Text style={styles.section}>Intensity</Text>
+            <Text style={styles.section}>Co-triggers (optional, max 4)</Text>
+            <View style={styles.chipRow}>
+              {TOO_MUCH_TRIGGERS.filter(
+                (t) =>
+                  t.id !== "undecided" &&
+                  t.id !== "custom" &&
+                  t.id !== draft.triggerId,
+              ).map((t) => (
+                <Chip
+                  key={t.id}
+                  label={t.label}
+                  selected={draft.coTriggers.includes(t.id)}
+                  onPress={() =>
+                    setDraft({
+                      ...draft,
+                      coTriggers: toggleCoTrigger(draft.coTriggers, t.id),
+                    })
+                  }
+                  styles={styles}
+                  colors={colors}
+                />
+              ))}
+            </View>
+          </Card>
+
+          <Card style={styles.roomCard}>
+            <Text style={styles.section}>Intensity → containment track</Text>
             <View style={styles.chipRow}>
               {TOO_MUCH_INTENSITIES.filter((i) => i.id !== "undecided").map(
                 (i) => (
                   <Chip
                     key={i.id}
-                    label={i.label}
+                    label={`${i.label} (${i.containmentTrack})`}
                     selected={draft.intensityId === i.id}
                     onPress={() =>
                       setDraft({
@@ -524,7 +661,7 @@ export default function TooMuchScreen() {
           </Card>
 
           <Card style={styles.roomCard}>
-            <Text style={styles.section}>Body</Text>
+            <Text style={styles.section}>Body locater</Text>
             <View style={styles.chipRow}>
               {BODY_SPOTS.map((b) => (
                 <Chip
@@ -554,30 +691,33 @@ export default function TooMuchScreen() {
                 multiline
               />
             ) : (
-              <Body muted>Flooded: story optional. Soft Signal is the point.</Body>
+              <Body muted>
+                Flood track: story optional. Soft Signal is the point.
+              </Body>
             )}
-            <View style={styles.row}>
-              <View style={{ flex: 1 }}>
-                <Body>Soft Signal is free (required)</Body>
-              </View>
-              <Switch
-                value={draft.softSignalAcknowledged}
-                onValueChange={(v) =>
-                  setDraft({ ...draft, softSignalAcknowledged: v })
-                }
-                trackColor={{ false: colors.line, true: colors.mossSoft }}
-                thumbColor={
-                  draft.softSignalAcknowledged ? colors.moss : colors.white
-                }
-              />
-            </View>
+            <Toggle
+              label="Soft Signal is free (required to seal door)"
+              value={draft.softSignalAcknowledged}
+              onChange={(v) =>
+                setDraft({ ...draft, softSignalAcknowledged: v })
+              }
+              colors={colors}
+              styles={styles}
+            />
+            <Toggle
+              label="Voluntary: delay raw dump to partner (contain first)"
+              value={draft.delayDumpPledge}
+              onChange={(v) => setDraft({ ...draft, delayDumpPledge: v })}
+              colors={colors}
+              styles={styles}
+            />
           </Card>
 
           {sealError ? <Body muted>{sealError}</Body> : null}
           {!gate.ok ? <Body muted>{gate.reason}</Body> : null}
 
           <Button
-            label="Enter panic room"
+            label="Seal door · enter panic room"
             onPress={enterRoom}
             disabled={!gate.ok}
           />
@@ -592,12 +732,13 @@ export default function TooMuchScreen() {
   }
 
   return (
-    <Screen style={styles.roomScreen}>
+    <Screen style={styles.roomScreen} scroll={false}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <View style={styles.roomHeader}>
-          <Eyebrow>TOO MUCH · ABANDONMENT</Eyebrow>
-          <Title>{TOO_MUCH_COPY.title}</Title>
+        <View style={styles.doorSeal}>
+          <Text style={styles.doorSealText}>PANIC ROOM · LOBBY</Text>
+          <Text style={styles.softBanner}>{TOO_MUCH_COPY.softSignal}</Text>
         </View>
+        <Title>{TOO_MUCH_COPY.title}</Title>
         <Card style={styles.roomCard}>
           <Text style={styles.softBanner}>{TOO_MUCH_COPY.banner}</Text>
           <Text style={styles.tagline}>{TOO_MUCH_COPY.tagline}</Text>
@@ -608,16 +749,17 @@ export default function TooMuchScreen() {
         <Card style={styles.roomCard}>
           <Body muted>
             {patterns.total} runs · {patterns.last_7_days} this week · Soft
-            Signal uses: {patterns.soft_signal_count}
+            Signal: {patterns.soft_signal_count} · streak named/no-dump:{" "}
+            {patterns.named_without_dump_streak}
           </Body>
         </Card>
         <Button
-          label="Detection → enter panic room"
+          label="Detection → seal door"
           onPress={() => setPhase("detect")}
         />
         <Button
           variant="secondary"
-          label="Pattern tracking"
+          label="Pattern tracking (private)"
           onPress={() => {
             void reload();
             setPhase("patterns");
@@ -727,8 +869,21 @@ function makeStyles(colors: AppColors) {
     roomScreen: {
       backgroundColor: colors.ink,
     },
-    scroll: { gap: 12, paddingBottom: 48 },
-    roomHeader: { gap: 6 },
+    scroll: { gap: 12, paddingBottom: 56, paddingHorizontal: 4 },
+    doorSeal: {
+      borderWidth: 2,
+      borderColor: colors.moss,
+      borderRadius: 12,
+      padding: 12,
+      backgroundColor: colors.cream,
+      gap: 4,
+    },
+    doorSealText: {
+      color: colors.moss,
+      fontWeight: "900" as const,
+      fontSize: 12,
+      letterSpacing: 1.2,
+    },
     roomCard: {
       backgroundColor: colors.cream,
       borderColor: colors.mossSoft,
@@ -739,6 +894,20 @@ function makeStyles(colors: AppColors) {
       fontWeight: "800" as const,
       fontSize: 13,
       marginBottom: 8,
+    },
+    softDock: {
+      borderWidth: 2,
+      borderColor: colors.signal,
+      borderRadius: 16,
+      padding: 12,
+      backgroundColor: colors.cream,
+      gap: 8,
+    },
+    softDockLabel: {
+      color: colors.signal,
+      fontWeight: "900" as const,
+      fontSize: 11,
+      letterSpacing: 1.4,
     },
     tagline: {
       color: colors.ink,
@@ -759,6 +928,17 @@ function makeStyles(colors: AppColors) {
       fontWeight: "600" as const,
       lineHeight: 28,
       marginBottom: 12,
+    },
+    progressTrack: {
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: colors.line,
+      overflow: "hidden" as const,
+      marginBottom: 8,
+    },
+    progressFill: {
+      height: 8,
+      borderRadius: 4,
     },
     triggerCard: {
       borderWidth: 1,

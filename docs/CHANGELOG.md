@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-13 — I'm Too Much / Fear of Abandonment v0.2
+
+Maximum autism panic room: 13+ triggers with system labels, co-triggers,
+standard vs flood containment tracks, adaptive reassurance, delay-dump
+pledge, Soft Signal dock, pattern streak + recommended next protocol.
+Never a neediness score. `/too-much`.
+
 ## 2026-07-13 — I'm Too Much / Fear of Abandonment v0.1
 
 Safe panic-room UI: detection triggers, intensity, body locater, containment
