@@ -259,6 +259,12 @@ export default function HomeTabScreen() {
       />
       <Button
         variant="secondary"
+        label="Flood Protocol (language gone)"
+        onPress={() => router.push("/flood" as never)}
+        accessibilityHint="Minimum path when flooded. Soft Signal free. No essays."
+      />
+      <Button
+        variant="secondary"
         label="Pre-Renn Gate (before you dump)"
         onPress={() => router.push("/pre-renn" as never)}
         accessibilityHint="Regulation gate before reaching out. Soft Signal free. Not a ban on contact."
@@ -274,6 +280,12 @@ export default function HomeTabScreen() {
         label="Aftercare Protocol"
         onPress={() => router.push("/aftercare" as never)}
         accessibilityHint="Land the plane after touch, conflict, flood, or build spiral. Soft Signal free."
+      />
+      <Button
+        variant="secondary"
+        label="Field Notes (write, don't send)"
+        onPress={() => router.push("/field-notes" as never)}
+        accessibilityHint="Private notes so the urge doesn't have to become a text."
       />
       <Button
         variant="secondary"
