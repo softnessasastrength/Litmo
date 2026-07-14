@@ -35,6 +35,8 @@ import {
   recommendFromModel,
   type RelationshipModel,
 } from "../../lib/relationshipModelCore";
+import { runtimeConfig } from "../../config/runtime";
+import { FeatureUnavailable } from "../../components/FeatureUnavailable";
 
 type HubItem = {
   href: string;
@@ -229,7 +231,14 @@ export default function ContainmentHubScreen() {
   const [recs, setRecs] = useState<ProtocolRec[]>([]);
   const [relModel, setRelModel] = useState<RelationshipModel | null>(null);
 
+  // v1 App Store Safe scope: solo self-understanding only. This hub is entirely
+  // relationship-in-friction content (bond map, conflict, attachment repair) —
+  // a deliberate later layer, not v1. Fails closed on direct navigation even
+  // though home.tsx already stops linking here. SEE: docs/BUILD_MODES.md.
+  const hubAvailable = runtimeConfig.features.pairedGrowthContent;
+
   useEffect(() => {
+    if (!hubAvailable) return;
     void masochistModeStore.load().then(setMPrefs);
     void (async () => {
       const [debriefs, weatherHist, relBundle] = await Promise.all([
@@ -248,6 +257,16 @@ export default function ContainmentHubScreen() {
       );
     })();
   }, []);
+
+  if (!hubAvailable) {
+    return (
+      <FeatureUnavailable
+        eyebrow="CONTAINMENT HUB"
+        title="Relationship-in-friction tools are not available in this build."
+        body="This build focuses on your own self-understanding — Touch Language, Nervous System Weather, Soft Signal practice, and Guided Learning. The Containment Hub (bond map, conflict, attachment repair) remains in Maximum Mode builds (macOS / Linux / internal)."
+      />
+    );
+  }
 
   const mBanner = masochistBanner(mPrefs);
   const bondRecs = relModel ? recommendFromModel(relModel).slice(0, 3) : [];

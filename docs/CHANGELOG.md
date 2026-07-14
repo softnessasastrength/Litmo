@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-14 — v1 App Store Safe scope: solo self-understanding + first guided ritual
+
+Added `partnerPairingFeatures` / `pairedGrowthContent` flags to `features.ts`:
+App Store Safe v1 is now scoped to solo self-understanding (onboarding,
+Guided Learning Foundations, Touch Language, Weather, Soft Signal, Too Much,
+Attachment Repair Cathedral) — Discover/Match/session lifecycle/Consent
+Snapshot mutual seal and relationship-in-friction content (Relationship
+Model, Reconcile, Conflict-sim, Need-Scared, containment hub, Learning Lived
+Lessons) are gated to Maximum Mode only. Genericized hardcoded "Renn"
+references via the copy-pack (`modeCopy.partnerName`) in Pre-Renn/Too
+Much/Attachment Repair. Added `docs/FIRST_RITUAL.md` + `/first-ritual`: a new
+four-step guided ritual ("The Map, Not The Mirror") reusing existing
+containment building blocks, reachable from Home in both build modes.
+
 ## 2026-07-14 — Relationship Model fuzz test + clampAxis NaN fix
 
 Added `relationshipModelCore.fuzz.test.ts`: seeded PRNG throws 500 randomized/

@@ -54,6 +54,8 @@ const EXTRA_ASYNC_KEYS = [
   "litmo.apology_craft.history.v1",
   "litmo.field_notes.v1",
   "litmo.relationship_model.v1",
+  /** The Map, Not The Mirror — first guided ritual progress. */
+  "litmo.first_ritual.progress.v1",
 ];
 
 const EXTRA_SECURE_KEYS = [

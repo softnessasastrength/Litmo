@@ -61,4 +61,5 @@ export const maximumCopy: ModeCopyPack = {
     caption:
       "A tap-through prototype using imaginary people and local data. No real account or connection is created.",
   },
+  partnerName: "Renn",
 };

@@ -4,6 +4,7 @@ import { Pressable, Text } from "react-native";
 import { fonts, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
+import { runtimeConfig } from "../../config/runtime";
 
 function makeChromeStyles(colors: AppColors) {
   return {
@@ -60,6 +61,11 @@ function ProfileButton() {
 
 export default function TabsLayout() {
   const colors = useColors();
+  // v1 App Store Safe scope is solo self-understanding: paired-messaging and
+  // Discover/Match need a real second account, so hide those tabs entirely
+  // rather than advertise a feature this binary doesn't offer. Maximum Mode
+  // keeps both. SEE: docs/BUILD_MODES.md.
+  const showPairingTabs = runtimeConfig.features.partnerPairingFeatures;
   return (
     <Tabs
       screenOptions={{
@@ -80,6 +86,7 @@ export default function TabsLayout() {
         name="messages"
         options={{
           title: "Messages",
+          href: showPairingTabs ? undefined : null,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="chatbubble-outline" size={size} color={color} />
           ),
@@ -110,6 +117,7 @@ export default function TabsLayout() {
         name="discover"
         options={{
           title: "People",
+          href: showPairingTabs ? undefined : null,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="people-outline" size={size} color={color} />
           ),

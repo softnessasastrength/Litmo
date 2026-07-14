@@ -27,11 +27,24 @@ import {
 import { LoadingState, FailureState } from "../../components/AsyncState";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
+import { runtimeConfig } from "../../config/runtime";
+import { FeatureUnavailable } from "../../components/FeatureUnavailable";
 
 const uuidRe =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export default function MatchDetailScreen() {
+  // v1 App Store Safe scope: solo self-understanding only — matching needs a
+  // real second paired account. SEE: docs/BUILD_MODES.md.
+  if (!runtimeConfig.features.partnerPairingFeatures) {
+    return (
+      <FeatureUnavailable
+        eyebrow="MATCH"
+        title="Matching is not available in this build."
+        body="This build focuses on your own self-understanding rather than partner matching. The full Match and Consent Snapshot flow remains in Maximum Mode builds (macOS / Linux / internal)."
+      />
+    );
+  }
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();

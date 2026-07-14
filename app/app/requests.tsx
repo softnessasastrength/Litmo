@@ -22,6 +22,8 @@ import {
   FailureState,
   LoadingState,
 } from "../components/AsyncState";
+import { runtimeConfig } from "../config/runtime";
+import { FeatureUnavailable } from "../components/FeatureUnavailable";
 
 type IncomingRequest = {
   id: string;
@@ -40,6 +42,17 @@ type OutgoingRequest = {
 };
 
 export default function IncomingRequestsScreen() {
+  // v1 App Store Safe scope: solo self-understanding only — session requests
+  // need a real second paired account. SEE: docs/BUILD_MODES.md.
+  if (!runtimeConfig.features.partnerPairingFeatures) {
+    return (
+      <FeatureUnavailable
+        eyebrow="REQUESTS"
+        title="Session requests are not available in this build."
+        body="This build focuses on your own self-understanding rather than partner sessions. The full request flow remains in Maximum Mode builds (macOS / Linux / internal)."
+      />
+    );
+  }
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { user, status } = useAuth();

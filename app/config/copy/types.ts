@@ -52,4 +52,8 @@ export type ModeCopyPack = {
   softSignal: SoftSignalCopyPack;
   entry: EntryCopyPack;
   welcome: WelcomeCopyPack;
+  /** Generic name for the founder's real partner in Maximum-mode containment
+   *  copy ("Renn"); genericized to "your partner" for App Store Safe so a
+   *  stranger's screen never displays someone else's real name. */
+  partnerName: string;
 };

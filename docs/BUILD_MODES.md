@@ -146,8 +146,18 @@ macos/                    # native Mac stays Maximum (ADR 0045)
 | Demo mode surface | ✅ | ❌ |
 | Sacred Soft Signal copy | ✅ | ❌ (calm end-session copy) |
 | Build mode badge on entry | ✅ | ❌ |
+| Discover / Match / sessions / Consent Snapshot mutual seal | ✅ | ❌ (needs a real second paired account) |
+| Relationship Model, Reconcile, Conflict-sim, Need-Scared, Containment Hub, Learning Lived Lessons | ✅ | ❌ (phase-2: presupposes an existing relationship) |
+| Too Much, Attachment Repair Cathedral, first guided ritual, Learning Foundations | ✅ | ✅ (core v1: solo self-understanding) |
 
 Full table: `app/config/features.ts` · delta: `featureDelta()`.
+
+**v1 App Store Safe scope (2026-07-14):** solo self-understanding only —
+onboarding, Guided Learning Foundations, Touch Language, Nervous System
+Weather, Soft Signal, Too Much / Fear of Abandonment, Attachment Repair
+Cathedral, and the first guided ritual (`docs/FIRST_RITUAL.md`). Gated behind
+`partnerPairingFeatures` (real second-account features) and
+`pairedGrowthContent` (relationship-in-friction content) in `features.ts`.
 
 ---
 

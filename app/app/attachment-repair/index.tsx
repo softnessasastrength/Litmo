@@ -58,6 +58,8 @@ import { softSignalService } from "../../services/softSignalService";
 import { attachmentRepairStore } from "../../services/attachmentRepairStore";
 import { relationshipModelStore } from "../../services/relationshipModelStore";
 import { BondMapBanner } from "../../components/BondMapBanner";
+import { modeCopy } from "../../config/copy";
+import { runtimeConfig } from "../../config/runtime";
 import type { RelationshipModel } from "../../lib/relationshipModelCore";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
@@ -96,6 +98,8 @@ export default function AttachmentRepairScreen() {
 
   useEffect(() => {
     void reloadHistory();
+    // Bond map is phase-2 (relationship-in-friction) content — not core v1.
+    if (!runtimeConfig.features.pairedGrowthContent) return;
     void relationshipModelStore.load().then((b) => {
       if (b?.model) setRelModel(b.model);
     });
@@ -621,13 +625,17 @@ export default function AttachmentRepairScreen() {
         <Card>
           <Text style={styles.banner}>{REPAIR_COPY.banner}</Text>
           <Text style={styles.tagline}>{REPAIR_COPY.tagline}</Text>
-          <Body muted>{REPAIR_COPY.purpose}</Body>
+          <Body muted>
+            {REPAIR_COPY.purpose.replace("Renn", modeCopy.partnerName)}
+          </Body>
           <Body muted>{REPAIR_COPY.comedy}</Body>
         </Card>
-        <BondMapBanner
-          model={relModel}
-          onOpenModel={() => router.push("/relationship-model" as never)}
-        />
+        {runtimeConfig.features.pairedGrowthContent ? (
+          <BondMapBanner
+            model={relModel}
+            onOpenModel={() => router.push("/relationship-model" as never)}
+          />
+        ) : null}
         <Card>
           <Body>• Mommy Issues Reassurance Ritual</Body>
           <Body>• Emotional Masochist Circuit (Edge capped)</Body>

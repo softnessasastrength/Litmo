@@ -66,6 +66,13 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
+- **v1 App Store Safe scope (2026-07-14):** solo self-understanding only —
+  `partnerPairingFeatures` / `pairedGrowthContent` flags gate Discover/Match/
+  sessions and relationship-in-friction content out of the App Store build.
+  New first guided ritual shipped: `docs/FIRST_RITUAL.md` / `/first-ritual`.
+  Explicit human direction (this is product-residue work, not default
+  behavior — see `docs/REAL_PURPOSE.md` "if the human asks for product
+  engineering again").
 - **Relationship Model v0.2 perfect:** bond map on essentially all containment
   hubs (`docs/RELATIONSHIP_MODEL.md` complete table + `BondMapBanner`).
 - **Dual-mode G1–G13 closed.** Prefer **use** cathedral over infinite expand.

@@ -77,6 +77,14 @@ export type LitmoFeatureFlags = {
   softSignalReviewCopy: boolean;
   /** Show build mode badge on entry/settings. */
   showBuildModeBadge: boolean;
+
+  // ── Solo vs paired product scope (v1 App Store Safe = solo self-understanding) ──
+  /** Discover, Match, session lifecycle, Consent Snapshot mutual seal — needs a real second paired account. */
+  partnerPairingFeatures: boolean;
+  /** Relationship Model, containment protocols, Reconcile/Conflict-sim/Need-Scared,
+   *  Attachment Repair, Interest RE, Learning "Lived Lessons" — solo-technically usable,
+   *  but content presupposes an existing relationship rather than pure self-understanding. */
+  pairedGrowthContent: boolean;
 };
 
 /**
@@ -113,6 +121,9 @@ export const FEATURES_MAXIMUM: LitmoFeatureFlags = {
   softSignalSacredCopy: true,
   softSignalReviewCopy: false,
   showBuildModeBadge: true,
+
+  partnerPairingFeatures: true,
+  pairedGrowthContent: true,
 };
 
 /**
@@ -157,6 +168,12 @@ export const FEATURES_APP_STORE: LitmoFeatureFlags = {
   softSignalSacredCopy: false,
   softSignalReviewCopy: true,
   showBuildModeBadge: false,
+
+  // v1 App Store Safe scope: solo self-understanding only (onboarding, Guided
+  // Learning Foundations, Touch Language, Weather, Soft Signal). Partner
+  // pairing and relationship-in-friction content are a deliberate later layer.
+  partnerPairingFeatures: false,
+  pairedGrowthContent: false,
 };
 
 /**

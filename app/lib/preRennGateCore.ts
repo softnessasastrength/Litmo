@@ -153,11 +153,14 @@ export function sealPreRenn(
   };
 }
 
-export function verdictCopy(v: GateVerdict): { title: string; body: string } {
+export function verdictCopy(
+  v: GateVerdict,
+  partnerName: string = "Renn",
+): { title: string; body: string } {
   if (v === "red")
     return {
       title: "RED · Do not dump right now",
-      body: "Regulate first. Soft Signal free. Delay is care, not exile. Renn is not a fire extinguisher.",
+      body: `Regulate first. Soft Signal free. Delay is care, not exile. ${partnerName} is not a fire extinguisher.`,
     };
   if (v === "yellow")
     return {

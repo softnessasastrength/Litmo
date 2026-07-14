@@ -184,3 +184,21 @@ test("MAXIMUM_MODE and APP_STORE_SAFE aliases are boolean duals", () => {
   // Exactly one of the two is true for a given binary (xor).
   assert.equal(MAXIMUM_MODE !== APP_STORE_SAFE, true);
 });
+
+test("v1 App Store Safe scope: solo self-understanding only, partner features gated off", () => {
+  assert.equal(FEATURES_APP_STORE.partnerPairingFeatures, false);
+  assert.equal(FEATURES_APP_STORE.pairedGrowthContent, false);
+  assert.equal(FEATURES_MAXIMUM.partnerPairingFeatures, true);
+  assert.equal(FEATURES_MAXIMUM.pairedGrowthContent, true);
+  const delta = featureDelta();
+  assert.ok(delta.some((d) => d.key === "partnerPairingFeatures"));
+  assert.ok(delta.some((d) => d.key === "pairedGrowthContent"));
+});
+
+test("App Store Safe containment copy never names the founder's real partner", () => {
+  const max = copyForMode("maximum");
+  const store = copyForMode("app_store");
+  assert.equal(max.partnerName, "Renn");
+  assert.notEqual(store.partnerName, "Renn");
+  assert.ok(!/\bRenn\b/.test(store.partnerName));
+});

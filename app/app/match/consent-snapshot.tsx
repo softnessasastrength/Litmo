@@ -50,6 +50,8 @@ import {
   buildEncryptedQr,
   buildSnapshotStartInner,
 } from "../../services/qrInviteCore";
+import { runtimeConfig } from "../../config/runtime";
+import { FeatureUnavailable } from "../../components/FeatureUnavailable";
 
 /**
  * WHAT: Route shell that wraps snapshot content in Face ID / sensitive step-up.
@@ -60,6 +62,17 @@ import {
  * SEE: SensitiveAccessGate · BiometricLockContext
  */
 export default function ConsentSnapshotScreen() {
+  // v1 App Store Safe scope: solo self-understanding only — a match-specific
+  // Consent Snapshot needs a real second paired account. SEE: docs/BUILD_MODES.md.
+  if (!runtimeConfig.features.partnerPairingFeatures) {
+    return (
+      <FeatureUnavailable
+        eyebrow="CONSENT SNAPSHOT"
+        title="Matched Consent Snapshot is not available in this build."
+        body="This build focuses on your own self-understanding rather than partner matching. The full Match and Consent Snapshot flow remains in Maximum Mode builds (macOS / Linux / internal)."
+      />
+    );
+  }
   return (
     <SensitiveAccessGate>
       <ConsentSnapshotContent />

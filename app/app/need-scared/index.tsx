@@ -52,6 +52,7 @@ import { softSignalService } from "../../services/softSignalService";
 import { needScaredStore } from "../../services/needScaredStore";
 import { hapticService } from "../../services/hapticService";
 import { relationshipModelStore } from "../../services/relationshipModelStore";
+import { modeCopy } from "../../config/copy";
 import {
   enterFloodProtect,
   modelBannerLine,
@@ -794,7 +795,9 @@ export default function NeedScaredScreen() {
         <Card>
           <Text style={styles.banner}>{NEED_SCARED_COPY.banner}</Text>
           <Text style={styles.tagline}>{NEED_SCARED_COPY.tagline}</Text>
-          <Body muted>{NEED_SCARED_COPY.purpose}</Body>
+          <Body muted>
+            {NEED_SCARED_COPY.purpose.replace("Renn", modeCopy.partnerName)}
+          </Body>
           <Body muted>{NEED_SCARED_COPY.comedy}</Body>
         </Card>
         <Card>

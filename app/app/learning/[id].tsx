@@ -16,6 +16,7 @@ import type { LearningProgress } from "../../services/learningProgressCore";
 import { speechService } from "../../services/speechService";
 import { fonts, radius, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
+import { runtimeConfig } from "../../config/runtime";
 
 export default function LearningModuleScreen() {
   const styles = useThemedStyles(makeStyles);
@@ -84,6 +85,30 @@ export default function LearningModuleScreen() {
       <View style={styles.missing}>
         <Text style={styles.title} accessibilityRole="header">
           Module unavailable
+        </Text>
+        <Pressable
+          onPress={() => router.back()}
+          style={styles.secondaryButton}
+          accessibilityRole="button"
+        >
+          <Text style={styles.secondaryButtonText}>Go back</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  // v1 App Store Safe scope: solo self-understanding only. Lived Lessons
+  // presuppose an existing partner dynamic — fail closed on direct/deep-link
+  // navigation even though the Learn hub already stops listing these.
+  // SEE: docs/BUILD_MODES.md.
+  if (
+    module.track === "lived-lessons" &&
+    !runtimeConfig.features.pairedGrowthContent
+  ) {
+    return (
+      <View style={styles.missing}>
+        <Text style={styles.title} accessibilityRole="header">
+          Not available in this build
         </Text>
         <Pressable
           onPress={() => router.back()}

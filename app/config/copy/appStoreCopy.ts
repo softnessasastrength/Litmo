@@ -62,4 +62,5 @@ export const appStoreCopy: ModeCopyPack = {
     caption:
       "Practice with imaginary people and local data. No real account is required to explore the demo path when available.",
   },
+  partnerName: "your partner",
 };

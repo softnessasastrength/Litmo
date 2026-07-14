@@ -24,8 +24,21 @@ import {
 } from "../../components/AsyncState";
 import { fonts, radius, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
+import { runtimeConfig } from "../../config/runtime";
+import { FeatureUnavailable } from "../../components/FeatureUnavailable";
 
 export default function DiscoverScreen() {
+  // v1 App Store Safe scope: solo self-understanding only. Discover needs a
+  // real second paired account. SEE: docs/BUILD_MODES.md.
+  if (!runtimeConfig.features.partnerPairingFeatures) {
+    return (
+      <FeatureUnavailable
+        eyebrow="PEOPLE"
+        title="Discovering other people is not available in this build."
+        body="This build focuses on your own self-understanding — Touch Language, Nervous System Weather, Soft Signal practice, and Guided Learning. Partner discovery and matching remain in Maximum Mode builds (macOS / Linux / internal)."
+      />
+    );
+  }
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const { selectProfile } = usePrototype();

@@ -51,6 +51,8 @@ import { softSignalService } from "../../services/softSignalService";
 import { tooMuchStore } from "../../services/tooMuchStore";
 import { hapticService } from "../../services/hapticService";
 import { relationshipModelStore } from "../../services/relationshipModelStore";
+import { modeCopy } from "../../config/copy";
+import { runtimeConfig } from "../../config/runtime";
 import {
   enterFloodProtect,
   modelBannerLine,
@@ -113,6 +115,8 @@ export default function TooMuchScreen() {
 
   useEffect(() => {
     void reload();
+    // Bond map is phase-2 (relationship-in-friction) content — not core v1.
+    if (!runtimeConfig.features.pairedGrowthContent) return;
     void relationshipModelStore.load().then((b) => {
       if (b) {
         setRelModel(b.model);
@@ -774,7 +778,9 @@ export default function TooMuchScreen() {
         <Card style={styles.roomCard}>
           <Text style={styles.softBanner}>{TOO_MUCH_COPY.banner}</Text>
           <Text style={styles.tagline}>{TOO_MUCH_COPY.tagline}</Text>
-          <Body muted>{TOO_MUCH_COPY.purpose}</Body>
+          <Body muted>
+            {TOO_MUCH_COPY.purpose.replace("Renn", modeCopy.partnerName)}
+          </Body>
           <Body muted>{TOO_MUCH_COPY.panicRoom}</Body>
           <Body muted>{TOO_MUCH_COPY.comedy}</Body>
         </Card>
@@ -785,7 +791,7 @@ export default function TooMuchScreen() {
             {patterns.named_without_dump_streak}
           </Body>
         </Card>
-        {relModel ? (
+        {runtimeConfig.features.pairedGrowthContent && relModel ? (
           <Card style={styles.roomCard}>
             <Body muted>Bond map: {modelBannerLine(relModel)}</Body>
             <Body muted>

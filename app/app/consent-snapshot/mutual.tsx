@@ -40,6 +40,8 @@ import { hapticService } from "../../services/hapticService";
 import { fonts, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { scheduleDemoNotification } from "../../services/notifications";
+import { runtimeConfig } from "../../config/runtime";
+import { FeatureUnavailable } from "../../components/FeatureUnavailable";
 
 /**
  * WHAT: UI toggle state for dual-seal checklists before casting to AffirmationChecks.
@@ -111,6 +113,17 @@ const SELF_ROWS = [
  * SEE: affirmParty, withdrawMutualSnapshot, useConsentGrantArm
  */
 export default function ConsentSnapshotMutualScreen() {
+  // v1 App Store Safe scope: solo self-understanding only — mutual seal needs
+  // a real second paired account. SEE: docs/BUILD_MODES.md.
+  if (!runtimeConfig.features.partnerPairingFeatures) {
+    return (
+      <FeatureUnavailable
+        eyebrow="CONSENT SNAPSHOT"
+        title="Mutual Consent Snapshot is not available in this build."
+        body="This build focuses on your own self-understanding rather than partner matching. The full mutual-seal flow remains in Maximum Mode builds (macOS / Linux / internal)."
+      />
+    );
+  }
   const styles = useThemedStyles(makeStyles);
   const router = useRouter();
   const [selfDecl, setSelfDecl] = useState<PreSessionDeclaration | null>(null);

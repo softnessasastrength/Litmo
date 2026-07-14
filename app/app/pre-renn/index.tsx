@@ -14,6 +14,7 @@ import {
   type PreRennSnapshot,
 } from "../../lib/preRennGateCore";
 import { preRennGateStore } from "../../services/preRennGateStore";
+import { modeCopy } from "../../config/copy";
 import { softSignalService } from "../../services/softSignalService";
 import { relationshipModelStore } from "../../services/relationshipModelStore";
 import {
@@ -97,7 +98,7 @@ export default function PreRennGateScreen() {
   };
 
   if (snap) {
-    const copy = verdictCopy(snap.verdict);
+    const copy = verdictCopy(snap.verdict, modeCopy.partnerName);
     return (
       <Screen>
         <ScrollView contentContainerStyle={styles.scroll}>

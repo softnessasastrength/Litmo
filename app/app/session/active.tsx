@@ -28,6 +28,8 @@ import type { TraumaSafetyPrefs } from "../../lib/traumaSafetyCore";
 import { defaultTraumaSafetyPrefs } from "../../lib/traumaSafetyCore";
 import { SOFT_SIGNAL_COPY } from "../../lib/softSignalCore";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
+import { runtimeConfig } from "../../config/runtime";
+import { FeatureUnavailable } from "../../components/FeatureUnavailable";
 
 /**
  * Maps terminal session repository statuses → wrap-up `ended` query params.
@@ -50,6 +52,17 @@ const terminalEndedReason: Record<string, string> = {
  * SEE: SensitiveAccessGate · docs ONBOARDING vs session (Soft Signal only post-onboarding)
  */
 export default function ActiveSessionScreen() {
+  // v1 App Store Safe scope: solo self-understanding only — a live session
+  // needs a real second paired account. SEE: docs/BUILD_MODES.md.
+  if (!runtimeConfig.features.partnerPairingFeatures) {
+    return (
+      <FeatureUnavailable
+        eyebrow="SESSION"
+        title="Live sessions are not available in this build."
+        body="This build focuses on your own self-understanding rather than partner sessions. The full session lifecycle remains in Maximum Mode builds (macOS / Linux / internal)."
+      />
+    );
+  }
   return (
     <SensitiveAccessGate>
       <ActiveSessionContent />

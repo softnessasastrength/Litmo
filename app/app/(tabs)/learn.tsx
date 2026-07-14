@@ -21,6 +21,7 @@ import {
 import { fonts, radius, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
+import { runtimeConfig } from "../../config/runtime";
 
 function ModuleCard({
   module,
@@ -168,14 +169,27 @@ export default function LearningHomeScreen() {
     }, []),
   );
 
+  // v1 App Store Safe scope: solo self-understanding only. Lived Lessons
+  // presuppose an existing partner dynamic (Partner Communication, etc.) and
+  // are a deliberate later layer. SEE: docs/BUILD_MODES.md.
+  const showLivedLessons = runtimeConfig.features.pairedGrowthContent;
+
   const completed = completionCount(progress);
   const foundations = learningModulesForTrack("foundations");
   const lived = learningModulesForTrack("lived-lessons");
+  const livedIds = new Set(lived.map((m) => m.id));
   const foundationsDone = foundations.filter(
     (m) => progress[m.id]?.completed,
   ).length;
   const livedDone = lived.filter((m) => progress[m.id]?.completed).length;
-  const next = recommendedNextModule(progress);
+  const rawNext = recommendedNextModule(progress);
+  const next =
+    showLivedLessons || !rawNext || rawNext.track !== "lived-lessons"
+      ? rawNext
+      : foundations.find((m) => !progress[m.id]?.completed);
+  const visiblePaths = showLivedLessons
+    ? learningPaths
+    : learningPaths.filter((p) => !p.moduleIds.some((id) => livedIds.has(id)));
 
   const openModule = (module: LearningModule) => {
     router.push({
@@ -200,10 +214,9 @@ export default function LearningHomeScreen() {
         Learn the language before you need it.
       </Text>
       <Text style={styles.intro}>
-        A full private section: six lived lessons from hard-earned practice, six
-        Litmo foundations, and curated paths. Short interactive steps, scenarios
-        with feedback, optional product practice and quizzes. Completing a
-        module never proves anyone is safe.
+        {showLivedLessons
+          ? "A full private section: six lived lessons from hard-earned practice, six Litmo foundations, and curated paths. Short interactive steps, scenarios with feedback, optional product practice and quizzes. Completing a module never proves anyone is safe."
+          : "A private section for understanding yourself: six Litmo foundations and curated paths. Short interactive steps, scenarios with feedback. Completing a module never proves anyone is safe."}
       </Text>
 
       {prefs.enabled ? (
@@ -227,21 +240,24 @@ export default function LearningHomeScreen() {
         accessibilityRole="progressbar"
         accessibilityValue={{
           min: 0,
-          max: learningModules.length,
-          now: completed,
+          max: showLivedLessons ? learningModules.length : foundations.length,
+          now: showLivedLessons ? completed : foundationsDone,
         }}
-        accessibilityLabel={`${completed} of ${learningModules.length} modules completed`}
+        accessibilityLabel={`${showLivedLessons ? completed : foundationsDone} of ${showLivedLessons ? learningModules.length : foundations.length} modules completed`}
       >
         <View style={styles.progressMain}>
           <Text style={styles.progressNumber}>
-            {completed}/{learningModules.length}
+            {showLivedLessons ? completed : foundationsDone}/
+            {showLivedLessons ? learningModules.length : foundations.length}
           </Text>
           <Text style={styles.progressLabel}>modules completed privately</Text>
         </View>
         <View style={styles.progressSplit}>
-          <Text style={styles.progressSplitText}>
-            Lived {livedDone}/{lived.length}
-          </Text>
+          {showLivedLessons ? (
+            <Text style={styles.progressSplitText}>
+              Lived {livedDone}/{lived.length}
+            </Text>
+          ) : null}
           <Text style={styles.progressSplitText}>
             Foundations {foundationsDone}/{foundations.length}
           </Text>
@@ -347,7 +363,7 @@ export default function LearningHomeScreen() {
         </Text>
       </View>
 
-      {[...learningPaths]
+      {[...visiblePaths]
         .sort((a, b) => {
           // Surface the dojo path first — ritual honesty over product curriculum.
           if (a.id === "exorcism-dojo-track") return -1;
@@ -365,28 +381,32 @@ export default function LearningHomeScreen() {
           />
         ))}
 
-      <View style={styles.sectionHeader}>
-        <Text style={styles.section} accessibilityRole="header">
-          Lived lessons
-        </Text>
-        <Text style={styles.sectionHint}>
-          Six hard-learned modules: Consent as Language, Nervous System Safety,
-          Boundaries, Recovering from Violation, Partner Communication, and
-          Self-Compassion. Interactive practice, optional product links and
-          quizzes. Leave anytime.
-        </Text>
-      </View>
+      {showLivedLessons ? (
+        <>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.section} accessibilityRole="header">
+              Lived lessons
+            </Text>
+            <Text style={styles.sectionHint}>
+              Six hard-learned modules: Consent as Language, Nervous System
+              Safety, Boundaries, Recovering from Violation, Partner
+              Communication, and Self-Compassion. Interactive practice,
+              optional product links and quizzes. Leave anytime.
+            </Text>
+          </View>
 
-      {lived.map((module) => (
-        <ModuleCard
-          key={module.id}
-          module={module}
-          progress={progress}
-          styles={styles}
-          colors={colors}
-          onPress={() => openModule(module)}
-        />
-      ))}
+          {lived.map((module) => (
+            <ModuleCard
+              key={module.id}
+              module={module}
+              progress={progress}
+              styles={styles}
+              colors={colors}
+              onPress={() => openModule(module)}
+            />
+          ))}
+        </>
+      ) : null}
 
       <View style={styles.sectionHeader}>
         <Text style={styles.section} accessibilityRole="header">
