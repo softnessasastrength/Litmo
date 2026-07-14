@@ -4,7 +4,7 @@ Litmo begins from a simple premise:
 
 > **Touch is not a transaction — it is a language.**
 
-The product exists to help people communicate that language with clarity, dignity, and agency.
+This project exists to help its founder communicate that language, with clarity, dignity, and agency, in their own relationship — not (currently) to serve a general public.
 
 ## What follows from that premise
 

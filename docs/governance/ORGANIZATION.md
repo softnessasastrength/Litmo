@@ -1,5 +1,7 @@
 # Organizational Model
 
+**Reality check:** today this is one founder plus AI coding agents — there is no team filling the distinct "stewardship" roles below. Read them as hypothetical role definitions for if the project ever grew, not as filled positions (in particular, "Independent review" is not currently staffed; see `CURRENT_STATE.md`'s open item: "named second reviewer... not inventable").
+
 Litmo may be built by a changing mix of human and AI contributors. Roles are defined by responsibility, not vendor, model, employment status, or repository permission.
 
 ## Accountable human ownership

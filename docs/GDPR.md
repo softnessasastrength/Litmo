@@ -31,9 +31,11 @@ Consent Snapshots are **sensitive**; they never become public safety scores.
 
 ## 2. Roles (to be finalized legally)
 
+**Reality check:** no incorporated entity or "operator" currently exists — this is a placeholder for if the founder ever operates Litmo for real external users, not a description of a real controller today.
+
 | Role | Current engineering stance |
 | ---- | -------------------------- |
-| **Controller** | Softness as a Strength / Litmo operator (name TBD in public notice) |
+| **Controller** | No entity exists yet; placeholder is "Softness as a Strength / Litmo operator" if this ever needs a public notice |
 | **Processors** | Supabase (hosting/auth/db), Apple (passkeys/biometrics), Expo (build) — list in privacy policy |
 | **Data subject** | Authenticated adult users; demo mode has **no** server account |
 

@@ -1,5 +1,7 @@
 # Litmo Governance Charter
 
+**Reality check:** Litmo is currently a personal emotional containment system built by one founder for their own relationship — not a public product with "consenting adults" (plural) as a user base. This charter describes the governance model for a hypothetical multi-person future; today there is one accountable human and a set of AI coding agents, no separate stewards or reviewers.
+
 ## Purpose
 
 This charter defines how Litmo is allowed to evolve. It governs human and AI contributors, protects the product's mission, and keeps authority, accountability, and project memory inside the repository.

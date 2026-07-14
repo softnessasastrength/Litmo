@@ -1,5 +1,7 @@
 # Litmo UX/UI Philosophy
 
+**Reality check:** Litmo is currently a personal emotional containment system built by one founder for their own relationship, not a public product — there is no general user base today. "Users" below means the founder and their partner; treat these as personal design notes, not a company's product strategy.
+
 ## Fluid and Warm
 
 Every interaction should feel fluid, calm, and intentional. Motion is part of the interface, not decoration.

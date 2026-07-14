@@ -1,5 +1,7 @@
 # Litmo Feature Swarm Tracker
 
+**Reality check:** "swarm" and "Agent N" mean parallel AI coding-agent instances directed by one founder, not real staff or teams. "Shipped on main" means the code exists, runs, and is merged — not that it has shipped to any real user base beyond the founder. The stranger-discovery/matching-radar and Device OS/hardware-SKU items below are speculative design, not live features with real users.
+
 **Created:** 2026-07-13  
 **Purpose:** Clean task tracking for the five parallel major feature streams (multi-agent swarm).  
 **Authority:** Living tracker. Implementation truth is still code + ADRs + chapter docs.  

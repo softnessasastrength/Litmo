@@ -67,13 +67,13 @@ Profiles must be presented as conversation starters and current tendencies, not 
 **Status**
 Accepted principle
 
-## 2026-07-11 — The idea must stand without the company
+## 2026-07-11 — The idea must stand without a company (there is no company)
 
 **Observation**
-The public framework is larger than the Litmo implementation.
+The public framework is larger than the Litmo implementation. Note: there is no company behind Litmo — this is one founder's personal tool, and this entry is about how to talk about the underlying idea honestly *if* it ever comes up publicly, not about defending an existing business.
 
 **Possible product implication**
-Talks and public writing should explain why safe platonic touch needs social infrastructure without becoming product advertisements.
+If the founder ever writes or speaks publicly about this, it should explain why safe platonic touch needs social infrastructure without becoming product advertisements for something that doesn't exist as a product.
 
 **Status**
 Accepted principle

@@ -75,6 +75,8 @@ See [`docs/LEARNING_SYSTEM.md`](docs/LEARNING_SYSTEM.md).
 
 ## Current private-beta priorities
 
+**Reality check:** "private-beta" here is aspirational design work, not an active program — there are no invited beta testers today, only the founder.
+
 1. ~~Integrated physical-iPhone validation of the latest `main`.~~ Complete (BETA-001, 2026-07-13).
 2. Optional founder VoiceOver smoke; broader Dynamic Type, reduced-motion, focus-order, and touch-target review.
 3. ~~Full fictional two-person guided-practice flow.~~ Complete (LEARN-002).

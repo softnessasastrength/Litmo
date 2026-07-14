@@ -1,5 +1,7 @@
 # Keynote Philosophy
 
+**Reality check:** there is no keynote planned or scheduled. Litmo is currently a personal emotional containment system built by one founder for their own relationship, not a public product with a launch. This file is design thinking for an "if it ever came up" scenario, not a live plan.
+
 If Litmo is ever introduced on stage, the presentation should teach before it sells.
 
 ## Guiding principles

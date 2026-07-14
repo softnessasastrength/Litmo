@@ -1,5 +1,7 @@
 # Litmo Design Principles
 
+**Reality check:** Litmo is currently a personal emotional containment system built by one founder for their own relationship, not a public product — there is no general user base today. "Users" below means the founder and their partner; treat these as personal design notes, not a company's product strategy.
+
 ## Trust is Earned Before It Is Requested
 
 This is a foundational principle of Litmo.

@@ -2,6 +2,8 @@
 
 This file defines responsibilities for human and AI collaborators. It does not transfer ownership, authority, or accountability away from the founder.
 
+**Reality check:** today, every role below that isn't "Founder and Product Owner" or "Engineering Agents" is vacant. There are no Product/Design Advisors, no independent Safety and Security Reviewer, and no Documentation Steward beyond the founder themself. Where a section below says a reviewer "should" do something, read it as an open gap (tracked in `CURRENT_STATE.md` as "named second reviewer... not inventable"), not a filled position.
+
 ## Founder and Product Owner — Branden
 
 Final authority for:

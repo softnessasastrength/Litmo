@@ -34,7 +34,7 @@ Record decisions that materially affect architecture, security, privacy, operati
 - **Status:** accepted (hardware vision)
 - **Context:** Dedicated Litmo hardware needs warm high-fidelity, ND/sensory-first feedback; Soft Signal must feel free/safe, not alarming.
 - **Decision:** Wideband VCM primary + LRA secondary; distributed warm field; Soft Signal = long descending warm pulse with Gentle breath-fade; every pattern has Gentle Mode; Sensory-Friendly global + per-pattern presets; canonical spec `docs/HARDWARE/HAPTICS.md`.
-- **Consequences:** Device manufacturing is not private-alpha blocking; phone HAPTIC-001 remains shipping path; no ERM-primary Soft Signal.
+- **Consequences:** Dedicated hardware is design-only, not a real device or shipping SKU (see `CURRENT_STATE.md`); phone HAPTIC-001 remains the only actually-used path; no ERM-primary Soft Signal.
 
 ## ADR template
 

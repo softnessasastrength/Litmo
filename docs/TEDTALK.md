@@ -1,5 +1,7 @@
 # What Your Nervous System Is Starving For
 
+**Reality check:** no talk is scheduled or planned. This is a hypothetical-talk-outline writing exercise, not a real event or a marketing claim about who currently uses Litmo — today that's one founder and their partner, not veterans/widows/college students/etc.
+
 **Speaker:** Branden | **Runtime:** ~15-17 minutes
 
 > _"Touch is not a transaction. It is a language."_

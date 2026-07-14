@@ -1,5 +1,7 @@
 # First Codex Session Prompt
 
+**This is currently a personal emotional containment system, not a public product.** See `CURRENT_STATE.md` and `docs/REAL_PURPOSE.md` for the canonical framing before using the prompt below — it was written in an earlier "first playable prototype" framing, but the underlying reality is one founder's private tool.
+
 Copy and paste the prompt below into Codex while it is opened in the Litmo repository root.
 
 ```text

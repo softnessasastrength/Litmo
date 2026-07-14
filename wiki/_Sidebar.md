@@ -14,4 +14,4 @@
 
 **Repository:** [softnessasastrength/Litmo](https://github.com/softnessasastrength/Litmo)
 
-**Status:** Experimental; not production-ready.
+**Status:** A personal project, not a public product. Not production-ready and not headed toward a near-term public launch.

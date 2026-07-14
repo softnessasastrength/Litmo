@@ -1,10 +1,14 @@
 # Litmo Governance
 
-Litmo is an open-source project with clear stewardship, distributed ownership, and a strong preference for consensus. The project is governed as a community, but it is not directionless: the founder remains responsible for protecting Litmo's purpose, design language, privacy commitments, and long-term coherence.
+**This is currently a personal emotional containment system, not a public product.**
 
-## 1. Core governance principles
+**Reality check:** Litmo has no contributors, maintainers, lead maintainers, or community today. It is designed, written, and used by one founder, for that founder's own relationship. There is no "team" to organize into "two-pizza" groups and no Code of Conduct enforcement body, because there is no one else here yet.
 
-Litmo follows five basic principles:
+Everything below is written in the present tense as **design thinking about a hypothetical future** — the governance model this project *would* use *if* it ever grew into a real multi-person open-source project with outside contributors. Read every "maintainer," "contributor," "team," and "founder" reference below as "the role I would define if this ever stopped being a solo project," not as a description of an org that exists now.
+
+## 1. Core governance principles (hypothetical — for a future multi-person project)
+
+If Litmo ever became a real multi-person project, it would follow five basic principles:
 
 1. **Consensus before authority.** Decisions should be developed openly, with meaningful input from the people affected by them.
 2. **Clear ownership.** Every meaningful feature, service, or submodule should have a person or small team responsible for its health.
@@ -12,7 +16,7 @@ Litmo follows five basic principles:
 4. **Discussion stays visible.** Important disagreements and decisions should be documented in the relevant GitHub issue, pull request, discussion, or design document.
 5. **The project remains coherent.** The founder retains final responsibility for the roadmap and for decisions that affect Litmo's mission, product identity, privacy model, or overall direction.
 
-## 2. Roles
+## 2. Roles (hypothetical — none of these roles are filled by anyone but the founder today)
 
 ### Contributors
 
@@ -173,9 +177,9 @@ A decision may be revisited when there is meaningful new information, changed ci
 
 Reopening a decision should not merely repeat the prior discussion. The request should identify what has changed.
 
-## 8. Two-pizza teams
+## 8. Two-pizza teams (hypothetical — there is no team of any size today)
 
-Litmo organizes sustained work through small, autonomous groups that are generally small enough to be fed by two pizzas.
+If Litmo ever needed sustained work from more than one person, it would organize through small, autonomous groups that are generally small enough to be fed by two pizzas.
 
 A team should normally:
 

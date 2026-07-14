@@ -1,5 +1,7 @@
 # Roadmap
 
+**Reality check:** this roadmap was written in an earlier "real product" framing. Litmo is currently a personal tool with one user (the founder, plus their partner) — "beta," "TestFlight," and "companion clients" below describe a hypothetical future path, not an active plan or timeline. There is no current path to any of the scaling/multi-platform items.
+
 Litmo develops in safety-first milestones rather than feature accumulation.
 
 ## Foundation

@@ -1,5 +1,7 @@
 # Publishing the GitHub Wiki
 
+**Reality check:** this has never actually been done. Every file in `wiki/` still shows only its original add-commit in `git log`, and no `Litmo.wiki.git` clone exists locally — there is no live, published GitHub wiki today, and no active operation with real readers. These are draft instructions kept for reference, not a description of something that happened.
+
 GitHub stores a repository wiki in a separate Git repository ending in `.wiki.git`. The connected GitHub API used to prepare these pages cannot publish directly to that repository.
 
 ## First-time setup
