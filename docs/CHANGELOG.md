@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-07-14 — Third-party notice audit (DOCS-002 follow-up)
+
+`docs/THIRD_PARTY_NOTICES.md`: ran `license-checker` (one-off via `npx`,
+no permanent dependency added) across all three npm workspaces. Every
+dependency found is permissively licensed — no copyleft, no MPL
+compatibility conflict. Explicitly scoped: does not cover native iOS
+CocoaPods/SPM dependencies (separate ecosystem), not CI-enforced, a
+one-time snapshot dated 2026-07-14.
+
 ## 2026-07-14 — Cathedral Purge: drop the prescribed emotional posture
 
 Confirmation phrase changed from "I release this, not in anger." to "This

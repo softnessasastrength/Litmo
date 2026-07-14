@@ -69,6 +69,7 @@ Only one implementation task should normally be `active`. Every status change mu
 - **Goal:** Treat documentation as part of each implementation unit.
 - **Acceptance criteria:** update current state, task ledger, changelog, known limitations, architecture, ADRs, and release docs whenever behavior changes.
 - **Progress 2026-07-13:** founder selected MPL-2.0. ADR 0044, the canonical `LICENSE`, package metadata, and public license copy record the file-level copyleft decision. Contributor attestation, trademark policy, third-party notice audit, and qualified legal review remain follow-up governance work.
+- **Progress 2026-07-14 (agent):** third-party notice audit done — `docs/THIRD_PARTY_NOTICES.md`. Every npm dependency across `app/`, `backend/`, `shared/` is permissively licensed (MIT/BSD-2/BSD-3/ISC/Apache-2.0); zero copyleft found; no MPL-compatibility conflict. Explicitly does not cover native iOS CocoaPods/SPM dependencies (separate ecosystem, flagged as still open) and is not CI-enforced or re-run automatically. Contributor attestation, trademark policy, and qualified legal review remain open.
 - **Progress 2026-07-13 (quizzes docs):** ADR 0050 strengthened (short/deep, local-first vs partner-local, four consent gates, Face ID, seal posture, hub non-disclosure). Living docs aligned with ADR 0051 optional owner-only backup. `docs/KNOWN_LIMITATIONS.md`, `docs/ARCHITECTURE.md`, `docs/CHANGELOG.md`, `CURRENT_STATE.md`, and `project-state.json` updated.
 
 ## Blocked
