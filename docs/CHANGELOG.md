@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-07-14 — Fixed a real bug found by actually attempting the App Store Safe build
+
+Earlier "verified" claims for the entitlement-stripping work
+(`Litmodevelopment-AppStoreSafe` scheme) only checked `xcodebuild -list`
+and `-showBuildSettings` — necessary but not sufficient. Actually attempting
+a compile found a real bug: `Pods.xcodeproj` only mirrors build
+configurations it's explicitly told about, so the app-level
+`Release-AppStoreSafe` configuration had no matching Pod-target
+configuration, breaking module-map resolution for every Pod. Fixed with a
+`project` directive in `app/ios/Podfile` mapping the new configuration to
+`:release`, then `pod install` (clean, minimal diff: one new xcconfig, one
+corrected `baseConfigurationReference`). Re-attempted the build: the
+module-map error was gone and real Expo modules were compiling. Could not
+complete the full build — this machine's disk is at 97% capacity — but
+that's an environment constraint, not a config bug, and is now documented
+honestly in `docs/BUILD_MODES.md` alongside what's still unverified.
+
 ## 2026-07-14 — Third-party notice audit (DOCS-002 follow-up)
 
 `docs/THIRD_PARTY_NOTICES.md`: ran `license-checker` (one-off via `npx`,

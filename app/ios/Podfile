@@ -22,6 +22,16 @@ platform :ios, podfile_properties['ios.deploymentTarget'] || '15.1'
 
 prepare_react_native_project!
 
+# Pods.xcodeproj only mirrors build configurations it's told about — without
+# this, adding Release-AppStoreSafe to the app project alone leaves every Pod
+# target still Debug/Release-only, and cross-project configuration matching
+# breaks (module maps end up in the wrong Derived Data path). See
+# docs/BUILD_MODES.md §12.
+project 'Litmodevelopment.xcodeproj',
+  'Debug' => :debug,
+  'Release' => :release,
+  'Release-AppStoreSafe' => :release
+
 target 'Litmodevelopment' do
   use_expo_modules!
 

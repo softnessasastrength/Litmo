@@ -21,6 +21,7 @@
 		13B07F961A680F5B00A75B9A /* Litmodevelopment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Litmodevelopment.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Litmodevelopment/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Litmodevelopment/Info.plist; sourceTree = "<group>"; };
+		5B77F2DD047B432A28645DAE /* Pods-Litmodevelopment.release-appstoresafe.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Litmodevelopment.release-appstoresafe.xcconfig"; path = "Target Support Files/Pods-Litmodevelopment/Pods-Litmodevelopment.release-appstoresafe.xcconfig"; sourceTree = "<group>"; };
 		7CBC7192ED15293CE404E99D /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Litmodevelopment/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		954ED2300AF65C26A7373549 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Litmodevelopment/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Litmodevelopment/SplashScreen.storyboard; sourceTree = "<group>"; };
@@ -72,6 +73,7 @@
 			children = (
 				12507CE76CD47F8492528957 /* Pods-Litmodevelopment.debug.xcconfig */,
 				C39DCA4867A7B5A383C0961F /* Pods-Litmodevelopment.release.xcconfig */,
+				5B77F2DD047B432A28645DAE /* Pods-Litmodevelopment.release-appstoresafe.xcconfig */,
 			);
 			name = Pods;
 			path = Pods;
@@ -407,14 +409,14 @@
 		};
 		498AB72F3150A43D2363EFD7 /* Release-AppStoreSafe */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C39DCA4867A7B5A383C0961F /* Pods-Litmodevelopment.release.xcconfig */;
+			baseConfigurationReference = 5B77F2DD047B432A28645DAE /* Pods-Litmodevelopment.release-appstoresafe.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Litmodevelopment/Litmodevelopment.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FHZSE6U4R5;
-				INFOPLIST_FILE = Litmodevelopment/Info-AppStoreSafe.plist;
+				INFOPLIST_FILE = "Litmodevelopment/Info-AppStoreSafe.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

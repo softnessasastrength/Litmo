@@ -282,12 +282,22 @@ Assert:
   `NSLocalNetworkUsageDescription`, and `NSBonjourServices` removed, matching
   `FEATURES_APP_STORE`'s `nfcCarefulConnect`/`localMultipeerShare: false`.
   Maximum Mode's scheme/configuration/Info.plist are untouched. Verified via
-  `xcodebuild -list` (both schemes/configs parse) and `xcodebuild
-  -showBuildSettings -scheme Litmodevelopment-AppStoreSafe -configuration
-  Release-AppStoreSafe` (resolves `INFOPLIST_FILE` correctly) — **not**
-  verified via an actual signed archive, EAS cloud build, or App Store
-  Connect submission (no Apple Developer credentials available in this
-  environment); that end-to-end check remains the founder's to run.
+  `xcodebuild -list`, `xcodebuild -showBuildSettings`, **and an actual
+  attempted compile** (2026-07-14): the first attempt genuinely failed —
+  `module map file ... not found` for every Pod target, because
+  `Pods.xcodeproj` only mirrors build configurations it's explicitly told
+  about via the Podfile's `project` directive, and adding
+  `Release-AppStoreSafe` to the app project alone left every Pod target
+  still Debug/Release-only. Fixed by adding the configuration mapping to
+  `app/ios/Podfile` and re-running `pod install` (regenerated a real
+  `Pods-Litmodevelopment.release-appstoresafe.xcconfig`, confirmed via a
+  clean, minimal git diff). A second build attempt confirmed the fix: the
+  module-map error was completely gone and real compilation of real Expo
+  modules was underway. **Not fully verified end-to-end** — the second
+  attempt failed on this machine's disk being at 97% capacity (only 1.1GB
+  free before cleanup), an environment constraint unrelated to the fix
+  itself. A full clean build, a signed archive, and App Store Connect
+  submission remain the founder's to run, ideally after freeing disk space.
 - **Still open:** the native NFC/Multipeer modules themselves remain linked
   into the App Store Safe binary (compiled but unreachable — the JS feature
   flags never call them). Fully excluding them would need conditional Podfile
