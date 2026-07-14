@@ -58,6 +58,8 @@ const EXTRA_ASYNC_KEYS = [
   "litmo.first_ritual.progress.v1",
   /** Two Maps, One Table — second (bringing someone in) ritual progress. */
   "litmo.second_ritual.progress.v1",
+  /** Letters To Him — Pillar 7 grace-over-guilt letters (device-local only). */
+  "litmo.letters_to_him.v1",
 ];
 
 const EXTRA_SECURE_KEYS = [

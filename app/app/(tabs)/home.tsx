@@ -284,6 +284,12 @@ export default function HomeTabScreen() {
         onPress={() => router.push("/attachment-repair" as never)}
         accessibilityHint="Solo reassurance ritual for attachment panic and the urge to prove you're wanted. Soft Signal God Mode."
       />
+      <Button
+        variant="secondary"
+        label="Letters To Him"
+        onPress={() => router.push("/letters-to-him" as never)}
+        accessibilityHint="One sentence of grace to who you used to be. Local, solo, no partner needed, no score."
+      />
       {runtimeConfig.features.pairedGrowthContent ? (
         <Button
           variant="secondary"

@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-07-14 — Letters To Him: Pillar 7 chamber ("Grace Over Guilt")
+
+Added `docs/LETTERS_TO_HIM.md` / `/letters-to-him`: closes the last open
+Seven Pillars gap. Deliberately not a stepper — a single free-write screen
+(regret + what-he-didn't-know-yet, both optional; one sentence of grace,
+required) with a read-only list of past letters and a one-way "let this
+one go" toggle. No step sequence, no progress tracking, no streak, no
+score, no ledger — turning grace into something to earn would reinvent the
+Emotional Masochist Circuit this project already warns against elsewhere.
+Core v1 (not gated behind `pairedGrowthContent` — this is about the
+person's own past, not an existing relationship). Built via three
+delegated subagents (core+store+tests, docs, screen+wiring), each
+independently verified (9/9 new tests passing, zero new typecheck errors)
+before integration. `docs/REAL_PURPOSE.md` updated: 6 of 7 pillars now
+have a home in the codebase; Pillar 5 ("Healing Is a Collective Act")
+remains the deliberate, documented gap.
+
 ## 2026-07-14 — ACCESS-001: static accessibility audit of containment screens
 
 Static audit (no physical device — see caveat below) of the personal

@@ -44,7 +44,9 @@ The purpose above is still true and still primary. This adds to it; it does not 
 
 **First concrete artifact:** `docs/FIRST_RITUAL.md` / `/first-ritual` ("The Map, Not The Mirror") and the `partnerPairingFeatures` / `pairedGrowthContent` v1 App Store Safe scope in `docs/BUILD_MODES.md` — solo self-understanding first, shared/partner language later, matching the sequencing "younger me" actually needed. `docs/SECOND_RITUAL.md` / `/second-ritual` ("Two Maps, One Table") is the shared-language layer once a real partner exists.
 
-**Governing values (2026-07-14):** the Seven Pillars from softnessasastrength.com now sit alongside this file as the value layer for the younger-me work specifically: Softness Is Strength · Do the Hard Thing · Live in the Gray · Be the Mirror You Needed · Healing Is a Collective Act · Authenticity Over Performance · Grace Over Guilt. Pillar 6 is why `docs/THE_2_382_DOCTRINE.md` exists and is never "fixed." Pillar 7 is the open gap this file's next proposed chamber ("Letters To Him") would close.
+**Governing values (2026-07-14):** the Seven Pillars from softnessasastrength.com now sit alongside this file as the value layer for the younger-me work specifically: Softness Is Strength · Do the Hard Thing · Live in the Gray · Be the Mirror You Needed · Healing Is a Collective Act · Authenticity Over Performance · Grace Over Guilt. Pillar 6 is why `docs/THE_2_382_DOCTRINE.md` exists and is never "fixed." Pillar 7 is `docs/LETTERS_TO_HIM.md` / `/letters-to-him` — deliberately not a sequence, not scored, not tracked; the one chamber this project doesn't get to turn into homework.
+
+**Pillar coverage as of 2026-07-14:** 6 of 7 pillars now have a home in the codebase. Pillar 5, "Healing Is a Collective Act," is the deliberate remaining gap — a literal community/shared feature would contradict `ROADMAP.md`'s own "deliberately deferred: open stranger discovery, public scores." Honoring it without breaking that boundary means static, non-user-generated content, not infrastructure — an open question, not yet a chamber.
 
 This is still not a startup pitch. It's the same honesty, aimed at one more person than just me.
 
