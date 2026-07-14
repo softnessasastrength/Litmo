@@ -52,6 +52,8 @@ PODS:
     - Yoga
   - ExpoAsset (55.0.17):
     - ExpoModulesCore
+  - ExpoAudio (55.0.15):
+    - ExpoModulesCore
   - ExpoCrypto (55.0.16):
     - ExpoModulesCore
   - ExpoDomWebView (55.0.6):
@@ -145,6 +147,8 @@ PODS:
   - LitmoNfc (1.0.0):
     - ExpoModulesCore
   - LitmoPasskeys (1.0.0):
+    - ExpoModulesCore
+  - LitmoWatchHaptics (0.1.0):
     - ExpoModulesCore
   - RCTDeprecation (0.83.6)
   - RCTRequired (0.83.6)
@@ -2059,6 +2063,7 @@ DEPENDENCIES:
   - EXConstants (from `../../node_modules/expo-constants/ios`)
   - Expo (from `../../node_modules/expo`)
   - ExpoAsset (from `../../node_modules/expo-asset/ios`)
+  - ExpoAudio (from `../../node_modules/expo-audio/ios`)
   - ExpoCrypto (from `../../node_modules/expo-crypto/ios`)
   - "ExpoDomWebView (from `../../node_modules/@expo/dom-webview/ios`)"
   - ExpoFileSystem (from `../../node_modules/expo-file-system/ios`)
@@ -2082,6 +2087,7 @@ DEPENDENCIES:
   - LitmoLocalShare (from `../modules/litmo-local-share/ios`)
   - LitmoNfc (from `../modules/litmo-nfc/ios`)
   - LitmoPasskeys (from `../modules/litmo-passkeys/ios`)
+  - LitmoWatchHaptics (from `../modules/litmo-watch-haptics/ios`)
   - RCTDeprecation (from `../../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
   - RCTRequired (from `../../node_modules/react-native/Libraries/Required`)
   - RCTSwiftUI (from `../../node_modules/react-native/ReactApple/RCTSwiftUI`)
@@ -2178,6 +2184,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/expo"
   ExpoAsset:
     :path: "../../node_modules/expo-asset/ios"
+  ExpoAudio:
+    :path: "../../node_modules/expo-audio/ios"
   ExpoCrypto:
     :path: "../../node_modules/expo-crypto/ios"
   ExpoDomWebView:
@@ -2225,6 +2233,8 @@ EXTERNAL SOURCES:
     :path: "../modules/litmo-nfc/ios"
   LitmoPasskeys:
     :path: "../modules/litmo-passkeys/ios"
+  LitmoWatchHaptics:
+    :path: "../modules/litmo-watch-haptics/ios"
   RCTDeprecation:
     :path: "../../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation"
   RCTRequired:
@@ -2378,6 +2388,7 @@ SPEC CHECKSUMS:
   EXConstants: dadbeba983acc30f855a919658a2b34fbd86615d
   Expo: b0f96de93d2e9ab7c6eabcf88597b13f6fe3f67e
   ExpoAsset: 7721c5c4ae2a7c3c8147a046727ac6c020b05648
+  ExpoAudio: 7314dc660c5749134f75767b371da210e4a2692f
   ExpoCrypto: 1fe00d6b57bdc7bcf0c9eafedcae8fb5af6b8102
   ExpoDomWebView: b2e9d601f9cb77d3c97da73234e175b64be91928
   ExpoFileSystem: 49ab894dee0818cb8b83d489fc51eafade73efb9
@@ -2404,6 +2415,7 @@ SPEC CHECKSUMS:
   LitmoLocalShare: 9b056b0f09f487267d3ec84be36fa84675afe45a
   LitmoNfc: 9410b2f68bbeddcc20fc6932a3dac371cc23caa0
   LitmoPasskeys: 7c85cfcb73ae27f23dd437ccb1d675bda7830036
+  LitmoWatchHaptics: d8f1e685ea9cf4853f36139c16965f1c665b1f73
   RCTDeprecation: 9502b5eb8e3c9eb75ff5a333b2c591bab9d91e28
   RCTRequired: 0268a5d86aef1defea2e04289d74fdf3570197c1
   RCTSwiftUI: cff211c5e4d94e491dda240d663b8effd25296d7
