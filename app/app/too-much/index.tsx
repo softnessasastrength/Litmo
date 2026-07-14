@@ -50,6 +50,13 @@ import {
 import { softSignalService } from "../../services/softSignalService";
 import { tooMuchStore } from "../../services/tooMuchStore";
 import { hapticService } from "../../services/hapticService";
+import { relationshipModelStore } from "../../services/relationshipModelStore";
+import {
+  enterFloodProtect,
+  modelBannerLine,
+  type RelationshipEvent,
+  type RelationshipModel,
+} from "../../lib/relationshipModelCore";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
@@ -97,6 +104,8 @@ export default function TooMuchScreen() {
   >(null);
   const [containmentSteps, setContainmentSteps] = useState(0);
   const [reassuranceSteps, setReassuranceSteps] = useState(0);
+  const [relModel, setRelModel] = useState<RelationshipModel | null>(null);
+  const [relEvents, setRelEvents] = useState<RelationshipEvent[]>([]);
 
   const reload = useCallback(async () => {
     setHistory(await tooMuchStore.load());
@@ -104,6 +113,12 @@ export default function TooMuchScreen() {
 
   useEffect(() => {
     void reload();
+    void relationshipModelStore.load().then((b) => {
+      if (b) {
+        setRelModel(b.model);
+        setRelEvents(b.events);
+      }
+    });
   }, [reload]);
 
   const gate = canEnterPanicRoom(draft);
@@ -155,6 +170,23 @@ export default function TooMuchScreen() {
       includeDebrief ? debrief : null,
     );
     await tooMuchStore.append(entry);
+    // Flooded intensity path + bond still "steady" → suggest flood_protect locally.
+    // Soft Signal freeness unchanged (never blocks exit / freeness).
+    const floodedPath =
+      snapshot.intensityId === "flooded" ||
+      snapshot.containmentTrack === "flood";
+    if (
+      floodedPath &&
+      reason !== "abandoned" &&
+      relModel &&
+      relModel.phase === "steady"
+    ) {
+      const result = enterFloodProtect(relModel);
+      const evts = [result.event, ...relEvents].slice(0, 100);
+      await relationshipModelStore.saveModel(result.model, evts);
+      setRelModel(result.model);
+      setRelEvents(evts);
+    }
     await reload();
     setSnapshot(null);
     setDraft(defaultTooMuchDraft());
@@ -753,6 +785,32 @@ export default function TooMuchScreen() {
             {patterns.named_without_dump_streak}
           </Body>
         </Card>
+        {relModel ? (
+          <Card style={styles.roomCard}>
+            <Body muted>Bond map: {modelBannerLine(relModel)}</Body>
+            <Body muted>
+              Flooded intensity finish can move phase → flood_protect when bond
+              was steady. Soft Signal freeness unchanged. Not consent.
+            </Body>
+            <Button
+              variant="secondary"
+              label="Open Relationship Model"
+              onPress={() => router.push("/relationship-model" as never)}
+            />
+          </Card>
+        ) : (
+          <Card style={styles.roomCard}>
+            <Body muted>
+              No Relationship Model yet — optional bond map for phase context.
+              Soft Signal free either way.
+            </Body>
+            <Button
+              variant="secondary"
+              label="Open Relationship Model"
+              onPress={() => router.push("/relationship-model" as never)}
+            />
+          </Card>
+        )}
         <Button
           label="Detection → seal door"
           onPress={() => setPhase("detect")}

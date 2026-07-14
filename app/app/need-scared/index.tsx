@@ -51,6 +51,13 @@ import {
 import { softSignalService } from "../../services/softSignalService";
 import { needScaredStore } from "../../services/needScaredStore";
 import { hapticService } from "../../services/hapticService";
+import { relationshipModelStore } from "../../services/relationshipModelStore";
+import {
+  enterFloodProtect,
+  modelBannerLine,
+  type RelationshipEvent,
+  type RelationshipModel,
+} from "../../lib/relationshipModelCore";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
@@ -100,6 +107,8 @@ export default function NeedScaredScreen() {
   >(null);
   const [bothAndDone, setBothAndDone] = useState(0);
   const [askEdit, setAskEdit] = useState("");
+  const [relModel, setRelModel] = useState<RelationshipModel | null>(null);
+  const [relEvents, setRelEvents] = useState<RelationshipEvent[]>([]);
 
   const reload = useCallback(async () => {
     setHistory(await needScaredStore.load());
@@ -107,6 +116,12 @@ export default function NeedScaredScreen() {
 
   useEffect(() => {
     void reload();
+    void relationshipModelStore.load().then((b) => {
+      if (b) {
+        setRelModel(b.model);
+        setRelEvents(b.events);
+      }
+    });
   }, [reload]);
 
   const gate = canSealNeedScared(draft);
@@ -155,6 +170,22 @@ export default function NeedScaredScreen() {
       includeDebrief ? debrief : null,
     );
     await needScaredStore.append(entry);
+    // High dual-bind intensity + bond still "steady" → suggest flood_protect locally.
+    // Soft Signal freeness unchanged (never blocks exit / freeness).
+    const highFlood =
+      finalSnap.needIntensity >= 4 || finalSnap.fearIntensity >= 4;
+    if (
+      highFlood &&
+      reason !== "abandoned" &&
+      relModel &&
+      relModel.phase === "steady"
+    ) {
+      const result = enterFloodProtect(relModel);
+      const evts = [result.event, ...relEvents].slice(0, 100);
+      await relationshipModelStore.saveModel(result.model, evts);
+      setRelModel(result.model);
+      setRelEvents(evts);
+    }
     await reload();
     setSnapshot(null);
     setDraft(defaultNeedScaredDraft());
@@ -772,6 +803,32 @@ export default function NeedScaredScreen() {
             {summary.soft_signal}
           </Body>
         </Card>
+        {relModel ? (
+          <Card>
+            <Body muted>Bond map: {modelBannerLine(relModel)}</Body>
+            <Body muted>
+              High need/fear finish can move phase → flood_protect when bond was
+              steady. Soft Signal freeness unchanged. Not consent.
+            </Body>
+            <Button
+              variant="secondary"
+              label="Open Relationship Model"
+              onPress={() => router.push("/relationship-model" as never)}
+            />
+          </Card>
+        ) : (
+          <Card>
+            <Body muted>
+              No Relationship Model yet — optional bond map for phase context.
+              Soft Signal free either way.
+            </Body>
+            <Button
+              variant="secondary"
+              label="Open Relationship Model"
+              onPress={() => router.push("/relationship-model" as never)}
+            />
+          </Card>
+        )}
         <Button
           label="Begin dual-bind ritual"
           onPress={() => setPhase("admit")}
