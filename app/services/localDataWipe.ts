@@ -56,6 +56,8 @@ const EXTRA_ASYNC_KEYS = [
   "litmo.relationship_model.v1",
   /** The Map, Not The Mirror — first guided ritual progress. */
   "litmo.first_ritual.progress.v1",
+  /** Two Maps, One Table — second (bringing someone in) ritual progress. */
+  "litmo.second_ritual.progress.v1",
 ];
 
 const EXTRA_SECURE_KEYS = [

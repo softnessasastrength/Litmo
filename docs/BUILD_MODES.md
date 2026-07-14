@@ -149,6 +149,7 @@ macos/                    # native Mac stays Maximum (ADR 0045)
 | Discover / Match / sessions / Consent Snapshot mutual seal | ✅ | ❌ (needs a real second paired account) |
 | Relationship Model, Reconcile, Conflict-sim, Need-Scared, Containment Hub, Learning Lived Lessons | ✅ | ❌ (phase-2: presupposes an existing relationship) |
 | Too Much, Attachment Repair Cathedral, first guided ritual, Learning Foundations | ✅ | ✅ (core v1: solo self-understanding) |
+| Second guided ritual "Two Maps, One Table" (bringing someone in) | ✅ | ❌ (phase-2: presupposes an existing relationship) |
 
 Full table: `app/config/features.ts` · delta: `featureDelta()`.
 

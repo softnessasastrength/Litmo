@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-07-14 — Second guided ritual: "Two Maps, One Table" (bringing someone in)
+
+Added `docs/SECOND_RITUAL.md` / `/second-ritual`: the phase-2 follow-up to
+the first ritual, for once "younger me" has a real partner. Four steps
+(check your weather, share the Touch Language map, name the bond together,
+shared reassurance), each linking to an existing already-built screen
+rather than duplicating it — no new consent machinery. Gated behind
+`pairedGrowthContent` (Maximum Mode only); nudged from the first ritual's
+completion screen. `app/lib/secondRitualCore.ts` + tests, `secondRitualStore.ts`.
+
 ## 2026-07-14 — v1 App Store Safe scope: solo self-understanding + first guided ritual
 
 Added `partnerPairingFeatures` / `pairedGrowthContent` flags to `features.ts`:

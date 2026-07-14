@@ -37,6 +37,7 @@ import {
   type FirstRitualStepId,
 } from "../../lib/firstRitualCore";
 import { TOO_MUCH_TRIGGERS, REASSURANCE_LINES } from "../../lib/tooMuchCore";
+import { runtimeConfig } from "../../config/runtime";
 import { firstRitualStore } from "../../services/firstRitualStore";
 import { softSignalService } from "../../services/softSignalService";
 import { modeCopy } from "../../config/copy";
@@ -159,6 +160,19 @@ export default function FirstRitualScreen() {
             That's the whole ritual. No badge, no score — just came back to
             yourself four times. Come back to any step whenever, in any order.
           </Body>
+          {runtimeConfig.features.pairedGrowthContent ? (
+            <Body muted>
+              No rush on this next part — it's only relevant once there's an
+              actual person to bring in.
+            </Body>
+          ) : null}
+          {runtimeConfig.features.pairedGrowthContent ? (
+            <Button
+              variant="secondary"
+              label="When you're ready: Two Maps, One Table"
+              onPress={() => router.push("/second-ritual" as never)}
+            />
+          ) : null}
           <Button label="Back to Home" onPress={() => router.push("/(tabs)/home" as never)} />
         </Card>
       )}

@@ -284,6 +284,14 @@ export default function HomeTabScreen() {
         onPress={() => router.push("/attachment-repair" as never)}
         accessibilityHint="Solo reassurance ritual for attachment panic and the urge to prove you're wanted. Soft Signal God Mode."
       />
+      {runtimeConfig.features.pairedGrowthContent ? (
+        <Button
+          variant="secondary"
+          label="Two Maps, One Table (bringing someone in)"
+          onPress={() => router.push("/second-ritual" as never)}
+          accessibilityHint="Four-step follow-up for once you have a partner: check your weather, share your Touch Language map, name the bond together, shared reassurance."
+        />
+      ) : null}
       {runtimeConfig.features.partnerPairingFeatures ? (
         <Button
           label="Consent Snapshot (prepare & mutual seal)"
