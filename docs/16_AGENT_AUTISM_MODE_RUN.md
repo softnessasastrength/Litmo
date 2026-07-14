@@ -42,15 +42,21 @@
 | G6 | release:check lacks EAS mode pins | validate-release.mjs pins production/preview/dev/max |
 | G7 | Server accepts dev attest in prod | migration 044 + GUC `app.litmo_allow_dev_age_attest` |
 
+## Wave 2 residuals (also closed)
+
+| ID | Gap | Fix |
+| -- | --- | --- |
+| G3 | NFC/Bonjour always on | app.config strips RF plugins unless MAXIMUM |
+| G8–G9 | soft_limit collapse | onboarding preserves soft_limit in bodyZones |
+| G10 | TS↔Swift parity | `npm run parity:features` |
+| G12 | Maestro demo path | maestro-app-store.yaml no fictional demo |
+| G13 | Privacy 5.1.1 honesty | APPLE_PRIVACY_5_1_1.md + delete-data card |
+
 ## Still open (honest)
 
 | ID | Gap | Why open |
 | -- | --- | -------- |
-| G3 | NFC/Bonjour plugins always on for store IPA | prebuild conditional plugins — residual |
-| G8–G9 | soft_limit onboarding/server | P1 |
-| G10 | TS↔Swift machine parity CI | P1 |
-| G12 | Maestro demo path | P1 |
-| G13 | Privacy deletion honesty 5.1.1 | distribution residual |
+| G11 | ADR 0060 prose vs platform-primary code | doc reconcile residual |
 
 ---
 

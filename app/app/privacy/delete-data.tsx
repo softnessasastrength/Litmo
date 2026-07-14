@@ -82,6 +82,18 @@ function DeleteDataBody() {
         account erasure for human/ops fulfillment. Soft Signal still ends a
         session without any of this.
       </Body>
+      <Card>
+        <Text style={styles.cardTitle} accessibilityRole="header">
+          App Store honesty (5.1.1)
+        </Text>
+        <Body muted>
+          Local wipe is immediate on this device. Server account erasure is a
+          recorded request — not silent total destruction of every backup or log
+          until ops/legal fulfill it. We do not claim one-button full cloud
+          deletion is complete today. Export first if you need a copy. See
+          docs/GDPR.md · docs/APPLE_PRIVACY_5_1_1.md.
+        </Body>
+      </Card>
 
       <Card>
         <Text style={styles.cardTitle} accessibilityRole="header">
@@ -89,9 +101,9 @@ function DeleteDataBody() {
         </Text>
         <Body muted>
           Clears local quiz results, learning progress, mid-quiz saves, partner
-          invites, known E2E identity material, Exorcism Dojo urge/burn state
-          (litmo.dojo.state.v1), and related preferences on this phone. Immediate.
-          Does not delete your cloud account by itself.
+          invites, known E2E identity material, Exorcism Dojo urge/burn state,
+          containment protocol histories, and related preferences on this phone.
+          Immediate. Does not delete your cloud account by itself.
         </Body>
         <Button
           label={busy ? "Working…" : "Wipe data on this device"}

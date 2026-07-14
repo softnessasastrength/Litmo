@@ -39,7 +39,7 @@ import { touchLanguageStore } from "../../services/touchLanguageStore";
  *   - Demo (no user) → local store + PrototypeContext only; then boundaries.
  *   - Real user → completeProfile may set onboardingCompletedAt before zones polished
  *     (documented tension); still must do age gate if not adult.
- *   - soft_limit zones map to ask_first for server bodyZones; empty zones bootstrap hands ask_first.
+ *   - soft_limit is first-class on server bodyZones (not collapsed to ask_first); empty zones bootstrap hands ask_first.
  *   - Save error → stay, show message, busy cleared.
  * NEVER: Profile as consent; partner may touch now; skip Soft Signal in later sessions.
  * SEE: docs/ONBOARDING_CONSENT_FLOW.md §8 · CONSENT_POINTS.onboard_touch_language_save
@@ -167,7 +167,7 @@ export default function TouchLanguageScreen() {
    *   - !user → save local + push boundaries; no completeProfile.
    *   - Empty zones → bootstrap hands ask_first (fail-closed default, not welcomed).
    *   - Empty hardLimits → default “All unlisted body areas are off limits”.
-   *   - soft_limit → ask_first; unknown status → ask_first (never invent welcomed).
+   *   - soft_limit preserved first-class (G8/G9); unknown status → ask_first (never invent welcomed).
    *   - Error → message, stay, busy false.
    * NEVER: Upload private notes as public bio; claim session ready; skip age gate for real.
    * SEE: docs/ONBOARDING_CONSENT_FLOW.md §8.3–8.5 · profileRepository.completeProfile
@@ -200,22 +200,26 @@ export default function TouchLanguageScreen() {
         },
         {
           bodyZones: (() => {
-            const zones = Object.entries(next.zones).map(([zone, pref]) => ({
-              zone,
-              status:
-                pref!.status === "soft_limit"
-                  ? ("ask_first" as const)
-                  : pref!.status === "off_limits"
-                    ? ("off_limits" as const)
-                    : pref!.status === "welcomed"
-                      ? ("welcomed" as const)
-                      : // Unknown / missing status → ask_first (fail-closed vs welcomed).
-                        ("ask_first" as const),
-              pressure:
-                pref!.status === "off_limits"
-                  ? null
-                  : (pref!.pressure ?? next.pressure),
-            }));
+            // G8/G9: soft_limit is first-class in ConsentPreferenceSchema.boundaryValues.
+            // Never collapse soft_limit → ask_first (loses care-rank fidelity).
+            const zones = Object.entries(next.zones).map(([zone, pref]) => {
+              const status = pref!.status;
+              const mapped =
+                status === "soft_limit" ||
+                status === "off_limits" ||
+                status === "welcomed" ||
+                status === "ask_first"
+                  ? status
+                  : ("ask_first" as const);
+              return {
+                zone,
+                status: mapped,
+                pressure:
+                  mapped === "off_limits"
+                    ? null
+                    : (pref!.pressure ?? next.pressure),
+              };
+            });
             // Empty map: one conservative default zone — never empty welcomed list as “open body”.
             if (zones.length === 0) {
               return [

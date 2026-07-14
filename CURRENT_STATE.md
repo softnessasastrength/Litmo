@@ -66,9 +66,8 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
-- Done: **16-agent autism mode** dual-mode P0 (G1/G2/G4/G5/G6/G7 closed).
-  See `docs/16_AGENT_AUTISM_MODE_RUN.md`.
-- Residual dual-mode: G3 NFC plugins, G8–G9 soft_limit, G10 parity CI, G12 Maestro.
+- Done: **16-agent autism mode** P0+P1 gaps G1–G10, G12–G13 closed.
+  Residual: G11 ADR 0060 prose reconcile. See `docs/16_AGENT_AUTISM_MODE_RUN.md`.
 - Containment cook still on main (Pre-Renn · Weather · Flood · Field Notes…).
 - Physical Watch + VoiceOver smoke still open.
 - Follow `docs/REAL_PURPOSE.md`.

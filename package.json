@@ -25,6 +25,7 @@
     "env:check": "node scripts/validate-env.mjs",
     "state:check": "node scripts/validate-project-state.mjs",
     "release:check": "node scripts/validate-release.mjs",
+    "parity:features": "node scripts/validate-feature-parity.mjs",
     "release:xcode-source": "bash scripts/package-xcode-source-kit.sh local",
     "bootstrap": "bash scripts/bootstrap-macos-dev-env.sh",
     "postinstall": "node scripts/fix-expo-router-hoisting.mjs"

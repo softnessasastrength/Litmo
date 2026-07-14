@@ -82,9 +82,38 @@ const displayName =
       : "Litmo Max"
     : `Litmo ${environment}${litmoBuildMode === "maximum" ? " Max" : ""}`;
 
+/**
+ * G3 — Agent 08/02/10: RF native plugins only in MAXIMUM_MODE prebuild.
+ * App Store Safe binaries must not inject NFC Reader / Bonjour entitlements
+ * or usage strings that advertise nearby radio to Review.
+ */
+const RF_PLUGIN_IDS = new Set([
+  "./plugins/withLocalShareBonjour.cjs",
+  "./plugins/withLitmoNfc.cjs",
+]);
+
+function pluginId(entry: unknown): string {
+  if (typeof entry === "string") return entry;
+  if (Array.isArray(entry) && typeof entry[0] === "string") return entry[0];
+  return "";
+}
+
+const basePlugins = (base.expo.plugins ?? []).filter(
+  (entry) => !RF_PLUGIN_IDS.has(pluginId(entry)),
+);
+const plugins =
+  litmoBuildMode === "maximum"
+    ? [
+        ...basePlugins,
+        "./plugins/withLocalShareBonjour.cjs",
+        "./plugins/withLitmoNfc.cjs",
+      ]
+    : basePlugins;
+
 export default {
   ...base.expo,
   name: displayName,
+  plugins,
   ios: {
     ...baseIosWithoutAssociatedDomains,
     bundleIdentifier: selected.bundleIdentifier,
@@ -110,5 +139,7 @@ export default {
       litmoBuildMode === "maximum"
         ? "Maximum Mode (full consent experience)"
         : "App Store Safe Mode (review-sanitized)",
+    /** Whether RF plugins were attached at prebuild (G3 audit surface). */
+    litmoRfPlugins: litmoBuildMode === "maximum",
   },
 };

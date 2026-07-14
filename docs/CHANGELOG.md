@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-13 — 16-agent autism mode wave 2 (G3/G8–G13)
+
+Conditional NFC/Bonjour plugins (app_store strip), soft_limit fidelity in
+onboarding completeProfile, TS↔Swift `parity:features` script, Maestro
+app-store flow without demo, Apple 5.1.1 privacy honesty pack + delete-data
+card. Soft Signal freeness preserved.
+
 ## 2026-07-13 — 16-agent autism mode (dual-mode P0)
 
 Closed G1 share gate, G2 radar gate, G4 Soft Signal pack chrome, G5 Home/Settings
