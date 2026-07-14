@@ -2,6 +2,7 @@
  * Containment Hub — single door into personal emotional-support protocols.
  * THIS IS NOT A PUBLIC PRODUCT.
  */
+import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import {
@@ -15,6 +16,13 @@ import {
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
+import { masochistModeStore } from "../../services/masochistModeStore";
+import {
+  defaultMasochistPrefs,
+  intensityLabel,
+  masochistBanner,
+  type MasochistPrefs,
+} from "../../lib/masochistModeCore";
 
 type HubItem = {
   href: string;
@@ -45,7 +53,8 @@ const PROTOCOLS: readonly HubItem[] = [
   {
     href: "/parallel-play",
     title: "Parallel Play But Make It Sacred",
-    blurb: "Non-touch closeness. Same-room silence, tea, side-by-side work.",
+    blurb:
+      "Non-touch closeness. Silence, media, work, tea, walk, reading corner.",
     tag: "PARALLEL",
   },
   {
@@ -157,6 +166,13 @@ export default function ContainmentHubScreen() {
   const styles = useThemedStyles(makeStyles);
   const colors = useColors();
   const router = useRouter();
+  const [mPrefs, setMPrefs] = useState<MasochistPrefs>(defaultMasochistPrefs());
+
+  useEffect(() => {
+    void masochistModeStore.load().then(setMPrefs);
+  }, []);
+
+  const mBanner = masochistBanner(mPrefs);
 
   return (
     <Screen>
@@ -178,6 +194,15 @@ export default function ContainmentHubScreen() {
             building.
           </Body>
         </Card>
+        {mBanner ? (
+          <Card>
+            <Body>{mBanner}</Body>
+            <Body muted>
+              Intensity: {intensityLabel(mPrefs)} · Reconcile denser + Parallel
+              ceremonial armed
+            </Body>
+          </Card>
+        ) : null}
 
         <Text style={styles.section}>Protocols</Text>
         {PROTOCOLS.map((item) => (

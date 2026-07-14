@@ -42,6 +42,7 @@ struct SoftSignalComplicationView: View {
 struct LitmoWatchWidgets: WidgetBundle {
   var body: some Widget {
     SoftSignalWidget()
+    ReassuranceComplication()
   }
 }
 

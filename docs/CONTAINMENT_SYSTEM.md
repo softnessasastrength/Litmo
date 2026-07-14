@@ -65,6 +65,13 @@ This is not a diagnosis. It’s a field guide.
 | **I'm Too Much / Fear of Abandonment** (`/too-much`) | Panic room + triggers + patterns | Hold “too much / they will leave” spiral with Soft Signal, reassurance, private tracking | Abandonment fear; shame of intensity; fawn |
 | **I Need You But I'm Scared You'll Leave** (`/need-scared`) | Dual-bind poles + both/and ritual | Hold need AND leave-fear without fawn-only or pre-abandon; optional ask never auto-sent | Attachment dual bind; ask-shame |
 | **Containment Hub** (`/containment`) | Single door UI | Index all personal protocols so Home isn’t a buffet; stamp honesty once | Meta: too many rituals (D23-adjacent) |
+| **Post-Fight Reconciliation** (`/reconcile`) | 5 repair archetypes practice | Rehearse repair without dumping prosecutor-brain on Renn mid-fight | Conflict terror; exile math; shame of never repairing |
+| **Parallel Play Sacred** (`/parallel-play`) | Non-touch co-presence modes | Prove closeness ≠ performance or obligatory touch | Intimacy demand anxiety; “if not touch am I failing” |
+| **Relationship Constitution** (`/relationship-constitution`) | Living articles + versioned amendments | Freeze shared rules so mind-reading contracts die | Fear of unspoken tests; sticky history |
+| **Emotional Masochist Mode** (`/masochist-mode`) | Global denser/ceremony toggle | Name choosing intensity as regulation; Soft Signal still free | Over-protocoling as self-harm/self-love dual |
+| **Private Debrief Lab** (`/debrief-lab`) | Unified local tags + insights | Turn interactions into useful patterns without partner surveillance | Need for data without becoming creepy |
+| **Watch Soft Signal + Reassurance** | Wrist complications | Soft Signal freeness + local reassurance lines offline | Panic when phone is far; FOMO traps |
+| **Self-roast / self-love manifesto** | Honest why-doc | Hold both embarrassment and care for building all this | Shame of coping via cathedral |
 
 ---
 

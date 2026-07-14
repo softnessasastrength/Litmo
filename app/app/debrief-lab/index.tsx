@@ -1,11 +1,13 @@
-/** Private Debrief Lab — useful data, not creepy. */
+/** Private Debrief Lab — useful data, not creepy. v0.2 precision. */
 import { useCallback, useEffect, useState } from "react";
 import { Pressable, ScrollView, Switch, Text, TextInput, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Body, Button, Card, Eyebrow, Screen, Title } from "../../components/ui";
 import {
+  DEBRIEF_FORBIDDEN,
   DEBRIEF_TAG_VOCAB,
   createManualDebrief,
+  generateInsights,
   summarizeDebriefs,
   type UnifiedDebriefEntry,
 } from "../../lib/privateDebriefCore";
@@ -25,6 +27,8 @@ export default function DebriefLabScreen() {
   const [reg, setReg] = useState<1 | 2 | 3 | 4 | 5 | null>(null);
   const [tags, setTags] = useState<string[]>([]);
   const [soft, setSoft] = useState(false);
+  const [again, setAgain] = useState(false);
+  const [showForbidden, setShowForbidden] = useState(false);
 
   const reload = useCallback(async () => {
     setLog(await privateDebriefStore.load());
@@ -35,6 +39,7 @@ export default function DebriefLabScreen() {
   }, [reload]);
 
   const summary = summarizeDebriefs(log);
+  const insights = generateInsights(log);
 
   const save = async () => {
     const e = createManualDebrief({
@@ -44,6 +49,7 @@ export default function DebriefLabScreen() {
       didnt,
       tags,
       softSignalUsed: soft,
+      again,
     });
     await privateDebriefStore.append(e);
     setTitle("");
@@ -52,13 +58,14 @@ export default function DebriefLabScreen() {
     setReg(null);
     setTags([]);
     setSoft(false);
+    setAgain(false);
     await reload();
   };
 
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Eyebrow>PRIVATE DEBRIEF LAB</Eyebrow>
+        <Eyebrow>PRIVATE DEBRIEF LAB v0.2</Eyebrow>
         <Title>Useful data. Not creepy.</Title>
         <Body muted>
           Local only. Controlled tags. Wipeable. Soft Signal freeness tracked as
@@ -69,12 +76,32 @@ export default function DebriefLabScreen() {
             {summary.total} entries · Soft Signal rate{" "}
             {Math.round(summary.soft_signal_rate * 100)}% · avg regulation{" "}
             {summary.avg_regulation ?? "—"}
+            {summary.again_rate != null
+              ? ` · again ${Math.round(summary.again_rate * 100)}%`
+              : ""}
           </Body>
           <Body muted>
             Top tags:{" "}
             {summary.top_tags.map((t) => `${t.tag}(${t.count})`).join(" · ") ||
               "none yet"}
           </Body>
+          {summary.by_source.length > 0 ? (
+            <Body muted>
+              Sources:{" "}
+              {summary.by_source
+                .slice(0, 5)
+                .map((s) => `${s.source}(${s.count})`)
+                .join(" · ")}
+            </Body>
+          ) : null}
+        </Card>
+        <Card>
+          <Text style={styles.h}>Insights</Text>
+          {insights.map((i) => (
+            <Body key={i.id} muted>
+              [{i.kind}] {i.text}
+            </Body>
+          ))}
         </Card>
         <Card>
           <Text style={styles.h}>New debrief</Text>
@@ -84,7 +111,9 @@ export default function DebriefLabScreen() {
             onChangeText={setTitle}
             placeholder="Title"
             placeholderTextColor={colors.muted}
+            accessibilityLabel="Debrief title"
           />
+          <Body muted>Regulation after (1–5)</Body>
           <View style={styles.row}>
             {([1, 2, 3, 4, 5] as const).map((n) => (
               <Pressable
@@ -92,8 +121,13 @@ export default function DebriefLabScreen() {
                 onPress={() => setReg(n)}
                 style={[
                   styles.chip,
-                  reg === n && { borderColor: colors.moss, backgroundColor: colors.mossSoft },
+                  reg === n && {
+                    borderColor: colors.moss,
+                    backgroundColor: colors.mossSoft,
+                  },
                 ]}
+                accessibilityRole="button"
+                accessibilityLabel={`Regulation ${n}`}
               >
                 <Text style={{ color: colors.ink }}>{n}</Text>
               </Pressable>
@@ -105,6 +139,7 @@ export default function DebriefLabScreen() {
             onChangeText={setWorked}
             placeholder="What worked"
             placeholderTextColor={colors.muted}
+            accessibilityLabel="What worked"
           />
           <TextInput
             style={styles.input}
@@ -112,6 +147,7 @@ export default function DebriefLabScreen() {
             onChangeText={setDidnt}
             placeholder="What didn't"
             placeholderTextColor={colors.muted}
+            accessibilityLabel="What did not work"
           />
           <View style={styles.rowWrap}>
             {DEBRIEF_TAG_VOCAB.map((t) => (
@@ -119,7 +155,9 @@ export default function DebriefLabScreen() {
                 key={t}
                 onPress={() =>
                   setTags((prev) =>
-                    prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t],
+                    prev.includes(t)
+                      ? prev.filter((x) => x !== t)
+                      : [...prev, t],
                   )
                 }
                 style={[
@@ -129,6 +167,8 @@ export default function DebriefLabScreen() {
                     backgroundColor: colors.mossSoft,
                   },
                 ]}
+                accessibilityRole="button"
+                accessibilityLabel={`Tag ${t}`}
               >
                 <Text style={{ color: colors.ink, fontSize: 12 }}>{t}</Text>
               </Pressable>
@@ -136,9 +176,37 @@ export default function DebriefLabScreen() {
           </View>
           <View style={styles.rowBetween}>
             <Body>Soft Signal used</Body>
-            <Switch value={soft} onValueChange={setSoft} />
+            <Switch
+              value={soft}
+              onValueChange={setSoft}
+              accessibilityLabel="Soft Signal used"
+            />
+          </View>
+          <View style={styles.rowBetween}>
+            <Body>Would do again</Body>
+            <Switch
+              value={again}
+              onValueChange={setAgain}
+              accessibilityLabel="Would do again"
+            />
           </View>
           <Button label="Save private debrief" onPress={() => void save()} />
+        </Card>
+        <Card>
+          <Pressable onPress={() => setShowForbidden((v) => !v)}>
+            <Text style={styles.h}>
+              Anti-creep rules {showForbidden ? "▾" : "▸"}
+            </Text>
+          </Pressable>
+          {showForbidden
+            ? DEBRIEF_FORBIDDEN.map((f) => (
+                <Body key={f} muted>
+                  ✕ {f}
+                </Body>
+              ))
+            : (
+              <Body muted>Tap to expand what we never store.</Body>
+            )}
         </Card>
         {log.slice(0, 12).map((e) => (
           <Card key={e.id}>
@@ -147,7 +215,10 @@ export default function DebriefLabScreen() {
             </Body>
             <Body muted>
               reg {e.regulation ?? "—"} · {e.tags.join(", ")}
+              {e.softSignalUsed ? " · SS" : ""}
+              {e.again ? " · again" : ""}
             </Body>
+            {e.worked ? <Body muted>Worked: {e.worked}</Body> : null}
           </Card>
         ))}
         <Button variant="secondary" label="Back" onPress={() => router.back()} />
@@ -170,7 +241,12 @@ function makeStyles(colors: AppColors) {
       marginTop: 8,
     },
     row: { flexDirection: "row" as const, gap: 8, marginTop: 8 },
-    rowWrap: { flexDirection: "row" as const, flexWrap: "wrap" as const, gap: 6, marginTop: 8 },
+    rowWrap: {
+      flexDirection: "row" as const,
+      flexWrap: "wrap" as const,
+      gap: 6,
+      marginTop: 8,
+    },
     rowBetween: {
       flexDirection: "row" as const,
       justifyContent: "space-between" as const,

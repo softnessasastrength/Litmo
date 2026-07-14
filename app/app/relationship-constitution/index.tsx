@@ -1,11 +1,14 @@
-/** Relationship Constitution living document + amendments. */
+/** Relationship Constitution living document + amendments. v0.2 */
 import { useCallback, useEffect, useState } from "react";
-import { ScrollView, Text, TextInput, View } from "react-native";
+import { Alert, ScrollView, Share, Text, TextInput, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Body, Button, Card, Eyebrow, Screen, Title } from "../../components/ui";
 import {
   addArticle,
   amendArticle,
+  exportConstitutionText,
+  ratifyProposal,
+  setPendingProposal,
   type ConstitutionDoc,
 } from "../../lib/relationshipConstitutionCore";
 import { relationshipConstitutionStore } from "../../services/relationshipConstitutionStore";
@@ -23,6 +26,7 @@ export default function RelationshipConstitutionScreen() {
   const [editSummary, setEditSummary] = useState("");
   const [newTitle, setNewTitle] = useState("");
   const [newBody, setNewBody] = useState("");
+  const [proposal, setProposal] = useState("");
 
   const load = useCallback(async () => {
     setDoc(await relationshipConstitutionStore.load());
@@ -46,13 +50,22 @@ export default function RelationshipConstitutionScreen() {
     setEditId(null);
   };
 
+  const shareExport = async () => {
+    try {
+      await Share.share({ message: exportConstitutionText(doc) });
+    } catch {
+      Alert.alert("Export ready", "Copy failed or cancelled.");
+    }
+  };
+
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Eyebrow>RELATIONSHIP CONSTITUTION</Eyebrow>
+        <Eyebrow>RELATIONSHIP CONSTITUTION v0.2</Eyebrow>
         <Title>{doc.title}</Title>
         <Body muted>
-          Living document · v{doc.version} · Soft Signal free · not legal
+          Living document · v{doc.version} · Soft Signal free · not legal ·
+          silence ≠ consent to amendments
         </Body>
         <Card>
           <Body muted>{doc.preamble}</Body>
@@ -76,13 +89,14 @@ export default function RelationshipConstitutionScreen() {
         ))}
         {editId ? (
           <Card>
-            <Text style={styles.h}>Amendment</Text>
+            <Text style={styles.h}>Amendment (bumps version)</Text>
             <TextInput
               style={styles.input}
               value={editSummary}
               onChangeText={setEditSummary}
               placeholder="Summary of change"
               placeholderTextColor={colors.muted}
+              accessibilityLabel="Amendment summary"
             />
             <TextInput
               style={[styles.input, { minHeight: 100 }]}
@@ -90,6 +104,7 @@ export default function RelationshipConstitutionScreen() {
               onChangeText={setEditBody}
               multiline
               placeholderTextColor={colors.muted}
+              accessibilityLabel="Amendment body"
             />
             <Button
               label="Commit amendment (+version)"
@@ -104,7 +119,11 @@ export default function RelationshipConstitutionScreen() {
                 )
               }
             />
-            <Button variant="secondary" label="Cancel" onPress={() => setEditId(null)} />
+            <Button
+              variant="secondary"
+              label="Cancel"
+              onPress={() => setEditId(null)}
+            />
           </Card>
         ) : null}
         <Card>
@@ -136,17 +155,50 @@ export default function RelationshipConstitutionScreen() {
           />
         </Card>
         <Card>
+          <Text style={styles.h}>Proposal → ratify</Text>
+          <Body muted>
+            Draft a shared agreement. Ratify logs it and bumps version. Soft
+            Signal free to never send.
+          </Body>
+          <TextInput
+            style={[styles.input, { minHeight: 80 }]}
+            value={proposal}
+            onChangeText={setProposal}
+            multiline
+            placeholder="Pending proposal…"
+            placeholderTextColor={colors.muted}
+          />
+          <Button
+            variant="secondary"
+            label="Save as pending proposal"
+            onPress={() => {
+              void save(setPendingProposal(doc, proposal));
+            }}
+          />
+          {doc.pendingProposal ? (
+            <>
+              <Body muted>Pending: {doc.pendingProposal}</Body>
+              <Button
+                label="Ratify proposal (+version)"
+                onPress={() => void save(ratifyProposal(doc))}
+              />
+            </>
+          ) : null}
+        </Card>
+        <Card>
           <Text style={styles.h}>Amendment log</Text>
           {doc.amendments.length === 0 ? (
             <Body muted>No amendments yet.</Body>
           ) : (
-            doc.amendments.slice(0, 12).map((m) => (
+            doc.amendments.slice(0, 16).map((m) => (
               <Body key={m.id} muted>
-                v-related · {m.summary} · {m.at.slice(0, 10)}
+                v{m.versionAfter ?? "?"} · {m.kind ?? "amend"} · {m.summary} ·{" "}
+                {m.at.slice(0, 10)}
               </Body>
             ))
           )}
         </Card>
+        <Button label="Export / share text" onPress={() => void shareExport()} />
         <Button variant="secondary" label="Back" onPress={() => router.back()} />
       </ScrollView>
     </Screen>
@@ -156,7 +208,12 @@ export default function RelationshipConstitutionScreen() {
 function makeStyles(colors: AppColors) {
   return {
     scroll: { gap: 12, paddingBottom: 40 },
-    h: { fontWeight: "800" as const, color: colors.ink, fontSize: 16, marginBottom: 6 },
+    h: {
+      fontWeight: "800" as const,
+      color: colors.ink,
+      fontSize: 16,
+      marginBottom: 6,
+    },
     input: {
       borderWidth: 1,
       borderColor: colors.line,

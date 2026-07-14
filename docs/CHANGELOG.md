@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-07-13 — Containment batch 10–16 v0.2 nuclear
+
+Deepened batch: Reconcile denser steps + when/anti-pattern; Parallel Play
+7 modes + entry/exit rituals; Watch WidgetBundle registers Reassurance;
+Constitution proposal/ratify/export; Masochist consumers + invariants;
+Debrief insights + anti-creep forbidden list; expanded manifesto.
+Soft Signal freeness preserved.
+
 ## 2026-07-13 — Containment batch 10–16
 
 Post-Fight Reconciliation (5 archetypes), Parallel Play Sacred, Watch

@@ -11,6 +11,12 @@ private let reassuranceLines: [String] = [
     "Both poles allowed",
     "Exit is success",
     "Intensity ≠ unlovable",
+    "Conflict ≠ exile",
+    "Delay ≠ discard",
+    "Parallel play is sacred",
+    "Repair is allowed",
+    "Silence can be co-regulation",
+    "You can soft-signal anytime",
 ]
 
 struct ReassuranceEntry: TimelineEntry {

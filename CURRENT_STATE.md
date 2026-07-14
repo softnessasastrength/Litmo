@@ -66,8 +66,12 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
-- Done recently: batch 10–16 (reconcile, parallel play, watch complications, constitution, masochist mode, debrief lab, manifesto).
+- Done: batch 10–16 **v0.2 nuclear** (reconcile denser, parallel 7 modes, Watch
+  Reassurance in WidgetBundle, constitution proposal/ratify, masochist wiring,
+  debrief insights, manifesto).
 - Follow `docs/REAL_PURPOSE.md` · manifesto: `docs/SELF_ROAST_SELF_LOVE_MANIFESTO.md`.
+- Optional next: wire more protocols into debrief auto-ingest; dual-bind Watch
+  complication; physical Watch build if hardware available.
 
 ## Verification baseline
 

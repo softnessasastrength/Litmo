@@ -1,4 +1,4 @@
-/** Post-Fight Reconciliation Simulator — 5 repair archetypes. */
+/** Post-Fight Reconciliation Simulator — 5 repair archetypes. v0.2 denser under masochist. */
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Switch, Text, TextInput, View } from "react-native";
 import { useRouter } from "expo-router";
@@ -8,6 +8,7 @@ import {
   REPAIR_ARCHETYPES,
   canSealReconcile,
   findArchetype,
+  resolveReconcileSteps,
   sealReconcile,
   summarizeReconcile,
   type ReconcileDraft,
@@ -18,6 +19,13 @@ import { reconcileStore } from "../../services/reconcileStore";
 import { softSignalService } from "../../services/softSignalService";
 import { privateDebriefStore } from "../../services/privateDebriefStore";
 import { createManualDebrief } from "../../lib/privateDebriefCore";
+import { masochistModeStore } from "../../services/masochistModeStore";
+import {
+  masochistBanner,
+  wantsDenserRitual,
+  type MasochistPrefs,
+  defaultMasochistPrefs,
+} from "../../lib/masochistModeCore";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 import type { AppColors } from "../../theme";
@@ -26,7 +34,7 @@ export default function ReconcileScreen() {
   const styles = useThemedStyles(makeStyles);
   const colors = useColors();
   const router = useRouter();
-  const [phase, setPhase] = useState<"hub" | "run" | "done">("hub");
+  const [phase, setPhase] = useState<"hub" | "run">("hub");
   const [draft, setDraft] = useState<ReconcileDraft>({
     archetypeId: "undecided",
     fightNote: "",
@@ -35,17 +43,27 @@ export default function ReconcileScreen() {
   const [snap, setSnap] = useState<ReconcileSnapshot | null>(null);
   const [step, setStep] = useState(0);
   const [soft, setSoft] = useState<"idle" | "stopping" | "stopped">("idle");
-  const [summary, setSummary] = useState({ total: 0, soft_signal: 0, by_archetype: [] as { id: string; count: number; label: string }[] });
+  const [summary, setSummary] = useState({
+    total: 0,
+    soft_signal: 0,
+    by_archetype: [] as { id: string; count: number; label: string }[],
+  });
+  const [mPrefs, setMPrefs] = useState<MasochistPrefs>(defaultMasochistPrefs());
 
   useEffect(() => {
     void reconcileStore.load().then((h) => setSummary(summarizeReconcile(h)));
+    void masochistModeStore.load().then(setMPrefs);
   }, [phase]);
 
   const arch = snap ? findArchetype(snap.archetypeId) : null;
+  const steps =
+    snap && arch ? resolveReconcileSteps(arch, snap.denser) : [];
   const gate = canSealReconcile(draft);
+  const denser = wantsDenserRitual(mPrefs);
+  const banner = masochistBanner(mPrefs);
 
   const start = () => {
-    const s = sealReconcile(draft);
+    const s = sealReconcile(draft, denser);
     if (!s) return;
     setSnap(s);
     setStep(0);
@@ -67,28 +85,36 @@ export default function ReconcileScreen() {
         regulation: endReason === "soft_signal" ? 3 : 4,
         worked: arch.sampleLine,
         didnt: "",
-        tags: ["repair", "conflict"],
+        tags: ["repair", "conflict", ...(snap.denser ? ["ceremony"] : [])],
         softSignalUsed: endReason === "soft_signal",
         source: "reconcile",
+        again: endReason === "completed",
       }),
     );
     setPhase("hub");
     setSnap(null);
-    setDraft({ archetypeId: "undecided", fightNote: "", softSignalAcknowledged: false });
+    setDraft({
+      archetypeId: "undecided",
+      fightNote: "",
+      softSignalAcknowledged: false,
+    });
   };
 
   if (phase === "run" && snap && arch) {
-    const line = arch.steps[step] ?? arch.steps[0]!;
+    const line = steps[step] ?? steps[0] ?? "Soft Signal free.";
     return (
       <Screen>
         <ScrollView contentContainerStyle={styles.scroll}>
-          <Eyebrow>RECONCILE · {arch.label.toUpperCase()}</Eyebrow>
+          <Eyebrow>
+            RECONCILE · {arch.label.toUpperCase()}
+            {snap.denser ? " · DENSE" : ""}
+          </Eyebrow>
           <Title>{arch.label}</Title>
           <Card>
             <Body muted>Fight note: {snap.fightNote}</Body>
             <Text style={styles.script}>{line}</Text>
             <Body muted>
-              Step {step + 1}/{arch.steps.length}
+              Step {step + 1}/{steps.length}
             </Body>
             <Body muted>Sample: {arch.sampleLine}</Body>
           </Card>
@@ -102,13 +128,19 @@ export default function ReconcileScreen() {
             }}
           />
           <Button
-            label={step < arch.steps.length - 1 ? "Next step" : "Complete repair sim"}
+            label={
+              step < steps.length - 1 ? "Next step" : "Complete repair sim"
+            }
             onPress={() => {
-              if (step < arch.steps.length - 1) setStep((s) => s + 1);
+              if (step < steps.length - 1) setStep((s) => s + 1);
               else void finish("completed");
             }}
           />
-          <Button variant="secondary" label="Hub" onPress={() => router.push("/containment" as never)} />
+          <Button
+            variant="secondary"
+            label="Hub"
+            onPress={() => router.push("/containment" as never)}
+          />
         </ScrollView>
       </Screen>
     );
@@ -117,20 +149,35 @@ export default function ReconcileScreen() {
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Eyebrow>POST-FIGHT RECONCILIATION</Eyebrow>
+        <Eyebrow>POST-FIGHT RECONCILIATION v0.2</Eyebrow>
         <Title>5 repair archetypes.</Title>
         <Body muted>
           Practice only. Soft Signal free. {summary.total} sims · Soft Signal{" "}
           {summary.soft_signal}
+          {denser ? " · denser ritual armed" : ""}
         </Body>
+        {banner ? (
+          <Card>
+            <Body>{banner}</Body>
+          </Card>
+        ) : null}
         {REPAIR_ARCHETYPES.filter((a) => a.id !== "undecided").map((a) => (
           <Pressable
             key={a.id}
-            onPress={() => setDraft({ ...draft, archetypeId: a.id as RepairArchetypeId })}
-            style={[styles.card, draft.archetypeId === a.id && { borderColor: colors.moss }]}
+            onPress={() =>
+              setDraft({ ...draft, archetypeId: a.id as RepairArchetypeId })
+            }
+            style={[
+              styles.card,
+              draft.archetypeId === a.id && { borderColor: colors.moss },
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel={a.label}
           >
             <Text style={styles.h}>{a.label}</Text>
             <Body muted>{a.blurb}</Body>
+            <Body muted>When: {a.whenToUse}</Body>
+            <Body muted>Not: {a.antiPattern}</Body>
           </Pressable>
         ))}
         <TextInput
@@ -139,12 +186,16 @@ export default function ReconcileScreen() {
           placeholderTextColor={colors.muted}
           value={draft.fightNote}
           onChangeText={(t) => setDraft({ ...draft, fightNote: t })}
+          accessibilityLabel="Fight note"
         />
         <View style={styles.row}>
           <Body>Soft Signal free</Body>
           <Switch
             value={draft.softSignalAcknowledged}
-            onValueChange={(v) => setDraft({ ...draft, softSignalAcknowledged: v })}
+            onValueChange={(v) =>
+              setDraft({ ...draft, softSignalAcknowledged: v })
+            }
+            accessibilityLabel="Acknowledge Soft Signal free"
           />
         </View>
         {!gate.ok ? <Body muted>{gate.reason}</Body> : null}
@@ -164,9 +215,15 @@ function makeStyles(colors: AppColors) {
       borderRadius: 16,
       padding: 12,
       backgroundColor: colors.cream,
+      gap: 4,
     },
     h: { fontWeight: "800" as const, color: colors.ink, fontSize: 16 },
-    script: { fontSize: 18, fontWeight: "600" as const, color: colors.ink, marginVertical: 12 },
+    script: {
+      fontSize: 18,
+      fontWeight: "600" as const,
+      color: colors.ink,
+      marginVertical: 12,
+    },
     input: {
       borderWidth: 1,
       borderColor: colors.line,
@@ -176,6 +233,10 @@ function makeStyles(colors: AppColors) {
       backgroundColor: colors.cream,
       minHeight: 60,
     },
-    row: { flexDirection: "row" as const, justifyContent: "space-between" as const, alignItems: "center" as const },
+    row: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      alignItems: "center" as const,
+    },
   };
 }
