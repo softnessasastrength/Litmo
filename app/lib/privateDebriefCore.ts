@@ -19,6 +19,8 @@ export type DebriefSource =
   | "pre_renn"
   | "weather"
   | "aftercare"
+  | "flood"
+  | "apology_craft"
   | "manual"
   | "other";
 

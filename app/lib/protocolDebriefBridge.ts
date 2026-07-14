@@ -21,6 +21,8 @@ import type { ParallelEntry } from "./parallelPlayCore.ts";
 import type { PreRennEntry } from "./preRennGateCore.ts";
 import type { WeatherEntry } from "./weatherCore.ts";
 import type { AftercareEntry } from "./aftercareCore.ts";
+import type { FloodEntry } from "./floodProtocolCore.ts";
+import type { ApologyEntry } from "./apologyCraftCore.ts";
 
 function softFromReason(reason: string): boolean {
   return reason === "soft_signal";
@@ -291,6 +293,39 @@ export function debriefFromAftercare(e: AftercareEntry): UnifiedDebriefEntry {
   });
 }
 
+export function debriefFromFlood(e: FloodEntry): UnifiedDebriefEntry {
+  const soft = softFromReason(e.endReason);
+  const tags = ["flooded", "rest"];
+  if (soft) tags.push("soft_signal");
+  return createManualDebrief({
+    title: `Flood protocol · ${e.endReason}`,
+    regulation: soft ? 3 : 3,
+    worked: e.stepsTouched.join(", ") || e.note,
+    didnt: "",
+    tags,
+    softSignalUsed: soft,
+    source: "flood",
+    again: e.endReason === "completed",
+  });
+}
+
+export function debriefFromApology(e: ApologyEntry): UnifiedDebriefEntry {
+  const soft = softFromReason(e.endReason);
+  const tags = ["repair"];
+  if (soft) tags.push("soft_signal");
+  if (e.endReason === "scrapped") tags.push("clear_no");
+  return createManualDebrief({
+    title: `Apology craft · ${e.endReason}`,
+    regulation: e.endReason === "completed" ? 4 : baseReg(e.endReason, soft),
+    worked: e.snapshot.composedLine.slice(0, 200),
+    didnt: e.note,
+    tags,
+    softSignalUsed: soft,
+    source: "apology_craft",
+    again: e.endReason === "completed",
+  });
+}
+
 export const DEBRIEF_BRIDGE_SOURCES: readonly DebriefSource[] = [
   "spooning",
   "morning_cuddle",
@@ -305,4 +340,6 @@ export const DEBRIEF_BRIDGE_SOURCES: readonly DebriefSource[] = [
   "pre_renn",
   "weather",
   "aftercare",
+  "flood",
+  "apology_craft",
 ] as const;

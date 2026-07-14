@@ -15,9 +15,12 @@ export type ProtocolRec = {
 };
 
 const CATALOG: readonly { href: string; title: string; tags: string[] }[] = [
+  { href: "/flood", title: "Flood Protocol", tags: ["flooded", "rest", "soft_signal"] },
   { href: "/pre-renn", title: "Pre-Renn Gate", tags: ["dump", "urge", "reach"] },
   { href: "/weather", title: "Nervous System Weather", tags: ["daily", "check"] },
   { href: "/aftercare", title: "Aftercare Protocol", tags: ["land", "post"] },
+  { href: "/apology-craft", title: "Apology Craft", tags: ["repair", "conflict"] },
+  { href: "/field-notes", title: "Field Notes", tags: ["urge", "rest"] },
   { href: "/soft-signal/practice", title: "Soft Signal Practice", tags: ["exit", "soft_signal"] },
   { href: "/too-much", title: "I'm Too Much", tags: ["too_much_story", "abandon", "flooded"] },
   { href: "/need-scared", title: "Need ∧ Leave-fear", tags: ["dual_bind", "attachment"] },
@@ -84,7 +87,10 @@ export function recommendProtocols(input: RecommenderInput): ProtocolRec[] {
   // Weather
   if (input.weather) {
     const w = input.weather;
-    if (w.anxiety >= 4) bump("/too-much", 4, `Weather: ${w.skyLabel}`);
+    if (w.anxiety >= 4) {
+      bump("/flood", 5, `Weather: ${w.skyLabel}`);
+      bump("/too-much", 4, `Weather: ${w.skyLabel}`);
+    }
     if (w.attachmentHeat >= 4) bump("/need-scared", 4, "Attachment heat high.");
     if (w.capacityForOthers <= 2) bump("/pre-renn", 5, "Low capacity — gate before dump.");
     if (w.energy <= 2) bump("/not-ready-yet", 3, "Low energy weather.");
@@ -98,7 +104,9 @@ export function recommendProtocols(input: RecommenderInput): ProtocolRec[] {
     bump("/not-ready-yet", 2, "Morning window.");
     bump("/weather", 3, "Name the morning sky.");
   } else if (hour >= 22 || hour < 5) {
+    bump("/flood", 3, "Late-night flood risk.");
     bump("/pre-renn", 4, "Late-night dump risk is high.");
+    bump("/field-notes", 3, "Night: write it here, not in their inbox.");
     bump("/containment/lofi", 2, "Night: lo-fi over essays.");
   }
 

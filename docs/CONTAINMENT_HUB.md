@@ -16,9 +16,12 @@ Links:
 
 | Protocol | Route |
 | -------- | ----- |
+| Flood Protocol | `/flood` |
 | Pre-Renn Regulation Gate | `/pre-renn` |
 | Nervous System Weather | `/weather` |
 | Aftercare Protocol | `/aftercare` |
+| Apology Craft | `/apology-craft` |
+| Field Notes | `/field-notes` |
 | Protocol Recommender | Hub “Suggested right now” |
 | Containment Lo-Fi | `/containment/lofi` |
 | I Need You But I'm Scared You'll Leave | `/need-scared` |

@@ -39,6 +39,13 @@ type HubItem = {
 
 const PROTOCOLS: readonly HubItem[] = [
   {
+    href: "/flood",
+    title: "Flood Protocol",
+    blurb:
+      "When language is gone. Six minimum steps. No essays. Soft Signal free.",
+    tag: "FLOOD",
+  },
+  {
     href: "/pre-renn",
     title: "Pre-Renn Regulation Gate",
     blurb:
@@ -57,6 +64,19 @@ const PROTOCOLS: readonly HubItem[] = [
     blurb:
       "Land the plane after touch, conflict, flood, good thing, or build spiral.",
     tag: "LAND",
+  },
+  {
+    href: "/apology-craft",
+    title: "Apology Craft",
+    blurb:
+      "Impact + slice. Not self-annihilation. Draft never auto-sent. Scrap is a win.",
+    tag: "SORRY",
+  },
+  {
+    href: "/field-notes",
+    title: "Field Notes",
+    blurb: "Private freeform capture so the urge doesn't have to become a text.",
+    tag: "NOTES",
   },
   {
     href: "/masochist-mode",

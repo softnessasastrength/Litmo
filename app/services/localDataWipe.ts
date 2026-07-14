@@ -50,6 +50,9 @@ const EXTRA_ASYNC_KEYS = [
   "litmo.pre_renn_gate.history.v1",
   "litmo.weather.history.v1",
   "litmo.aftercare.history.v1",
+  "litmo.flood_protocol.history.v1",
+  "litmo.apology_craft.history.v1",
+  "litmo.field_notes.v1",
 ];
 
 const EXTRA_SECURE_KEYS = [

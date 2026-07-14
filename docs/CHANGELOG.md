@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — Cook wave 2: Flood · Apology Craft · Field Notes
+
+Flood Protocol (min path when language is gone), Apology Craft (impact+slice,
+never auto-sent, scrap is win), Field Notes (private capture). Hub +
+recommender + debrief bridge + wipe keys. Soft Signal freeness preserved.
+
 ## 2026-07-13 — Cook session: Pre-Renn Gate · Weather · Aftercare · Recommender
 
 Pre-Renn Regulation Gate (red/yellow/green + delay pledge), Nervous System

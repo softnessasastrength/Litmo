@@ -76,6 +76,9 @@ This is not a diagnosis. It’s a field guide.
 | **Nervous System Weather** (`/weather`) | Daily energy/anxiety/heat/capacity | Name sky before it becomes someone’s job | Unnamed weather → partner labor |
 | **Aftercare Protocol** (`/aftercare`) | Post-touch/conflict/flood/good/build | Land without making the other the only gear | Post-peak dump / Option A hangover |
 | **Protocol Recommender** (Hub) | Local suggestions from debrief + weather | Reduce buffet paralysis without partner scores | Choice overload (D23-adjacent) |
+| **Flood Protocol** (`/flood`) | 6 min steps when language gone | Survive peak without partner contact or essays | Total flood / freeze |
+| **Apology Craft** (`/apology-craft`) | Impact + slice draft | Practice repair language without self-annihilation or auto-send | Apology shame; essay dumps |
+| **Field Notes** (`/field-notes`) | Private freeform + tags | Capture urge so it doesn't become a text | Midnight dump via notes-as-draft |
 
 ---
 

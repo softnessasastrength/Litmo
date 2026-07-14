@@ -22,6 +22,18 @@ import {
 } from "./aftercareCore.ts";
 import { recommendProtocols } from "./protocolRecommenderCore.ts";
 import { createManualDebrief } from "./privateDebriefCore.ts";
+import {
+  FLOOD_STEPS,
+  createFloodEntry,
+  summarizeFlood,
+} from "./floodProtocolCore.ts";
+import {
+  canSealApology,
+  composeApology,
+  sealApology,
+  defaultApologyDraft,
+} from "./apologyCraftCore.ts";
+import { createFieldNote, summarizeFieldNotes } from "./fieldNotesCore.ts";
 
 describe("cook session protocols", () => {
   it("pre-renn red when flooded", () => {
@@ -79,6 +91,38 @@ describe("cook session protocols", () => {
     };
     assert.equal(canSealAftercare(d).ok, true);
     assert.ok(sealAftercare(d, true)?.denser);
+  });
+
+  it("flood protocol minimal steps", () => {
+    assert.ok(FLOOD_STEPS.length >= 6);
+    const e = createFloodEntry(["stop", "body", "soft_signal"], "soft_signal");
+    assert.equal(e.endReason, "soft_signal");
+    assert.equal(summarizeFlood([e]).soft_signal, 1);
+  });
+
+  it("apology craft composes without auto-send", () => {
+    const d = {
+      ...defaultApologyDraft(),
+      impact: "the silence after dinner hurt",
+      mySlice: "I froze and left without a map",
+      notDoing: "self-annihilation monologue",
+      repairOffer: "we time-box a repair talk tomorrow",
+      softSignalAcknowledged: true,
+    };
+    assert.equal(canSealApology(d).ok, true);
+    const line = composeApology(d);
+    assert.ok(line.includes("Soft Signal free"));
+    assert.ok(sealApology(d)?.composedLine);
+  });
+
+  it("field notes capture", () => {
+    const n = createFieldNote({
+      body: "urge to text is high; writing here instead",
+      tags: ["urge", "renn_adjacent"],
+      mood: 2,
+    });
+    assert.ok(n);
+    assert.equal(summarizeFieldNotes([n!]).total, 1);
   });
 
   it("recommender ranks without partner data", () => {
