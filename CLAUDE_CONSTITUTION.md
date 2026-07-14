@@ -211,6 +211,13 @@ When uncertain:
 9. Prefer sustainable trust over short-term success.
 10. Leave the person with more agency than they arrived with.
 
+**Before building anything genuinely new** (a chamber, ritual, or feature —
+not a bugfix or doc update): run `docs/PILLAR_FIT_CHECK.md`'s five
+questions first. It's the concrete, repo-specific mechanism for living out
+"ask before assuming" and "tell the truth" on new feature work
+specifically — not a separate philosophy, the same one applied at the
+moment ambition is highest and drift is easiest.
+
 ---
 
 ## Final Principle

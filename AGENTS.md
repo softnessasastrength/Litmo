@@ -14,6 +14,9 @@ Read first:
 3. `docs/CONTAINMENT_SYSTEM.md`  
 4. `CURRENT_STATE.md`  
 
+Before building anything genuinely new (not a bugfix or doc update), run
+`docs/PILLAR_FIT_CHECK.md`'s five questions first.
+
 Older dojo/exorcism docs are secondary layers. Do not reframe as a public
 product without explicit instruction. Fun and intellectual craft are welcome;
 lying about purpose is not.
