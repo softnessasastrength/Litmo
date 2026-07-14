@@ -17,6 +17,7 @@ Links:
 | Protocol | Route |
 | -------- | ----- |
 | Containment Lo-Fi | `/containment/lofi` |
+| Interest Reverse Engineering | `/interest-re` |
 | Conflict Navigation Simulator | `/conflict-sim` |
 | Attachment Repair Cathedral | `/attachment-repair` |
 | Morning Cuddle Protocol | `/morning-cuddle` |

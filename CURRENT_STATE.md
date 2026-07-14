@@ -66,8 +66,8 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
-- Done recently: **Containment Hub** (`/containment`) + Conflict Sim, Cathedral, Morning Cuddle, Spooning.
-- Follow `docs/REAL_PURPOSE.md`. Next silly-useful: Interest Reverse Engineering, “I’m Not Ready To Get Up Yet.”
+- Done recently: **Interest Reverse Engineering** (`/interest-re`) + Containment Hub, Conflict Sim, Cathedral, Morning/Spooning, Lo-Fi (expo-audio), iOS sim build green.
+- Follow `docs/REAL_PURPOSE.md`. Next silly-useful: “I’m Not Ready To Get Up Yet,” Interest RE ↔ Morning cross-links.
 
 ## Verification baseline
 

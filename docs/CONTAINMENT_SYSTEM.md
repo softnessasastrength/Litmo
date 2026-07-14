@@ -60,6 +60,7 @@ This is not a diagnosis. It’s a field guide.
 | **Morning Cuddle Protocol** (`/morning-cuddle`) | Pre-coffee 30s negotiation + gremlin mode | Hold 7:42am “am I needy / are they annoyed / ruining the relationship” spiral; Exit Protocol; positive exit ritual | Morning neediness guilt; closeness before coffee |
 | **Attachment Repair Cathedral** (`/attachment-repair`) | Mommy Issues Reassurance + Emotional Masochist Circuit | Hold abandonment/need-to-be-wanted loops; name masochistic over-protocoling; Soft Signal + Yellow; joke ledger | Mommy issues; emotional masochism; attachment panic |
 | **Conflict Navigation Simulator** (`/conflict-sim`) | Solo rehearsal / flood / repair script | Hold terror of conflict + shame of never navigating it; Soft Signal / reschedule as valid wins | Conflict terror; freeze/fawn; prosecutor-brain |
+| **Interest Reverse Engineering** (`/interest-re`) | Want vs should vs fawn inventory | Hold “is my yes real or performance?” so fake interest is less likely to hit Renn raw | Fawn; performing desire; ambiguity shame |
 | **Containment Hub** (`/containment`) | Single door UI | Index all personal protocols so Home isn’t a buffet; stamp honesty once | Meta: too many rituals (D23-adjacent) |
 
 ---

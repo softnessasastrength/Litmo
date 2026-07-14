@@ -32,6 +32,13 @@ const PROTOCOLS: readonly HubItem[] = [
     tag: "LO-FI",
   },
   {
+    href: "/interest-re",
+    title: "Interest Reverse Engineering",
+    blurb:
+      "Want vs should vs fawn. “I don’t know yet” is valid. Interest is not consent.",
+    tag: "INTEREST",
+  },
+  {
     href: "/conflict-sim",
     title: "Conflict Navigation Simulator",
     blurb:

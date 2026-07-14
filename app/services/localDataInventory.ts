@@ -24,6 +24,8 @@ import { summarizeRepairHistory } from "../lib/attachmentRepairCore.ts";
 import { attachmentRepairStore } from "./attachmentRepairStore.ts";
 import { summarizeConflictHistory } from "../lib/conflictSimCore.ts";
 import { conflictSimStore } from "./conflictSimStore.ts";
+import { summarizeInterestHistory } from "../lib/interestReCore.ts";
+import { interestReStore } from "./interestReStore.ts";
 
 export type LocalInventory = {
   collected_at: string;
@@ -70,6 +72,12 @@ export type LocalInventory = {
     session_count: number;
     soft_signal_exits: number;
     reschedule_count: number;
+  };
+  interest_re: {
+    history_present: boolean;
+    session_count: number;
+    performing_count: number;
+    soft_signal_exits: number;
   };
   notes: string[];
 };
@@ -281,6 +289,25 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     notes.push("conflict_sim_history_unreadable");
   }
 
+  let interest_re: LocalInventory["interest_re"] = {
+    history_present: false,
+    session_count: 0,
+    performing_count: 0,
+    soft_signal_exits: 0,
+  };
+  try {
+    const interests = await interestReStore.load();
+    const ir = summarizeInterestHistory(interests);
+    interest_re = {
+      history_present: ir.total > 0,
+      session_count: ir.total,
+      performing_count: ir.performing,
+      soft_signal_exits: ir.soft_signal,
+    };
+  } catch {
+    notes.push("interest_re_history_unreadable");
+  }
+
   return {
     collected_at: new Date().toISOString(),
     offline_ready: true,
@@ -308,6 +335,7 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     morning_cuddle,
     attachment_repair,
     conflict_sim,
+    interest_re,
     notes,
   };
 }

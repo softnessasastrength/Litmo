@@ -69,6 +69,7 @@ Do not pretend this is therapy.
 | **Spooning Protocol** | Intimacy anxiety as sealable joke-spec |
 | **Morning Cuddle Protocol** | 7:42am neediness spiral before coffee |
 | **Conflict Navigation Simulator** | Terror of conflict as a practice room |
+| **Interest Reverse Engineering** | Want vs should vs performing yes |
 | ND Mode / docs / dual modes | Volume knobs + freeze morality in pages |
 
 Full map: [`docs/CONTAINMENT_SYSTEM.md`](docs/CONTAINMENT_SYSTEM.md).  

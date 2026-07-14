@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — Interest Reverse Engineering v0.1
+
+Want vs should vs fawn signal inventory, honesty labels (clear yes/no,
+performing, flooded, mixed), moves including “I don’t know yet,” Soft Signal,
+joke ledger. Hub entry `/interest-re`.
+
 ## 2026-07-13 — Containment Lo-Fi player (expo-audio)
 
 In-app ambient player: `expo-audio` (not expo-av — Xcode 27 EXAV break) +

@@ -34,6 +34,8 @@ const EXTRA_ASYNC_KEYS = [
   "litmo.conflict_sim.history.v1",
   /** Containment Lo-Fi ambient prefs (volume / last track). */
   "litmo.lofi.ambient.prefs.v1",
+  /** Interest Reverse Engineering history. */
+  "litmo.interest_re.history.v1",
 ];
 
 const EXTRA_SECURE_KEYS = [
