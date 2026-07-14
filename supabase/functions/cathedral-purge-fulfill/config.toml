@@ -1,0 +1,6 @@
+# cathedral-purge-fulfill — STUB. Not deployed. Not called by the app.
+# verify_jwt = true even though the handler currently always refuses (501) —
+# defense in depth so an unaudited destructive stub is never reachable
+# without at least a valid user JWT if it's ever accidentally deployed.
+[functions.cathedral-purge-fulfill]
+verify_jwt = true

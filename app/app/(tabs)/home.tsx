@@ -17,6 +17,7 @@ import { sessionRepository } from "../../services/sessionRepository";
 import { fonts, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { runtimeConfig } from "../../config/runtime";
+import { cathedralSealStore } from "../../services/cathedralSealStore";
 
 type OpenSession = {
   id: string;
@@ -42,6 +43,13 @@ export default function HomeTabScreen() {
   const [pendingCount, setPendingCount] = useState(0);
   const [openSessions, setOpenSessions] = useState<OpenSession[]>([]);
   const [resumingId, setResumingId] = useState<string | null>(null);
+
+  // Bonds this device to the cathedral quietly, once, the first time Home
+  // actually mounts — gives the Cathedral Purge ritual something real to
+  // remove as its first deliberate gate. Idempotent; never blocks render.
+  useEffect(() => {
+    void cathedralSealStore.ensureSealed();
+  }, []);
 
   const refreshActivity = useCallback(async () => {
     if (!user || !runtimeConfig.features.partnerPairingFeatures) return;

@@ -367,6 +367,12 @@ function SettingsContent() {
         onPress={() => router.push("/privacy/delete-data" as never)}
         accessibilityHint="Wipe this device and request account erasure"
       />
+      <Button
+        variant="secondary"
+        label="The Cathedral Purge"
+        onPress={() => router.push("/cathedral-purge" as never)}
+        accessibilityHint="A slow, ritualized version of deleting everything. Every gate before execution can be cancelled with no explanation."
+      />
 
       {status === "authenticated" ? (
         <>

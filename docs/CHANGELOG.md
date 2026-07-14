@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-07-14 — The Cathedral Purge: ritualized, escalating full-data wipe
+
+Added `docs/CATHEDRAL_PURGE.md` / `/cathedral-purge` (Settings entry, not
+Home): a one-way, linear gate sequence for the "burn everything and
+disappear" urge — intro, remove your Cathedral Seal (a real SecureStore
+marker, the ritual's one witnessed physical act), optional non-blocking
+reason naming, a "last look" reusing `collectLocalInventory()`, typed
+confirmation ("I release this, not in anger."), a 20-second cancelable
+countdown, execution, and a quiet rebirth screen — no badge, no score.
+
+Every gate but execution is cancelable with no explanation, same law as
+Soft Signal at maximum stakes. No new deletion mechanism: reuses
+`privacyService.wipeLocal()` / `requestErasure()` exactly as
+`app/app/privacy/delete-data.tsx` already does. Rejected the original
+"trigger off deleting your real iOS Passkey" spec after confirming it's not
+technically possible (Apple's Keychain/Passkey storage is invisible to
+third-party apps by design) and would be dangerously false-positive-prone
+if faked via a proxy signal — documented the reasoning in
+`docs/CATHEDRAL_PURGE.md` rather than silently building a different thing.
+
+Server-side erasure stays queued for human fulfillment, not instant —
+confirmed with the founder before building, keeping
+`request_account_erasure()`'s existing documented policy intact. Added a
+clearly-marked, non-deployed Supabase edge function stub
+(`cathedral-purge-fulfill`, returns 501) as a design artifact for once
+legal/ops approval exists, not a live destructive path.
+
+18 new files/changes, 10 new tests, zero regressions: 407/409 (2 expected
+per `docs/THE_2_382_DOCTRINE.md`).
+
 ## 2026-07-14 — GDPR audit: closed the export-inventory gap
 
 Found a real access/portability gap while auditing GDPR.md's claims against

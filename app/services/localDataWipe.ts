@@ -73,6 +73,9 @@ const EXTRA_SECURE_KEYS = [
   "litmo.trauma_safety.verify.secure.v1",
   "litmo.trauma_safety.reflection.secure.v1",
   "litmo.trauma_safety.reflections.secure.v1",
+  /** Cathedral Seal — normally removed as the purge ritual's own first act;
+   *  included here too so a direct "wipe this device" always clears it. */
+  "litmo.cathedral_seal.v1",
 ];
 
 export type LocalWipeReport = {
