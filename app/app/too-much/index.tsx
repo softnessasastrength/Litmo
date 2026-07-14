@@ -379,6 +379,10 @@ export default function TooMuchScreen() {
                     borderColor: colors.moss,
                   },
                 ]}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: moveId === m }}
+                accessibilityLabel={moveLabel(m)}
+                hitSlop={6}
               >
                 <Text style={styles.chipText}>{moveLabel(m)}</Text>
               </Pressable>
@@ -628,6 +632,9 @@ export default function TooMuchScreen() {
                   styles.triggerCard,
                   draft.triggerId === t.id && styles.triggerSelected,
                 ]}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: draft.triggerId === t.id }}
+                accessibilityLabel={`${t.label}. ${t.detect}`}
               >
                 <Text style={styles.roleTitle}>{t.label}</Text>
                 <Body muted>{t.detect}</Body>

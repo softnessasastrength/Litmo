@@ -193,7 +193,13 @@ export default function DebriefLabScreen() {
           <Button label="Save private debrief" onPress={() => void save()} />
         </Card>
         <Card>
-          <Pressable onPress={() => setShowForbidden((v) => !v)}>
+          <Pressable
+            onPress={() => setShowForbidden((v) => !v)}
+            accessibilityRole="button"
+            accessibilityState={{ expanded: showForbidden }}
+            accessibilityLabel="Anti-creep rules"
+            accessibilityHint={showForbidden ? "Collapses the list" : "Expands the list"}
+          >
             <Text style={styles.h}>
               Anti-creep rules {showForbidden ? "▾" : "▸"}
             </Text>

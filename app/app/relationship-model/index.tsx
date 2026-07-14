@@ -184,7 +184,10 @@ export default function RelationshipModelScreen() {
                           backgroundColor: colors.mossSoft,
                         },
                       ]}
+                      accessibilityRole="radio"
+                      accessibilityState={{ selected: model.axes[key] === n }}
                       accessibilityLabel={`${label} ${n}`}
+                      hitSlop={6}
                     >
                       <Text style={{ color: colors.ink }}>{n}</Text>
                     </Pressable>
@@ -303,6 +306,9 @@ export default function RelationshipModelScreen() {
           <Pressable
             key={p.id}
             onPress={() => setDraft({ ...draft, phase: p.id })}
+            accessibilityRole="radio"
+            accessibilityState={{ selected: draft.phase === p.id }}
+            accessibilityLabel={`${p.label}. ${p.blurb}`}
             style={[
               styles.card,
               draft.phase === p.id && { borderColor: colors.moss },
@@ -319,6 +325,9 @@ export default function RelationshipModelScreen() {
             onPress={() =>
               setDraft({ ...draft, closenessStyle: c.id as ClosenessStyle })
             }
+            accessibilityRole="radio"
+            accessibilityState={{ selected: draft.closenessStyle === c.id }}
+            accessibilityLabel={`${c.label}. ${c.blurb}`}
             style={[
               styles.card,
               draft.closenessStyle === c.id && { borderColor: colors.moss },
@@ -338,6 +347,9 @@ export default function RelationshipModelScreen() {
                 attachmentWeather: a.id as AttachmentWeather,
               })
             }
+            accessibilityRole="radio"
+            accessibilityState={{ selected: draft.attachmentWeather === a.id }}
+            accessibilityLabel={`${a.label}. ${a.blurb}`}
             style={[
               styles.card,
               draft.attachmentWeather === a.id && { borderColor: colors.moss },

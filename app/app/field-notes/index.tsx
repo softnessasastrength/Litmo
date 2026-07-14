@@ -89,6 +89,10 @@ export default function FieldNotesScreen() {
                     backgroundColor: colors.mossSoft,
                   },
                 ]}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: mood === n }}
+                accessibilityLabel={`Mood ${n}`}
+                hitSlop={6}
               >
                 <Text style={{ color: colors.ink }}>{n}</Text>
               </Pressable>
@@ -112,6 +116,9 @@ export default function FieldNotesScreen() {
                     backgroundColor: colors.mossSoft,
                   },
                 ]}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: tags.includes(t) }}
+                accessibilityLabel={t}
               >
                 <Text style={{ color: colors.ink, fontSize: 12 }}>{t}</Text>
               </Pressable>

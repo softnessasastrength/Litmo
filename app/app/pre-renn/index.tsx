@@ -258,6 +258,10 @@ export default function PreRennGateScreen() {
               <Pressable
                 key={n}
                 onPress={() => setDraft({ ...draft, delayPledgeMinutes: n })}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: draft.delayPledgeMinutes === n }}
+                accessibilityLabel={n === 0 ? "No delay" : `${n} minute delay`}
+                hitSlop={6}
                 style={[
                   styles.chip,
                   draft.delayPledgeMinutes === n && {

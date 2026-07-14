@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-07-14 — ACCESS-001: static accessibility audit of containment screens
+
+Static audit (no physical device — see caveat below) of the personal
+containment protocol screens, which prior BETA-001/Track C passes hadn't
+covered. Found and fixed 19 hand-rolled option-picker `Pressable`s across
+`pre-renn`, `relationship-model`, `containment`, `too-much`, `flood`,
+`field-notes`, `debrief-lab`, `not-ready-yet`, `interest-re`, and
+`need-scared` missing `accessibilityRole`/`accessibilityLabel`/
+`accessibilityState` — selection was conveyed by border-color change only,
+invisible to VoiceOver. Added `hitSlop={6}` to small numeric chip pickers
+under Apple's 44pt touch-target minimum. Verified via a static Python
+scanner (zero remaining flags) and full typecheck/test suite. **Not**
+verified: an actual VoiceOver session on a simulator or device — that
+remains the one open physical-device item on ACCESS-001.
+
 ## 2026-07-14 — Second guided ritual: "Two Maps, One Table" (bringing someone in)
 
 Added `docs/SECOND_RITUAL.md` / `/second-ritual`: the phase-2 follow-up to

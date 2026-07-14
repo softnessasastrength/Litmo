@@ -283,6 +283,10 @@ export default function NotReadyYetScreen() {
                       borderColor: colors.moss,
                     },
                   ]}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: debrief.guilt === n }}
+                  accessibilityLabel={`Guilt level ${n}`}
+                  hitSlop={6}
                 >
                   <Text style={styles.chipText}>{n}</Text>
                 </Pressable>
@@ -403,6 +407,9 @@ export default function NotReadyYetScreen() {
                   styles.roleCard,
                   draft.reasonId === r.id && styles.roleCardSelected,
                 ]}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: draft.reasonId === r.id }}
+                accessibilityLabel={`${r.label}. ${r.blurb}`}
               >
                 <Text style={styles.roleTitle}>{r.label}</Text>
                 <Body muted>{r.blurb}</Body>
@@ -438,6 +445,10 @@ export default function NotReadyYetScreen() {
                       borderColor: colors.moss,
                     },
                   ]}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: draft.snoozeMinutes === s }}
+                  accessibilityLabel={snoozeLabel(s)}
+                  hitSlop={6}
                 >
                   <Text style={styles.chipText}>{snoozeLabel(s)}</Text>
                 </Pressable>

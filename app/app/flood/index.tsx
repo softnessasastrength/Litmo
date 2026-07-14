@@ -168,7 +168,11 @@ export default function FloodProtocolScreen() {
             setTouched([]);
           }}
         />
-        <Pressable onPress={() => router.push("/pre-renn" as never)}>
+        <Pressable
+          onPress={() => router.push("/pre-renn" as never)}
+          accessibilityRole="link"
+          accessibilityLabel="If you can still read, try Pre-Renn Gate"
+        >
           <Body muted>If you can still read: try Pre-Renn Gate →</Body>
         </Pressable>
         <Button

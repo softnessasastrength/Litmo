@@ -379,6 +379,10 @@ export default function NeedScaredScreen() {
                     borderColor: colors.moss,
                   },
                 ]}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: moveId === m }}
+                accessibilityLabel={moveLabel(m)}
+                hitSlop={6}
               >
                 <Text style={styles.chipText}>{moveLabel(m)}</Text>
               </Pressable>
@@ -613,6 +617,9 @@ export default function NeedScaredScreen() {
                 styles.poleCard,
                 draft.needId === p.id && styles.poleSelected,
               ]}
+              accessibilityRole="radio"
+              accessibilityState={{ selected: draft.needId === p.id }}
+              accessibilityLabel={`${p.label}. ${p.blurb}`}
             >
               <Text style={styles.poleTitle}>{p.label}</Text>
               <Body muted>{p.blurb}</Body>
@@ -686,6 +693,9 @@ export default function NeedScaredScreen() {
                 styles.poleCard,
                 draft.fearId === p.id && styles.poleSelected,
               ]}
+              accessibilityRole="radio"
+              accessibilityState={{ selected: draft.fearId === p.id }}
+              accessibilityLabel={`${p.label}. ${p.blurb}`}
             >
               <Text style={styles.poleTitle}>{p.label}</Text>
               <Body muted>{p.blurb}</Body>

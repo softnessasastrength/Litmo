@@ -239,6 +239,10 @@ export default function InterestReScreen() {
                       borderColor: colors.moss,
                     },
                   ]}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: debrief.clarity === n }}
+                  accessibilityLabel={`Clarity ${n}`}
+                  hitSlop={6}
                 >
                   <Text style={styles.chipText}>{n}</Text>
                 </Pressable>
@@ -361,6 +365,9 @@ export default function InterestReScreen() {
                   styles.roleCard,
                   draft.targetKind === t.id && styles.roleCardSelected,
                 ]}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: draft.targetKind === t.id }}
+                accessibilityLabel={`${t.label}. ${t.blurb}`}
               >
                 <Text style={styles.roleTitle}>{t.label}</Text>
                 <Body muted>{t.blurb}</Body>

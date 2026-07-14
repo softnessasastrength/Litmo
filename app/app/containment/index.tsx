@@ -310,6 +310,8 @@ export default function ContainmentHubScreen() {
               <Pressable
                 key={r.href}
                 onPress={() => router.push(r.href as never)}
+                accessibilityRole="link"
+                accessibilityLabel={r.why}
                 style={{ marginTop: 8 }}
               >
                 <Body muted>
