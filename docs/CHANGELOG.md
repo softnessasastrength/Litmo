@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-07-14 — GDPR audit: closed the export-inventory gap
+
+Found a real access/portability gap while auditing GDPR.md's claims against
+actual code: `localDataWipe.ts` (erasure) has been kept current all
+session — every new local-only store this session was registered there
+without being asked — but `localDataInventory.ts` (access/portability) had
+drifted behind, covering only 9 of ~24 local-only categories. Added
+summaries for Weather, Pre-Renn, Aftercare, Flood, Apology Craft, Field
+Notes, Reconcile, Parallel Play, Private Debrief, Relationship
+Constitution, Emotional Masochist Mode, Relationship Model, both guided
+rituals, Letters To Him, and trauma-safety reflections — all counts/shape
+only, reusing each domain's existing `summarize*` function where one
+existed. Free text (regrets, private notes, reflection answers, the bond
+label) is never exported, matching the same discipline the wipe list
+already had. Updated the export screen's copy and `GDPR.md`'s rights table
+to match reality. Zero regressions: 397/399 tests, same 5 pre-existing
+typecheck errors.
+
 ## 2026-07-14 — CLAUDE_CONSTITUTION.md: the AI collaborator's ethical posture
 
 New root-level document, founder-authored, addressed specifically to the

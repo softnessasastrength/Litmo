@@ -88,8 +88,13 @@ function DataExportContent() {
         <Body muted>
           Device-local: quiz result counts, learning progress counts, mid-quiz
           save presence, partner invite presence, ND mode flag, privacy notice
-          acknowledgment, Exorcism Dojo flags/counts (not urge free-text) — not
-          plaintext partner packages or E2E secrets.
+          acknowledgment, Exorcism Dojo flags/counts (not urge free-text), and
+          counts/shape only (never free text) for every containment protocol:
+          Weather, Pre-Renn, Aftercare, Flood, Apology Craft, Field Notes,
+          Reconcile, Parallel Play, Private Debrief, Relationship Constitution,
+          Emotional Masochist Mode, Relationship Model, the two guided rituals,
+          Letters To Him, and trauma-safety reflections — not plaintext partner
+          packages, E2E secrets, or any private note/regret/reflection text.
         </Body>
       </Card>
       <Body muted>

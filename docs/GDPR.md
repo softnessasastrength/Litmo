@@ -87,7 +87,7 @@ quiz_result_summaries (owner-only), device registration digests, staff ops data.
 
 | Right | Implementation status |
 | ----- | --------------------- |
-| **Access / portability** | `export_my_data()` RPC + in-app **Export my data**; enhanced with **device-local** categories in export screen |
+| **Access / portability** | `export_my_data()` RPC + in-app **Export my data**; device-local inventory (`localDataInventory.ts`) now covers all ~24 local-only categories, not just the original 9 — every containment protocol, both guided rituals, Letters To Him, and trauma-safety reflections are represented as counts/shape only (2026-07-14 audit found and closed this gap; free text — regrets, private notes, reflection answers — is never exported, matching the wipe list's coverage in `localDataWipe.ts`) |
 | **Erasure** | **Request erasure** recorded (`account_erasure_requests`); **immediate device-local wipe**; full auth.user destruction **blocked** until legal/ops owners (KNOWN_LIMITATIONS) |
 | **Rectification** | Profile / touch / consent edit flows |
 | **Restriction** | Matching holds / blocks (safety); not a general “restrict processing” UI yet |
