@@ -76,6 +76,7 @@ Use these documents when modifying or reviewing implemented behavior:
 - [`BUILD_MODES.md`](BUILD_MODES.md) — Maximum vs App Store Safe dual-mode operator manual (ADR 0060)
 - [`DUAL_MODE_ARCHITECTURE.md`](DUAL_MODE_ARCHITECTURE.md) — full folder tree, SPM, flags, consent flows by mode
 - [`DUAL_MODE_16_AGENT_SWARM.md`](DUAL_MODE_16_AGENT_SWARM.md) — 16-role swarm synthesis: gaps, backlog, flow matrix
+- [`16_AGENT_AUTISM_MODE_RUN.md`](16_AGENT_AUTISM_MODE_RUN.md) — latest autism-mode run (P0 dual-mode gates)
 - [`SOFT_SIGNAL.md`](SOFT_SIGNAL.md) — Soft Signal product system (app, hardware contract, private log)
 - [`LOCAL_FIRST.md`](LOCAL_FIRST.md) — local-first personal vault + optional encrypted cloud backup
 - [`TRAUMA_INFORMED_SAFETY.md`](TRAUMA_INFORMED_SAFETY.md) — panic, quick exit, timeout, verification, reflection

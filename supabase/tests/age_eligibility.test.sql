@@ -54,6 +54,8 @@ select throws_ok(
 );
 
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000002', true);
+-- Local test harness only: allow development_self_attest (migration 044).
+select set_config('app.litmo_allow_dev_age_attest', 'true', true);
 select public.record_age_signal('adult', 'development_self_attest', null, null);
 
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000001', true);

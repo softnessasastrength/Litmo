@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-13 — 16-agent autism mode (dual-mode P0)
+
+Closed G1 share gate, G2 radar gate, G4 Soft Signal pack chrome, G5 Home/Settings
+RF CTAs, G6 EAS release pins, G7 server reject development_self_attest without
+GUC (migration 044). FeatureUnavailable component. Swarm run log:
+`docs/16_AGENT_AUTISM_MODE_RUN.md`. Soft Signal freeness preserved.
+
 ## 2026-07-13 — Cook wave 2: Flood · Apology Craft · Field Notes
 
 Flood Protocol (min path when language is gone), Apology Craft (impact+slice,

@@ -30,8 +30,23 @@ import {
 import type { QrPrivacyMode } from "../../services/qrInviteCore";
 import { profileRepository } from "../../services/profileRepository";
 import { defaultProximityPrefs } from "../../services/proximityPreferenceCore";
+import { runtimeConfig } from "../../config/runtime";
+import { FeatureUnavailable } from "../../components/FeatureUnavailable";
 
+/**
+ * Proximity radar deep-link — Agent 08 gate (G2).
+ * Must not bypass hub: App Store Safe has no RF radar.
+ */
 export default function ProximityRadarScreen() {
+  if (!runtimeConfig.features.proximityRadar) {
+    return (
+      <FeatureUnavailable
+        eyebrow="RADAR"
+        title="Proximity radar is not available in this build."
+        body="Continuous nearby radio is off in the App Store binary. Soft Signal and session consent still work. Maximum Mode keeps the careful radar path."
+      />
+    );
+  }
   return (
     <SensitiveAccessGate>
       <ProximityRadarContent />

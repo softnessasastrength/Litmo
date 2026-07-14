@@ -108,13 +108,14 @@ export function SoftSignalButton({
     phase,
   });
 
-  // Labels: sacred settled copy “You are free” — never “failed” or “cancelled.”
+  // Labels: mode pack (Maximum sacred vs App Store calm) — never “failed” / “cancelled.”
+  // Agent 04/10: Soft Signal chrome is pack-driven; stop authority unchanged.
   const label =
     state === "stopping"
       ? SOFT_SIGNAL_COPY.buttonStopping
       : state === "stopped"
         ? SOFT_SIGNAL_COPY.buttonStopped
-        : point.copy.primary;
+        : SOFT_SIGNAL_COPY.button;
 
   // Sticky bar trades copy density for always-available control — stop authority unchanged.
   const showBannerResolved = sticky ? false : showBanner;
@@ -162,8 +163,8 @@ export function SoftSignalButton({
       </View>
       {explainResolved ? (
         <Text style={styles.explain} accessibilityRole="text">
-          {/* Prefer registry secondary; fall back to SOFT_SIGNAL_COPY.hint. */}
-          {point.copy.secondary ?? SOFT_SIGNAL_COPY.hint}
+          {/* Mode pack hint (sacred vs calm); registry secondary is secondary. */}
+          {SOFT_SIGNAL_COPY.hint}
         </Text>
       ) : null}
       {/* Always visible: Soft Signal is not emergency/crisis services (product non-claim). */}

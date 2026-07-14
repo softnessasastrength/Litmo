@@ -255,47 +255,59 @@ function SettingsContent() {
         onPress={() => router.push("/security/devices" as never)}
       />
 
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
-        <View style={{ flex: 1, gap: 6 }}>
-          <Body>
-            {nearbyShareOn
-              ? "Nearby share allowed"
-              : "Nearby share off (default)"}
-          </Body>
-          <Body muted>
-            AirDrop-style Multipeer exchange for discovery profiles and
-            co-located Consent Snapshot reviews. Off by default. Radio only
-            while you open Nearby Share. Easy stop. Never consent to touch.
-            Requires an iOS development build (not Expo Go).
-          </Body>
-        </View>
-        <Switch
-          accessibilityLabel="Nearby share"
-          accessibilityHint="Master opt-in for Multipeer nearby share. Default is off."
-          trackColor={{ false: colors.line, true: colors.mossSoft }}
-          thumbColor={nearbyShareOn ? colors.moss : colors.white}
-          ios_backgroundColor={colors.line}
-          onValueChange={(next) => {
-            setNearbyShareOn(next);
-            void setNearbyShareEnabled(next).then(() => {
-              if (!next) void localShareService.stop("settings_opt_out");
-            });
-          }}
-          value={nearbyShareOn}
+      {runtimeConfig.features.localMultipeerShare ? (
+        <>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
+            <View style={{ flex: 1, gap: 6 }}>
+              <Body>
+                {nearbyShareOn
+                  ? "Nearby share allowed"
+                  : "Nearby share off (default)"}
+              </Body>
+              <Body muted>
+                AirDrop-style Multipeer exchange for discovery profiles and
+                co-located Consent Snapshot reviews. Off by default. Radio only
+                while you open Nearby Share. Easy stop. Never consent to touch.
+                Requires an iOS development build (not Expo Go).
+              </Body>
+            </View>
+            <Switch
+              accessibilityLabel="Nearby share"
+              accessibilityHint="Master opt-in for Multipeer nearby share. Default is off."
+              trackColor={{ false: colors.line, true: colors.mossSoft }}
+              thumbColor={nearbyShareOn ? colors.moss : colors.white}
+              ios_backgroundColor={colors.line}
+              onValueChange={(next) => {
+                setNearbyShareOn(next);
+                void setNearbyShareEnabled(next).then(() => {
+                  if (!next) void localShareService.stop("settings_opt_out");
+                });
+              }}
+              value={nearbyShareOn}
+            />
+          </View>
+          <Button
+            variant="secondary"
+            label="Open Nearby Share"
+            onPress={() => router.push("/share/local" as never)}
+            accessibilityHint="Open the intentional nearby share screen for profiles or snapshot review"
+          />
+        </>
+      ) : (
+        <Body muted>
+          Nearby Multipeer share is not in this build (App Store Safe). Soft
+          Signal and session consent remain.
+        </Body>
+      )}
+      {runtimeConfig.features.proximityRadar ||
+      runtimeConfig.features.nfcCarefulConnect ? (
+        <Button
+          variant="secondary"
+          label="Proximity Layer hub (radar · NFC · QR)"
+          onPress={() => router.push("/proximity" as never)}
+          accessibilityHint="Opens the proximity hub with extreme consent gates before radar, NFC, or Multipeer. Soft Signal exits. Never consent to touch."
         />
-      </View>
-      <Button
-        variant="secondary"
-        label="Open Nearby Share"
-        onPress={() => router.push("/share/local" as never)}
-        accessibilityHint="Open the intentional nearby share screen for profiles or snapshot review"
-      />
-      <Button
-        variant="secondary"
-        label="Proximity Layer hub (radar · NFC · QR)"
-        onPress={() => router.push("/proximity" as never)}
-        accessibilityHint="Opens the proximity hub with extreme consent gates before radar, NFC, or Multipeer. Soft Signal exits. Never consent to touch."
-      />
+      ) : null}
       <Button
         variant="secondary"
         label="Touch Language (full map)"

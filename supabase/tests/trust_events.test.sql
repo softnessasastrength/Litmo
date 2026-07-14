@@ -37,6 +37,7 @@ update public.profiles
 
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000001', true);
+select set_config('app.litmo_allow_dev_age_attest', 'true', true);
 select public.record_age_signal('adult', 'development_self_attest', null, null);
 
 reset role;

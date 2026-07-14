@@ -15,6 +15,22 @@ if (eas.build.preview.env.EXPO_PUBLIC_APP_ENV !== "staging")
   failures.push("preview must target staging");
 if (eas.build.production.env.EXPO_PUBLIC_APP_ENV !== "production")
   failures.push("production profile mismatch");
+// Agent 02/14 — dual-mode EAS pins (G6): store production must be app_store;
+// internal maximum profiles must pin maximum so binaries cannot drift.
+const pin = (profile, key, expected) => {
+  const got = eas.build?.[profile]?.env?.[key];
+  if (got !== expected)
+    failures.push(
+      `EAS ${profile}.${key} must be ${expected} (got ${got ?? "missing"})`,
+    );
+};
+pin("production", "EXPO_PUBLIC_LITMO_BUILD_MODE", "app_store");
+pin("production", "EXPO_PUBLIC_LITMO_PLATFORM", "ios");
+pin("preview", "EXPO_PUBLIC_LITMO_BUILD_MODE", "app_store");
+pin("preview", "EXPO_PUBLIC_LITMO_PLATFORM", "ios");
+pin("development", "EXPO_PUBLIC_LITMO_BUILD_MODE", "maximum");
+pin("production_maximum_internal", "EXPO_PUBLIC_LITMO_BUILD_MODE", "maximum");
+pin("device_beta", "EXPO_PUBLIC_LITMO_BUILD_MODE", "maximum");
 if (
   !fs
     .readFileSync("app/ios/Litmo/Litmo.entitlements", "utf8")

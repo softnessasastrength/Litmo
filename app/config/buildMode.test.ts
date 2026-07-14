@@ -56,6 +56,26 @@ test("explicit env overrides platform heuristic", () => {
   );
 });
 
+test("App Store mode disables RF; Maximum enables (Agent 08 matrix)", () => {
+  assert.equal(FEATURES_APP_STORE.proximityRadar, false);
+  assert.equal(FEATURES_APP_STORE.localMultipeerShare, false);
+  assert.equal(FEATURES_APP_STORE.nfcCarefulConnect, false);
+  assert.equal(FEATURES_APP_STORE.softSignalStop, true);
+  assert.equal(FEATURES_MAXIMUM.proximityRadar, true);
+  assert.equal(FEATURES_MAXIMUM.localMultipeerShare, true);
+  assert.equal(FEATURES_MAXIMUM.softSignalStop, true);
+});
+
+test("Soft Signal copy packs differ by mode (Agent 04)", () => {
+  const max = copyForMode("maximum").softSignal;
+  const store = copyForMode("app_store").softSignal;
+  assert.notEqual(max.button, store.button);
+  assert.ok(max.button.toLowerCase().includes("soft signal") || max.button.includes("end"));
+  assert.ok(store.button.toLowerCase().includes("end"));
+  // Neither pack requires a reason
+  assert.ok(!/explain why|reason required/i.test(max.hint + store.hint));
+});
+
 test("platform law: any iOS family → app_store when env unset", () => {
   for (const env of ["development", "staging", "production"] as const) {
     assert.equal(

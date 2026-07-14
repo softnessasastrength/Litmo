@@ -66,11 +66,12 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
-- Done cook: Pre-Renn · Weather · Aftercare · Recommender · **Flood** ·
-  **Apology Craft** · **Field Notes** (hub + debrief + wipe).
-- Prior: batch 10–16 v0.2, auto-debrief bridge, Watch simulator BUILD SUCCEEDED.
-- Physical Watch + paired iPhone Taptic QA still open (signing + device).
-- Follow `docs/REAL_PURPOSE.md` · manifesto: `docs/SELF_ROAST_SELF_LOVE_MANIFESTO.md`.
+- Done: **16-agent autism mode** dual-mode P0 (G1/G2/G4/G5/G6/G7 closed).
+  See `docs/16_AGENT_AUTISM_MODE_RUN.md`.
+- Residual dual-mode: G3 NFC plugins, G8–G9 soft_limit, G10 parity CI, G12 Maestro.
+- Containment cook still on main (Pre-Renn · Weather · Flood · Field Notes…).
+- Physical Watch + VoiceOver smoke still open.
+- Follow `docs/REAL_PURPOSE.md`.
 
 ## Verification baseline
 

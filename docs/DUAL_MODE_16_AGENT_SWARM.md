@@ -328,21 +328,23 @@ L1 Constitution → L2 ADR 0060 → L3 BUILD_MODES + DUAL_MODE_ARCHITECTURE
 
 ## 9. Unified gap board (swarm consensus)
 
-| ID | Gap | Agents | Severity |
-| -- | --- | ------ | -------- |
-| G1 | `/share/local` not feature-gated | 02, 08, 10, 14 | **Critical** |
-| G2 | `/proximity/radar` deep-link ungated | 08 | High |
-| G3 | NFC/Bonjour plugins always on for store IPA | 02, 08, 10 | High |
-| G4 | Soft Signal chrome not fully mode-pack-driven | 04, 10, 15 | High |
-| G5 | Home/Settings still market RF in store | 08, 10 | High |
-| G6 | `release:check` lacks EAS mode pins | 01, 02, 14, 16 | High |
-| G7 | Server accepts `development_self_attest` in prod | 09 | High |
-| G8 | Onboarding boundaries lack soft_limit status | 07 | Medium |
-| G9 | Server soft_limit→ask_first collapse | 07, 03 | Medium |
-| G10 | TS↔Swift matrix not machine-parity CI | 01, 02, 12, 14 | Medium |
-| G11 | ADR 0060 prose vs platform-primary code | 02, 16 | Medium |
-| G12 | Maestro app-store uses demo path | 05, 10, 14 | Medium |
-| G13 | Privacy deletion honesty for 5.1.1 | 10, 13 | High (distribution) |
+**Autism mode run:** [`16_AGENT_AUTISM_MODE_RUN.md`](16_AGENT_AUTISM_MODE_RUN.md) (2026-07-13).
+
+| ID | Gap | Agents | Severity | Status |
+| -- | --- | ------ | -------- | ------ |
+| G1 | `/share/local` not feature-gated | 02, 08, 10, 14 | **Critical** | **closed** — FeatureUnavailable + `localMultipeerShare` |
+| G2 | `/proximity/radar` deep-link ungated | 08 | High | **closed** — FeatureUnavailable + `proximityRadar` |
+| G3 | NFC/Bonjour plugins always on for store IPA | 02, 08, 10 | High | open |
+| G4 | Soft Signal chrome not fully mode-pack-driven | 04, 10, 15 | High | **closed** — SoftSignalButton pack labels/hints |
+| G5 | Home/Settings still market RF in store | 08, 10 | High | **closed** — CTAs gated by features |
+| G6 | `release:check` lacks EAS mode pins | 01, 02, 14, 16 | High | **closed** — validate-release.mjs pins |
+| G7 | Server accepts `development_self_attest` in prod | 09 | High | **closed** — migration 044 + GUC |
+| G8 | Onboarding boundaries lack soft_limit status | 07 | Medium | open |
+| G9 | Server soft_limit→ask_first collapse | 07, 03 | Medium | open |
+| G10 | TS↔Swift matrix not machine-parity CI | 01, 02, 12, 14 | Medium | open |
+| G11 | ADR 0060 prose vs platform-primary code | 02, 16 | Medium | open |
+| G12 | Maestro app-store uses demo path | 05, 10, 14 | Medium | open |
+| G13 | Privacy deletion honesty for 5.1.1 | 10, 13 | High (distribution) | open |
 
 ---
 

@@ -30,10 +30,25 @@ import {
   type SnapshotRowShare,
 } from "../../services/localShareCore";
 import { profileRepository } from "../../services/profileRepository";
+import { runtimeConfig } from "../../config/runtime";
+import { FeatureUnavailable } from "../../components/FeatureUnavailable";
 
 type Mode = "choose" | "host" | "receive";
 
+/**
+ * Nearby Multipeer share — Agent 08/02/10 gate (G1).
+ * App Store Safe: localMultipeerShare false → honest unavailable, no RF CTAs.
+ */
 export default function LocalShareScreen() {
+  if (!runtimeConfig.features.localMultipeerShare) {
+    return (
+      <FeatureUnavailable
+        eyebrow="NEARBY SHARE"
+        title="Nearby share is not available in this build."
+        body="This App Store build does not offer Multipeer / AirDrop-style profile exchange. Accounts, boundaries, Soft Signal, and session consent remain. Maximum Mode keeps the full nearby share path."
+      />
+    );
+  }
   return (
     <SensitiveAccessGate>
       <LocalShareContent />

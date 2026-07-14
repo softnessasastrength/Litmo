@@ -28,6 +28,7 @@ import { localShareService } from "../../services/localShareService";
 import { fonts, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { runtimeConfig } from "../../config/runtime";
+import { FeatureUnavailable } from "../../components/FeatureUnavailable";
 
 /**
  * Proximity Layer hub — extreme consent gating before any radio path.
@@ -41,15 +42,11 @@ export default function ProximityHubScreen() {
   // Compile-time feature gate — App Store binary does not offer RF radar UI.
   if (!runtimeConfig.features.proximityRadar) {
     return (
-      <Screen>
-        <Eyebrow>NEARBY</Eyebrow>
-        <Title>Nearby discovery is not available in this build.</Title>
-        <Body muted>
-          This App Store build focuses on accounts, preferences, boundaries, and
-          session consent without continuous nearby radio. The full Proximity
-          Layer remains in Maximum Mode builds (macOS / Linux / internal).
-        </Body>
-      </Screen>
+      <FeatureUnavailable
+        eyebrow="NEARBY"
+        title="Nearby discovery is not available in this build."
+        body="This App Store build focuses on accounts, preferences, boundaries, and session consent without continuous nearby radio. The full Proximity Layer remains in Maximum Mode builds (macOS / Linux / internal)."
+      />
     );
   }
   return (

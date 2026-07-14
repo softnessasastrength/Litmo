@@ -16,6 +16,7 @@ import { notifyPrivateUpdate } from "../../services/notifications";
 import { sessionRepository } from "../../services/sessionRepository";
 import { fonts, type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
+import { runtimeConfig } from "../../config/runtime";
 
 type OpenSession = {
   id: string;
@@ -299,12 +300,16 @@ export default function HomeTabScreen() {
         onPress={() => router.push("/safety" as never)}
         accessibilityHint="Panic cover, quick exit, session time boundaries, present-moment checks, and optional private reflection. Not emergency services."
       />
-      <Button
-        variant="secondary"
-        label="Proximity Layer (radar · NFC · QR · AirDrop)"
-        onPress={() => router.push("/proximity" as never)}
-        accessibilityHint="Full proximity hub: opt-in anonymous radar with Touch Language compatibility percent, NFC, encrypted QR, and AirDrop-style share. Extreme consent gating. Soft Signal anytime."
-      />
+      {runtimeConfig.features.proximityRadar ||
+      runtimeConfig.features.localMultipeerShare ||
+      runtimeConfig.features.nfcCarefulConnect ? (
+        <Button
+          variant="secondary"
+          label="Proximity Layer (radar · NFC · QR · AirDrop)"
+          onPress={() => router.push("/proximity" as never)}
+          accessibilityHint="Full proximity hub: opt-in anonymous radar with Touch Language compatibility percent, NFC, encrypted QR, and AirDrop-style share. Extreme consent gating. Soft Signal anytime."
+        />
+      ) : null}
       <Button
         variant="secondary"
         label={
