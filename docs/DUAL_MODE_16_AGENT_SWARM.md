@@ -344,7 +344,7 @@ L1 Constitution → L2 ADR 0060 → L3 BUILD_MODES + DUAL_MODE_ARCHITECTURE
 | G8 | Onboarding boundaries lack soft_limit status | 07 | Medium | **closed** — soft_limit preserved in completeProfile |
 | G9 | Server soft_limit→ask_first collapse | 07, 03 | Medium | **closed** — schema already first-class; client no longer collapses |
 | G10 | TS↔Swift matrix not machine-parity CI | 01, 02, 12, 14 | Medium | **closed** — `npm run parity:features` |
-| G11 | ADR 0060 prose vs platform-primary code | 02, 16 | Medium | open |
+| G11 | ADR 0060 prose vs platform-primary code | 02, 16 | Medium | **closed** — ADR 0060 resolution order matches buildMode.ts |
 | G12 | Maestro app-store uses demo path | 05, 10, 14 | Medium | **closed** — maestro-app-store.yaml no demo |
 | G13 | Privacy deletion honesty for 5.1.1 | 10, 13 | High (distribution) | **closed** — APPLE_PRIVACY_5_1_1 + delete-data honesty card |
 

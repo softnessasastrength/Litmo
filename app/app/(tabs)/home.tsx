@@ -260,6 +260,12 @@ export default function HomeTabScreen() {
       />
       <Button
         variant="secondary"
+        label="Relationship Model (bond map)"
+        onPress={() => router.push("/relationship-model" as never)}
+        accessibilityHint="Living bond map: phase, axes, weather. Not consent. Soft Signal free."
+      />
+      <Button
+        variant="secondary"
         label="Flood Protocol (language gone)"
         onPress={() => router.push("/flood" as never)}
         accessibilityHint="Minimum path when flooded. Soft Signal free. No essays."

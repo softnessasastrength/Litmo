@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — Overnight autonomous: model→Flood/Aftercare/Home + G11
+
+Flood start/exit updates bond phase; Aftercare mode primed from phase; Home
+shortcut. ADR 0060 resolution order reconciled to platform-primary code (G11
+closed). Soft Signal freeness preserved.
+
 ## 2026-07-13 — Relationship Model wired into Pre-Renn · Weather · Hub
 
 Bond map biases Pre-Renn delay + verdict reasons, Weather can apply sky →

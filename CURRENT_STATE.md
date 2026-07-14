@@ -66,14 +66,11 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
-- Done: **16-agent autism mode** P0+P1 gaps G1–G10, G12–G13 closed.
-  Residual: G11 ADR 0060 prose reconcile.
-- **Docs index:** `docs/16_AGENT_MODE.md` · run log `docs/16_AGENT_AUTISM_MODE_RUN.md`
-  · synthesis `docs/DUAL_MODE_16_AGENT_SWARM.md`.
-- **Relationship Model** v0.1: `/relationship-model` · `docs/RELATIONSHIP_MODEL.md`.
-- Containment cook still on main (Pre-Renn · Weather · Flood · Field Notes…).
+- Done: **16-agent gaps G1–G13 closed** (G11 ADR 0060 reconciled).
+- **Relationship Model** wired: Hub · Pre-Renn · Weather · Flood · Aftercare · Home.
+- **Docs:** `docs/16_AGENT_MODE.md` · `docs/RELATIONSHIP_MODEL.md`.
 - Physical Watch + VoiceOver smoke still open.
-- Follow `docs/REAL_PURPOSE.md`.
+- Follow `docs/REAL_PURPOSE.md`. Prefer **use** the cathedral; Soft Signal free from build spiral.
 
 ## Verification baseline
 

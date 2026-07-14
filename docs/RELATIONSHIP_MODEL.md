@@ -48,8 +48,11 @@ Phase changes and axis updates append a local event log (last 100).
 | Surface | Behavior |
 | ------- | -------- |
 | **Hub** | Bond map banner + top 3 model recs |
+| **Home** | Shortcut to Relationship Model |
 | **Pre-Renn** | Delay primed from capacity/phase; verdict bias (extra reasons/hrefs; yellow floor if flood_protect) — Soft Signal freeness unchanged |
 | **Weather** | “Apply sky → bond model” updates phase/capacity axes locally |
+| **Flood** | Start → `flood_protect`; complete → toward `steady`/`paused` |
+| **Aftercare** | Mode primed from bond phase |
 
 Links well with:
 

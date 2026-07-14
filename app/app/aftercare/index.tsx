@@ -24,6 +24,12 @@ import {
   wantsDenserRitual,
   type MasochistPrefs,
 } from "../../lib/masochistModeCore";
+import { relationshipModelStore } from "../../services/relationshipModelStore";
+import {
+  aftercareModeFromPhase,
+  modelBannerLine,
+  type RelationshipModel,
+} from "../../lib/relationshipModelCore";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 import type { AppColors } from "../../theme";
@@ -38,6 +44,8 @@ export default function AftercareScreen() {
     partnerLine: "",
   });
   const [snap, setSnap] = useState<AftercareSnapshot | null>(null);
+  const [relModel, setRelModel] = useState<RelationshipModel | null>(null);
+  const [modePrimed, setModePrimed] = useState(false);
   const [step, setStep] = useState(0);
   const [soft, setSoft] = useState<"idle" | "stopping" | "stopped">("idle");
   const [mPrefs, setMPrefs] = useState<MasochistPrefs>(defaultMasochistPrefs());
@@ -46,7 +54,16 @@ export default function AftercareScreen() {
   useEffect(() => {
     void masochistModeStore.load().then(setMPrefs);
     void aftercareStore.load().then((h) => setSummary(summarizeAftercare(h)));
-  }, [snap]);
+    void relationshipModelStore.load().then((b) => {
+      if (!b?.model) return;
+      setRelModel(b.model);
+      if (!modePrimed) {
+        const mode = aftercareModeFromPhase(b.model.phase);
+        if (mode) setDraft((d) => ({ ...d, modeId: mode }));
+        setModePrimed(true);
+      }
+    });
+  }, [snap, modePrimed]);
 
   const denser = wantsDenserRitual(mPrefs);
   const banner = masochistBanner(mPrefs);
@@ -149,6 +166,14 @@ export default function AftercareScreen() {
         {banner ? (
           <Card>
             <Body>{banner}</Body>
+          </Card>
+        ) : null}
+        {relModel ? (
+          <Card>
+            <Body muted>Bond map: {modelBannerLine(relModel)}</Body>
+            <Body muted>
+              Mode primed from phase when possible. Soft Signal free to pick another.
+            </Body>
           </Card>
         ) : null}
         {AFTERCARE_MODES.filter((m) => m.id !== "undecided").map((m) => (

@@ -482,6 +482,52 @@ export type WeatherAxesLite = {
  * Suggest bond-model updates from personal weather.
  * Pure: does not mutate. Caller applies with Soft Signal freeness intact.
  */
+/** Aftercare mode ids we may prime (mirrors aftercareCore; no circular import). */
+export type AftercareModeHint =
+  | "after_touch"
+  | "after_conflict"
+  | "after_flood"
+  | "after_good_thing"
+  | "after_build_spiral";
+
+/**
+ * Suggest aftercare mode from bond phase (never auto-starts aftercare).
+ */
+export function aftercareModeFromPhase(
+  phase: RelationshipPhase,
+): AftercareModeHint | null {
+  switch (phase) {
+    case "repair_needed":
+      return "after_conflict";
+    case "flood_protect":
+      return "after_flood";
+    case "celebration":
+      return "after_good_thing";
+    case "forming":
+    case "steady":
+    case "paused":
+      return "after_touch";
+    default:
+      return null;
+  }
+}
+
+/** Enter flood_protect on bond map when Flood Protocol starts (optional apply). */
+export function enterFloodProtect(
+  model: RelationshipModel,
+): { model: RelationshipModel; event: RelationshipEvent } {
+  return setPhase(model, "flood_protect");
+}
+
+/** After flood completes: leave flood_protect → steady if settled. */
+export function exitFloodTowardSteady(
+  model: RelationshipModel,
+  settled: boolean,
+): { model: RelationshipModel; event: RelationshipEvent } | null {
+  if (model.phase !== "flood_protect") return null;
+  return setPhase(model, settled ? "steady" : "paused");
+}
+
 export function suggestModelUpdateFromWeather(
   model: RelationshipModel,
   w: WeatherAxesLite,

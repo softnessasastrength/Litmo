@@ -12,6 +12,9 @@ import {
   parseBundle,
   preRennBiasFromModel,
   suggestModelUpdateFromWeather,
+  aftercareModeFromPhase,
+  enterFloodProtect,
+  exitFloodTowardSteady,
 } from "./relationshipModelCore.ts";
 import { computeVerdict } from "./preRennGateCore.ts";
 
@@ -103,5 +106,22 @@ describe("relationship model", () => {
     });
     assert.equal(s.phase, "flood_protect");
     assert.ok(s.reasons.length > 0);
+  });
+
+  it("flood protect enter/exit and aftercare phase map", () => {
+    const d = {
+      ...defaultDraft(),
+      label: "bond",
+      phase: "steady" as const,
+      softSignalAcknowledged: true,
+    };
+    let m = createModel(d)!;
+    m = enterFloodProtect(m).model;
+    assert.equal(m.phase, "flood_protect");
+    m = exitFloodTowardSteady(m, true)!.model;
+    assert.equal(m.phase, "steady");
+    assert.equal(aftercareModeFromPhase("repair_needed"), "after_conflict");
+    assert.equal(aftercareModeFromPhase("flood_protect"), "after_flood");
+    assert.equal(aftercareModeFromPhase("celebration"), "after_good_thing");
   });
 });

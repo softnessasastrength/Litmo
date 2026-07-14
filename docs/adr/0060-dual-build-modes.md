@@ -30,11 +30,21 @@ Maintain **one monorepo** with **two compile-time product modes**:
 1. **App environment** — `development` | `staging` | `production` (`EXPO_PUBLIC_APP_ENV`)
 2. **Build mode** — `maximum` | `app_store` (`EXPO_PUBLIC_LITMO_BUILD_MODE`)
 
-### Resolution order
+### Resolution order (platform-primary — code is source of truth)
 
-1. Explicit `EXPO_PUBLIC_LITMO_BUILD_MODE` (EAS profiles always set this)
-2. Else: `ios` + (`staging`|`production`) → `app_store`
-3. Else → `maximum`
+Implemented in `app/config/buildMode.ts` `resolveBuildMode`:
+
+1. **Explicit** `EXPO_PUBLIC_LITMO_BUILD_MODE` / aliases always wins  
+   (EAS profiles pin this; use for internal Maximum iOS)
+2. Else if platform is **iOS family** (`ios` | `iphoneos` | `iphonesimulator` | `ipados` | `tvos`)  
+   → `app_store`  
+   (including development iOS — not only staging/production)
+3. Else (**macOS**, **Linux**, Android, web, unknown) → `maximum`
+
+**Note (G11 reconcile 2026-07-13):** Earlier ADR prose said “ios + staging|production
+only.” That was superseded by product law: **any iOS family defaults to App Store
+Safe** so a mis-set APP_ENV cannot ship Maximum RF to a phone. Staging vs production
+no longer flips iOS mode.
 
 ### Non-negotiable in BOTH modes
 

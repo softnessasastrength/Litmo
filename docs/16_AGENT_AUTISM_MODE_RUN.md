@@ -55,11 +55,17 @@
 | G12 | Maestro demo path | maestro-app-store.yaml no fictional demo |
 | G13 | Privacy 5.1.1 honesty | APPLE_PRIVACY_5_1_1.md + delete-data card |
 
+## Wave 3 (overnight autonomous)
+
+| ID | Work |
+| -- | ---- |
+| G11 | ADR 0060 resolution order aligned to platform-primary code |
+| — | Relationship Model → Flood / Aftercare / Home wiring |
+
 ## Still open (honest)
 
 | ID | Gap | Why open |
 | -- | --- | -------- |
-| G11 | ADR 0060 prose vs platform-primary code | doc reconcile residual only |
 | — | Soft Signal mid-seal / fingerprint rebuild (Agent 06 backlog) | not on G-board as closed |
 | — | Physical Review submission | external; not inventable |
 

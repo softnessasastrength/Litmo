@@ -109,8 +109,8 @@ node --experimental-strip-types --test config/buildMode.test.ts
 
 | Status | IDs |
 | ------ | --- |
-| **Closed** | G1, G2, G3, G4, G5, G6, G7, G8, G9, G10, G12, G13 |
-| **Open** | G11 (ADR 0060 prose vs platform-primary code) |
+| **Closed** | G1–G13 (all listed dual-mode integrity gaps) |
+| **Open** | Agent 06 mid-seal residual; physical Review (external) |
 
 Full table + backlog: [`DUAL_MODE_16_AGENT_SWARM.md`](DUAL_MODE_16_AGENT_SWARM.md) §9–10.  
 Execution detail: [`16_AGENT_AUTISM_MODE_RUN.md`](16_AGENT_AUTISM_MODE_RUN.md).
