@@ -156,7 +156,11 @@ I can stop, archive, or delete this when containment is no longer the job.
 Distributed under MPL 2.0 (see `LICENSE`) plus a plain-language promise on
 top of it: [`NON_MONETIZATION_COVENANT.md`](NON_MONETIZATION_COVENANT.md) —
 never charges, never sells your data, never adds ads or engagement
-mechanics, and the promise transfers to any fork.
+mechanics, and the promise transfers to any fork. See also
+[`CONTRIBUTOR_ATTESTATION.md`](CONTRIBUTOR_ATTESTATION.md) (what
+contributing implies) and
+[`TRADEMARK_POLICY.md`](TRADEMARK_POLICY.md) (what the names "Litmo" and
+"Softness as a Strength" ask of forks).
 
 Building your own version of this for your own fear: see
 [`docs/FORK_YOUR_OWN_CATHEDRAL.md`](docs/FORK_YOUR_OWN_CATHEDRAL.md) —

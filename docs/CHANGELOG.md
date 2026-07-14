@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-14 — Contributor attestation + trademark policy (DOCS-002 follow-up)
+
+Two of ADR 0044's four remaining governance follow-ups: `CONTRIBUTOR_ATTESTATION.md`
+names a DCO sign-off as the intended lightweight mechanism if outside
+contributions are ever accepted (not currently enforced — there's no
+outside-contribution flow to enforce it against yet), and describes what
+contributing already implicitly means, including for AI coding agents.
+`TRADEMARK_POLICY.md` is a plain-language ask for forks about the names
+"Litmo" and "Softness as a Strength" — explicitly not a registered-mark
+legal claim, since neither name is registered. Both cross-referenced from
+`README.md`. Qualified legal review is the one remaining ADR 0044 follow-up
+item, and it's explicitly out of scope for an agent to close — that needs
+an actual lawyer, not documentation.
+
 ## 2026-07-14 — Closed a real App Store Safe reachability + partner-name leak
 
 Checking whether the earlier `pairedGrowthContent` gating plan
