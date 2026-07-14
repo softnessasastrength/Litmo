@@ -1,99 +1,87 @@
-# Spooning Protocol v0.1
+# Spooning Protocol v0.2
 
 **This is currently a personal emotional containment system, not a public product.**
 
 > **Because apparently I can’t just fucking cuddle like a normal person.**
 
 **Route:** `/spooning`  
-**Date:** 2026-07-13  
-**Core:** `app/lib/spooningCore.ts` (v2 fields)
+**Version:** 0.2 · nuclear autistic precision  
+**Core:** `app/lib/spooningCore.ts` · haptics: `app/services/spooningHaptics.ts`
 
 ---
 
 ## Purpose
 
-Externalize anxiety around **physical intimacy and closeness** so it is less likely to dump onto **Renn**.
+Externalize intimacy anxiety + “am I allowed to need hold?” (mommy-issues-adjacent) into a fail-closed, hilarious, Watch-aware ritual so raw need is less likely to dump onto **Renn**.
 
-Turn the terrifying act of “just lying next to someone” into a hilarious, over-engineered ritual that somehow makes a nervous system feel safer.
-
----
-
-## Core principles
-
-1. **All spooning is opt-in, revocable, and snapshot-based**  
-2. **Soft Signal is God Mode** — instant disengage, no questions  
-3. **Little Spoon is a position of strength, not weakness** (important for this brain)  
-4. **Post-spoon debrief is “mandatory for data collection” (lol)** — skip still allowed; Soft Signal freeness extends to paperwork  
-5. Prior cuddles are **never** consent  
-6. Local “+1 non-traumatic closeness” is a **joke ledger**, not a public trust score  
+Comedy gold. Actually functional for a nervous system that freezes without a map.
 
 ---
 
-## Role negotiation (funny cards)
+## Negotiate flow (5 steps)
 
-| Role | Mode |
-| ---- | ---- |
-| **Little Spoon** | Protected / cherished — **strength** |
-| **Big Spoon** | Protective / grounding |
-| **Switch** | Chaotic neutral |
-| **Parallel Play** | Touch-adjacent, no full entanglement |
-| **Burrito Mode** | Fully wrapped, maximum containment (valid primary role) |
-| **Solo Practice** | You + pillow + protocol |
+1. **Role** — Little / Care-Seeker Little / Big / Switch / Parallel / Burrito / Solo  
+2. **Position** — 14 shapes (see below)  
+3. **Body rules** — duration · pressure · energy · zones  
+4. **Reassurance + Watch** — mommy-issues contract · check-in phrase · Watch haptics  
+5. **Seal** → active timer  
 
----
-
-## Consent Snapshot (local seal)
-
-Must name before start:
-
-| Field | Options |
-| ----- | ------- |
-| **Duration** | 5 min · 15 min · 45 min · **until one of us gets hot or has to pee** |
-| **Pressure** | Feather · Gentle · Firm · **“I want to feel like I’m being held together”** |
-| **Allowed zones** | Back, waist, hair, arm, shoulder, hand/wrist; hard notes: nowhere near stomach, no face unless re-asked |
-| **Energy** | Cozy silence · soft talk · occasional forehead kiss · playful · heavy/sad-cuddle |
-
-**Half-Nelson of Love** requires chest-adjacent zone consent (back or shoulder).
+Soft Signal = God Mode entire time.
 
 ---
 
-## Position variants (stupid names)
+## Positions (14)
 
-| Name | Detail |
-| ---- | ------ |
-| **Classic** | Default |
-| **Safety Spoon** | Big spoon arm under pillow; little can hold wrist — **escape route built in** |
-| **Burrito** | Blanket + human wrap |
-| **Half-Nelson of Love** | Arm across chest — **explicit consent only** |
-| **Cthulhu** | All limbs entangled, maximum chaos |
-| **Distance Spoon** | Back-to-back with pinky contact (overstimulated days) |
+| Id | Label | Nervous-system job |
+| -- | ----- | ------------------ |
+| classic | Classic | Baseline co-presence |
+| safety | Safety Spoon | Hold + escape wrist |
+| safety_burrito | Safety Burrito | Max containment + exit |
+| burrito | Burrito | Nest / reduce surface |
+| half_nelson_love | Half-Nelson of Love | Deep pressure (consent) |
+| cthulhu | Cthulhu | Full contact “enough” |
+| distance | Distance Spoon | Connection without flood |
+| jetpack | Jetpack Mode | Cling with agency |
+| koala_death_grip | Koala Death Grip | Ventral “I’m still here” |
+| starfish_adjacent | Starfish Adjacent | Lowest-demand closeness |
+| lap_nest | Lap Nest | Care-seeker geometry |
+| backpack_of_love | Backpack of Love | Being carried in bed |
+| fortress_of_solitude | Fortress of Solitude | Solo-adjacent co-reg |
+| custom | Custom Chaos | Name it |
+
+Chest-adjacent positions require back / shoulder / chest-over-clothes zone.
 
 ---
 
-## Mid-session tools
+## Mommy issues reassurance
+
+Toggle on step 4 (auto-hinted for Little / Care-Seeker Little).
+
+- Energy: **Reassurance needed**  
+- Mid-spoon: scripted lines (“You are allowed to need this…”)  
+- Check-in flash: **you are still wanted**  
+- Debrief ledger: received hold without performing pain · named need for hold  
+- Cross-link: Attachment Repair Cathedral  
+
+---
+
+## Mid-spoon tools
 
 | Tool | Behavior |
 | ---- | -------- |
-| **Soft Signal** | God Mode — ends spoon immediately (practice Soft Signal path) |
-| **Check-in** | Gentle `presence` haptic + on-screen **“you good?”** — does **not** end spoon |
-| **5 min warning** | On 15/45 timed spoons — extend, Soft Signal, or graceful exit |
-| **Hot/pee exit** | Sacred duration clause as an end reason |
+| Soft Signal | God Mode + Watch `watch_soft_signal` best-effort |
+| Check-in | Phone presence haptic + Watch `watch_check_in` / heartbeat |
+| 5 min warning | Attention + Watch gentle tap |
+| Reassurance line | Cycles MOMMY_ISSUES lines + confirmation haptic |
+| Hot/pee exit | Sacred duration clause |
+
+Watch unpaired → simulated delivery (honest note in UI). Soft Signal never waits on Watch.
 
 ---
 
-## Post-spoon debrief (private)
+## Post-spoon debrief
 
-- How did that feel in your body? (1–5 + notes)  
-- What worked / didn’t work?  
-- Toggle: **+1 “successful non-traumatic closeness”** (local joke ledger)  
-- Toggle: I did not owe a performance  
-- Skip paperwork still allowed  
-
----
-
-## Containment job
-
-Hold *“what if I mess up closeness / freeze / stay too long / don’t know how to ask”* in a runnable joke-spec so raw spiral is less likely to hit Renn first.
+Body feel 1–5 · worked / didn’t · joke ledgers · optional skip.
 
 ---
 
@@ -101,16 +89,12 @@ Hold *“what if I mess up closeness / freeze / stay too long / don’t know how
 
 | Path | Role |
 | ---- | ---- |
-| `docs/SPOONING_PROTOCOL.md` | This spec |
-| `app/lib/spooningCore.ts` | Pure logic |
+| `app/lib/spooningCore.ts` | Pure v0.2 |
 | `app/lib/spooningCore.test.ts` | Invariants |
-| `app/services/spooningStore.ts` | `litmo.spooning.history.v1` |
-| `app/app/spooning/index.tsx` | Runnable UI |
+| `app/services/spooningStore.ts` | History |
+| `app/services/spooningHaptics.ts` | Phone + Watch bridge |
+| `app/app/spooning/index.tsx` | Full UI |
 
 ---
-
-## What we are not claiming
-
-Not multi-party real-time sync. Not sexual protocol. Not therapy. Not proof of relationship skill. Not a public product.
 
 **Last updated:** 2026-07-13

@@ -68,9 +68,9 @@ const PROTOCOLS: readonly HubItem[] = [
   },
   {
     href: "/spooning",
-    title: "Spooning Protocol",
+    title: "Spooning Protocol v0.2",
     blurb:
-      "Over-engineered cuddle seal. Safety Spoon, Cthulhu, held-together pressure. Soft Signal free.",
+      "14 positions (Jetpack, Koala Death Grip, Safety Burrito), role negotiation, Watch check-ins, mommy-issues reassurance.",
     tag: "SPOON",
   },
   {

@@ -66,8 +66,8 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
-- Done recently: **I'm Not Ready To Get Up Yet** (`/not-ready-yet`) + Interest RE + full containment suite + iOS sim green.
-- Follow `docs/REAL_PURPOSE.md`. Next: deepen cross-links, or chill.
+- Done recently: **Spooning Protocol v0.2** (nuclear positions + Watch + mommy-issues) + Interest RE + Not Ready Yet + Hub + iOS green.
+- Follow `docs/REAL_PURPOSE.md`.
 
 ## Verification baseline
 

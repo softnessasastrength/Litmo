@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-13 — Spooning Protocol v0.2 nuclear
+
+14 positions (Jetpack, Koala Death Grip, Safety Burrito, Lap Nest, etc.),
+5-step role negotiation UI, mid-spoon check-ins, Apple Watch haptic bridge
+(best-effort), mommy-issues reassurance contract + cathedral cross-link,
+expanded debrief ledger. Soft Signal God Mode preserved.
+
 ## 2026-07-13 — I'm Not Ready To Get Up Yet v0.1
 
 Morning snooze protocol: reason + snooze unit seal, timer, one +5 extend,
