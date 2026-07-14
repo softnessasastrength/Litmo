@@ -55,12 +55,20 @@ Phase changes and axis updates append a local event log (last 100).
 | **Aftercare** | Mode primed from bond phase |
 | **Too Much** | Bond map banner + link; flooded intensity finish + phase was `steady` → `flood_protect` locally |
 | **Need-Scared** | Bond map banner + link; high need/fear (≥4) finish + phase was `steady` → `flood_protect` locally |
+| **Reconcile** | Banner + link; **completed** (not Soft Signal) while phase is `repair_needed` → `steady`; Soft Signal freeness unchanged |
+| **Conflict sim** | Banner + link only — Soft Signal / reschedule / complete never force phase |
+| **Spooning** | Hub banner + link; touch-primary note if closeness style matches — **no** auto phase change |
+| **Morning Cuddle** | Hub banner + link; touch-primary note if closeness style matches — **no** auto phase change |
+| **Not Ready Yet** | Hub banner + link; optional touch-primary note — **no** auto phase change |
 
 Links well with:
 
 - `/relationship-constitution` — living articles  
 - `/weather` — daily personal sky  
 - `/pre-renn` — before dump  
+- `/reconcile` — practice repair when safe  
+- `/conflict-sim` — practice conflict without dumping first  
+- `/spooning` · `/morning-cuddle` · `/not-ready-yet` — touch-adjacent protocols (banner only)
 
 ---
 
@@ -72,6 +80,9 @@ Links well with:
 | `app/lib/relationshipModelCore.test.ts` | Tests |
 | `app/services/relationshipModelStore.ts` | Persist |
 | `app/app/relationship-model/index.tsx` | UI |
+| `app/app/spooning/index.tsx` | Hub banner consumer |
+| `app/app/morning-cuddle/index.tsx` | Hub banner consumer |
+| `app/app/not-ready-yet/index.tsx` | Hub banner consumer |
 
 ---
 

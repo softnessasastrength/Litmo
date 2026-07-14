@@ -47,12 +47,27 @@ import {
 } from "../../lib/conflictSimCore";
 import { softSignalService } from "../../services/softSignalService";
 import { conflictSimStore } from "../../services/conflictSimStore";
+import { relationshipModelStore } from "../../services/relationshipModelStore";
+import {
+  modelBannerLine,
+  type RelationshipModel,
+} from "../../lib/relationshipModelCore";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 
 type Phase = "hub" | "negotiate" | "run" | "debrief" | "history";
 
+/**
+ * WHAT: Conflict navigation practice sim with optional bond-map banner.
+ * WHY: Externalize conflict practice without dumping on Renn; map is context only.
+ * CONSENT: Practice-only — Soft Signal free; never contact; never consent seal.
+ * EDGE CASES:
+ *   - soft_signal / reschedule ends → never force bond phase (banner only)
+ *   - no model → no banner; sim unchanged
+ * NEVER: Treat sim completion as repair proof, safety score, or consent.
+ * SEE: docs/RELATIONSHIP_MODEL.md
+ */
 export default function ConflictSimScreen() {
   const styles = useThemedStyles(makeStyles);
   const colors = useColors();
@@ -74,6 +89,7 @@ export default function ConflictSimScreen() {
   const [pendingEnd, setPendingEnd] = useState<
     "completed" | "soft_signal" | "reschedule" | null
   >(null);
+  const [relModel, setRelModel] = useState<RelationshipModel | null>(null);
 
   const reloadHistory = useCallback(async () => {
     setHistory(await conflictSimStore.load());
@@ -81,6 +97,10 @@ export default function ConflictSimScreen() {
 
   useEffect(() => {
     void reloadHistory();
+    // Bond map is advisory only on this surface — never force phase from ends.
+    void relationshipModelStore.load().then((b) => {
+      if (b?.model) setRelModel(b.model);
+    });
   }, [reloadHistory]);
 
   const gate = canSealConflict(draft);
@@ -108,6 +128,16 @@ export default function ConflictSimScreen() {
     setPhase("run");
   };
 
+  /**
+   * WHAT: Persist conflict-sim history and return to hub.
+   * WHY: Practice log only — Soft Signal / reschedule / complete all valid ends.
+   * CONSENT: Local-only; Soft Signal freeness never reduced by map logic.
+   * EDGE CASES:
+   *   - soft_signal / reschedule / completed → NO bond phase mutation (by design)
+   *   - includeDebrief false → still saves end reason without shame ledger
+   * NEVER: Auto-set repair_needed or steady from this simulator.
+   * SEE: docs/RELATIONSHIP_MODEL.md (conflict-sim = banner only)
+   */
   const finish = async (
     reason: "completed" | "soft_signal" | "reschedule" | "abandoned",
     includeDebrief: boolean,
@@ -119,6 +149,8 @@ export default function ConflictSimScreen() {
       includeDebrief ? debrief : null,
     );
     await conflictSimStore.append(entry);
+    // Intentionally do not setBondPhase here: soft_signal / reschedule must stay
+    // free; even "completed" is practice — map phase is human-owned on this surface.
     await reloadHistory();
     setSim(null);
     setDraft(defaultConflictDraft());
@@ -518,6 +550,14 @@ export default function ConflictSimScreen() {
           <Body muted>{CONFLICT_COPY.purpose}</Body>
           <Body muted>{CONFLICT_COPY.comedy}</Body>
         </Card>
+        {relModel ? (
+          <Card>
+            <Body muted>Bond map: {modelBannerLine(relModel)}</Body>
+            <Body muted>
+              Advisory only — Soft Signal / reschedule never force phase.
+            </Body>
+          </Card>
+        ) : null}
         <Button label="Start simulator" onPress={() => setPhase("negotiate")} />
         <Button
           variant="secondary"
@@ -531,6 +571,11 @@ export default function ConflictSimScreen() {
           variant="secondary"
           label="Attachment Repair Cathedral"
           onPress={() => router.push("/attachment-repair" as never)}
+        />
+        <Button
+          variant="secondary"
+          label="Relationship Model"
+          onPress={() => router.push("/relationship-model" as never)}
         />
         <Button
           variant="secondary"

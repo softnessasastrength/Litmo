@@ -24,15 +24,33 @@ import {
   type MasochistPrefs,
   defaultMasochistPrefs,
 } from "../../lib/masochistModeCore";
+import { relationshipModelStore } from "../../services/relationshipModelStore";
+import {
+  modelBannerLine,
+  setPhase as setBondPhase,
+  type RelationshipEvent,
+  type RelationshipModel,
+} from "../../lib/relationshipModelCore";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 import type { AppColors } from "../../theme";
 
+/**
+ * WHAT: Post-fight repair sim screen with optional bond-map phase nudge.
+ * WHY: Practice repair locally; when a full sim completes while bond phase is
+ *      repair_needed, mark the map toward steady so exile-math has a structure.
+ * CONSENT: Sim is practice only — never contact, never consent, never a score.
+ * EDGE CASES:
+ *   - Soft Signal end → never force bond phase (freeness outranks optimization)
+ *   - No model / non-repair_needed phase → leave map untouched
+ * NEVER: Treat complete as proof partner is safe, repaired, or consented.
+ * SEE: docs/RELATIONSHIP_MODEL.md
+ */
 export default function ReconcileScreen() {
   const styles = useThemedStyles(makeStyles);
   const colors = useColors();
   const router = useRouter();
-  const [phase, setPhase] = useState<"hub" | "run">("hub");
+  const [phase, setUiPhase] = useState<"hub" | "run">("hub");
   const [draft, setDraft] = useState<ReconcileDraft>({
     archetypeId: "undecided",
     fightNote: "",
@@ -47,10 +65,18 @@ export default function ReconcileScreen() {
     by_archetype: [] as { id: string; count: number; label: string }[],
   });
   const [mPrefs, setMPrefs] = useState<MasochistPrefs>(defaultMasochistPrefs());
+  const [relModel, setRelModel] = useState<RelationshipModel | null>(null);
+  const [relEvents, setRelEvents] = useState<RelationshipEvent[]>([]);
 
   useEffect(() => {
     void reconcileStore.load().then((h) => setSummary(summarizeReconcile(h)));
     void masochistModeStore.load().then(setMPrefs);
+    void relationshipModelStore.load().then((b) => {
+      if (b) {
+        setRelModel(b.model);
+        setRelEvents(b.events);
+      }
+    });
   }, [phase]);
 
   const arch = snap ? findArchetype(snap.archetypeId) : null;
@@ -65,9 +91,20 @@ export default function ReconcileScreen() {
     if (!s) return;
     setSnap(s);
     setStep(0);
-    setPhase("run");
+    setUiPhase("run");
   };
 
+  /**
+   * WHAT: Persist sim history and optionally nudge bond phase after full repair.
+   * WHY: Completing practice while map says repair_needed can leave exile-math;
+   *      Soft Signal abort must not rewrite the map (freeness > optimization).
+   * CONSENT: Local practice log only — never sends, never seals consent.
+   * EDGE CASES:
+   *   - endReason soft_signal → append history, no setBondPhase
+   *   - completed + repair_needed → setBondPhase steady + save
+   *   - completed + other phase / no model → history only
+   * NEVER: Infer partner repair, safety, or consent from this call.
+   */
   const finish = async (endReason: "completed" | "soft_signal") => {
     if (!snap || !arch) return;
     await reconcileStore.append({
@@ -77,7 +114,19 @@ export default function ReconcileScreen() {
       endReason,
       note: arch.sampleLine,
     });
-    setPhase("hub");
+    // Fail-closed on Soft Signal: freeness never reduced by map optimization.
+    if (
+      endReason === "completed" &&
+      relModel &&
+      relModel.phase === "repair_needed"
+    ) {
+      const { model: next, event } = setBondPhase(relModel, "steady");
+      const evts = [event, ...relEvents].slice(0, 100);
+      await relationshipModelStore.saveModel(next, evts);
+      setRelModel(next);
+      setRelEvents(evts);
+    }
+    setUiPhase("hub");
     setSnap(null);
     setDraft({
       archetypeId: "undecided",
@@ -147,6 +196,15 @@ export default function ReconcileScreen() {
             <Body>{banner}</Body>
           </Card>
         ) : null}
+        {relModel ? (
+          <Card>
+            <Body muted>Bond map: {modelBannerLine(relModel)}</Body>
+            <Body muted>
+              Complete repair (not Soft Signal) while phase is repair_needed →
+              steady. Soft Signal freeness unchanged.
+            </Body>
+          </Card>
+        ) : null}
         {REPAIR_ARCHETYPES.filter((a) => a.id !== "undecided").map((a) => (
           <Pressable
             key={a.id}
@@ -186,6 +244,11 @@ export default function ReconcileScreen() {
         </View>
         {!gate.ok ? <Body muted>{gate.reason}</Body> : null}
         <Button label="Start repair sim" onPress={start} disabled={!gate.ok} />
+        <Button
+          variant="secondary"
+          label="Relationship Model"
+          onPress={() => router.push("/relationship-model" as never)}
+        />
         <Button variant="secondary" label="Back" onPress={() => router.back()} />
       </ScrollView>
     </Screen>

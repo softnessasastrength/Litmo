@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-07-13 — Relationship Model → Reconcile + Conflict sim
+
+- `/reconcile`: load bond map on mount; banner + link; **completed** (not Soft
+  Signal) while phase is `repair_needed` → `steady` via `setPhase` + save.
+- `/conflict-sim`: banner + link only — Soft Signal / reschedule / complete never
+  force phase. Soft Signal freeness unchanged.
+
+
 ## 2026-07-13 — Dual-mode residual polish (Agent 16)
 
 BUILD_MODES resolution algorithm aligned to platform-primary (iOS family →
