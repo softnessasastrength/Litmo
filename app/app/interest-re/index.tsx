@@ -42,6 +42,9 @@ import {
 } from "../../lib/interestReCore";
 import { softSignalService } from "../../services/softSignalService";
 import { interestReStore } from "../../services/interestReStore";
+import { relationshipModelStore } from "../../services/relationshipModelStore";
+import { BondMapBanner } from "../../components/BondMapBanner";
+import type { RelationshipModel } from "../../lib/relationshipModelCore";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
@@ -67,6 +70,7 @@ export default function InterestReScreen() {
   const [pendingEnd, setPendingEnd] = useState<
     "completed" | "soft_signal" | null
   >(null);
+  const [relModel, setRelModel] = useState<RelationshipModel | null>(null);
 
   const reloadHistory = useCallback(async () => {
     setHistory(await interestReStore.load());
@@ -74,6 +78,9 @@ export default function InterestReScreen() {
 
   useEffect(() => {
     void reloadHistory();
+    void relationshipModelStore.load().then((b) => {
+      if (b?.model) setRelModel(b.model);
+    });
   }, [reloadHistory]);
 
   const gate = canSealInterest(draft);
@@ -513,6 +520,10 @@ export default function InterestReScreen() {
           <Body muted>{INTEREST_COPY.purpose}</Body>
           <Body muted>{INTEREST_COPY.comedy}</Body>
         </Card>
+        <BondMapBanner
+          model={relModel}
+          onOpenModel={() => router.push("/relationship-model" as never)}
+        />
         <Button
           label="Open signal inventory"
           onPress={() => setPhase("inventory")}

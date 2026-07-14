@@ -10,6 +10,9 @@ import {
   type FieldNote,
 } from "../../lib/fieldNotesCore";
 import { fieldNotesStore } from "../../services/fieldNotesStore";
+import { relationshipModelStore } from "../../services/relationshipModelStore";
+import { BondMapBanner } from "../../components/BondMapBanner";
+import type { RelationshipModel } from "../../lib/relationshipModelCore";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 import type { AppColors } from "../../theme";
@@ -22,6 +25,7 @@ export default function FieldNotesScreen() {
   const [body, setBody] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [mood, setMood] = useState<1 | 2 | 3 | 4 | 5 | null>(null);
+  const [relModel, setRelModel] = useState<RelationshipModel | null>(null);
 
   const reload = useCallback(async () => {
     setNotes(await fieldNotesStore.load());
@@ -29,6 +33,9 @@ export default function FieldNotesScreen() {
 
   useEffect(() => {
     void reload();
+    void relationshipModelStore.load().then((b) => {
+      if (b?.model) setRelModel(b.model);
+    });
   }, [reload]);
 
   const summary = summarizeFieldNotes(notes);
@@ -54,6 +61,11 @@ export default function FieldNotesScreen() {
             ? ` · top tag ${summary.top_tags[0].tag}`
             : ""}
         </Body>
+        <BondMapBanner
+          model={relModel}
+          emptyNote="Write here so the bond map doesn't have to become a text. Seal a model when ready. Soft Signal free."
+          onOpenModel={() => router.push("/relationship-model" as never)}
+        />
         <Card>
           <TextInput
             style={[styles.input, { minHeight: 120 }]}

@@ -56,6 +56,9 @@ import {
 } from "../../lib/attachmentRepairCore";
 import { softSignalService } from "../../services/softSignalService";
 import { attachmentRepairStore } from "../../services/attachmentRepairStore";
+import { relationshipModelStore } from "../../services/relationshipModelStore";
+import { BondMapBanner } from "../../components/BondMapBanner";
+import type { RelationshipModel } from "../../lib/relationshipModelCore";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
@@ -84,6 +87,7 @@ export default function AttachmentRepairScreen() {
   );
   const [history, setHistory] = useState<RepairHistoryEntry[]>([]);
   const [sealError, setSealError] = useState("");
+  const [relModel, setRelModel] = useState<RelationshipModel | null>(null);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const reloadHistory = useCallback(async () => {
@@ -92,6 +96,9 @@ export default function AttachmentRepairScreen() {
 
   useEffect(() => {
     void reloadHistory();
+    void relationshipModelStore.load().then((b) => {
+      if (b?.model) setRelModel(b.model);
+    });
   }, [reloadHistory]);
 
   useEffect(() => {
@@ -617,6 +624,10 @@ export default function AttachmentRepairScreen() {
           <Body muted>{REPAIR_COPY.purpose}</Body>
           <Body muted>{REPAIR_COPY.comedy}</Body>
         </Card>
+        <BondMapBanner
+          model={relModel}
+          onOpenModel={() => router.push("/relationship-model" as never)}
+        />
         <Card>
           <Body>• Mommy Issues Reassurance Ritual</Body>
           <Body>• Emotional Masochist Circuit (Edge capped)</Body>

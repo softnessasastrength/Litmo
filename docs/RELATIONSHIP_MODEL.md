@@ -1,4 +1,4 @@
-# Relationship Model v0.1
+# Relationship Model v0.2
 
 **This is currently a personal emotional containment system, not a public product.**
 
@@ -6,7 +6,8 @@
 
 **Route:** `/relationship-model`  
 **Core:** `app/lib/relationshipModelCore.ts`  
-**Store:** `litmo.relationship_model.v1`
+**Store:** `litmo.relationship_model.v1`  
+**Shared chrome:** `app/components/BondMapBanner.tsx`
 
 ---
 
@@ -35,40 +36,42 @@ Phase changes and axis updates append a local event log (last 100).
 2. `modelIsNotConsent = true` always.  
 3. Axes are **bond climate**, never a partner grade or neediness score.  
 4. Export is plain text, never auto-sent.  
-5. Wipeable via local data wipe.
+5. Wipeable via local data wipe.  
+6. Soft Signal ends never force a “happy” phase rewrite unless explicitly designed (see table).
 
 ---
 
-## Protocol suggestions
-
-`recommendFromModel` maps phase + axes + weather → containment routes (flood, pre-renn, reconcile, need-scared, spooning, etc.) without surveillance.
-
-### Wired consumers (v0.1.2)
+## Wired consumers (complete map)
 
 | Surface | Behavior |
 | ------- | -------- |
 | **Hub** | Bond map banner + top 3 model recs |
-| **Home** | Shortcut to Relationship Model |
-| **Pre-Renn** | Delay primed from capacity/phase; verdict bias (extra reasons/hrefs; yellow floor if flood_protect) — Soft Signal freeness unchanged |
-| **Weather** | “Apply sky → bond model” updates phase/capacity axes locally |
-| **Flood** | Start → `flood_protect`; complete → toward `steady`/`paused` |
-| **Aftercare** | Mode primed from bond phase |
-| **Too Much** | Bond map banner + link; flooded intensity finish + phase was `steady` → `flood_protect` locally |
-| **Need-Scared** | Bond map banner + link; high need/fear (≥4) finish + phase was `steady` → `flood_protect` locally |
-| **Reconcile** | Banner + link; **completed** (not Soft Signal) while phase is `repair_needed` → `steady`; Soft Signal freeness unchanged |
-| **Conflict sim** | Banner + link only — Soft Signal / reschedule / complete never force phase |
-| **Spooning** | Hub banner + link; touch-primary note if closeness style matches — **no** auto phase change |
-| **Morning Cuddle** | Hub banner + link; touch-primary note if closeness style matches — **no** auto phase change |
-| **Not Ready Yet** | Hub banner + link; optional touch-primary note — **no** auto phase change |
+| **Home** | Shortcut |
+| **Pre-Renn** | Delay primed; verdict bias from capacity/phase |
+| **Weather** | Apply sky → phase/capacity |
+| **Flood** | Start → `flood_protect`; complete → `steady`/`paused` |
+| **Aftercare** | Mode primed from phase |
+| **Too Much** | Banner; flooded finish + was `steady` → `flood_protect` |
+| **Need-Scared** | Banner; high intensity finish + was `steady` → `flood_protect` |
+| **Reconcile** | Banner; **completed** while `repair_needed` → `steady` (Soft Signal does not) |
+| **Conflict sim** | Banner only — never forces phase |
+| **Spooning / Morning / Not Ready** | Hub banner; touch-primary note |
+| **Parallel Play** | `BondMapBanner` (shared component) |
+| **Apology Craft** | `BondMapBanner` |
+| **Field Notes** | `BondMapBanner` |
+| **Interest RE** | `BondMapBanner` |
+| **Attachment Repair Cathedral** | `BondMapBanner` |
 
-Links well with:
+---
 
-- `/relationship-constitution` — living articles  
-- `/weather` — daily personal sky  
-- `/pre-renn` — before dump  
-- `/reconcile` — practice repair when safe  
-- `/conflict-sim` — practice conflict without dumping first  
-- `/spooning` · `/morning-cuddle` · `/not-ready-yet` — touch-adjacent protocols (banner only)
+## Perfect-path (human)
+
+1. Seal Relationship Model once (`me + Renn` is fine).  
+2. Log Weather → optionally apply sky to bond.  
+3. Pre-Renn before heavy reach.  
+4. Field Notes instead of raw dump.  
+5. Flood when language is gone.  
+6. Aftercare / Reconcile when landing or repairing.  
 
 ---
 
@@ -76,14 +79,12 @@ Links well with:
 
 | Path | Role |
 | ---- | ---- |
-| `app/lib/relationshipModelCore.ts` | Pure model |
+| `app/lib/relationshipModelCore.ts` | Pure model + bias helpers |
 | `app/lib/relationshipModelCore.test.ts` | Tests |
 | `app/services/relationshipModelStore.ts` | Persist |
-| `app/app/relationship-model/index.tsx` | UI |
-| `app/app/spooning/index.tsx` | Hub banner consumer |
-| `app/app/morning-cuddle/index.tsx` | Hub banner consumer |
-| `app/app/not-ready-yet/index.tsx` | Hub banner consumer |
+| `app/components/BondMapBanner.tsx` | Shared hub chrome |
+| `app/app/relationship-model/index.tsx` | Editor UI |
 
 ---
 
-**Last updated:** 2026-07-13
+**Last updated:** 2026-07-13 · v0.2 perfect inventory

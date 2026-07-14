@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-13 — Relationship Model v0.2 perfect inventory
+
+Shared `BondMapBanner`; remaining hubs: Parallel · Apology · Field Notes ·
+Interest RE · Attachment Repair. Subagent wave already wired Too Much ·
+Need-Scared · Reconcile · Conflict · Spooning · Morning · Not Ready. Complete
+consumer table in RELATIONSHIP_MODEL.md. Soft Signal freeness preserved. Push.
+
 ## 2026-07-13 — Relationship Model → Spooning / Morning / Not-Ready hubs
 
 Light hub banners: `modelBannerLine` + link to `/relationship-model`; muted

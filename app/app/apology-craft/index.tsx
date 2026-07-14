@@ -15,6 +15,9 @@ import {
 } from "../../lib/apologyCraftCore";
 import { apologyCraftStore } from "../../services/apologyCraftStore";
 import { softSignalService } from "../../services/softSignalService";
+import { relationshipModelStore } from "../../services/relationshipModelStore";
+import { BondMapBanner } from "../../components/BondMapBanner";
+import type { RelationshipModel } from "../../lib/relationshipModelCore";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 import type { AppColors } from "../../theme";
@@ -26,6 +29,7 @@ export default function ApologyCraftScreen() {
   const [draft, setDraft] = useState<ApologyDraft>(defaultApologyDraft());
   const [snap, setSnap] = useState<ApologySnapshot | null>(null);
   const [soft, setSoft] = useState<"idle" | "stopping" | "stopped">("idle");
+  const [relModel, setRelModel] = useState<RelationshipModel | null>(null);
   const [summary, setSummary] = useState({
     total: 0,
     completed: 0,
@@ -35,6 +39,9 @@ export default function ApologyCraftScreen() {
 
   useEffect(() => {
     void apologyCraftStore.load().then((h) => setSummary(summarizeApology(h)));
+    void relationshipModelStore.load().then((b) => {
+      if (b?.model) setRelModel(b.model);
+    });
   }, [snap]);
 
   const gate = canSealApology(draft);
@@ -108,6 +115,10 @@ export default function ApologyCraftScreen() {
           Practice only. Never auto-sent. {summary.total} drafts · completed{" "}
           {summary.completed} · scrapped {summary.scrapped}
         </Body>
+        <BondMapBanner
+          model={relModel}
+          onOpenModel={() => router.push("/relationship-model" as never)}
+        />
         <Card>
           <Text style={styles.h}>Anti-patterns</Text>
           {APOLOGY_ANTI_PATTERNS.map((p) => (

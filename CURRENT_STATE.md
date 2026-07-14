@@ -66,10 +66,10 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
-- Done: **G1–G13 closed**; Relationship Model wired (Hub · Pre-Renn · Weather · Flood · Aftercare · Home); BUILD_MODES resolution = platform-primary (matches ADR 0060 / `buildMode.ts`).
-- Overnight subagent residual: dual-mode doc polish only — no new product invent.
-- Prefer **use** the cathedral (Pre-Renn / Flood / Aftercare / Field Notes) over more architecture.
-- Still open (external/physical): Watch smoke, VoiceOver smoke, Agent 06 mid-seal residual.
+- **Relationship Model v0.2 perfect:** bond map on essentially all containment
+  hubs (`docs/RELATIONSHIP_MODEL.md` complete table + `BondMapBanner`).
+- **Dual-mode G1–G13 closed.** Prefer **use** cathedral over infinite expand.
+- Still open (external/physical): Watch smoke, VoiceOver smoke, Agent 06 mid-seal.
 - Soft Signal freeness never reduced. Follow `docs/REAL_PURPOSE.md`.
 
 ## Verification baseline

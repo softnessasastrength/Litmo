@@ -79,7 +79,7 @@ This is not a diagnosis. It’s a field guide.
 | **Flood Protocol** (`/flood`) | 6 min steps when language gone | Survive peak without partner contact or essays | Total flood / freeze |
 | **Apology Craft** (`/apology-craft`) | Impact + slice draft | Practice repair language without self-annihilation or auto-send | Apology shame; essay dumps |
 | **Field Notes** (`/field-notes`) | Private freeform + tags | Capture urge so it doesn't become a text | Midnight dump via notes-as-draft |
-| **Relationship Model** (`/relationship-model`) | Phase + axes + weather map; wired Hub · Pre-Renn · Weather · Flood · Aftercare · Home | Externalize “how this bond operates” without scores; bias protocols, not consent | Intimacy fear; mind-reading contracts |
+| **Relationship Model** (`/relationship-model`) | Phase + axes + weather; `BondMapBanner` on nearly all protocols | Externalize bond climate; bias Pre-Renn/Flood/Weather; **not consent** | Intimacy fear; mind-reading; dump spiral |
 
 ---
 

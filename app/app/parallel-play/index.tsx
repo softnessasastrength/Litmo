@@ -23,6 +23,9 @@ import {
   wantsCeremonialCopy,
   type MasochistPrefs,
 } from "../../lib/masochistModeCore";
+import { relationshipModelStore } from "../../services/relationshipModelStore";
+import { BondMapBanner } from "../../components/BondMapBanner";
+import type { RelationshipModel } from "../../lib/relationshipModelCore";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 import type { AppColors } from "../../theme";
@@ -38,6 +41,7 @@ export default function ParallelPlayScreen() {
   const [snap, setSnap] = useState<ParallelSnapshot | null>(null);
   const [active, setActive] = useState(false);
   const [soft, setSoft] = useState<"idle" | "stopping" | "stopped">("idle");
+  const [relModel, setRelModel] = useState<RelationshipModel | null>(null);
   const [mPrefs, setMPrefs] = useState<MasochistPrefs>(defaultMasochistPrefs());
   const [summary, setSummary] = useState({
     total: 0,
@@ -48,6 +52,9 @@ export default function ParallelPlayScreen() {
   useEffect(() => {
     void masochistModeStore.load().then(setMPrefs);
     void parallelPlayStore.load().then((h) => setSummary(summarizeParallel(h)));
+    void relationshipModelStore.load().then((b) => {
+      if (b?.model) setRelModel(b.model);
+    });
   }, [active]);
 
   const ceremonial = wantsCeremonialCopy(mPrefs);
@@ -141,6 +148,11 @@ export default function ParallelPlayScreen() {
           {summary.total} sessions · connected{" "}
           {Math.round(summary.felt_connected_rate * 100)}%
         </Body>
+        <BondMapBanner
+          model={relModel}
+          touchPrimaryNote="Touch-primary bond — parallel still sacred when touch is off. Model is not consent."
+          onOpenModel={() => router.push("/relationship-model" as never)}
+        />
         {banner ? (
           <Card>
             <Body>{banner}</Body>
