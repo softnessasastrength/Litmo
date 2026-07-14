@@ -90,15 +90,31 @@ Not real songs. Ritual flavor text for the app index:
 
 ---
 
-## In-app
+## In-app (expo-av)
 
-`/containment/lofi` lists protocol moods + opens external streams via browser.  
-No music files shipped in the repo (keeps licensing clean). Soft Signal freeness includes **mute anytime**.
+**Route:** `/containment/lofi`
+
+| Piece | Role |
+| ----- | ---- |
+| `app/lib/lofiCatalog.ts` | Track catalog, comedy titles, CC URIs |
+| `app/services/lofiAmbientPlayer.ts` | Singleton expo-av player (loop, volume, mute, next/prev) |
+| Prefs | AsyncStorage `litmo.lofi.ambient.prefs.v1` (wiped with local data) |
+
+**Playback sources (remote HTTPS MP3):** Kevin MacLeod / incompetech.com  
+**License:** Creative Commons Attribution 4.0 (CC BY 4.0)  
+**Attribution (required):**  
+Music by Kevin MacLeod (incompetech.com) — Licensed under Creative Commons: By Attribution 4.0 License  
+https://creativecommons.org/licenses/by/4.0/
+
+Soft Signal of sound = **Stop** / **Mute** anytime. Needs network for first buffer.
+
+Dependency: `expo-av` (heavy deps OK).
 
 ---
 
 ## Non-claims
 
-Not a Spotify product. Not clinical music therapy. Not required for any ritual.
+Not a Spotify product. Not clinical music therapy. Not required for any ritual.  
+Not commercial lo-fi brand IP — free CC streams with credit.
 
 **Last updated:** 2026-07-13

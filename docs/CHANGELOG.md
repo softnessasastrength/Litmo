@@ -1,10 +1,14 @@
 # Changelog
 
-## 2026-07-13 — Containment Lo-Fi
+## 2026-07-13 — Containment Lo-Fi player (expo-av)
 
-Protocol-matched lo-fi map (`docs/CONTAINMENT_LOFI.md`) + in-app
-`/containment/lofi` index (external Chillhop / free libraries; no bundled
-copyright audio). Comedy track titles; mute = Soft Signal of sound.
+In-app ambient player: `expo-av` + Kevin MacLeod CC BY 4.0 remote MP3s mapped
+to protocols (comedy titles + required attribution). Play/pause/next/prev,
+volume, mute, stop (Soft Signal of sound). Prefs wiped with local data.
+
+## 2026-07-13 — Containment Lo-Fi map
+
+Protocol-matched lo-fi map (`docs/CONTAINMENT_LOFI.md`) + hub entry.
 
 ## 2026-07-13 — Containment Hub
 

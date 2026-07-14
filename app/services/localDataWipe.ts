@@ -32,6 +32,8 @@ const EXTRA_ASYNC_KEYS = [
   "litmo.attachment_repair.history.v1",
   /** Conflict Navigation Simulator history. */
   "litmo.conflict_sim.history.v1",
+  /** Containment Lo-Fi ambient prefs (volume / last track). */
+  "litmo.lofi.ambient.prefs.v1",
 ];
 
 const EXTRA_SECURE_KEYS = [
