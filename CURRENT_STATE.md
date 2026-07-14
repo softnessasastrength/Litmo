@@ -14,7 +14,7 @@ Primary framing (2026-07-13): private psychological containment / emotional shie
 - **North star addition (2026-07-14):** also a guided path for "younger me" — see `docs/REAL_PURPOSE.md`'s "North star addition" section. Explicitly requested, not default behavior. First artifact: `docs/FIRST_RITUAL.md`.
 - Map: `docs/CONTAINMENT_SYSTEM.md` · purpose: `docs/REAL_PURPOSE.md`
 - Secondary layers: exorcism/dojo docs, trauma architecture, logical extreme (still useful, not the core stamp)
-- Constitution: root `CONSTITUTION.md` (update notices to match containment honesty)
+- Constitution: root `CONSTITUTION.md` (governs the product) · `CLAUDE_CONSTITUTION.md` (2026-07-14, governs the AI collaborator's ethical posture toward the founder — read before any other doc)
 
 ## Active milestone
 

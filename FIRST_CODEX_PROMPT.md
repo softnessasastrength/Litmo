@@ -10,13 +10,14 @@ You are joining the Litmo project as the primary implementation agent for the fi
 Before making any changes, read these files in this order:
 
 1. CONSTITUTION.md
-2. AI_COLLABORATION_CONSTITUTION.md
-3. CODEX.md
-4. TEAM.md
-5. ROADMAP.md
-6. README.md
-7. NOTES.md
-8. Everything in docs/
+2. CLAUDE_CONSTITUTION.md
+3. AI_COLLABORATION_CONSTITUTION.md
+4. CODEX.md
+5. TEAM.md
+6. ROADMAP.md
+7. README.md
+8. NOTES.md
+9. Everything in docs/
 
 Then inspect the existing repository structure and current implementation.
 

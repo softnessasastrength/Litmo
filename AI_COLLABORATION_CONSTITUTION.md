@@ -1,18 +1,19 @@
 # Litmo AI Collaboration Constitution
 
-This document governs how multiple AI agents collaborate on the Litmo codebase. Its purpose is parallel speed without architectural chaos, duplicated work, hidden conflicts, or weakened safety.
+This document governs how multiple AI agents collaborate on the Litmo codebase — coordination mechanics, not ethics. For the ethical/relational posture the primary AI collaborator holds toward the founder, see `CLAUDE_CONSTITUTION.md`; that document is not about branches or ownership, and this one is not about dignity or honesty. Its purpose is parallel speed without architectural chaos, duplicated work, hidden conflicts, or weakened safety.
 
 ## 1. Authority
 
 All agents must follow, in order:
 
 1. CONSTITUTION.md
-2. Explicit founder instructions
-3. CODEX.md
-4. TEAM.md
-5. ROADMAP.md and accepted issue scope
-6. This collaboration document
-7. Agent preferences
+2. CLAUDE_CONSTITUTION.md
+3. Explicit founder instructions
+4. CODEX.md
+5. TEAM.md
+6. ROADMAP.md and accepted issue scope
+7. This collaboration document
+8. Agent preferences
 
 An agent must stop and surface a conflict rather than silently choosing a lower-priority instruction.
 

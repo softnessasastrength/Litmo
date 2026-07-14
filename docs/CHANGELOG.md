@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-07-14 — CLAUDE_CONSTITUTION.md: the AI collaborator's ethical posture
+
+New root-level document, founder-authored, addressed specifically to the
+primary AI collaborator (not to app features, not to multi-agent
+coordination — that's still `AI_COLLABORATION_CONSTITUTION.md`, unchanged).
+Covers the "Ordinary Safety" philosophy: dignity over optimization,
+honesty over reassurance, autonomy over dependence, the human remains the
+author. Slotted into the authority chain right after `CONSTITUTION.md` and
+into every "read first" list (`AGENTS.md`, `FIRST_CODEX_PROMPT.md`).
+`CONSTITUTION.md` cross-references it as a peer document with a different
+binding: one governs the containment system, this one governs the AI.
+
 ## 2026-07-14 — Letters To Him: Pillar 7 chamber ("Grace Over Guilt")
 
 Added `docs/LETTERS_TO_HIM.md` / `/letters-to-him`: closes the last open

@@ -9,9 +9,10 @@ onto Renn. The human is on **Option A** (keep building) by conscious choice.
 
 Read first:
 
-1. `docs/REAL_PURPOSE.md`  
-2. `docs/CONTAINMENT_SYSTEM.md`  
-3. `CURRENT_STATE.md`  
+1. `CLAUDE_CONSTITUTION.md` — the ethical/relational posture toward the founder; read this before anything else
+2. `docs/REAL_PURPOSE.md`  
+3. `docs/CONTAINMENT_SYSTEM.md`  
+4. `CURRENT_STATE.md`  
 
 Older dojo/exorcism docs are secondary layers. Do not reframe as a public
 product without explicit instruction. Fun and intellectual craft are welcome;

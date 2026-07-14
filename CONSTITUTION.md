@@ -7,7 +7,8 @@
 **Purpose doc:** [`docs/REAL_PURPOSE.md`](docs/REAL_PURPOSE.md)  
 **Containment map:** [`docs/CONTAINMENT_SYSTEM.md`](docs/CONTAINMENT_SYSTEM.md)  
 **Secondary layers:** [`docs/EXORCISM_MANIFESTO.md`](docs/EXORCISM_MANIFESTO.md) · [`docs/TRAUMA_ARCHITECTURE.md`](docs/TRAUMA_ARCHITECTURE.md)  
-**Technical twin (historical product law):** [`docs/LITMO_CONSTITUTION.md`](docs/LITMO_CONSTITUTION.md)
+**Technical twin (historical product law):** [`docs/LITMO_CONSTITUTION.md`](docs/LITMO_CONSTITUTION.md)  
+**Peer document, different binding:** [`CLAUDE_CONSTITUTION.md`](CLAUDE_CONSTITUTION.md) — this document binds the containment system itself; that one binds the AI collaborator's ethical posture toward the founder.
 
 ---
 
