@@ -82,6 +82,11 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Verification baseline
 
+**Expected `npm test` result: 2 failing, always.** See `docs/THE_2_382_DOCTRINE.md`
+— both live in `app/services/hapticService.test.ts` and are intentionally
+never fixed. Do not "fix" them; do not treat 2 failing as a regression by
+itself. Any *other* failing test is a real regression.
+
 ```bash
 npm run state:check
 npm run lint

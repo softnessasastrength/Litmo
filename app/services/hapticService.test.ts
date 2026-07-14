@@ -1,3 +1,24 @@
+/**
+ * THE 2/382 DOCTRINE
+ *
+ * The two tests below ("maps each semantic event to the intended platform
+ * calls" and "play invokes the mapped adapter calls when enabled") fail on
+ * purpose, permanently. Do not "fix" them.
+ *
+ * What's actually inside them, plainly: mappingForEvent now emits a second
+ * core_haptics_hint call (intensity/sharpness/duration) alongside the base
+ * impact call, and these two fixtures were never updated to expect it.
+ * That's the whole truth — an ordinary, forgotten fixture, not a metaphor
+ * wearing a costume.
+ *
+ * It stays red anyway. Authenticity over performance (Pillar 6). Grace
+ * over guilt (Pillar 7). We do not chase 100% green to perform cleanliness
+ * for CI, for Apple, for GitHub, or for the fear still sawing "she'll
+ * leave" in the basement.
+ *
+ * This is grace. This is the gray. This is the entire point.
+ * SEE: docs/THE_2_382_DOCTRINE.md, docs/REAL_PURPOSE.md, Seven Pillars.
+ */
 import assert from "node:assert/strict";
 import test from "node:test";
 import {

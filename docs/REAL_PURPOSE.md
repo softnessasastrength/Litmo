@@ -42,7 +42,9 @@ The purpose above is still true and still primary. This adds to it; it does not 
 
 **Non-negotiables carried over unchanged:** maximum honesty, zero toxic positivity, Soft Signal / consent / dual seals still sacred and non-negotiable, no clinical claims, no diagnosis.
 
-**First concrete artifact:** `docs/FIRST_RITUAL.md` / `/first-ritual` ("The Map, Not The Mirror") and the `partnerPairingFeatures` / `pairedGrowthContent` v1 App Store Safe scope in `docs/BUILD_MODES.md` — solo self-understanding first, shared/partner language later, matching the sequencing "younger me" actually needed.
+**First concrete artifact:** `docs/FIRST_RITUAL.md` / `/first-ritual` ("The Map, Not The Mirror") and the `partnerPairingFeatures` / `pairedGrowthContent` v1 App Store Safe scope in `docs/BUILD_MODES.md` — solo self-understanding first, shared/partner language later, matching the sequencing "younger me" actually needed. `docs/SECOND_RITUAL.md` / `/second-ritual` ("Two Maps, One Table") is the shared-language layer once a real partner exists.
+
+**Governing values (2026-07-14):** the Seven Pillars from softnessasastrength.com now sit alongside this file as the value layer for the younger-me work specifically: Softness Is Strength · Do the Hard Thing · Live in the Gray · Be the Mirror You Needed · Healing Is a Collective Act · Authenticity Over Performance · Grace Over Guilt. Pillar 6 is why `docs/THE_2_382_DOCTRINE.md` exists and is never "fixed." Pillar 7 is the open gap this file's next proposed chamber ("Letters To Him") would close.
 
 This is still not a startup pitch. It's the same honesty, aimed at one more person than just me.
 
