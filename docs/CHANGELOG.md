@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — Relationship Model → Spooning / Morning / Not-Ready hubs
+
+Light hub banners: `modelBannerLine` + link to `/relationship-model`; muted
+touch-primary note when closeness style matches. No auto phase change. Soft
+Signal freeness preserved.
+
 ## 2026-07-13 — Relationship Model → Reconcile + Conflict sim
 
 - `/reconcile`: load bond map on mount; banner + link; **completed** (not Soft
