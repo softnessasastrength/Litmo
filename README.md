@@ -72,6 +72,7 @@ Do not pretend this is therapy.
 | **Interest Reverse Engineering** | Want vs should vs performing yes |
 | **I'm Not Ready To Get Up Yet** | Morning snooze / exit guilt |
 | **I'm Too Much / Fear of Abandonment** | Panic room for abandonment spiral |
+| **I Need You But I'm Scared You'll Leave** | Dual-bind need + leave-fear ritual |
 | ND Mode / docs / dual modes | Volume knobs + freeze morality in pages |
 
 Full map: [`docs/CONTAINMENT_SYSTEM.md`](docs/CONTAINMENT_SYSTEM.md).  

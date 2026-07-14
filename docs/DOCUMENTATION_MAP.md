@@ -31,6 +31,7 @@ These documents define why Litmo exists *right now*:
 - **[`INTEREST_REVERSE_ENGINEERING.md`](INTEREST_REVERSE_ENGINEERING.md)** — want vs should vs fawn
 - **[`IM_NOT_READY_YET.md`](IM_NOT_READY_YET.md)** — morning snooze / exit containment
 - **[`TOO_MUCH_ABANDONMENT.md`](TOO_MUCH_ABANDONMENT.md)** — too much / fear of abandonment panic room
+- **[`NEED_SCARED_LEAVE.md`](NEED_SCARED_LEAVE.md)** — dual-bind need + scared you'll leave ritual
 - Root [`CONSTITUTION.md`](../CONSTITUTION.md) — `litmo-constitution-v4-containment`
 
 ### Secondary layers (useful, not primary stamp)

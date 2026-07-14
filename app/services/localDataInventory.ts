@@ -30,6 +30,8 @@ import { summarizeNotReadyHistory } from "../lib/notReadyYetCore.ts";
 import { notReadyYetStore } from "./notReadyYetStore.ts";
 import { summarizePatterns } from "../lib/tooMuchCore.ts";
 import { tooMuchStore } from "./tooMuchStore.ts";
+import { summarizeNeedScared } from "../lib/needScaredCore.ts";
+import { needScaredStore } from "./needScaredStore.ts";
 
 export type LocalInventory = {
   collected_at: string;
@@ -93,6 +95,12 @@ export type LocalInventory = {
     history_present: boolean;
     session_count: number;
     flooded_count: number;
+    soft_signal_exits: number;
+  };
+  need_scared: {
+    history_present: boolean;
+    session_count: number;
+    held_both: number;
     soft_signal_exits: number;
   };
   notes: string[];
@@ -362,6 +370,25 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     notes.push("too_much_history_unreadable");
   }
 
+  let need_scared: LocalInventory["need_scared"] = {
+    history_present: false,
+    session_count: 0,
+    held_both: 0,
+    soft_signal_exits: 0,
+  };
+  try {
+    const ns = await needScaredStore.load();
+    const s = summarizeNeedScared(ns);
+    need_scared = {
+      history_present: s.total > 0,
+      session_count: s.total,
+      held_both: s.held_both,
+      soft_signal_exits: s.soft_signal,
+    };
+  } catch {
+    notes.push("need_scared_history_unreadable");
+  }
+
   return {
     collected_at: new Date().toISOString(),
     offline_ready: true,
@@ -392,6 +419,7 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     interest_re,
     not_ready_yet,
     too_much,
+    need_scared,
     notes,
   };
 }

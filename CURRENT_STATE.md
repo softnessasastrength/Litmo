@@ -66,7 +66,7 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
-- Done recently: **I'm Too Much / Fear of Abandonment** panic room + Spooning v0.2 + full containment suite.
+- Done recently: **I Need You But I'm Scared You'll Leave** dual-bind ritual + Too Much v0.2 + Spooning v0.2 + full suite.
 - Follow `docs/REAL_PURPOSE.md`.
 
 ## Verification baseline

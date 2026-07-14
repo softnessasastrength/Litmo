@@ -40,6 +40,8 @@ const EXTRA_ASYNC_KEYS = [
   "litmo.not_ready_yet.history.v1",
   /** Too Much / Fear of Abandonment history. */
   "litmo.too_much.history.v1",
+  /** I Need You But I'm Scared You'll Leave dual-bind history. */
+  "litmo.need_scared.history.v1",
 ];
 
 const EXTRA_SECURE_KEYS = [

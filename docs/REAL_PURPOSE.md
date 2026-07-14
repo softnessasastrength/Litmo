@@ -46,6 +46,8 @@ We are **leaning all the way into it**:
 - Interest Reverse Engineering (want vs should vs fawn)  
 - I'm Not Ready To Get Up Yet (morning snooze / exit)  
 - I'm Too Much / Fear of Abandonment (panic room + patterns)  
+- I Need You But I'm Scared You'll Leave (dual-bind ritual)  
+
 
 
 

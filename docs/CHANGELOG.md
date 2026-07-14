@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — I Need You But I'm Scared You'll Leave v0.1
+
+Maximum-granularity dual-bind attachment ritual: need poles + fear poles,
+intensities, body map per pole, both/and holding script, optional ask (never
+auto-sent), dual reassurance, Soft Signal, private patterns. `/need-scared`.
+
 ## 2026-07-13 — I'm Too Much / Fear of Abandonment v0.2
 
 Maximum autism panic room: 13+ triggers with system labels, co-triggers,

@@ -63,6 +63,7 @@ This is not a diagnosis. It’s a field guide.
 | **Interest Reverse Engineering** (`/interest-re`) | Want vs should vs fawn inventory | Hold “is my yes real or performance?” so fake interest is less likely to hit Renn raw | Fawn; performing desire; ambiguity shame |
 | **I'm Not Ready To Get Up Yet** (`/not-ready-yet`) | Snooze negotiation + exit script | Hold morning exit guilt / need for more hold before the day | Neediness guilt; bed-as-safety; hard start |
 | **I'm Too Much / Fear of Abandonment** (`/too-much`) | Panic room + triggers + patterns | Hold “too much / they will leave” spiral with Soft Signal, reassurance, private tracking | Abandonment fear; shame of intensity; fawn |
+| **I Need You But I'm Scared You'll Leave** (`/need-scared`) | Dual-bind poles + both/and ritual | Hold need AND leave-fear without fawn-only or pre-abandon; optional ask never auto-sent | Attachment dual bind; ask-shame |
 | **Containment Hub** (`/containment`) | Single door UI | Index all personal protocols so Home isn’t a buffet; stamp honesty once | Meta: too many rituals (D23-adjacent) |
 
 ---

@@ -32,6 +32,13 @@ const PROTOCOLS: readonly HubItem[] = [
     tag: "LO-FI",
   },
   {
+    href: "/need-scared",
+    title: "I Need You But I'm Scared You'll Leave",
+    blurb:
+      "Dual-bind ritual: granular need + fear poles, both/and holding, optional ask never auto-sent.",
+    tag: "DUAL BIND",
+  },
+  {
     href: "/too-much",
     title: "I'm Too Much / Fear of Abandonment",
     blurb:

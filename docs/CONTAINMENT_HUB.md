@@ -17,6 +17,7 @@ Links:
 | Protocol | Route |
 | -------- | ----- |
 | Containment Lo-Fi | `/containment/lofi` |
+| I Need You But I'm Scared You'll Leave | `/need-scared` |
 | I'm Too Much / Fear of Abandonment | `/too-much` |
 | Interest Reverse Engineering | `/interest-re` |
 | I'm Not Ready To Get Up Yet | `/not-ready-yet` |
