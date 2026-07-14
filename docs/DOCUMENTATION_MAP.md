@@ -26,6 +26,7 @@ These documents define why Litmo exists *right now*:
 - **[`MORNING_CUDDLE_PROTOCOL.md`](MORNING_CUDDLE_PROTOCOL.md)** — Morning Cuddle Protocol v0.1 (7:42am gremlin edition)
 - **[`ATTACHMENT_REPAIR_PROTOCOL.md`](ATTACHMENT_REPAIR_PROTOCOL.md)** — Attachment Repair Cathedral (mommy issues + emotional masochist)
 - **[`CONFLICT_NAVIGATION_SIMULATOR.md`](CONFLICT_NAVIGATION_SIMULATOR.md)** — Conflict Navigation Simulator v0.1
+- **[`CONTAINMENT_HUB.md`](CONTAINMENT_HUB.md)** — single door UI for all personal protocols
 - Root [`CONSTITUTION.md`](../CONSTITUTION.md) — `litmo-constitution-v4-containment`
 
 ### Secondary layers (useful, not primary stamp)

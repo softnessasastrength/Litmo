@@ -66,8 +66,8 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
-- Done recently: Conflict Navigation Simulator, Attachment Repair Cathedral, Morning Cuddle, Spooning.
-- Follow `docs/REAL_PURPOSE.md`. Next silly-useful: Interest Reverse Engineering, “I’m Not Ready To Get Up Yet,” containment hub screen.
+- Done recently: **Containment Hub** (`/containment`) + Conflict Sim, Cathedral, Morning Cuddle, Spooning.
+- Follow `docs/REAL_PURPOSE.md`. Next silly-useful: Interest Reverse Engineering, “I’m Not Ready To Get Up Yet.”
 
 ## Verification baseline
 

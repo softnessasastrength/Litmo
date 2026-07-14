@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — Containment Hub
+
+Single `/containment` door for all personal protocols (conflict, cathedral,
+morning cuddle, spooning, dojo, Soft Signal). Home/Settings point at the hub
+instead of a protocol buffet.
+
 ## 2026-07-13 — Conflict Navigation Simulator v0.1
 
 Solo rehearsal / Soft Signal First / Flood / Repair Script. Issue seal, body

@@ -72,7 +72,7 @@ Do not pretend this is therapy.
 | ND Mode / docs / dual modes | Volume knobs + freeze morality in pages |
 
 Full map: [`docs/CONTAINMENT_SYSTEM.md`](docs/CONTAINMENT_SYSTEM.md).  
-Cathedral: `/attachment-repair` · Spooning: `/spooning` · Morning: `/morning-cuddle`.
+**Hub:** `/containment` · Cathedral: `/attachment-repair` · Spooning: `/spooning` · Morning: `/morning-cuddle` · Conflict: `/conflict-sim`.
 
 ---
 

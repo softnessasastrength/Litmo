@@ -241,37 +241,13 @@ function SettingsContent() {
       </View>
       <Button
         variant="signal"
-        label="Conflict Navigation Simulator v0.1"
-        onPress={() => router.push("/conflict-sim" as never)}
-        accessibilityHint="Practice conflict structure, Soft Signal, reschedule-as-win. Private containment."
-      />
-      <Button
-        variant="signal"
-        label="Attachment Repair Cathedral v0.1"
-        onPress={() => router.push("/attachment-repair" as never)}
-        accessibilityHint="Mommy Issues + Emotional Masochist Circuit. Soft Signal. Private containment."
-      />
-      <Button
-        variant="signal"
-        label="Morning Cuddle Protocol v0.1"
-        onPress={() => router.push("/morning-cuddle" as never)}
-        accessibilityHint="Pre-coffee negotiation, gremlin mode, Soft Signal, exit ritual. Personal containment."
-      />
-      <Button
-        variant="signal"
-        label="Spooning Protocol v0.1"
-        onPress={() => router.push("/spooning" as never)}
-        accessibilityHint="Legendary cuddle planner with Soft Signal mid-spoon. Personal containment, not a product."
-      />
-      <Button
-        variant="signal"
-        label="Exorcism Dojo (not a product)"
-        onPress={() => router.push("/dojo" as never)}
-        accessibilityHint="Private ritual surface: defense inventory, urge log, burn readiness. Not a consumer feature."
+        label="Containment Hub"
+        onPress={() => router.push("/containment" as never)}
+        accessibilityHint="All personal protocols: conflict, cathedral, morning cuddle, spooning, dojo, Soft Signal."
       />
       <Body muted>
-        THIS IS A PRIVATE EXORCISM ARTIFACT, NOT A PRODUCT. Open the Dojo to
-        name fears before building more cage bars.
+        This is currently a personal emotional containment system, not a public
+        product. Open the Hub for Attachment Repair Cathedral and friends.
       </Body>
       <Button
         variant="secondary"

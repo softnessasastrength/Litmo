@@ -253,33 +253,9 @@ export default function HomeTabScreen() {
       />
       <Button
         variant="signal"
-        label="Conflict Navigation Simulator v0.1"
-        onPress={() => router.push("/conflict-sim" as never)}
-        accessibilityHint="Practice conflict without dumping freeze onto a partner first. Soft Signal free. Containment, not a product."
-      />
-      <Button
-        variant="signal"
-        label="Attachment Repair Cathedral v0.1"
-        onPress={() => router.push("/attachment-repair" as never)}
-        accessibilityHint="Mommy Issues Reassurance + Emotional Masochist Circuit. Soft Signal God Mode. Private containment, not a product."
-      />
-      <Button
-        variant="signal"
-        label="Morning Cuddle Protocol v0.1"
-        onPress={() => router.push("/morning-cuddle" as never)}
-        accessibilityHint="7:42am negotiation before coffee. Gremlin energy, Soft Signal, exit ritual. Containment, not a product."
-      />
-      <Button
-        variant="signal"
-        label="Spooning Protocol v0.1"
-        onPress={() => router.push("/spooning" as never)}
-        accessibilityHint="Over-engineered cuddle planner: roles, positions, duration, Soft Signal, private debrief. Containment, not a product."
-      />
-      <Button
-        variant="signal"
-        label="Exorcism Dojo — not a product"
-        onPress={() => router.push("/dojo" as never)}
-        accessibilityHint="Private ritual: defense inventory, urge before build, burn readiness. Not a consumer feature."
+        label="Containment Hub"
+        onPress={() => router.push("/containment" as never)}
+        accessibilityHint="All personal emotional-support protocols: conflict, cathedral, morning cuddle, spooning, Soft Signal. Not a public product."
       />
       <Button
         variant="secondary"
