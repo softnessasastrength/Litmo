@@ -70,7 +70,7 @@ with a single tap, no explanation required — same law as Soft Signal.
 | **Remove the seal** | The one real, witnessed act: your Cathedral Seal is actually deleted, right there | Yes |
 | **Name it (optional)** | "What's actually happening right now?" — five options including "none of these"; never required, never read downstream | Yes |
 | **The last look** | Generates a real inventory via `collectLocalInventory()`; offers "export a copy first"; optional toggle to also queue account erasure | Yes |
-| **Typed confirmation** | Type `"I release this, not in anger."` exactly — a decision, not a reflex | Yes |
+| **Typed confirmation** | Type `"This is my choice."` exactly — a decision, not a reflex | Yes |
 | **Countdown** | 20 seconds, ticking down, cancelable the entire time — "the only clock in the cathedral that counts down instead of up" | Yes |
 | **Executing** | `privacyService.wipeLocal()` runs (always); `privacyService.requestErasure()` runs only if opted in and signed in | No — already real |
 | **Done / rebirth** | Plain, quiet closing screen. No badge, no score, no "achievement unlocked" | N/A |
@@ -107,8 +107,10 @@ it, for reference and for anyone extending the ritual later:
 >you can take a copy. you can also still burn it. both are allowed at the same time.
 
 >gate 4: say it on purpose
->type "I release this, not in anger."
+>type "This is my choice."
 >not because the words are magic. because your thumb doesn't get to do this alone.
+>notice what it doesn't ask you to feel. not peace, not forgiveness, not "not in anger."
+>your feelings about this are yours. the app only needed to know it was on purpose.
 
 >gate 5: the clock
 >20 seconds. counts DOWN. every other clock in this app counts up.

@@ -150,7 +150,13 @@ export const PURGE_REASON_OPTIONS: readonly { id: PurgeReasonId; label: string }
 ] as const;
 
 /** The exact phrase the user must type to proceed past confirmation. */
-export const PURGE_CONFIRMATION_PHRASE = "I release this, not in anger.";
+/**
+ * Deliberately does not prescribe an emotional posture (earlier draft said
+ * "not in anger" — dropped: it's not this app's place to tell someone which
+ * feeling is the acceptable one to make this choice from). Confirms intent
+ * only.
+ */
+export const PURGE_CONFIRMATION_PHRASE = "This is my choice.";
 
 /** Case/whitespace-tolerant match — the point is a deliberate act, not a spelling test. */
 export function purgeConfirmationMatches(typed: string): boolean {

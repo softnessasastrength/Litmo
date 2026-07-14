@@ -60,8 +60,14 @@ describe("cathedral purge core", () => {
   it("confirmation phrase must match exactly (tolerant of case/whitespace only)", () => {
     assert.equal(purgeConfirmationMatches(PURGE_CONFIRMATION_PHRASE), true);
     assert.equal(purgeConfirmationMatches(`  ${PURGE_CONFIRMATION_PHRASE.toUpperCase()}  `), true);
-    assert.equal(purgeConfirmationMatches("I release this"), false);
+    assert.equal(purgeConfirmationMatches("This is my"), false);
     assert.equal(purgeConfirmationMatches(""), false);
-    assert.equal(purgeConfirmationMatches("i release this, not in anger"), false); // missing period
+    assert.equal(purgeConfirmationMatches("this is my choice"), false); // missing period
+  });
+
+  it("confirmation phrase never prescribes an emotional posture", () => {
+    // Regression guard: an earlier draft required affirming "not in anger" —
+    // dropped on purpose. This phrase must confirm intent only.
+    assert.doesNotMatch(PURGE_CONFIRMATION_PHRASE.toLowerCase(), /anger|peace|calm|forgiv/);
   });
 });

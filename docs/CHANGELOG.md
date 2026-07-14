@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-07-14 — Cathedral Purge: drop the prescribed emotional posture
+
+Confirmation phrase changed from "I release this, not in anger." to "This
+is my choice." — the original quietly told the person which feeling was
+the acceptable one to make an irreversible choice from. Confirming intent
+is the app's job; how someone feels about their own choice isn't. Added a
+regression-guard test asserting the phrase never matches
+anger/peace/calm/forgiveness language. Updated the doc's narration script
+to match. Zero regressions: 408/410 (2 expected per THE_2_382_DOCTRINE.md).
+
 ## 2026-07-14 — The Cathedral Purge: ritualized, escalating full-data wipe
 
 Added `docs/CATHEDRAL_PURGE.md` / `/cathedral-purge` (Settings entry, not
