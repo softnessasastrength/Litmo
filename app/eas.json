@@ -15,7 +15,7 @@
     },
     "preview": {
       "distribution": "internal",
-      "ios": { "simulator": false },
+      "ios": { "simulator": false, "scheme": "Litmodevelopment-AppStoreSafe" },
       "env": {
         "EXPO_PUBLIC_APP_ENV": "staging",
         "EXPO_PUBLIC_LITMO_BUILD_MODE": "app_store",
@@ -43,6 +43,7 @@
     },
     "production": {
       "autoIncrement": true,
+      "ios": { "scheme": "Litmodevelopment-AppStoreSafe" },
       "env": {
         "EXPO_PUBLIC_APP_ENV": "production",
         "EXPO_PUBLIC_LITMO_BUILD_MODE": "app_store",

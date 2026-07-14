@@ -186,8 +186,8 @@ Cathedral, and the first guided ritual (`docs/FIRST_RITUAL.md`). Gated behind
 | `development` | maximum | Dev client, full phone |
 | `device_beta` | maximum | Internal full IPA |
 | `preview_simulator` | maximum | Simulator full |
-| `preview` | **app_store** | Staging-shaped review candidate |
-| `production` | **app_store** | **App Store / TestFlight store path** |
+| `preview` | **app_store** | Staging-shaped review candidate · iOS scheme `Litmodevelopment-AppStoreSafe` |
+| `production` | **app_store** | **App Store / TestFlight store path** · iOS scheme `Litmodevelopment-AppStoreSafe` |
 | `production_maximum_internal` | maximum | Internal production-env full (not submit) |
 | `maximum_linux_ci` | maximum | Linux CI env stamp |
 
@@ -272,7 +272,29 @@ Assert:
 ## 12. Honest limitations
 
 - App Store Safe is **not** a legal guarantee of App Review approval.  
-- Gating UI does not remove native modules from the Xcode project; Review may still see entitlements (NFC, etc.). Further entitlement stripping for store archives is a **follow-up** (Xcode capability sets / scheme flavors).  
+- **Entitlement/Info.plist stripping (2026-07-14, closed):** the App Store Safe
+  archive path (`eas.json` `production`/`preview` profiles) now builds via a
+  dedicated Xcode scheme, `Litmodevelopment-AppStoreSafe`, and build
+  configuration, `Release-AppStoreSafe`, pointing `INFOPLIST_FILE` at
+  `ios/Litmodevelopment/Info-AppStoreSafe.plist` — a copy of the main
+  Info.plist with `NFCReaderUsageDescription`,
+  `com.apple.developer.nfc.readersession.formats`,
+  `NSLocalNetworkUsageDescription`, and `NSBonjourServices` removed, matching
+  `FEATURES_APP_STORE`'s `nfcCarefulConnect`/`localMultipeerShare: false`.
+  Maximum Mode's scheme/configuration/Info.plist are untouched. Verified via
+  `xcodebuild -list` (both schemes/configs parse) and `xcodebuild
+  -showBuildSettings -scheme Litmodevelopment-AppStoreSafe -configuration
+  Release-AppStoreSafe` (resolves `INFOPLIST_FILE` correctly) — **not**
+  verified via an actual signed archive, EAS cloud build, or App Store
+  Connect submission (no Apple Developer credentials available in this
+  environment); that end-to-end check remains the founder's to run.
+- **Still open:** the native NFC/Multipeer modules themselves remain linked
+  into the App Store Safe binary (compiled but unreachable — the JS feature
+  flags never call them). Fully excluding them would need conditional Podfile
+  logic and a separate `pod install` per build mode, which needs a real
+  CocoaPods run to verify and hasn't been attempted here. Apple's review risk
+  from an unused *linked framework* alone is low compared to a declared
+  *entitlement/usage-description*, which is the part this fix addresses.
 - Maximum source remains readable in the open repo — that is intentional for stewardship.  
 
 ---
