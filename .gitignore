@@ -5,6 +5,9 @@ dist/
 npm-debug.log*
 .claude/
 
+# Generated Exorcism Certificate drafts — private snapshots, not committed by default
+docs/certificates/
+
 # Local secrets and machine-generated env (never commit)
 .env
 .env.*
