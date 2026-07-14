@@ -37,11 +37,14 @@ import {
   type AttachmentWeather,
   type ClosenessStyle,
 } from "../../lib/relationshipModelCore";
+import { modeCopy } from "../../config/copy";
 import { relationshipModelStore } from "../../services/relationshipModelStore";
 import { relationshipConstitutionStore } from "../../services/relationshipConstitutionStore";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 import type { AppColors } from "../../theme";
+import { runtimeConfig } from "../../config/runtime";
+import { FeatureUnavailable } from "../../components/FeatureUnavailable";
 
 export default function RelationshipModelScreen() {
   const styles = useThemedStyles(makeStyles);
@@ -284,6 +287,15 @@ export default function RelationshipModelScreen() {
 
   const gate = canSealModel(draft);
 
+  if (!runtimeConfig.features.pairedGrowthContent) {
+    return (
+      <FeatureUnavailable
+        eyebrow="RELATIONSHIP TOOLS"
+        title="This tool is not available in this build."
+        body="This build focuses on your own self-understanding. Relationship-in-friction tools (bond map, conflict, attachment repair) remain in Maximum Mode builds (macOS / Linux / internal)."
+      />
+    );
+  }
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -297,7 +309,7 @@ export default function RelationshipModelScreen() {
           style={styles.input}
           value={draft.label}
           onChangeText={(t) => setDraft({ ...draft, label: t })}
-          placeholder="Bond label (e.g. me + Renn)"
+          placeholder={`Bond label (e.g. me + ${modeCopy.partnerName})`}
           placeholderTextColor={colors.muted}
           accessibilityLabel="Bond label"
         />

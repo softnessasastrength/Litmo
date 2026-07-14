@@ -190,7 +190,7 @@ export const NEED_SCARED_COPY = {
   tagline:
     "Both poles are true. The ritual is holding them without collapsing.",
   purpose:
-    "Maximum granularity dual-bind attachment repair: name need, name fear, hold both/and, optional small ask — so the bind is less likely to dump raw onto Renn.",
+    "Maximum granularity dual-bind attachment repair: name need, name fear, hold both/and, optional small ask — so the bind is less likely to dump raw onto {{PARTNER}}.",
   softSignal:
     "Soft Signal is God Mode. Stopping the ritual does not prove the fear.",
   notConsent:

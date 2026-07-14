@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  TOO_MUCH_COPY,
   TOO_MUCH_TRIGGERS,
   canEnterPanicRoom,
   completeTooMuch,
@@ -73,5 +74,10 @@ describe("tooMuchCore v0.2", () => {
     assert.equal(p.recommended_protocol, "attachment-repair");
     const r = recommendProtocol([entry]);
     assert.equal(r.protocol, "attachment-repair");
+  });
+
+  it("never bakes the real partner name into shared copy — placeholder only, swapped per build mode at render time", () => {
+    assert.ok(!/\bRenn\b/.test(TOO_MUCH_COPY.purpose));
+    assert.ok(TOO_MUCH_COPY.purpose.includes("{{PARTNER}}"));
   });
 });

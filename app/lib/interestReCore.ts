@@ -145,7 +145,7 @@ export const INTEREST_COPY = {
   tagline:
     "Because “I want to” and “I should want to” both say “sure” with the same mouth.",
   purpose:
-    "Sort body / mind / should / fear so a performance-yes is less likely to hit Renn without a map. Interest is not consent. Soft Signal free.",
+    "Sort body / mind / should / fear so a performance-yes is less likely to hit {{PARTNER}} without a map. Interest is not consent. Soft Signal free.",
   softSignal: "Soft Signal ends the sim. No TED talk. No proof you are cold.",
   comedy:
     "I reverse-engineered my own interest because vibes were lying. Comedy gold. Also load-bearing.",

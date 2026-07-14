@@ -275,7 +275,7 @@ export const TOO_MUCH_COPY = {
   tagline:
     "Because “too much” is a story the body tells when it is afraid of being left.",
   purpose:
-    "Maximum autism on the abandonment detector: dense triggers, dual containment tracks, adaptive reassurance, private pattern analytics — so raw spiral is less likely to hit Renn first.",
+    "Maximum autism on the abandonment detector: dense triggers, dual containment tracks, adaptive reassurance, private pattern analytics — so raw spiral is less likely to hit {{PARTNER}} first.",
   softSignal:
     "Soft Signal is God Mode in this room. Lit at all times. No questions. No TED talk.",
   panicRoom:

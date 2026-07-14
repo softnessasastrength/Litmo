@@ -67,6 +67,7 @@ import {
   type SpoonSealDraft,
   type SpoonZoneId,
 } from "../../lib/spooningCore";
+import { modeCopy } from "../../config/copy";
 import { softSignalService } from "../../services/softSignalService";
 import { spooningStore } from "../../services/spooningStore";
 import { spooningHaptics } from "../../services/spooningHaptics";
@@ -78,6 +79,8 @@ import {
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
+import { runtimeConfig } from "../../config/runtime";
+import { FeatureUnavailable } from "../../components/FeatureUnavailable";
 
 type Phase =
   | "hub"
@@ -803,6 +806,15 @@ export default function SpooningProtocolScreen() {
     );
   }
 
+  if (!runtimeConfig.features.pairedGrowthContent) {
+    return (
+      <FeatureUnavailable
+        eyebrow="RELATIONSHIP TOOLS"
+        title="This tool is not available in this build."
+        body="This build focuses on your own self-understanding. Relationship-in-friction tools (bond map, conflict, attachment repair) remain in Maximum Mode builds (macOS / Linux / internal)."
+      />
+    );
+  }
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -811,7 +823,9 @@ export default function SpooningProtocolScreen() {
         <Card>
           <Text style={styles.banner}>{SPOONING_COPY.banner}</Text>
           <Text style={styles.tagline}>{SPOONING_COPY.tagline}</Text>
-          <Body muted>{SPOONING_COPY.purpose}</Body>
+          <Body muted>
+            {SPOONING_COPY.purpose.replace("{{PARTNER}}", modeCopy.partnerName)}
+          </Body>
           <Body muted>{SPOONING_COPY.comedy}</Body>
         </Card>
         {relModel ? (

@@ -786,7 +786,7 @@ export default function TooMuchScreen() {
           <Text style={styles.softBanner}>{TOO_MUCH_COPY.banner}</Text>
           <Text style={styles.tagline}>{TOO_MUCH_COPY.tagline}</Text>
           <Body muted>
-            {TOO_MUCH_COPY.purpose.replace("Renn", modeCopy.partnerName)}
+            {TOO_MUCH_COPY.purpose.replace("{{PARTNER}}", modeCopy.partnerName)}
           </Body>
           <Body muted>{TOO_MUCH_COPY.panicRoom}</Body>
           <Body muted>{TOO_MUCH_COPY.comedy}</Body>

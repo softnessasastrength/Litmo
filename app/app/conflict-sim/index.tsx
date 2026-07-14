@@ -45,6 +45,7 @@ import {
   type ConflictSealDraft,
   type ConflictSimState,
 } from "../../lib/conflictSimCore";
+import { modeCopy } from "../../config/copy";
 import { softSignalService } from "../../services/softSignalService";
 import { conflictSimStore } from "../../services/conflictSimStore";
 import { relationshipModelStore } from "../../services/relationshipModelStore";
@@ -55,6 +56,8 @@ import {
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
+import { runtimeConfig } from "../../config/runtime";
+import { FeatureUnavailable } from "../../components/FeatureUnavailable";
 
 type Phase = "hub" | "negotiate" | "run" | "debrief" | "history";
 
@@ -461,7 +464,9 @@ export default function ConflictSimScreen() {
                 ]}
               >
                 <Text style={styles.roleTitle}>{m.label}</Text>
-                <Body muted>{m.blurb}</Body>
+                <Body muted>
+                  {m.blurb.replace("{{PARTNER}}", modeCopy.partnerName)}
+                </Body>
               </Pressable>
             ))}
           </Card>
@@ -539,6 +544,15 @@ export default function ConflictSimScreen() {
     );
   }
 
+  if (!runtimeConfig.features.pairedGrowthContent) {
+    return (
+      <FeatureUnavailable
+        eyebrow="RELATIONSHIP TOOLS"
+        title="This tool is not available in this build."
+        body="This build focuses on your own self-understanding. Relationship-in-friction tools (bond map, conflict, attachment repair) remain in Maximum Mode builds (macOS / Linux / internal)."
+      />
+    );
+  }
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -547,7 +561,9 @@ export default function ConflictSimScreen() {
         <Card>
           <Text style={styles.banner}>{CONFLICT_COPY.banner}</Text>
           <Text style={styles.tagline}>{CONFLICT_COPY.tagline}</Text>
-          <Body muted>{CONFLICT_COPY.purpose}</Body>
+          <Body muted>
+            {CONFLICT_COPY.purpose.replace("{{PARTNER}}", modeCopy.partnerName)}
+          </Body>
           <Body muted>{CONFLICT_COPY.comedy}</Body>
         </Card>
         {relModel ? (

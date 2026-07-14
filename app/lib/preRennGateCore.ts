@@ -155,7 +155,7 @@ export function sealPreRenn(
 
 export function verdictCopy(
   v: GateVerdict,
-  partnerName: string = "Renn",
+  partnerName: string = "your partner",
 ): { title: string; body: string } {
   if (v === "red")
     return {

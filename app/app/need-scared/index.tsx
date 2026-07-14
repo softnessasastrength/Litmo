@@ -62,6 +62,8 @@ import {
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
+import { runtimeConfig } from "../../config/runtime";
+import { FeatureUnavailable } from "../../components/FeatureUnavailable";
 
 type Phase =
   | "hub"
@@ -797,6 +799,15 @@ export default function NeedScaredScreen() {
     );
   }
 
+  if (!runtimeConfig.features.pairedGrowthContent) {
+    return (
+      <FeatureUnavailable
+        eyebrow="RELATIONSHIP TOOLS"
+        title="This tool is not available in this build."
+        body="This build focuses on your own self-understanding. Relationship-in-friction tools (bond map, conflict, attachment repair) remain in Maximum Mode builds (macOS / Linux / internal)."
+      />
+    );
+  }
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -806,7 +817,7 @@ export default function NeedScaredScreen() {
           <Text style={styles.banner}>{NEED_SCARED_COPY.banner}</Text>
           <Text style={styles.tagline}>{NEED_SCARED_COPY.tagline}</Text>
           <Body muted>
-            {NEED_SCARED_COPY.purpose.replace("Renn", modeCopy.partnerName)}
+            {NEED_SCARED_COPY.purpose.replace("{{PARTNER}}", modeCopy.partnerName)}
           </Body>
           <Body muted>{NEED_SCARED_COPY.comedy}</Body>
         </Card>

@@ -65,6 +65,8 @@ import {
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
+import { runtimeConfig } from "../../config/runtime";
+import { FeatureUnavailable } from "../../components/FeatureUnavailable";
 
 type Phase = "hub" | "negotiate" | "active" | "exit_ritual" | "debrief" | "history";
 
@@ -714,6 +716,15 @@ export default function MorningCuddleScreen() {
     );
   }
 
+  if (!runtimeConfig.features.pairedGrowthContent) {
+    return (
+      <FeatureUnavailable
+        eyebrow="RELATIONSHIP TOOLS"
+        title="This tool is not available in this build."
+        body="This build focuses on your own self-understanding. Relationship-in-friction tools (bond map, conflict, attachment repair) remain in Maximum Mode builds (macOS / Linux / internal)."
+      />
+    );
+  }
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.scroll}>

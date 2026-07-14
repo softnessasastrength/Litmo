@@ -46,6 +46,7 @@ import {
   type NotReadySealDraft,
   type SnoozeMinutes,
 } from "../../lib/notReadyYetCore";
+import { modeCopy } from "../../config/copy";
 import { softSignalService } from "../../services/softSignalService";
 import { notReadyYetStore } from "../../services/notReadyYetStore";
 import { relationshipModelStore } from "../../services/relationshipModelStore";
@@ -56,6 +57,8 @@ import {
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
+import { runtimeConfig } from "../../config/runtime";
+import { FeatureUnavailable } from "../../components/FeatureUnavailable";
 
 type Phase =
   | "hub"
@@ -503,6 +506,15 @@ export default function NotReadyYetScreen() {
     );
   }
 
+  if (!runtimeConfig.features.pairedGrowthContent) {
+    return (
+      <FeatureUnavailable
+        eyebrow="RELATIONSHIP TOOLS"
+        title="This tool is not available in this build."
+        body="This build focuses on your own self-understanding. Relationship-in-friction tools (bond map, conflict, attachment repair) remain in Maximum Mode builds (macOS / Linux / internal)."
+      />
+    );
+  }
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -511,7 +523,9 @@ export default function NotReadyYetScreen() {
         <Card>
           <Text style={styles.banner}>{NOT_READY_COPY.banner}</Text>
           <Text style={styles.tagline}>{NOT_READY_COPY.tagline}</Text>
-          <Body muted>{NOT_READY_COPY.purpose}</Body>
+          <Body muted>
+            {NOT_READY_COPY.purpose.replace("{{PARTNER}}", modeCopy.partnerName)}
+          </Body>
           <Body muted>{NOT_READY_COPY.comedy}</Body>
         </Card>
         {relModel ? (

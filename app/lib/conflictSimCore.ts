@@ -57,7 +57,7 @@ export const CONFLICT_MODES: readonly ConflictMode[] = [
   {
     id: "solo_rehearsal",
     label: "Solo Rehearsal",
-    blurb: "Practice alone before a real talk. Pillow can play Renn if needed.",
+    blurb: "Practice alone before a real talk. Pillow can play {{PARTNER}} if needed.",
   },
   {
     id: "soft_signal_first",
@@ -183,7 +183,7 @@ export const CONFLICT_COPY = {
   tagline:
     "Because “we need to talk” still feels like a court summons issued by my childhood.",
   purpose:
-    "Practice conflict without dumping raw freeze/fawn/flee onto Renn first. Shame lives here on purpose. Soft Signal free.",
+    "Practice conflict without dumping raw freeze/fawn/flee onto {{PARTNER}} first. Shame lives here on purpose. Soft Signal free.",
   softSignal: "Soft Signal ends the sim (and the fantasy fight). No TED talk required.",
   comedy:
     "I’ve never successfully navigated conflict — so I built a simulator. That’s either growth or comedy. Both fine.",

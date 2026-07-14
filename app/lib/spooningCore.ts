@@ -511,7 +511,7 @@ export const SPOONING_COPY = {
   tagline: "Because apparently I can’t just fucking cuddle like a normal person",
   title: "Spooning Protocol v0.2",
   purpose:
-    "Nuclear autistic precision cuddle planner: 14 positions, full role negotiation, Watch check-ins, mommy-issues reassurance, Soft Signal God Mode — so intimacy anxiety has a map that is less likely to dump onto Renn.",
+    "Nuclear autistic precision cuddle planner: 14 positions, full role negotiation, Watch check-ins, mommy-issues reassurance, Soft Signal God Mode — so intimacy anxiety has a map that is less likely to dump onto {{PARTNER}}.",
   sealHint:
     "All spooning is opt-in, revocable, and snapshot-based. Prior cuddles are not consent.",
   softSignalGod:

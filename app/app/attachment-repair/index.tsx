@@ -626,7 +626,7 @@ export default function AttachmentRepairScreen() {
           <Text style={styles.banner}>{REPAIR_COPY.banner}</Text>
           <Text style={styles.tagline}>{REPAIR_COPY.tagline}</Text>
           <Body muted>
-            {REPAIR_COPY.purpose.replace("Renn", modeCopy.partnerName)}
+            {REPAIR_COPY.purpose.replace("{{PARTNER}}", modeCopy.partnerName)}
           </Body>
           <Body muted>{REPAIR_COPY.comedy}</Body>
         </Card>

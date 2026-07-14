@@ -15,6 +15,7 @@ import {
   type AftercareModeId,
   type AftercareSnapshot,
 } from "../../lib/aftercareCore";
+import { modeCopy } from "../../config/copy";
 import { aftercareStore } from "../../services/aftercareStore";
 import { softSignalService } from "../../services/softSignalService";
 import { masochistModeStore } from "../../services/masochistModeStore";
@@ -33,6 +34,8 @@ import {
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 import type { AppColors } from "../../theme";
+import { runtimeConfig } from "../../config/runtime";
+import { FeatureUnavailable } from "../../components/FeatureUnavailable";
 
 export default function AftercareScreen() {
   const styles = useThemedStyles(makeStyles);
@@ -111,7 +114,9 @@ export default function AftercareScreen() {
           </Eyebrow>
           <Title>{mode.label}</Title>
           <Card>
-            <Text style={styles.script}>{line}</Text>
+            <Text style={styles.script}>
+              {line.replace("{{PARTNER}}", modeCopy.partnerName)}
+            </Text>
             <Body muted>
               Step {step + 1}/{steps.length}
             </Body>
@@ -154,6 +159,15 @@ export default function AftercareScreen() {
     );
   }
 
+  if (!runtimeConfig.features.pairedGrowthContent) {
+    return (
+      <FeatureUnavailable
+        eyebrow="RELATIONSHIP TOOLS"
+        title="This tool is not available in this build."
+        body="This build focuses on your own self-understanding. Relationship-in-friction tools (bond map, conflict, attachment repair) remain in Maximum Mode builds (macOS / Linux / internal)."
+      />
+    );
+  }
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.scroll}>

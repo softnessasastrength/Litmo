@@ -132,7 +132,7 @@ export const NOT_READY_COPY = {
   title: "I'm Not Ready To Get Up Yet v0.1",
   tagline: "Because the day is a court date and the bed is a sovereign nation.",
   purpose:
-    "Negotiate one more unit of safety before the day starts — without dumping neediness-guilt onto Renn. Soft Signal free.",
+    "Negotiate one more unit of safety before the day starts — without dumping neediness-guilt onto {{PARTNER}}. Soft Signal free.",
   softSignal: "Soft Signal ends the snooze. Day can start messy. No TED talk.",
   comedy:
     "I wrote a protocol for not getting up. That’s either pathetic or genius. Both fine before coffee.",

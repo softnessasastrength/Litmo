@@ -249,7 +249,7 @@ export const REPAIR_COPY = {
   tagline:
     "Mommy issues, emotional masochism, and extremely over-engineered rituals — leaning all the way in.",
   purpose:
-    "Hold attachment panic and the urge to turn pain into protocol so raw need is less likely to ambush Renn without a map. Not therapy. Not a public product. Weirdly helpful.",
+    "Hold attachment panic and the urge to turn pain into protocol so raw need is less likely to ambush {{PARTNER}} without a map. Not therapy. Not a public product. Weirdly helpful.",
   softSignal: "Soft Signal is God Mode. Instant stop. No questions. Sacred even in the cathedral.",
   yellow: "Yellow = pause. Slow down. Do not escalate. Soft Signal still free.",
   careSeeker:

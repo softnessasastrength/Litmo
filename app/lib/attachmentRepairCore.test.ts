@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  REPAIR_COPY,
   canSealRepair,
   completeRepair,
   currentScriptLine,
@@ -72,5 +73,10 @@ describe("attachmentRepairCore", () => {
     const sum = summarizeRepairHistory([entry]);
     assert.equal(sum.soft_signal_exits, 1);
     assert.equal(sum.named_mommy_ledger, 1);
+  });
+
+  it("never bakes the real partner name into shared copy — placeholder only, swapped per build mode at render time", () => {
+    assert.ok(!/\bRenn\b/.test(REPAIR_COPY.purpose));
+    assert.ok(REPAIR_COPY.purpose.includes("{{PARTNER}}"));
   });
 });

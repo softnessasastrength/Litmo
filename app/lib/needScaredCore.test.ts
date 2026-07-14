@@ -4,6 +4,7 @@ import {
   BOTH_AND_SCRIPT,
   FEAR_POLES,
   NEED_POLES,
+  NEED_SCARED_COPY,
   buildDualSentence,
   canSealNeedScared,
   completeNeedScared,
@@ -47,5 +48,10 @@ describe("needScaredCore", () => {
     const s = summarizeNeedScared([entry]);
     assert.equal(s.total, 1);
     assert.equal(s.held_both, 1);
+  });
+
+  it("never bakes the real partner name into shared copy — placeholder only, swapped per build mode at render time", () => {
+    assert.ok(!/\bRenn\b/.test(NEED_SCARED_COPY.purpose));
+    assert.ok(NEED_SCARED_COPY.purpose.includes("{{PARTNER}}"));
   });
 });

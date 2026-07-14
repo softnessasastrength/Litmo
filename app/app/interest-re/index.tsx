@@ -40,6 +40,7 @@ import {
   type InterestSnapshot,
   type InterestTargetKind,
 } from "../../lib/interestReCore";
+import { modeCopy } from "../../config/copy";
 import { softSignalService } from "../../services/softSignalService";
 import { interestReStore } from "../../services/interestReStore";
 import { relationshipModelStore } from "../../services/relationshipModelStore";
@@ -48,6 +49,8 @@ import type { RelationshipModel } from "../../lib/relationshipModelCore";
 import { type AppColors } from "../../theme";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
+import { runtimeConfig } from "../../config/runtime";
+import { FeatureUnavailable } from "../../components/FeatureUnavailable";
 
 type Phase = "hub" | "inventory" | "result" | "debrief" | "history";
 
@@ -516,6 +519,15 @@ export default function InterestReScreen() {
     );
   }
 
+  if (!runtimeConfig.features.pairedGrowthContent) {
+    return (
+      <FeatureUnavailable
+        eyebrow="RELATIONSHIP TOOLS"
+        title="This tool is not available in this build."
+        body="This build focuses on your own self-understanding. Relationship-in-friction tools (bond map, conflict, attachment repair) remain in Maximum Mode builds (macOS / Linux / internal)."
+      />
+    );
+  }
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -524,7 +536,9 @@ export default function InterestReScreen() {
         <Card>
           <Text style={styles.banner}>{INTEREST_COPY.banner}</Text>
           <Text style={styles.tagline}>{INTEREST_COPY.tagline}</Text>
-          <Body muted>{INTEREST_COPY.purpose}</Body>
+          <Body muted>
+            {INTEREST_COPY.purpose.replace("{{PARTNER}}", modeCopy.partnerName)}
+          </Body>
           <Body muted>{INTEREST_COPY.comedy}</Body>
         </Card>
         <BondMapBanner

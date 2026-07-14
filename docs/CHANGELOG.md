@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-07-14 — Closed a real App Store Safe reachability + partner-name leak
+
+Checking whether the earlier `pairedGrowthContent` gating plan
+(`jaunty-tickling-pearl.md`) actually finished found it hadn't: only
+`too-much` and `attachment-repair` self-gated. 15 other relationship-in-
+friction screens (`relationship-model`, `flood`, `pre-renn`, `aftercare`,
+`apology-craft`, `field-notes`, `debrief-lab`, `reconcile`, `parallel-play`,
+`relationship-constitution`, `need-scared`, `interest-re`, `conflict-sim`,
+`not-ready-yet`, `morning-cuddle`, `spooning`) relied solely on the hub and
+home screen not linking to them — direct navigation in an App Store Safe
+build would have fully rendered them. All 15 now fail closed with
+`FeatureUnavailable`, same pattern as the two that already worked.
+
+While checking those screens' copy, found the founder's real partner's real
+name baked directly into eight shared string constants (`purpose`/`blurb`
+fields across `attachmentRepairCore.ts`, `tooMuchCore.ts`,
+`needScaredCore.ts`, `spooningCore.ts`, `interestReCore.ts`,
+`conflictSimCore.ts` ×2, `aftercareCore.ts`, `notReadyYetCore.ts`,
+`preRennGateCore.ts`). Three already tried to swap it at render time but the
+literal name still shipped in the bundle either way; three more rendered it
+unconditionally with no swap at all — a real bug, not just a bundle-string
+risk. Replaced all of them with a `{{PARTNER}}` placeholder resolved via
+`modeCopy.partnerName` at render time, so the real name never compiles into
+the shared JS bundle in either build mode. Added regression tests to the
+three core test files that already existed. Full account, including what's
+deliberately *not* fixed (the "Pre-Renn Gate" feature's own file/route/type
+names still carry the name), is in `docs/BUILD_MODES.md` §12.
+
+Full suite: 411/413 passing (the 2 canonized `hapticService` failures),
+5 pre-existing typecheck errors unrelated to this change — both unchanged
+from before this work.
+
 ## 2026-07-14 — Fixed a real bug found by actually attempting the App Store Safe build
 
 Earlier "verified" claims for the entitlement-stripping work

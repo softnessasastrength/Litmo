@@ -306,6 +306,45 @@ Assert:
   from an unused *linked framework* alone is low compared to a declared
   *entitlement/usage-description*, which is the part this fix addresses.
 - Maximum source remains readable in the open repo — that is intentional for stewardship.  
+- **Partner-name leak into the shared bundle (2026-07-14, closed):** the
+  `pairedGrowthContent` flag (added earlier) hid the *Containment Hub entry
+  point* and *home screen shortcuts* for relationship-in-friction protocols,
+  but 15 of those leaf screens (`relationship-model`, `flood`, `pre-renn`,
+  `aftercare`, `apology-craft`, `field-notes`, `debrief-lab`, `reconcile`,
+  `parallel-play`, `relationship-constitution`, `need-scared`, `interest-re`,
+  `conflict-sim`, `not-ready-yet`, `morning-cuddle`, `spooning`) never
+  self-gated — only `too-much` and `attachment-repair` did. Direct
+  navigation (deep link, saved route, App Review probing the route table)
+  would have fully rendered them in an App Store Safe build regardless of
+  the flag. All 15 now fail closed with `FeatureUnavailable`, matching the
+  existing `too-much`/`attachment-repair` pattern — same fix applied
+  consistently, not a new mechanism.
+  Separately, several of those screens' shared copy constants
+  (`REPAIR_COPY`, `TOO_MUCH_COPY`, `NEED_SCARED_COPY`, `SPOONING_COPY`,
+  `INTEREST_COPY`, `CONFLICT_COPY`, plus fields in `aftercareCore.ts` and
+  `notReadyYetCore.ts`) hardcoded the founder's real partner's real name
+  directly into a `purpose`/`blurb` string. Three of those (`REPAIR_COPY`,
+  `TOO_MUCH_COPY`, `NEED_SCARED_COPY`) already ran `.replace("Renn", ...)`
+  at render time but the source string still had the real name baked in —
+  meaning it shipped as a literal in the JS bundle for *both* build modes,
+  reachable via `strings`/decompilation regardless of what the UI shows.
+  Three more (`SPOONING_COPY`, `INTEREST_COPY`, `CONFLICT_COPY`, plus the
+  `conflict-sim` solo-rehearsal `blurb`) rendered the name directly with no
+  substitution at all — a straight bug, not just a bundle-string risk. All
+  eight source strings now use a `{{PARTNER}}` placeholder swapped for
+  `modeCopy.partnerName` at render time, so the real name never compiles
+  into the bundle in either build mode. Regression tests added to
+  `attachmentRepairCore.test.ts`, `tooMuchCore.test.ts`,
+  `needScaredCore.test.ts` assert the placeholder is present and the real
+  name is not.
+  **Explicitly not addressed:** the "Pre-Renn Gate" feature itself — its
+  file name (`preRennGateCore.ts`), route (`/pre-renn`), and several type/
+  function names (`PreRennDraft`, `sealPreRenn`, etc.) — keeps the real
+  name baked into the feature's identity across ~10 files. That's a
+  structural rename (route path, possibly stored data shape expectations),
+  not a copy-pack swap, and changes real behavior for the founder's own
+  Maximum build if done carelessly. Deliberately left alone rather than
+  rushed; flagged here so it isn't mistaken for "fully closed."
 
 ---
 

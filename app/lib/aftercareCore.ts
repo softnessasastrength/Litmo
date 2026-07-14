@@ -101,7 +101,7 @@ export const AFTERCARE_MODES: readonly AftercareMode[] = [
     ],
     denserSteps: [
       "Bless the work without making it the only self.",
-      "If Renn-adjacent guilt: Pre-Renn Gate, not a dump essay.",
+      "If {{PARTNER}}-adjacent guilt: Pre-Renn Gate, not a dump essay.",
     ],
   },
   {
