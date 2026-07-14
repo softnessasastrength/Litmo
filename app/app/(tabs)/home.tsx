@@ -259,6 +259,24 @@ export default function HomeTabScreen() {
       />
       <Button
         variant="secondary"
+        label="Pre-Renn Gate (before you dump)"
+        onPress={() => router.push("/pre-renn" as never)}
+        accessibilityHint="Regulation gate before reaching out. Soft Signal free. Not a ban on contact."
+      />
+      <Button
+        variant="secondary"
+        label="Nervous System Weather"
+        onPress={() => router.push("/weather" as never)}
+        accessibilityHint="Daily local check-in. Name the sky before it becomes someone else's job."
+      />
+      <Button
+        variant="secondary"
+        label="Aftercare Protocol"
+        onPress={() => router.push("/aftercare" as never)}
+        accessibilityHint="Land the plane after touch, conflict, flood, or build spiral. Soft Signal free."
+      />
+      <Button
+        variant="secondary"
         label="Soft Signal (practice & private log)"
         onPress={() => router.push("/soft-signal/practice" as never)}
         accessibilityHint="Practice Soft Signal without a peer, or open your private Soft Signal records. Never punitive."

@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-13 — Cook session: Pre-Renn Gate · Weather · Aftercare · Recommender
+
+Pre-Renn Regulation Gate (red/yellow/green + delay pledge), Nervous System
+Weather daily check-in, Aftercare Protocol (5 modes, masochist denser), pure
+Protocol Recommender on Containment Hub + Home shortcuts. Auto-debrief sources
+pre_renn / weather / aftercare. Soft Signal freeness preserved.
+
 ## 2026-07-13 — Auto-debrief bridge + dual-bind Watch + Watch simulator build
 
 Store-level protocol → Private Debrief Lab auto-ingest (10 protocols).

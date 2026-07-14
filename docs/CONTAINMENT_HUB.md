@@ -16,6 +16,10 @@ Links:
 
 | Protocol | Route |
 | -------- | ----- |
+| Pre-Renn Regulation Gate | `/pre-renn` |
+| Nervous System Weather | `/weather` |
+| Aftercare Protocol | `/aftercare` |
+| Protocol Recommender | Hub “Suggested right now” |
 | Containment Lo-Fi | `/containment/lofi` |
 | I Need You But I'm Scared You'll Leave | `/need-scared` |
 | I'm Too Much / Fear of Abandonment | `/too-much` |

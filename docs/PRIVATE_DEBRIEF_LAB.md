@@ -84,6 +84,9 @@ Every containment history `store.append` fires a unified debrief via
 | notReadyYetStore | `not_ready_yet` |
 | reconcileStore | `reconcile` |
 | parallelPlayStore | `parallel_play` |
+| preRennGateStore | `pre_renn` |
+| weatherStore | `weather` |
+| aftercareStore | `aftercare` |
 
 Manual entries still use `/debrief-lab` UI (`source: manual`).  
 Ingest is best-effort; protocol history remains the source of truth for that ritual.

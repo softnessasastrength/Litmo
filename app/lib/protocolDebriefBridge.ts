@@ -18,6 +18,9 @@ import type { RepairHistoryEntry } from "./attachmentRepairCore.ts";
 import type { NotReadyHistoryEntry } from "./notReadyYetCore.ts";
 import type { ReconcileEntry } from "./reconcileCore.ts";
 import type { ParallelEntry } from "./parallelPlayCore.ts";
+import type { PreRennEntry } from "./preRennGateCore.ts";
+import type { WeatherEntry } from "./weatherCore.ts";
+import type { AftercareEntry } from "./aftercareCore.ts";
 
 function softFromReason(reason: string): boolean {
   return reason === "soft_signal";
@@ -231,6 +234,63 @@ export function debriefFromParallel(e: ParallelEntry): UnifiedDebriefEntry {
   });
 }
 
+export function debriefFromPreRenn(e: PreRennEntry): UnifiedDebriefEntry {
+  const soft = softFromReason(e.endReason);
+  const tags = ["space"];
+  if (soft) tags.push("soft_signal");
+  if (e.snapshot.verdict === "red") tags.push("flooded");
+  if (e.endReason === "honored_delay") tags.push("clear_yes");
+  return createManualDebrief({
+    title: `Pre-Renn · ${e.snapshot.verdict} · ${e.endReason}`,
+    regulation: e.snapshot.verdict === "red" ? 2 : e.snapshot.verdict === "yellow" ? 3 : 4,
+    worked: e.note || e.snapshot.purpose || e.snapshot.reasons[0] || "",
+    didnt: "",
+    tags,
+    softSignalUsed: soft,
+    source: "pre_renn",
+    again: e.endReason === "honored_delay" || e.endReason === "completed",
+  });
+}
+
+export function debriefFromWeather(e: WeatherEntry): UnifiedDebriefEntry {
+  const soft = softFromReason(e.endReason);
+  const tags = ["rest"];
+  if (soft) tags.push("soft_signal");
+  if (e.snapshot.anxiety >= 4) tags.push("flooded");
+  if (e.snapshot.attachmentHeat >= 4) tags.push("attachment");
+  return createManualDebrief({
+    title: `Weather · ${e.snapshot.skyLabel}`,
+    regulation: (Math.max(
+      1,
+      Math.min(5, 6 - e.snapshot.anxiety),
+    ) as 1 | 2 | 3 | 4 | 5),
+    worked: e.snapshot.note || e.snapshot.skyLabel,
+    didnt: "",
+    tags,
+    softSignalUsed: soft,
+    source: "weather",
+    again: e.endReason === "completed",
+  });
+}
+
+export function debriefFromAftercare(e: AftercareEntry): UnifiedDebriefEntry {
+  const soft = softFromReason(e.endReason);
+  const tags = ["rest"];
+  if (soft) tags.push("soft_signal");
+  if (e.snapshot.denser) tags.push("ceremony");
+  if (e.feltSettled) tags.push("hold");
+  return createManualDebrief({
+    title: `Aftercare · ${e.snapshot.modeId}`,
+    regulation: e.feltSettled ? 4 : baseReg(e.endReason, soft),
+    worked: e.note || e.snapshot.partnerLine,
+    didnt: "",
+    tags,
+    softSignalUsed: soft,
+    source: "aftercare",
+    again: e.feltSettled,
+  });
+}
+
 export const DEBRIEF_BRIDGE_SOURCES: readonly DebriefSource[] = [
   "spooning",
   "morning_cuddle",
@@ -242,4 +302,7 @@ export const DEBRIEF_BRIDGE_SOURCES: readonly DebriefSource[] = [
   "not_ready_yet",
   "reconcile",
   "parallel_play",
+  "pre_renn",
+  "weather",
+  "aftercare",
 ] as const;

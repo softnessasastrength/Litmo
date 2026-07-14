@@ -16,6 +16,9 @@ export type DebriefSource =
   | "parallel_play"
   | "attachment_repair"
   | "not_ready_yet"
+  | "pre_renn"
+  | "weather"
+  | "aftercare"
   | "manual"
   | "other";
 

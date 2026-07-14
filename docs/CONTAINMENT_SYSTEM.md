@@ -72,6 +72,10 @@ This is not a diagnosis. It’s a field guide.
 | **Private Debrief Lab** (`/debrief-lab`) | Unified local tags + insights | Turn interactions into useful patterns without partner surveillance | Need for data without becoming creepy |
 | **Watch Soft Signal + Reassurance** | Wrist complications | Soft Signal freeness + local reassurance lines offline | Panic when phone is far; FOMO traps |
 | **Self-roast / self-love manifesto** | Honest why-doc | Hold both embarrassment and care for building all this | Shame of coping via cathedral |
+| **Pre-Renn Regulation Gate** (`/pre-renn`) | Red/yellow/green before reach | Hold dump-urge until capacity; delay pledge as win | Using partner as fire extinguisher |
+| **Nervous System Weather** (`/weather`) | Daily energy/anxiety/heat/capacity | Name sky before it becomes someone’s job | Unnamed weather → partner labor |
+| **Aftercare Protocol** (`/aftercare`) | Post-touch/conflict/flood/good/build | Land without making the other the only gear | Post-peak dump / Option A hangover |
+| **Protocol Recommender** (Hub) | Local suggestions from debrief + weather | Reduce buffet paralysis without partner scores | Choice overload (D23-adjacent) |
 
 ---
 

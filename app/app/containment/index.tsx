@@ -23,6 +23,12 @@ import {
   masochistBanner,
   type MasochistPrefs,
 } from "../../lib/masochistModeCore";
+import { privateDebriefStore } from "../../services/privateDebriefStore";
+import { weatherStore } from "../../services/weatherStore";
+import {
+  recommendProtocols,
+  type ProtocolRec,
+} from "../../lib/protocolRecommenderCore";
 
 type HubItem = {
   href: string;
@@ -32,6 +38,26 @@ type HubItem = {
 };
 
 const PROTOCOLS: readonly HubItem[] = [
+  {
+    href: "/pre-renn",
+    title: "Pre-Renn Regulation Gate",
+    blurb:
+      "Before you dump weather onto a human. Red/yellow/green · delay pledge · Soft Signal free.",
+    tag: "GATE",
+  },
+  {
+    href: "/weather",
+    title: "Nervous System Weather",
+    blurb: "Daily local sky: energy, anxiety, attachment heat, capacity. Not clinical.",
+    tag: "SKY",
+  },
+  {
+    href: "/aftercare",
+    title: "Aftercare Protocol",
+    blurb:
+      "Land the plane after touch, conflict, flood, good thing, or build spiral.",
+    tag: "LAND",
+  },
   {
     href: "/masochist-mode",
     title: "Emotional Masochist Mode",
@@ -167,9 +193,24 @@ export default function ContainmentHubScreen() {
   const colors = useColors();
   const router = useRouter();
   const [mPrefs, setMPrefs] = useState<MasochistPrefs>(defaultMasochistPrefs());
+  const [recs, setRecs] = useState<ProtocolRec[]>([]);
 
   useEffect(() => {
     void masochistModeStore.load().then(setMPrefs);
+    void (async () => {
+      const [debriefs, weatherHist] = await Promise.all([
+        privateDebriefStore.load(),
+        weatherStore.load(),
+      ]);
+      const lastWeather = weatherHist[0]?.snapshot ?? null;
+      setRecs(
+        recommendProtocols({
+          debriefs,
+          weather: lastWeather,
+          hour: new Date().getHours(),
+        }),
+      );
+    })();
   }, []);
 
   const mBanner = masochistBanner(mPrefs);
@@ -202,6 +243,29 @@ export default function ContainmentHubScreen() {
               ceremonial armed
             </Body>
           </Card>
+        ) : null}
+
+        {recs.length > 0 ? (
+          <>
+            <Text style={styles.section}>Suggested right now</Text>
+            <Card>
+              <Body muted>
+                From local debriefs + last weather. Never a partner score.
+              </Body>
+              {recs.slice(0, 4).map((r) => (
+                <Pressable
+                  key={r.href}
+                  onPress={() => router.push(r.href as never)}
+                  style={{ marginTop: 10 }}
+                  accessibilityRole="button"
+                  accessibilityLabel={r.title}
+                >
+                  <Text style={styles.cardTitle}>{r.title}</Text>
+                  <Body muted>{r.why}</Body>
+                </Pressable>
+              ))}
+            </Card>
+          </>
         ) : null}
 
         <Text style={styles.section}>Protocols</Text>

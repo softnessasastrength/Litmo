@@ -47,6 +47,9 @@ const EXTRA_ASYNC_KEYS = [
   "litmo.relationship_constitution.v1",
   "litmo.masochist_mode.v1",
   "litmo.private_debrief.log.v1",
+  "litmo.pre_renn_gate.history.v1",
+  "litmo.weather.history.v1",
+  "litmo.aftercare.history.v1",
 ];
 
 const EXTRA_SECURE_KEYS = [

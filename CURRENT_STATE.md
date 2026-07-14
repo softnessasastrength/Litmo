@@ -66,8 +66,9 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
-- Done: batch 10–16 v0.2 + **auto-debrief bridge** (all protocol stores) +
-  **DualBindComplication** + Watch **simulator BUILD SUCCEEDED**.
+- Done cook: **Pre-Renn Gate** · **Weather** · **Aftercare** · **Protocol
+  Recommender** (hub + home) + auto-debrief for all three.
+- Prior: batch 10–16 v0.2, auto-debrief bridge, Watch simulator BUILD SUCCEEDED.
 - Physical Watch + paired iPhone Taptic QA still open (signing + device).
 - Follow `docs/REAL_PURPOSE.md` · manifesto: `docs/SELF_ROAST_SELF_LOVE_MANIFESTO.md`.
 
