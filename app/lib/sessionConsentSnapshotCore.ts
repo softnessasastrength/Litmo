@@ -578,6 +578,68 @@ export function computeIntersection(
 }
 
 /**
+ * WHAT: Content fingerprint for two declarations + their fail-closed intersection.
+ * WHY: Detect stale mutual packages when prepare edits mid-seal without minting a new snap id.
+ * CONSENT: Fingerprint equality is package honesty only — not mutual yes, not safety forever.
+ * EDGE CASES:
+ *   - forces notConsentAlone true on both parties inside the hash payload
+ *   - intersection recomputed every call (never trusts a caller-supplied map)
+ * NEVER: Treat match as dual affirm or touch authorization.
+ * SEE: createMutualSnapshot, isMutualFingerprintCurrent, CONSENT_EDGE_CASES.fingerprint_stale_mid_seal
+ */
+export function fingerprintForMutualParties(
+  partyA: PreSessionDeclaration,
+  partyB: PreSessionDeclaration,
+): string {
+  const intersection = computeIntersection(partyA, partyB);
+  // Same payload shape as createMutualSnapshot so resume/rebuild comparisons stay exact.
+  const payload = {
+    partyA: { ...partyA, notConsentAlone: true as const },
+    partyB: { ...partyB, notConsentAlone: true as const },
+    intersection,
+  };
+  return stableFingerprint(payload);
+}
+
+/**
+ * WHAT: True when snapshot.fingerprint matches recomputed content from its embedded parties.
+ * WHY: Hand-edited vault rows or drifted stored fingerprints must not arm seal (fail closed).
+ * CONSENT: Stale package → no seal arm; Soft Signal / withdraw still free.
+ * EDGE CASES: Missing fingerprint string → false; content recompute is source of truth.
+ * NEVER: true does not mean sealed, mutual remote proof, or session-ready.
+ * SEE: fingerprintForMutualParties, mayEnableGrantConfirm.fingerprintCurrent
+ */
+export function isMutualFingerprintCurrent(
+  snapshot: MutualConsentSnapshot,
+): boolean {
+  if (!snapshot.fingerprint) return false;
+  return (
+    snapshot.fingerprint ===
+    fingerprintForMutualParties(snapshot.partyA, snapshot.partyB)
+  );
+}
+
+/**
+ * WHAT: True when the live self declaration still matches the mutual package content.
+ * WHY: Prepare re-save while reviewing must invalidate old fingerprint (Agent 06 residual).
+ * CONSENT: Self edit mid-seal → rebuild required; prior checklist yes must not carry over.
+ * EDGE CASES:
+ *   - partner side taken from snapshot.partyB (practice or real role)
+ *   - any field change including updatedAt → new fingerprint → false
+ * NEVER: false must not block Soft Signal / withdraw; only blocks seal arm + stale resume.
+ * SEE: mutual.tsx focus rebuild, fingerprint_stale_mid_seal edge case
+ */
+export function isSelfDeclarationCurrentForMutual(
+  snapshot: MutualConsentSnapshot,
+  selfDecl: PreSessionDeclaration,
+): boolean {
+  return (
+    snapshot.fingerprint ===
+    fingerprintForMutualParties(selfDecl, snapshot.partyB)
+  );
+}
+
+/**
  * WHAT: Create a new unsealed MutualConsentSnapshot from two declarations.
  * WHY: Fingerprint must cover both parties + intersection so later edits rebuild identity.
  * CONSENT: Starts with null affirmations, sealedAt null, notConsentUntilSealed true.
@@ -585,7 +647,7 @@ export function computeIntersection(
  *   - party payloads forced notConsentAlone true inside fingerprint payload
  *   - softSignalAlwaysAvailable always true
  * NEVER: Does not mark either party affirmed; does not authorize touch.
- * SEE: affirmParty, isSealed, stableFingerprint
+ * SEE: affirmParty, isSealed, fingerprintForMutualParties
  */
 /**
  * WHAT: Create unsealed MutualConsentSnapshot with fingerprint + empty affirmations.
@@ -601,16 +663,11 @@ export function createMutualSnapshot(
   const createdAt = new Date().toISOString();
   const intersection = computeIntersection(partyA, partyB);
   // Fingerprint payload is the consent-relevant content, not runtime seal timestamps.
-  const payload = {
-    partyA: { ...partyA, notConsentAlone: true as const },
-    partyB: { ...partyB, notConsentAlone: true as const },
-    intersection,
-  };
   return {
     version: 1,
     id: newId("snap"),
     createdAt,
-    fingerprint: stableFingerprint(payload),
+    fingerprint: fingerprintForMutualParties(partyA, partyB),
     partyA,
     partyB,
     intersection,
@@ -849,16 +906,17 @@ export function parseDeclaration(raw: unknown): PreSessionDeclaration | null {
  * EDGE CASES:
  *   - either party fails parseDeclaration → null entire mutual
  *   - intersection always rebuilt from parties (not trusted from raw)
- *   - seal/withdraw/affirm timestamps restored from raw when well-typed
- *   - fingerprint: prefer stored string else rebuilt (may diverge if raw was hand-edited)
- * NEVER: Do not trust raw intersection arrays; do not invent seal from single affirm.
- * SEE: createMutualSnapshot, parseDeclaration
+ *   - seal/withdraw/affirm restored only when stored fingerprint matches content
+ *   - stale fingerprint → content fingerprint kept; affirmations + sealedAt cleared
+ * NEVER: Do not trust raw intersection arrays; do not invent seal from single affirm;
+ *        do not keep sealedAt on a hand-edited fingerprint (Agent 06 / fingerprint_stale_mid_seal).
+ * SEE: createMutualSnapshot, fingerprintForMutualParties, parseDeclaration
  */
 /**
  * WHAT: Parse mutual snapshot JSON; rebuild intersection via createMutualSnapshot.
  * WHY:  Stored packages must re-validate constitutional flags and parties.
  * CONSENT: Requires notConsentUntilSealed + softSignalAlwaysAvailable true.
- * EDGE CASES: Preserves id/fingerprint/affirmations when present; invalid party → null.
+ * EDGE CASES: Affirmations/seal preserved only when fingerprint matches content; else wipe.
  * NEVER: Trusts client intersection without recompute from parties (rebuild path).
  */
 export function parseMutualSnapshot(raw: unknown): MutualConsentSnapshot | null {
@@ -874,34 +932,50 @@ export function parseMutualSnapshot(raw: unknown): MutualConsentSnapshot | null 
   if (!partyA || !partyB) return null;
   // Rebuild intersection + base shape from validated parties (ignore raw intersection).
   const rebuilt = createMutualSnapshot(partyA, partyB);
-  // Preserve ids/fingerprint if present and still match content.
-  const fingerprint =
-    typeof o.fingerprint === "string" ? o.fingerprint : rebuilt.fingerprint;
+  // Content fingerprint is always authoritative — never keep a divergent stored hash.
+  const contentFingerprint = rebuilt.fingerprint;
+  const storedFingerprint =
+    typeof o.fingerprint === "string" ? o.fingerprint : contentFingerprint;
+  // Stale/hand-edited fingerprint → wipe seal + affirmations (fail closed mid-seal integrity).
+  const fingerprintCurrent = storedFingerprint === contentFingerprint;
+
+  const emptyAffirmations = {
+    partyAAffirmedAt: null as string | null,
+    partyBAffirmedAt: null as string | null,
+    partyAChecks: null as AffirmationChecks | null,
+    partyBChecks: null as AffirmationChecks | null,
+  };
+
   return {
     ...rebuilt,
     id: typeof o.id === "string" ? o.id : rebuilt.id,
     createdAt:
       typeof o.createdAt === "string" ? o.createdAt : rebuilt.createdAt,
-    fingerprint,
-    affirmations: {
-      partyAAffirmedAt:
-        typeof (o.affirmations as { partyAAffirmedAt?: string } | undefined)
-          ?.partyAAffirmedAt === "string"
-          ? (o.affirmations as { partyAAffirmedAt: string }).partyAAffirmedAt
-          : null,
-      partyBAffirmedAt:
-        typeof (o.affirmations as { partyBAffirmedAt?: string } | undefined)
-          ?.partyBAffirmedAt === "string"
-          ? (o.affirmations as { partyBAffirmedAt: string }).partyBAffirmedAt
-          : null,
-      partyAChecks:
-        ((o.affirmations as { partyAChecks?: AffirmationChecks })
-          ?.partyAChecks as AffirmationChecks | null) ?? null,
-      partyBChecks:
-        ((o.affirmations as { partyBChecks?: AffirmationChecks })
-          ?.partyBChecks as AffirmationChecks | null) ?? null,
-    },
-    sealedAt: typeof o.sealedAt === "string" ? o.sealedAt : null,
+    // Always content-true so UI fingerprintCurrent and seal math agree.
+    fingerprint: contentFingerprint,
+    affirmations: fingerprintCurrent
+      ? {
+          partyAAffirmedAt:
+            typeof (o.affirmations as { partyAAffirmedAt?: string } | undefined)
+              ?.partyAAffirmedAt === "string"
+              ? (o.affirmations as { partyAAffirmedAt: string }).partyAAffirmedAt
+              : null,
+          partyBAffirmedAt:
+            typeof (o.affirmations as { partyBAffirmedAt?: string } | undefined)
+              ?.partyBAffirmedAt === "string"
+              ? (o.affirmations as { partyBAffirmedAt: string }).partyBAffirmedAt
+              : null,
+          partyAChecks:
+            ((o.affirmations as { partyAChecks?: AffirmationChecks })
+              ?.partyAChecks as AffirmationChecks | null) ?? null,
+          partyBChecks:
+            ((o.affirmations as { partyBChecks?: AffirmationChecks })
+              ?.partyBChecks as AffirmationChecks | null) ?? null,
+        }
+      : emptyAffirmations,
+    // Fail-closed: never restore sealedAt when package identity drifted.
+    sealedAt:
+      fingerprintCurrent && typeof o.sealedAt === "string" ? o.sealedAt : null,
     withdrawnAt: typeof o.withdrawnAt === "string" ? o.withdrawnAt : null,
     withdrawnBy:
       o.withdrawnBy === "partyA" || o.withdrawnBy === "partyB"

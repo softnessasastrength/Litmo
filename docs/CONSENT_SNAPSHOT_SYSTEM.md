@@ -50,15 +50,26 @@
 
 | Path | Role |
 | --- | --- |
-| `app/lib/sessionConsentSnapshotCore.ts` | Model, intersection, seal, withdraw, rows |
+| `app/lib/sessionConsentSnapshotCore.ts` | Model, intersection, seal, withdraw, fingerprint helpers, rows |
 | `app/services/sessionConsentSnapshotStore.ts` | Secure local persistence |
-| `app/app/consent-snapshot/prepare.tsx` | Your declaration wizard |
-| `app/app/consent-snapshot/mutual.tsx` | Dual affirm + seal UI |
+| `app/app/consent-snapshot/prepare.tsx` | Your declaration wizard (clears mutual on re-save) |
+| `app/app/consent-snapshot/mutual.tsx` | Dual affirm + Soft Signal mid-seal + fingerprint rebuild |
 | `app/app/match/consent-snapshot.tsx` | Live/mock engine overlap + link to prepare |
+
+## Soft Signal mid-seal + fingerprint rebuild (Agent 06 · 2026-07-14)
+
+| Law | Behavior |
+| --- | -------- |
+| Soft Signal mid-seal | Sticky `SoftSignalButton` on mutual; `withdrawMutualSnapshot` immediately; no arm; no reason |
+| Stop vs seal | Soft Signal wins; seal arm freezes; enter-session forbidden after stop |
+| Fingerprint rebuild | Prepare edit / self declaration drift → rebuild unsealed package + wipe checklists |
+| Prepare re-save | `clearMutual()` so vault cannot retain a stale seal |
+| Parse integrity | Stored fingerprint ≠ content → wipe affirmations + `sealedAt` (fail closed) |
+| DEMO honesty | Practice partner banner retained; not two real people |
 
 ## Feel
 
-Protective copy, signal-colored banners, Soft Signal non-negotiable block, fingerprint display, withdraw without explanation — designed to feel like a **safety gate**, not an engagement funnel.
+Protective copy, signal-colored banners, Soft Signal non-negotiable block, fingerprint display, Soft Signal mid-seal without explanation — designed to feel like a **safety gate**, not an engagement funnel.
 
 ## Nuclear machine (ADR 0062)
 

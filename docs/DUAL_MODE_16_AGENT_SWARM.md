@@ -364,11 +364,14 @@ L1 Constitution → L2 ADR 0060 → L3 BUILD_MODES + DUAL_MODE_ARCHITECTURE
 12. ~~Privacy wipe honesty~~ **done** (G13)  
 13. ~~Maestro app-store without demo~~ **done** (G12)
 
+### Done in wave 4 (Agent 06 · 2026-07-14)
+
+7. ~~Soft Signal mid-seal + fingerprint rebuild on mutual~~ **done** (06) — sticky SoftSignalButton mid-seal; `fingerprintForMutualParties` / focus rebuild / prepare `clearMutual`; parse wipes seal on stale fingerprint
+
 ### Still open
 
-7. Soft Signal mid-seal + fingerprint rebuild on mutual (06)  
 9. Expand App Store copy packs (Home/Safety/trauma chrome) (10, 15)  
-10. Doc graph polish / G11 ADR 0060 prose reconcile (16)  
+10. ~~Doc graph polish / G11 ADR 0060 prose reconcile~~ **done** (16 · wave 3)  
 11. Maximum diagnostics constitution panel (11)  
 14. Platonic adult affirm on Entry (05)  
 15. Dual-env + SPM in hosted CI (14, 12) — local parity script exists
@@ -402,7 +405,7 @@ L1 Constitution → L2 ADR 0060 → L3 BUILD_MODES + DUAL_MODE_ARCHITECTURE
 | 03 | domain ignores mode env tests · softLimit preview · presentation-only rows |
 | 04 | pack-driven SoftSignalButton/wrap-up · hardware surface gate · dual-mode copy tests |
 | 05 | demo only Max+dev audit · platonic affirm · age copy split |
-| 06 | Soft Signal mid-seal · fingerprint rebuild · mode copy DEMO banner |
+| 06 | ~~Soft Signal mid-seal · fingerprint rebuild · mode copy DEMO banner~~ **done 2026-07-14** |
 | 07 | soft_limit on boundaries · server soft_limit fidelity · share privateNotes harness |
 | 08 | gate share+radar+services · conditional plugins · UnavailableInThisBuild pack |
 | 09 | server reject dev attest · ageGatePolicy helper · Face ID ≠ age docs/tests |

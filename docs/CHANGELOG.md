@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-07-14 — Agent 06: Soft Signal mid-seal + fingerprint rebuild
+
+Closed the last dual-mode 16-agent residual on the Consent Snapshot mutual
+path. Soft Signal is now a sticky mid-seal control on
+`/consent-snapshot/mutual` (pack-driven labels, no arm, no reason); firing it
+calls `withdrawMutualSnapshot` and freezes seal arm / enter-session. Prepare
+edits invalidate packages: core helpers
+(`fingerprintForMutualParties`, `isMutualFingerprintCurrent`,
+`isSelfDeclarationCurrentForMutual`), focus rebuild with honesty banner,
+prepare `clearMutual` on re-save, and `parseMutualSnapshot` wiping seal when
+stored fingerprint drifts from content. DEMO practice-partner banner kept.
+Verification: `sessionConsentSnapshotCore.test.ts` 7/7;
+`npm run parity:features` OK. Soft Signal freeness not reduced.
+
 ## 2026-07-14 — Contributor attestation + trademark policy (DOCS-002 follow-up)
 
 Two of ADR 0044's four remaining governance follow-ups: `CONTRIBUTOR_ATTESTATION.md`

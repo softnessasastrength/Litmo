@@ -1,13 +1,13 @@
 /**
- * Consent Snapshot — mutual seal screen (dual affirm + withdraw + enter session).
+ * Consent Snapshot — mutual seal screen (dual affirm + Soft Signal mid-seal + enter session).
  *
  * WHAT (module): Display intersection package; require both-side checklists + grant-arm dwell;
- * seal via affirmParty×2; withdraw clears seal; sealed path may enter active session.
+ * seal via affirmParty×2; Soft Signal mid-seal abandons seal; sealed path may enter active session.
  * WHY: Dual independent affirm is constitutional; demo practice partner is labeled, not forged remote.
- * CONSENT: prepare ≠ mutual seal ≠ touch. Soft Signal always available. Withdraw faster than seal.
- * Dual affirm required. Withdraw clears seal. Fingerprint shown for same-package honesty.
+ * CONSENT: prepare ≠ mutual seal ≠ touch. Soft Signal always available mid-seal (Agent 06).
+ * Dual affirm required. Soft Signal / withdraw clears seal. Fingerprint rebuild on prepare edit.
  * NEVER: One-phone practice partner is not two real people; seal is not lifelong safety.
- * SEE: sessionConsentSnapshotCore · useConsentGrantArm · docs/CODE_COMMENT_STANDARD.md
+ * SEE: sessionConsentSnapshotCore · useConsentGrantArm · SoftSignalButton · 16_AGENT_MODE.md
  */
 
 import { useCallback, useState } from "react";
@@ -22,11 +22,14 @@ import {
   Title,
 } from "../../components/ui";
 import { ConsentAffirmRow } from "../../components/ConsentAffirmRow";
+import { SoftSignalButton } from "../../components/SoftSignalButton";
 import {
   affirmParty,
   createMutualSnapshot,
   createPracticePartnerDeclaration,
+  isMutualFingerprintCurrent,
   isSealed,
+  isSelfDeclarationCurrentForMutual,
   mutualSnapshotRows,
   withdrawMutualSnapshot,
   type AffirmationChecks,
@@ -100,17 +103,18 @@ const SELF_ROWS = [
 ];
 
 /**
- * WHAT: Mutual Consent Snapshot seal screen — dual affirm, withdraw, enter session.
+ * WHAT: Mutual Consent Snapshot seal screen — dual affirm, Soft Signal mid-seal, enter session.
  * WHY: Only mutual seal of the same package may proceed to active session in the demo path.
- * CONSENT: Practice partner on one phone is rehearsal only. Withdraw requires no explanation.
+ * CONSENT: Practice partner on one phone is rehearsal only. Soft Signal mid-seal requires no explanation.
  * Grant arm dwell slows seal; Soft Signal / withdraw never waits for arm.
  * EDGE CASES:
  *   - missing self declaration → redirect CTA to prepare
- *   - existing non-withdrawn mutual loaded from vault
- *   - withdrawn or missing mutual → create practice partner + rebuild snapshot
- *   - seal button disabled until arm + all checks
- * NEVER: Do not forge remote partner yes; do not auto-seal on focus.
- * SEE: affirmParty, withdrawMutualSnapshot, useConsentGrantArm
+ *   - existing mutual only resumed when fingerprint still matches live prepare (Agent 06)
+ *   - stale fingerprint / prepare edit → rebuild + wipe checklists
+ *   - Soft Signal mid-seal abandons seal (soft_signal_while_sealing)
+ *   - seal button disabled until arm + all checks + fingerprint current
+ * NEVER: Do not forge remote partner yes; do not auto-seal on focus; do not seal stale package.
+ * SEE: affirmParty, withdrawMutualSnapshot, SoftSignalButton, useConsentGrantArm
  */
 export default function ConsentSnapshotMutualScreen() {
   // v1 App Store Safe scope: solo self-understanding only — mutual seal needs
@@ -133,12 +137,18 @@ export default function ConsentSnapshotMutualScreen() {
   const [checksA, setChecksA] = useState({ ...EMPTY_CHECKS });
   const [checksB, setChecksB] = useState({ ...EMPTY_CHECKS });
   const [error, setError] = useState("");
+  /** Soft Signal mid-seal UI phase — settled after free exit (no re-fire spam). */
+  const [softSignalState, setSoftSignalState] = useState<
+    "idle" | "stopping" | "stopped"
+  >("idle");
+  /** True when focus rebuilt because prepare fingerprint drifted (honesty banner). */
+  const [rebuiltForStale, setRebuiltForStale] = useState(false);
 
   /**
    * WHAT: Rebuild mutual snapshot from two declarations and reset both checklists.
    * WHY: Fingerprint and intersection must match current parties; stale checks must not seal.
    * CONSENT: New package starts unsealed; prior toggles wiped (fail-closed vs carry-over yes).
-   * EDGE CASES: Called when creating practice partner package on focus.
+   * EDGE CASES: Called on practice seed, prepare edit mid-seal, or corrupt fingerprint.
    * NEVER: Do not copy sealedAt from an old snap into the new rebuild.
    */
   const rebuild = useCallback(
@@ -148,20 +158,25 @@ export default function ConsentSnapshotMutualScreen() {
       // Reset toggles — package identity changed; old yes is invalid.
       setChecksA({ ...EMPTY_CHECKS });
       setChecksB({ ...EMPTY_CHECKS });
+      // Soft Signal mid-seal state re-arms only on a fresh package.
+      setSoftSignalState("idle");
       return next;
     },
     [],
   );
 
   /**
-   * WHAT: On focus, load self declaration + mutual; seed practice partner if needed.
-   * WHY: Demo path must always have a dual package without requiring a second device.
-   * CONSENT: If mutual withdrawn or missing, practice partner is synthetic and labeled in UI.
+   * WHAT: On focus, load self declaration + mutual; resume only if fingerprint still current.
+   * WHY: Demo path needs dual package; Agent 06 forbids sealing after prepare drift mid-seal.
+   * CONSENT: Practice partner synthetic and labeled; stale package rebuilds unsealed.
    * EDGE CASES:
    *   - no declaration → selfDecl null (gate screen)
-   *   - existing mutual not withdrawn → resume (may be sealed)
+   *   - existing mutual fingerprint matches live self + content → resume (may be sealed)
+   *   - existing mutual fingerprint stale / self re-prepared → rebuild with live self
+   *   - withdrawn or absent → new practice package
    *   - unmount race: active flag prevents setState after leave
-   * NEVER: Do not silently treat practice partner as remote verified human.
+   * NEVER: Do not silently treat practice partner as remote verified human;
+   *        do not resume seal when self declaration no longer matches package.
    */
   useFocusEffect(
     useCallback(() => {
@@ -177,16 +192,37 @@ export default function ConsentSnapshotMutualScreen() {
           return;
         }
         setSelfDecl(decl);
-        // Resume non-withdrawn mutual (sealed or mid-affirm persistence).
+
         if (existing && !existing.withdrawnAt) {
-          setSnap(existing);
-          setPartnerDecl(existing.partyB);
+          // Resume only when stored package identity still matches live prepare content.
+          const selfCurrent = isSelfDeclarationCurrentForMutual(existing, decl);
+          const packageCurrent = isMutualFingerprintCurrent(existing);
+          if (selfCurrent && packageCurrent) {
+            setSnap(existing);
+            setPartnerDecl(existing.partyB);
+            setRebuiltForStale(false);
+            // Sealed packages are not Soft-Signaled-stopped until user fires mid-seal again.
+            setSoftSignalState("idle");
+            return;
+          }
+          // fingerprint_stale_mid_seal: keep practice partner role when possible; wipe seal yes.
+          const partner =
+            existing.partyB.role === "partner_practice"
+              ? existing.partyB
+              : createPracticePartnerDeclaration();
+          setPartnerDecl(partner);
+          const rebuiltSnap = rebuild(decl, partner);
+          setRebuiltForStale(true);
+          // Persist the same rebuilt package so vault cannot re-load a stale seal.
+          void sessionConsentSnapshotStore.saveMutual(rebuiltSnap);
           return;
         }
+
         // Withdrawn or absent → new practice package for demo dual-seal.
         const partner = createPracticePartnerDeclaration();
         setPartnerDecl(partner);
         rebuild(decl, partner);
+        setRebuiltForStale(false);
       })();
       return () => {
         active = false;
@@ -198,15 +234,22 @@ export default function ConsentSnapshotMutualScreen() {
   const allB = Object.values(checksB).every(Boolean);
   // Content ready for arm only when package exists, not withdrawn, not already sealed.
   const contentReady = Boolean(snap && !snap.withdrawnAt && !isSealed(snap));
+  // Agent 06: fingerprintCurrent is content integrity, not merely “string present”.
+  const fingerprintCurrent = Boolean(
+    snap &&
+      isMutualFingerprintCurrent(snap) &&
+      selfDecl &&
+      isSelfDeclarationCurrentForMutual(snap, selfDecl),
+  );
   /**
-   * Grant arm: dwell after all toggles — seal is deliberately slower than withdraw.
-   * fingerprintCurrent: package present; withdrawn freezes arm false.
+   * Grant arm: dwell after all toggles — seal is deliberately slower than Soft Signal.
+   * fingerprintCurrent false freezes arm (stale prepare mid-review).
    */
   const { armed: sealArmed, armProgress } = useConsentGrantArm({
     contentReady,
     requiredTogglesAllOn: allA && allB,
-    fingerprintCurrent: Boolean(snap?.fingerprint),
-    withdrawn: Boolean(snap?.withdrawnAt),
+    fingerprintCurrent,
+    withdrawn: Boolean(snap?.withdrawnAt) || softSignalState === "stopped",
   });
 
   /**
@@ -214,19 +257,22 @@ export default function ConsentSnapshotMutualScreen() {
    * WHY: Core seals only when both parties affirmed; UI enforces arm + all checks first.
    * CONSENT: Both sides use full AffirmationChecks including Soft Signal + not safety forever.
    * EDGE CASES:
-   *   - !sealArmed → error with distinct copy for incomplete checks vs dwell
+   *   - !sealArmed → error with distinct copy for incomplete checks vs dwell vs stale fp
    *   - isSealed false after dual affirm → error (should not happen if checks complete)
    *   - affirm throws snapshot_withdrawn / already_sealed → message
    * NEVER: Do not call affirmParty for only one party and claim sealed.
+   *        Do not seal when fingerprintCurrent is false.
    */
   const seal = async () => {
     if (!snap || !selfDecl || !partnerDecl) return;
-    // Fail-closed: no seal until arm (dwell + toggles + content).
+    // Fail-closed: no seal until arm (dwell + toggles + content + fingerprint).
     if (!sealArmed) {
       setError(
-        allA && allB
-          ? "Hold a breath — seal arms after a short deliberate pause."
-          : "Every protective check must be affirmed by both sides.",
+        !fingerprintCurrent
+          ? "This package changed. Review the rebuilt snapshot before sealing."
+          : allA && allB
+            ? "Hold a breath — seal arms after a short deliberate pause."
+            : "Every protective check must be affirmed by both sides.",
       );
       return;
     }
@@ -259,19 +305,32 @@ export default function ConsentSnapshotMutualScreen() {
   };
 
   /**
-   * WHAT: Withdraw mutual package as partyA — clear seal, persist, Soft Signal haptic.
-   * WHY: Withdraw must be faster and freer than sealing; no peer, dwell, or reason.
-   * CONSENT: withdrawMutualSnapshot clears affirmations + sealedAt; Soft Signal spirit.
-   * EDGE CASES: No snap → no-op; works whether sealed or mid-checklist.
-   * NEVER: Do not require confirmation modal that traps the user; do not require explanation.
+   * WHAT: Soft Signal mid-seal — abandon seal path immediately (Agent 06 residual).
+   * WHY: soft_signal_while_sealing: stop wins; no half-sealed session activation.
+   * CONSENT: Unilateral free exit; no reason, no dwell, no peer; Soft Signal freeness.
+   * EDGE CASES:
+   *   - no snap → still settle UI as free (body freedom before package)
+   *   - already withdrawn / stopped → idempotent no-op
+   *   - works mid-checklist and after seal before enter session
+   * NEVER: Require explanation modal; complete seal after Soft Signal; wait for network.
+   * SEE: CONSENT_EDGE_CASES.soft_signal_while_sealing · SoftSignalButton
    */
-  const withdraw = async () => {
-    if (!snap) return;
-    const next = withdrawMutualSnapshot(snap, "partyA");
-    await sessionConsentSnapshotStore.saveMutual(next);
-    setSnap(next);
-    // Soft Signal haptic family — withdraw is free exit, not confirmation chime.
+  const fireMidSealSoftSignal = async () => {
+    // Idempotent: second hammer after free exit is not punished.
+    if (softSignalState === "stopped" || softSignalState === "stopping") return;
+    setSoftSignalState("stopping");
+    setError("");
+    if (snap && !snap.withdrawnAt) {
+      const next = withdrawMutualSnapshot(snap, "partyA");
+      await sessionConsentSnapshotStore.saveMutual(next);
+      setSnap(next);
+    }
+    // Soft Signal haptic family — free exit, not confirmation chime.
     void hapticService.play("softSignal");
+    setSoftSignalState("stopped");
+    // Wipe mid-form yes so a later rebuild cannot inherit partial affirm UI.
+    setChecksA({ ...EMPTY_CHECKS });
+    setChecksB({ ...EMPTY_CHECKS });
   };
 
   /**
@@ -282,8 +341,8 @@ export default function ConsentSnapshotMutualScreen() {
    * NEVER: Do not enter session from unsealed or withdrawn snap.
    */
   const enterSession = async () => {
-    // Fail-closed: active session requires dual seal now.
-    if (!snap || !isSealed(snap)) return;
+    // Fail-closed: active session requires dual seal now; Soft Signal mid-seal forbids enter.
+    if (!snap || !isSealed(snap) || softSignalState === "stopped") return;
     await scheduleDemoNotification(4);
     router.push({
       pathname: "/session/active",
@@ -323,7 +382,8 @@ export default function ConsentSnapshotMutualScreen() {
         <Text style={styles.bannerTitle}>Slow yes · free no</Text>
         <Text style={styles.bannerBody}>
           Read every row. Affirm Soft Signal. Seal only if both of you mean yes
-          for now. Withdraw is always faster than sealing — no explanation.
+          for now. Soft Signal mid-seal abandons this package immediately — no
+          explanation, no arm wait.
         </Text>
       </View>
 
@@ -334,6 +394,21 @@ export default function ConsentSnapshotMutualScreen() {
           <Text style={styles.demoBody}>
             Dual affirmation on one phone is rehearsal only. A real session
             needs two independent people. Never forge a remote yes.
+          </Text>
+        </View>
+      ) : null}
+
+      {/* Agent 06: prepare edit / fingerprint drift honesty — seal must re-arm. */}
+      {rebuiltForStale ? (
+        <View
+          style={styles.staleBanner}
+          accessible
+          accessibilityRole="alert"
+        >
+          <Text style={styles.staleTitle}>PACKAGE REBUILT</Text>
+          <Text style={styles.staleBody}>
+            Your declaration changed while this seal was open. Prior checkmarks
+            were cleared. Review every row again — Soft Signal stays free.
           </Text>
         </View>
       ) : null}
@@ -353,8 +428,8 @@ export default function ConsentSnapshotMutualScreen() {
         ))}
       </Card>
 
-      {/* Affirm UI only when unsealed and not withdrawn. */}
-      {!sealed && !snap?.withdrawnAt ? (
+      {/* Affirm UI only when unsealed, not withdrawn, and Soft Signal has not abandoned seal. */}
+      {!sealed && !snap?.withdrawnAt && softSignalState !== "stopped" ? (
         <>
           <Text style={styles.section} accessibilityRole="header">
             Your yes ({selfDecl.displayLabel})
@@ -438,7 +513,8 @@ export default function ConsentSnapshotMutualScreen() {
         </>
       ) : null}
 
-      {sealed ? (
+      {/* Sealed path only if Soft Signal has not abandoned mid-seal / post-seal. */}
+      {sealed && softSignalState !== "stopped" ? (
         <View style={styles.sealed}>
           <Text style={styles.sealedTitle}>
             {CONSENT_POINTS.snapshot_dual_seal.copy.success}
@@ -454,9 +530,13 @@ export default function ConsentSnapshotMutualScreen() {
         </View>
       ) : null}
 
-      {snap?.withdrawnAt ? (
+      {snap?.withdrawnAt || softSignalState === "stopped" ? (
         <View style={styles.withdrawn}>
-          <Text style={styles.sealedTitle}>Withdrawn</Text>
+          <Text style={styles.sealedTitle}>
+            {softSignalState === "stopped"
+              ? "Soft Signal — you are free"
+              : "Withdrawn"}
+          </Text>
           <Text style={styles.sealedBody}>
             {CONSENT_POINTS.snapshot_withdraw.copy.success}
           </Text>
@@ -465,15 +545,7 @@ export default function ConsentSnapshotMutualScreen() {
             onPress={() => router.replace("/consent-snapshot/prepare" as never)}
           />
         </View>
-      ) : (
-        // Withdraw always available until withdrawn — faster than seal, no arm.
-        <Button
-          variant="signal"
-          label={CONSENT_POINTS.snapshot_withdraw.copy.primary}
-          onPress={() => void withdraw()}
-          accessibilityHint={CONSENT_POINTS.snapshot_withdraw.a11yHint}
-        />
-      )}
+      ) : null}
 
       {error ? (
         <Text accessibilityRole="alert" style={styles.error}>
@@ -491,16 +563,36 @@ export default function ConsentSnapshotMutualScreen() {
         label="Home"
         onPress={() => router.replace("/home")}
       />
+
+      {/*
+        Soft Signal mid-seal (Agent 06): sticky free exit while reviewing/sealing/post-seal.
+        Stop wins over seal arm (soft_signal_while_sealing). Mode pack labels via SoftSignalButton.
+        Always mounted when mutual UI is live so freeness is never scroll-buried only.
+      */}
+      <View
+        style={styles.stickyExit}
+        accessibilityRole="summary"
+        accessibilityLabel="Soft Signal. Abandons this seal immediately. Always available."
+      >
+        <Text style={styles.stickyLabel}>SOFT SIGNAL · MID-SEAL</Text>
+        <SoftSignalButton
+          prominent
+          sticky
+          state={softSignalState}
+          disabled={softSignalState === "stopped"}
+          onPress={() => void fireMidSealSoftSignal()}
+        />
+      </View>
     </Screen>
   );
 }
 
 /**
- * WHAT: Theme-bound styles for mutual seal layout (banner, rows, arm track, sealed/withdrawn).
+ * WHAT: Theme-bound styles for mutual seal layout (banner, rows, arm track, Soft Signal dock).
  * WHY: useThemedStyles pure factory from AppColors.
  * CONSENT: Not a consent surface — presentation; meaning is not color-only (copy + a11y labels).
  * EDGE CASES: none — pure style map.
- * NEVER: Do not encode seal vs withdraw only by hue without text.
+ * NEVER: Do not encode seal vs Soft Signal only by hue without text.
  */
 function makeStyles(colors: AppColors) {
   return {
@@ -537,6 +629,22 @@ function makeStyles(colors: AppColors) {
       letterSpacing: 1,
     },
     demoBody: { color: colors.ink, fontSize: 14, lineHeight: 20 },
+    staleBanner: {
+      backgroundColor: colors.signalSoft,
+      borderRadius: 14,
+      padding: 14,
+      gap: 6,
+      borderWidth: 1,
+      borderColor: colors.signal,
+      marginBottom: 8,
+    },
+    staleTitle: {
+      color: colors.signal,
+      fontWeight: "800" as const,
+      fontSize: 11,
+      letterSpacing: 1,
+    },
+    staleBody: { color: colors.ink, fontSize: 14, lineHeight: 20 },
     snapshot: {
       backgroundColor: colors.paper,
       borderWidth: 1,
@@ -615,5 +723,20 @@ function makeStyles(colors: AppColors) {
     },
     sealedBody: { color: colors.muted, lineHeight: 21 },
     error: { color: colors.signal, marginTop: 8 },
+    stickyExit: {
+      borderTopWidth: 2,
+      borderTopColor: colors.signal,
+      backgroundColor: colors.cream,
+      paddingTop: 12,
+      marginTop: 16,
+      gap: 8,
+    },
+    stickyLabel: {
+      color: colors.signal,
+      fontWeight: "800" as const,
+      fontSize: 11,
+      letterSpacing: 1,
+      textAlign: "center" as const,
+    },
   };
 }

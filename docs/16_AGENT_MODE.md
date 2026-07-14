@@ -7,7 +7,7 @@
 > Sixteen specialists. One monorepo. One consent engine. Two compile-time skins.  
 > Soft Signal freeness is never a mode flag.
 
-**Gap board status:** **G1–G13 closed** (dual-mode integrity wave complete, including G11 ADR 0060 platform-primary reconcile). Remaining: Agent 06 mid-seal residual; physical App Review (external).
+**Gap board status:** **G1–G13 closed** · **Agent 06 mid-seal residual closed** (2026-07-14). Remaining: physical App Review (external); optional backlog polish (copy packs, Max diagnostics, Entry affirm, hosted CI).
 
 **This is currently a personal emotional containment system that also carries dual-mode product residue.** Documentation here must stay honest about both.
 
@@ -107,12 +107,12 @@ node --experimental-strip-types --test config/buildMode.test.ts
 
 ---
 
-## Gap board summary (as of wave 2)
+## Gap board summary (as of wave 4 / Agent 06)
 
 | Status | IDs |
 | ------ | --- |
-| **Closed** | G1–G13 (all listed dual-mode integrity gaps) |
-| **Open** | Agent 06 mid-seal residual; physical Review (external) |
+| **Closed** | G1–G13 · Agent 06 Soft Signal mid-seal + fingerprint rebuild |
+| **Open** | Physical Review (external); optional backlog items §10 |
 
 Full table + backlog: [`DUAL_MODE_16_AGENT_SWARM.md`](DUAL_MODE_16_AGENT_SWARM.md) §9–10.  
 Execution detail: [`16_AGENT_AUTISM_MODE_RUN.md`](16_AGENT_AUTISM_MODE_RUN.md).
@@ -141,4 +141,4 @@ Execution detail: [`16_AGENT_AUTISM_MODE_RUN.md`](16_AGENT_AUTISM_MODE_RUN.md).
 *Sixteen specialists. One conclusion:*  
 **The engine stays sacred. The store skin stays calm. The flags stay compile-time. Touch is never a transaction.**
 
-**Last updated:** 2026-07-13
+**Last updated:** 2026-07-14

@@ -1,9 +1,9 @@
 # 16-Agent Autism Mode — Run Log
 
-**Date:** 2026-07-13  
+**Date:** 2026-07-13 (waves 1–2) · **Agent 06 close:** 2026-07-14  
 **Index:** [`16_AGENT_MODE.md`](16_AGENT_MODE.md)  
 **Parent synthesis:** [`DUAL_MODE_16_AGENT_SWARM.md`](DUAL_MODE_16_AGENT_SWARM.md)  
-**Commits:** `3a6f2d1` (wave 1 P0) · `076049b` (wave 2 residuals)
+**Commits:** `3a6f2d1` (wave 1 P0) · `076049b` (wave 2 residuals) · Agent 06 mid-seal (this run)
 
 **Framing:** Dual-mode store integrity + containment honesty. Soft Signal freeness never reduced.
 
@@ -11,7 +11,7 @@
 
 ---
 
-## Roster disposition (waves 1 + 2)
+## Roster disposition (waves 1 + 2 + Agent 06)
 
 | # | Role | Disposition |
 | - | ---- | ----------- |
@@ -20,7 +20,7 @@
 | 03 | Consent Domain Steward | Safety-core matrix tests; soft_limit first-class in schema |
 | 04 | Soft Signal Specialist | SoftSignalButton pack-driven `button` + `hint` |
 | 05 | Onboarding Flow Designer | Maestro store path without demo (G12) |
-| 06 | Snapshot Dual-Seal Designer | Deferred (mid-seal residual — not G-board closed) |
+| 06 | Snapshot Dual-Seal Designer | **Closed 2026-07-14** — Soft Signal mid-seal + fingerprint rebuild |
 | 07 | Touch Language / Body Map Lead | **G8/G9** soft_limit preserved in completeProfile |
 | 08 | Proximity / NFC / Multipeer Gatekeeper | **G1/G2/G3/G5** gates + plugin strip + CTAs |
 | 09 | Auth / Age / Passkey Lead | **G7** migration 044 + GUC |
@@ -62,23 +62,37 @@
 | G11 | ADR 0060 resolution order aligned to platform-primary code |
 | — | Relationship Model → Flood / Aftercare / Home wiring |
 
+## Wave 4 — Agent 06 residual (2026-07-14)
+
+| ID | Gap | Fix |
+| -- | --- | --- |
+| Agent 06 | Soft Signal mid-seal absent on mutual | Sticky `SoftSignalButton` on `/consent-snapshot/mutual`; `withdrawMutualSnapshot` + softSignal haptic; stop wins over seal arm |
+| Agent 06 | Fingerprint rebuild on prepare edit | `fingerprintForMutualParties` · `isMutualFingerprintCurrent` · `isSelfDeclarationCurrentForMutual`; focus rebuild + vault persist; prepare `clearMutual` on re-save |
+| Agent 06 | Stale fingerprint could keep seal | `parseMutualSnapshot` wipes affirmations + `sealedAt` when stored fingerprint ≠ content |
+| Agent 06 | DEMO banner / mode Soft Signal copy | DEMO practice-partner banner retained; Soft Signal labels pack-driven via SoftSignalButton |
+
+---
+
 ## Still open (honest)
 
 | ID | Gap | Why open |
 | -- | --- | -------- |
-| — | Soft Signal mid-seal / fingerprint rebuild (Agent 06 backlog) | not on G-board as closed |
-| — | Physical Review submission | external; not inventable |
+| — | Physical App Review submission | external; not inventable |
+| backlog 9 | Expand App Store copy packs (Home/Safety/trauma chrome) | presentation polish; Soft Signal freeness unaffected |
+| backlog 11 | Maximum diagnostics constitution panel | Max-only craft |
+| backlog 14 | Platonic adult affirm on Entry | onboarding copy |
+| backlog 15 | Dual-env + SPM in hosted CI | local `parity:features` exists |
 
 ---
 
-## Verification run (wave 2)
+## Verification run (wave 2 + Agent 06)
 
 ```text
 npm run parity:features
 → Feature parity OK (14 keys × 2 modes). Soft Signal stop always true on both sides.
 
-node --experimental-strip-types --test config/buildMode.test.ts
-→ 15/15 pass
+node --experimental-strip-types --test lib/sessionConsentSnapshotCore.test.ts
+→ 7/7 pass (includes Agent 06 fingerprint + mid-seal + parse stale wipe)
 ```
 
 ---
@@ -86,9 +100,10 @@ node --experimental-strip-types --test config/buildMode.test.ts
 ## Law reaffirmed
 
 - Soft Signal stop · dual seal · age gate · profile≠consent · fail-closed = **always on**
+- Soft Signal mid-seal abandons seal; never completes after stop
 - Mode changes presentation + RF only
 - No runtime unlock from App Store Safe → Maximum
 
 ---
 
-**Last updated:** 2026-07-13 (documentation pack)
+**Last updated:** 2026-07-14 (Agent 06 mid-seal residual closed)

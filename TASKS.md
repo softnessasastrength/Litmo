@@ -12,12 +12,12 @@ Only one implementation task should normally be `active`. Every status change mu
 
 ### DUAL-16-001 — Sixteen-agent dual-mode autism swarm
 
-- **Status:** completed (documentation pack 2026-07-13; code waves 1–2 same day)
+- **Status:** completed (waves 1–3 2026-07-13; Agent 06 residual 2026-07-14)
 - **Owner:** multi-agent swarm + orchestrator
 - **Goal:** Close dual-mode store integrity gaps (G1–G13) without weakening Soft Signal freeness.
-- **Result:** G1–G10, G12–G13 closed. Residual G11 ADR 0060 prose. Index: `docs/16_AGENT_MODE.md` · synthesis `docs/DUAL_MODE_16_AGENT_SWARM.md` · run `docs/16_AGENT_AUTISM_MODE_RUN.md`.
-- **Verification:** `npm run parity:features`; app `buildMode.test.ts` 15/15; commits `3a6f2d1` · `076049b`.
-- **Residual:** G11; Soft Signal mid-seal (Agent 06 backlog); physical Review.
+- **Result:** G1–G13 closed. Agent 06 Soft Signal mid-seal + fingerprint rebuild closed. Index: `docs/16_AGENT_MODE.md` · synthesis `docs/DUAL_MODE_16_AGENT_SWARM.md` · run `docs/16_AGENT_AUTISM_MODE_RUN.md`.
+- **Verification:** `npm run parity:features`; `sessionConsentSnapshotCore.test.ts` 7/7 (Agent 06 cases).
+- **Residual:** physical Review (external); optional backlog polish only.
 
 ### NUCLEAR-001 — Six-agent nuclear swarm (constitution + harden)
 

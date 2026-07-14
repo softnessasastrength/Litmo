@@ -162,13 +162,14 @@ export default function ConsentSnapshotPrepareScreen() {
   };
 
   /**
-   * WHAT: Gate Soft Signal checks, persist declaration, navigate to mutual seal screen.
+   * WHAT: Gate Soft Signal checks, persist declaration, invalidate prior mutual, open seal screen.
    * WHY: Mutual path must not open without a valid local prepare + Soft Signal understanding.
    * CONSENT: Save is still prepare-only; mutual.tsx performs dual affirm separately.
    * EDGE CASES:
    *   - incomplete ssChecks → error, no network/vault write
+   *   - prior mutual cleared so fingerprint_stale_mid_seal cannot keep old seal (Agent 06)
    *   - store throw → user-visible error
-   * NEVER: Do not navigate to /session/active from prepare.
+   * NEVER: Do not navigate to /session/active from prepare; do not keep sealed mutual after re-prepare.
    */
   const saveAndContinue = async () => {
     // Fail-closed: all three Soft Signal statements must be affirmed before persist.
@@ -194,6 +195,8 @@ export default function ConsentSnapshotPrepareScreen() {
         updatedAt: now,
       });
       setDecl(next);
+      // Agent 06: re-prepare invalidates any in-flight mutual package (fail-closed).
+      await sessionConsentSnapshotStore.clearMutual();
       void hapticService.play("confirmation");
       // Mutual seal is the next consent phase — not active session.
       router.push("/consent-snapshot/mutual" as never);

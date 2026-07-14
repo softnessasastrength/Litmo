@@ -76,8 +76,9 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
   engineering again").
 - **Relationship Model v0.2 perfect:** bond map on essentially all containment
   hubs (`docs/RELATIONSHIP_MODEL.md` complete table + `BondMapBanner`).
-- **Dual-mode G1–G13 closed.** Prefer **use** cathedral over infinite expand.
-- Still open (external/physical): Watch smoke, VoiceOver smoke, Agent 06 mid-seal.
+- **Dual-mode G1–G13 closed.** Agent 06 Soft Signal mid-seal + fingerprint rebuild closed 2026-07-14.
+- Prefer **use** cathedral over infinite expand.
+- Still open (external/physical): Watch smoke, VoiceOver smoke, physical App Review.
 - Soft Signal freeness never reduced. Follow `docs/REAL_PURPOSE.md`.
 
 ## Verification baseline
