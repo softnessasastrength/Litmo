@@ -1,8 +1,10 @@
 # 16-agent dual-mode architecture swarm
 
 **Status:** canonical synthesis of a 16-role design swarm  
-**Date:** 2026-07-14  
+**Date:** 2026-07-14 (gap board updated 2026-07-13 autism runs)  
 **Modes:** `MAXIMUM_MODE` (macOS/Linux/internal) · `APP_STORE_SAFE` (iOS default)  
+**Operator index:** [16_AGENT_MODE.md](16_AGENT_MODE.md)  
+**Latest run log:** [16_AGENT_AUTISM_MODE_RUN.md](16_AGENT_AUTISM_MODE_RUN.md)  
 **Parent:** [DUAL_MODE_ARCHITECTURE.md](DUAL_MODE_ARCHITECTURE.md) · [ADR 0060](adr/0060-dual-build-modes.md)
 
 > One monorepo. One consent engine. Two compile-time skins.  
@@ -350,28 +352,26 @@ L1 Constitution → L2 ADR 0060 → L3 BUILD_MODES + DUAL_MODE_ARCHITECTURE
 
 ## 10. Unified implementation backlog (priority)
 
-### P0 — Store integrity (ship-blockers)
+### Done in autism mode waves 1–2
 
-1. **Gate Multipeer + radar + collapse RF CTAs** (Agents 08, 10, 14)  
-2. **Mode-aware Soft Signal chrome end-to-end** (Agent 04)  
-3. **`release:check` EAS mode pins** (Agents 02, 14)  
-4. **Server reject dev age attest in production** (Agent 09)
+1. ~~Gate Multipeer + radar + collapse RF CTAs~~ **done** (G1/G2/G5)  
+2. ~~Mode-aware Soft Signal chrome end-to-end~~ **done** (G4)  
+3. ~~`release:check` EAS mode pins~~ **done** (G6)  
+4. ~~Server reject dev age attest in production~~ **done** (G7)  
+5. ~~Conditional NFC/Bonjour plugins for app_store prebuild~~ **done** (G3)  
+6. ~~soft_limit onboarding + server fidelity~~ **done** (G8/G9)  
+8. ~~TS↔Swift parity script~~ **done** (G10 · `npm run parity:features`)  
+12. ~~Privacy wipe honesty~~ **done** (G13)  
+13. ~~Maestro app-store without demo~~ **done** (G12)
 
-### P1 — Fidelity & parity
+### Still open
 
-5. Conditional NFC/Bonjour plugins for app_store prebuild (08, 10)  
-6. soft_limit onboarding + server fidelity (07)  
 7. Soft Signal mid-seal + fingerprint rebuild on mutual (06)  
-8. Dual-env + SPM in CI; TS↔Swift parity (14, 12)  
-9. Expand App Store copy packs (Home/Safety/trauma chrome) (10, 15)
-
-### P2 — Stewardship & experience
-
-10. Doc graph in DOCUMENTATION_MAP + CONTINUITY (16)  
+9. Expand App Store copy packs (Home/Safety/trauma chrome) (10, 15)  
+10. Doc graph polish / G11 ADR 0060 prose reconcile (16)  
 11. Maximum diagnostics constitution panel (11)  
-12. Privacy class×mode matrix + wipe honesty (13)  
-13. Maestro dual Soft Signal tracks (14)  
-14. Platonic adult affirm on Entry (05)
+14. Platonic adult affirm on Entry (05)  
+15. Dual-env + SPM in hosted CI (14, 12) — local parity script exists
 
 ---
 

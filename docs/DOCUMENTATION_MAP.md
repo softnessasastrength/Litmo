@@ -75,8 +75,9 @@ Use these documents when modifying or reviewing implemented behavior:
 - [`CODE_COMMENT_STANDARD.md`](CODE_COMMENT_STANDARD.md) — mandatory in-code WHAT/WHY/CONSENT/EDGE/NEVER documentation bar
 - [`BUILD_MODES.md`](BUILD_MODES.md) — Maximum vs App Store Safe dual-mode operator manual (ADR 0060)
 - [`DUAL_MODE_ARCHITECTURE.md`](DUAL_MODE_ARCHITECTURE.md) — full folder tree, SPM, flags, consent flows by mode
+- [`16_AGENT_MODE.md`](16_AGENT_MODE.md) — **operator index** for 16-agent dual-mode mode (read first)
 - [`DUAL_MODE_16_AGENT_SWARM.md`](DUAL_MODE_16_AGENT_SWARM.md) — 16-role swarm synthesis: gaps, backlog, flow matrix
-- [`16_AGENT_AUTISM_MODE_RUN.md`](16_AGENT_AUTISM_MODE_RUN.md) — latest autism-mode run (P0 dual-mode gates)
+- [`16_AGENT_AUTISM_MODE_RUN.md`](16_AGENT_AUTISM_MODE_RUN.md) — latest autism-mode execution log (waves 1–2)
 - [`APPLE_PRIVACY_5_1_1.md`](APPLE_PRIVACY_5_1_1.md) — App Store deletion/privacy honesty (G13)
 - [`SOFT_SIGNAL.md`](SOFT_SIGNAL.md) — Soft Signal product system (app, hardware contract, private log)
 - [`LOCAL_FIRST.md`](LOCAL_FIRST.md) — local-first personal vault + optional encrypted cloud backup

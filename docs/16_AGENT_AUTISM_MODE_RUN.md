@@ -1,37 +1,40 @@
 # 16-Agent Autism Mode — Run Log
 
 **Date:** 2026-07-13  
-**Parent:** [`DUAL_MODE_16_AGENT_SWARM.md`](DUAL_MODE_16_AGENT_SWARM.md)  
+**Index:** [`16_AGENT_MODE.md`](16_AGENT_MODE.md)  
+**Parent synthesis:** [`DUAL_MODE_16_AGENT_SWARM.md`](DUAL_MODE_16_AGENT_SWARM.md)  
+**Commits:** `3a6f2d1` (wave 1 P0) · `076049b` (wave 2 residuals)
+
 **Framing:** Dual-mode store integrity + containment honesty. Soft Signal freeness never reduced.
 
 > Sixteen specialists. Maximum granularity. Engine stays sacred. Store skin stays calm.
 
 ---
 
-## Roster disposition (this run)
+## Roster disposition (waves 1 + 2)
 
-| # | Role | This run |
-| - | ---- | -------- |
-| 01 | Monorepo Systems Architect | release:check EAS pin asserts |
-| 02 | Compile-Time Flags Engineer | EAS pins + feature gate surfaces |
-| 03 | Consent Domain Steward | Safety-core matrix tests (RF off, Soft Signal on) |
-| 04 | Soft Signal Specialist | SoftSignalButton pack-driven labels/hints |
-| 05 | Onboarding Flow Designer | deferred (no P0 regression) |
-| 06 | Snapshot Dual-Seal Designer | deferred |
-| 07 | Touch Language / Body Map Lead | deferred soft_limit (P1 residual) |
-| 08 | Proximity / NFC / Multipeer Gatekeeper | **G1/G2/G5 closed** — share/local, radar, Home/Settings CTAs |
-| 09 | Auth / Age / Passkey Lead | **G7** migration 044 reject dev attest without GUC |
-| 10 | App Review Survival Specialist | FeatureUnavailable honest copy |
+| # | Role | Disposition |
+| - | ---- | ----------- |
+| 01 | Monorepo Systems Architect | EAS pin asserts; parity script entry |
+| 02 | Compile-Time Flags Engineer | EAS pins; RF plugin strip in `app.config.ts` |
+| 03 | Consent Domain Steward | Safety-core matrix tests; soft_limit first-class in schema |
+| 04 | Soft Signal Specialist | SoftSignalButton pack-driven `button` + `hint` |
+| 05 | Onboarding Flow Designer | Maestro store path without demo (G12) |
+| 06 | Snapshot Dual-Seal Designer | Deferred (mid-seal residual — not G-board closed) |
+| 07 | Touch Language / Body Map Lead | **G8/G9** soft_limit preserved in completeProfile |
+| 08 | Proximity / NFC / Multipeer Gatekeeper | **G1/G2/G3/G5** gates + plugin strip + CTAs |
+| 09 | Auth / Age / Passkey Lead | **G7** migration 044 + GUC |
+| 10 | App Review Survival Specialist | FeatureUnavailable; **G13** 5.1.1 honesty |
 | 11 | Maximum Mode Experience Lead | RF remains Maximum-only |
-| 12 | macOS Native + SPM Lead | deferred parity CI |
-| 13 | Security / Local-First / Privacy Lead | wipe keys already cover containment; RF not leaked in store UI |
-| 14 | CI / Test Matrix Engineer | buildMode tests + release pin checks |
-| 15 | Accessibility / ND / Trauma Lead | Soft Signal a11y labels retained; pack hint still no-reason |
-| 16 | Docs / ADR / Stewardship Lead | this file + gap board update + CHANGELOG |
+| 12 | macOS Native + SPM Lead | **G10** Swift side of parity:features |
+| 13 | Security / Local-First / Privacy Lead | Wipe honesty; delete-data card |
+| 14 | CI / Test Matrix Engineer | buildMode tests; release pins; parity; Maestro |
+| 15 | Accessibility / ND / Trauma Lead | Soft Signal a11y retained; no-reason pack |
+| 16 | Docs / ADR / Stewardship Lead | Index `16_AGENT_MODE.md`; gap board; this log |
 
 ---
 
-## Gaps closed
+## Gaps closed — wave 1 (P0)
 
 | ID | Gap | Fix |
 | -- | --- | --- |
@@ -42,7 +45,7 @@
 | G6 | release:check lacks EAS mode pins | validate-release.mjs pins production/preview/dev/max |
 | G7 | Server accepts dev attest in prod | migration 044 + GUC `app.litmo_allow_dev_age_attest` |
 
-## Wave 2 residuals (also closed)
+## Gaps closed — wave 2
 
 | ID | Gap | Fix |
 | -- | --- | --- |
@@ -56,7 +59,21 @@
 
 | ID | Gap | Why open |
 | -- | --- | -------- |
-| G11 | ADR 0060 prose vs platform-primary code | doc reconcile residual |
+| G11 | ADR 0060 prose vs platform-primary code | doc reconcile residual only |
+| — | Soft Signal mid-seal / fingerprint rebuild (Agent 06 backlog) | not on G-board as closed |
+| — | Physical Review submission | external; not inventable |
+
+---
+
+## Verification run (wave 2)
+
+```text
+npm run parity:features
+→ Feature parity OK (14 keys × 2 modes). Soft Signal stop always true on both sides.
+
+node --experimental-strip-types --test config/buildMode.test.ts
+→ 15/15 pass
+```
 
 ---
 
@@ -68,4 +85,4 @@
 
 ---
 
-**Last updated:** 2026-07-13
+**Last updated:** 2026-07-13 (documentation pack)

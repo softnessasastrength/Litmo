@@ -39,6 +39,16 @@ Product-era chapter **SAFETY-OPS-001** is **residue** unless the human explicitl
 
 If the human asks for product engineering again, resume residual technical docs under containment honesty — still not market theater.
 
+## 16-agent dual-mode mode
+
+When the human says **“16 agent mode”**, **“16 agent autism mode”**, or equivalent:
+
+1. Read `docs/16_AGENT_MODE.md` (operator index).  
+2. Read gap board in `docs/DUAL_MODE_16_AGENT_SWARM.md` §9.  
+3. Prefer open gaps only; Soft Signal freeness never reduced.  
+4. Update `docs/16_AGENT_AUTISM_MODE_RUN.md` when work lands.  
+5. Run `npm run parity:features` if flags/Swift change.
+
 ## What “continue” means
 
 When instructed to “continue,” “continue the plan,” or equivalent:

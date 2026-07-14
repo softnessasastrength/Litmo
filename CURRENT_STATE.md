@@ -67,7 +67,9 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 ## Exact next action
 
 - Done: **16-agent autism mode** P0+P1 gaps G1–G10, G12–G13 closed.
-  Residual: G11 ADR 0060 prose reconcile. See `docs/16_AGENT_AUTISM_MODE_RUN.md`.
+  Residual: G11 ADR 0060 prose reconcile.
+- **Docs index:** `docs/16_AGENT_MODE.md` · run log `docs/16_AGENT_AUTISM_MODE_RUN.md`
+  · synthesis `docs/DUAL_MODE_16_AGENT_SWARM.md`.
 - Containment cook still on main (Pre-Renn · Weather · Flood · Field Notes…).
 - Physical Watch + VoiceOver smoke still open.
 - Follow `docs/REAL_PURPOSE.md`.

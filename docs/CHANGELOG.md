@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — 16-agent mode documentation pack
+
+Operator index `docs/16_AGENT_MODE.md` (roster, law, code map, re-run
+protocol). Run log updated for waves 1–2. Swarm gap board + backlog marked
+done/open. DOCUMENTATION_MAP entry point.
+
 ## 2026-07-13 — 16-agent autism mode wave 2 (G3/G8–G13)
 
 Conditional NFC/Bonjour plugins (app_store strip), soft_limit fidelity in

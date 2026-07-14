@@ -15,6 +15,16 @@ The founder originates the vision and currently holds decision authority, but th
 
 Litmo is therefore treated as a stewarded project rather than a personality-dependent artifact.
 
+## Dual-mode / 16-agent continuity
+
+When dual build modes or App Store Safe vs Maximum are in play, stewards start at:
+
+- [`16_AGENT_MODE.md`](16_AGENT_MODE.md) — operator index  
+- [`DUAL_MODE_16_AGENT_SWARM.md`](DUAL_MODE_16_AGENT_SWARM.md) — roster + gap board  
+- [`16_AGENT_AUTISM_MODE_RUN.md`](16_AGENT_AUTISM_MODE_RUN.md) — last execution truth  
+
+Do not leave gap status only in chat. Soft Signal freeness is never a mode flag.
+
 ## Continuity requirements
 
 The project must preserve, in the repository:
