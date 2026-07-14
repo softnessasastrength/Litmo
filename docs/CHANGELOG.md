@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-13 — Dual-mode residual polish (Agent 16)
+
+BUILD_MODES resolution algorithm aligned to platform-primary (iOS family →
+app_store; not ios+staging|production). G11 note clarified in ADR 0060.
+Relationship Model wiring noted in CONTAINMENT_SYSTEM; G1–G13 closed stamp on
+16_AGENT_MODE + CURRENT_STATE. Soft Signal freeness unchanged.
+
 ## 2026-07-13 — Overnight autonomous: model→Flood/Aftercare/Home + G11
 
 Flood start/exit updates bond phase; Aftercare mode primed from phase; Home

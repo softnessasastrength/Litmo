@@ -82,11 +82,14 @@ Swift SPM: `packages/LitmoBuildMode/`.
               Soft Signal stop · dual seal · age gate · fail closed
 ```
 
-### Resolution algorithm (`resolveBuildMode`)
+### Resolution algorithm (`resolveBuildMode`) — platform-primary
 
-1. If `EXPO_PUBLIC_LITMO_BUILD_MODE` is set → parse (aliases: `max`, `store`, `review`, …). Invalid → **throw**.  
-2. Else if platform is `ios` and env is `staging` or `production` → `app_store`.  
-3. Else → `maximum`.
+Source of truth: `app/config/buildMode.ts` · ADR 0060 (G11 reconciled).
+
+1. If `EXPO_PUBLIC_LITMO_BUILD_MODE` is set → parse (aliases: `max`, `store`, `review`, …). Invalid → **throw**. Explicit env always wins (EAS pins; internal Maximum iOS).  
+2. Else if platform is **iOS family** (`ios` | `iphoneos` | `iphonesimulator` | `ipados` | `tvos`) → `app_store`  
+   (including development iOS — staging vs production does **not** flip mode).  
+3. Else (macOS, Linux, Android, web, unknown) → `maximum`.
 
 **There is no in-app toggle** to “upgrade” an App Store binary to Maximum. That would violate store integrity and Review rules. Ship a different profile.
 

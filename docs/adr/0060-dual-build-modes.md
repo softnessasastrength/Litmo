@@ -41,10 +41,11 @@ Implemented in `app/config/buildMode.ts` `resolveBuildMode`:
    (including development iOS — not only staging/production)
 3. Else (**macOS**, **Linux**, Android, web, unknown) → `maximum`
 
-**Note (G11 reconcile 2026-07-13):** Earlier ADR prose said “ios + staging|production
-only.” That was superseded by product law: **any iOS family defaults to App Store
-Safe** so a mis-set APP_ENV cannot ship Maximum RF to a phone. Staging vs production
-no longer flips iOS mode.
+**Note (G11 reconcile 2026-07-13 — closed):** Earlier ADR prose said “ios +
+staging|production only.” That was wrong relative to code and product law.
+**Any iOS family defaults to App Store Safe** (including development) so a
+mis-set `APP_ENV` cannot ship Maximum RF to a phone. Staging vs production no
+longer flips iOS mode. Operator manual: `docs/BUILD_MODES.md` §3.
 
 ### Non-negotiable in BOTH modes
 

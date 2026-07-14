@@ -7,6 +7,8 @@
 > Sixteen specialists. One monorepo. One consent engine. Two compile-time skins.  
 > Soft Signal freeness is never a mode flag.
 
+**Gap board status:** **G1–G13 closed** (dual-mode integrity wave complete, including G11 ADR 0060 platform-primary reconcile). Remaining: Agent 06 mid-seal residual; physical App Review (external).
+
 **This is currently a personal emotional containment system that also carries dual-mode product residue.** Documentation here must stay honest about both.
 
 ---
