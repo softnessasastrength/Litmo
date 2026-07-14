@@ -46,7 +46,7 @@ The purpose above is still true and still primary. This adds to it; it does not 
 
 **Governing values (2026-07-14):** the Seven Pillars from softnessasastrength.com now sit alongside this file as the value layer for the younger-me work specifically: Softness Is Strength · Do the Hard Thing · Live in the Gray · Be the Mirror You Needed · Healing Is a Collective Act · Authenticity Over Performance · Grace Over Guilt. Pillar 6 is why `docs/THE_2_382_DOCTRINE.md` exists and is never "fixed." Pillar 7 is `docs/LETTERS_TO_HIM.md` / `/letters-to-him` — deliberately not a sequence, not scored, not tracked; the one chamber this project doesn't get to turn into homework.
 
-**Pillar coverage as of 2026-07-14:** 6 of 7 pillars now have a home in the codebase. Pillar 5, "Healing Is a Collective Act," is the deliberate remaining gap — a literal community/shared feature would contradict `ROADMAP.md`'s own "deliberately deferred: open stranger discovery, public scores." Honoring it without breaking that boundary means static, non-user-generated content, not infrastructure — an open question, not yet a chamber.
+**Pillar coverage as of 2026-07-14:** 7 of 7 pillars now have a home in the codebase. Pillar 5, "Healing Is a Collective Act," is honored by `docs/FORK_YOUR_OWN_CATHEDRAL.md` — not a hosted platform (that would contradict `ROADMAP.md`'s own "deliberately deferred: open stranger discovery, public scores"), but a real, clone-and-run toolkit (`scripts/consecrate-your-cathedral.mjs`) so someone else's fear can get the same architecture without ever touching this founder's data, account, or story.
 
 This is still not a startup pitch. It's the same honesty, aimed at one more person than just me.
 

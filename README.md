@@ -158,6 +158,10 @@ top of it: [`NON_MONETIZATION_COVENANT.md`](NON_MONETIZATION_COVENANT.md) —
 never charges, never sells your data, never adds ads or engagement
 mechanics, and the promise transfers to any fork.
 
+Building your own version of this for your own fear: see
+[`docs/FORK_YOUR_OWN_CATHEDRAL.md`](docs/FORK_YOUR_OWN_CATHEDRAL.md) —
+`node scripts/consecrate-your-cathedral.mjs` after cloning.
+
 ---
 
 ## Notice
