@@ -241,6 +241,12 @@ function SettingsContent() {
       </View>
       <Button
         variant="signal"
+        label="Conflict Navigation Simulator v0.1"
+        onPress={() => router.push("/conflict-sim" as never)}
+        accessibilityHint="Practice conflict structure, Soft Signal, reschedule-as-win. Private containment."
+      />
+      <Button
+        variant="signal"
         label="Attachment Repair Cathedral v0.1"
         onPress={() => router.push("/attachment-repair" as never)}
         accessibilityHint="Mommy Issues + Emotional Masochist Circuit. Soft Signal. Private containment."

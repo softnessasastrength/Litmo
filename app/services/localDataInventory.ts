@@ -20,6 +20,10 @@ import { summarizeHistory } from "../lib/spooningCore.ts";
 import { spooningStore } from "./spooningStore.ts";
 import { summarizeMorningHistory } from "../lib/morningCuddleCore.ts";
 import { morningCuddleStore } from "./morningCuddleStore.ts";
+import { summarizeRepairHistory } from "../lib/attachmentRepairCore.ts";
+import { attachmentRepairStore } from "./attachmentRepairStore.ts";
+import { summarizeConflictHistory } from "../lib/conflictSimCore.ts";
+import { conflictSimStore } from "./conflictSimStore.ts";
 
 export type LocalInventory = {
   collected_at: string;
@@ -55,6 +59,17 @@ export type LocalInventory = {
     session_count: number;
     soft_signal_exits: number;
     no_spiral_plus: number;
+  };
+  attachment_repair: {
+    history_present: boolean;
+    session_count: number;
+    soft_signal_exits: number;
+  };
+  conflict_sim: {
+    history_present: boolean;
+    session_count: number;
+    soft_signal_exits: number;
+    reschedule_count: number;
   };
   notes: string[];
 };
@@ -230,6 +245,42 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     notes.push("morning_cuddle_history_unreadable");
   }
 
+  let attachment_repair: LocalInventory["attachment_repair"] = {
+    history_present: false,
+    session_count: 0,
+    soft_signal_exits: 0,
+  };
+  try {
+    const repairs = await attachmentRepairStore.load();
+    const r = summarizeRepairHistory(repairs);
+    attachment_repair = {
+      history_present: r.total > 0,
+      session_count: r.total,
+      soft_signal_exits: r.soft_signal_exits,
+    };
+  } catch {
+    notes.push("attachment_repair_history_unreadable");
+  }
+
+  let conflict_sim: LocalInventory["conflict_sim"] = {
+    history_present: false,
+    session_count: 0,
+    soft_signal_exits: 0,
+    reschedule_count: 0,
+  };
+  try {
+    const conflicts = await conflictSimStore.load();
+    const c = summarizeConflictHistory(conflicts);
+    conflict_sim = {
+      history_present: c.total > 0,
+      session_count: c.total,
+      soft_signal_exits: c.soft_signal,
+      reschedule_count: c.reschedule,
+    };
+  } catch {
+    notes.push("conflict_sim_history_unreadable");
+  }
+
   return {
     collected_at: new Date().toISOString(),
     offline_ready: true,
@@ -255,6 +306,8 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     dojo,
     spooning,
     morning_cuddle,
+    attachment_repair,
+    conflict_sim,
     notes,
   };
 }

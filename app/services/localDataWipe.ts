@@ -30,6 +30,8 @@ const EXTRA_ASYNC_KEYS = [
   "litmo.morning_cuddle.history.v1",
   /** Attachment Repair Cathedral history (mommy issues / masochist circuit). */
   "litmo.attachment_repair.history.v1",
+  /** Conflict Navigation Simulator history. */
+  "litmo.conflict_sim.history.v1",
 ];
 
 const EXTRA_SECURE_KEYS = [

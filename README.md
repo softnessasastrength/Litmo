@@ -68,6 +68,7 @@ Do not pretend this is therapy.
 | **Attachment Repair Cathedral** | Mommy issues + masochistic over-protocoling |
 | **Spooning Protocol** | Intimacy anxiety as sealable joke-spec |
 | **Morning Cuddle Protocol** | 7:42am neediness spiral before coffee |
+| **Conflict Navigation Simulator** | Terror of conflict as a practice room |
 | ND Mode / docs / dual modes | Volume knobs + freeze morality in pages |
 
 Full map: [`docs/CONTAINMENT_SYSTEM.md`](docs/CONTAINMENT_SYSTEM.md).  

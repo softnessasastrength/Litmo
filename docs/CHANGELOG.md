@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — Conflict Navigation Simulator v0.1
+
+Solo rehearsal / Soft Signal First / Flood / Repair Script. Issue seal, body
+check, I-statement builder, moves (ask/pause/reschedule/Soft Signal), debrief
+joke ledger. Inventory counts for cathedral + conflict. `/conflict-sim`.
+
 ## 2026-07-13 — Attachment Repair Cathedral v0.1
 
 Mommy Issues Reassurance Ritual + Emotional Masochist Circuit + Soft Landing +

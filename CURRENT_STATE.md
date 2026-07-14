@@ -66,8 +66,8 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
-- Done recently: **Spooning Protocol v0.1** (`/spooning`, `docs/SPOONING_PROTOCOL.md`) + radical honesty stamp.
-- Follow `docs/REAL_PURPOSE.md`. Prefer honest naming / Option A craft over product theater. Next silly-useful candidates: Conflict Navigation Simulator, Interest Reverse Engineering.
+- Done recently: Conflict Navigation Simulator, Attachment Repair Cathedral, Morning Cuddle, Spooning.
+- Follow `docs/REAL_PURPOSE.md`. Next silly-useful: Interest Reverse Engineering, “I’m Not Ready To Get Up Yet,” containment hub screen.
 
 ## Verification baseline
 
