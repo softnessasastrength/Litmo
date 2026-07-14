@@ -61,6 +61,7 @@ This is not a diagnosis. It’s a field guide.
 | **Attachment Repair Cathedral** (`/attachment-repair`) | Mommy Issues Reassurance + Emotional Masochist Circuit | Hold abandonment/need-to-be-wanted loops; name masochistic over-protocoling; Soft Signal + Yellow; joke ledger | Mommy issues; emotional masochism; attachment panic |
 | **Conflict Navigation Simulator** (`/conflict-sim`) | Solo rehearsal / flood / repair script | Hold terror of conflict + shame of never navigating it; Soft Signal / reschedule as valid wins | Conflict terror; freeze/fawn; prosecutor-brain |
 | **Interest Reverse Engineering** (`/interest-re`) | Want vs should vs fawn inventory | Hold “is my yes real or performance?” so fake interest is less likely to hit Renn raw | Fawn; performing desire; ambiguity shame |
+| **I'm Not Ready To Get Up Yet** (`/not-ready-yet`) | Snooze negotiation + exit script | Hold morning exit guilt / need for more hold before the day | Neediness guilt; bed-as-safety; hard start |
 | **Containment Hub** (`/containment`) | Single door UI | Index all personal protocols so Home isn’t a buffet; stamp honesty once | Meta: too many rituals (D23-adjacent) |
 
 ---

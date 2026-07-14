@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — I'm Not Ready To Get Up Yet v0.1
+
+Morning snooze protocol: reason + snooze unit seal, timer, one +5 extend,
+Soft Signal, exit script, optional partner line, debrief ledger. Hub +
+Morning Cuddle cross-link. `/not-ready-yet`.
+
 ## 2026-07-13 — Interest Reverse Engineering v0.1
 
 Want vs should vs fawn signal inventory, honesty labels (clear yes/no,

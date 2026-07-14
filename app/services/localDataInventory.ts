@@ -26,6 +26,8 @@ import { summarizeConflictHistory } from "../lib/conflictSimCore.ts";
 import { conflictSimStore } from "./conflictSimStore.ts";
 import { summarizeInterestHistory } from "../lib/interestReCore.ts";
 import { interestReStore } from "./interestReStore.ts";
+import { summarizeNotReadyHistory } from "../lib/notReadyYetCore.ts";
+import { notReadyYetStore } from "./notReadyYetStore.ts";
 
 export type LocalInventory = {
   collected_at: string;
@@ -78,6 +80,12 @@ export type LocalInventory = {
     session_count: number;
     performing_count: number;
     soft_signal_exits: number;
+  };
+  not_ready_yet: {
+    history_present: boolean;
+    session_count: number;
+    soft_signal_exits: number;
+    im_up_count: number;
   };
   notes: string[];
 };
@@ -308,6 +316,25 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     notes.push("interest_re_history_unreadable");
   }
 
+  let not_ready_yet: LocalInventory["not_ready_yet"] = {
+    history_present: false,
+    session_count: 0,
+    soft_signal_exits: 0,
+    im_up_count: 0,
+  };
+  try {
+    const nry = await notReadyYetStore.load();
+    const n = summarizeNotReadyHistory(nry);
+    not_ready_yet = {
+      history_present: n.total > 0,
+      session_count: n.total,
+      soft_signal_exits: n.soft_signal,
+      im_up_count: n.im_up,
+    };
+  } catch {
+    notes.push("not_ready_yet_history_unreadable");
+  }
+
   return {
     collected_at: new Date().toISOString(),
     offline_ready: true,
@@ -336,6 +363,7 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     attachment_repair,
     conflict_sim,
     interest_re,
+    not_ready_yet,
     notes,
   };
 }

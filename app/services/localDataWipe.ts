@@ -36,6 +36,8 @@ const EXTRA_ASYNC_KEYS = [
   "litmo.lofi.ambient.prefs.v1",
   /** Interest Reverse Engineering history. */
   "litmo.interest_re.history.v1",
+  /** I'm Not Ready Yet snooze history. */
+  "litmo.not_ready_yet.history.v1",
 ];
 
 const EXTRA_SECURE_KEYS = [

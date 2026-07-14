@@ -70,6 +70,7 @@ Do not pretend this is therapy.
 | **Morning Cuddle Protocol** | 7:42am neediness spiral before coffee |
 | **Conflict Navigation Simulator** | Terror of conflict as a practice room |
 | **Interest Reverse Engineering** | Want vs should vs performing yes |
+| **I'm Not Ready To Get Up Yet** | Morning snooze / exit guilt |
 | ND Mode / docs / dual modes | Volume knobs + freeze morality in pages |
 
 Full map: [`docs/CONTAINMENT_SYSTEM.md`](docs/CONTAINMENT_SYSTEM.md).  

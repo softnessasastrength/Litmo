@@ -18,6 +18,7 @@ Links:
 | -------- | ----- |
 | Containment Lo-Fi | `/containment/lofi` |
 | Interest Reverse Engineering | `/interest-re` |
+| I'm Not Ready To Get Up Yet | `/not-ready-yet` |
 | Conflict Navigation Simulator | `/conflict-sim` |
 | Attachment Repair Cathedral | `/attachment-repair` |
 | Morning Cuddle Protocol | `/morning-cuddle` |

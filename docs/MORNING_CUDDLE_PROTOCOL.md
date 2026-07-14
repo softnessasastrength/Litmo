@@ -108,9 +108,12 @@ Sister protocol: [`SPOONING_PROTOCOL.md`](SPOONING_PROTOCOL.md) (anytime edition
 
 ---
 
+## Sister protocol
+
+**I'm Not Ready To Get Up Yet** — `/not-ready-yet` · [`IM_NOT_READY_YET.md`](IM_NOT_READY_YET.md)
+
 ## Future
 
-- “I'm Not Ready To Get Up Yet” sub-protocol  
 - Watch rising-wave Good Morning Haptic (native)  
 
 **Last updated:** 2026-07-13

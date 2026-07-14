@@ -44,6 +44,8 @@ We are **leaning all the way into it**:
 - Soft Signal as God Mode  
 - Joke trust ledgers that are not public scores  
 - Interest Reverse Engineering (want vs should vs fawn)  
+- I'm Not Ready To Get Up Yet (morning snooze / exit)  
+
 
 
 The comedy and absurdity are not a bug. They are how this stays survivable and fun while Option A (keep building) is chosen.

@@ -53,6 +53,13 @@ const PROTOCOLS: readonly HubItem[] = [
     tag: "ATTACHMENT",
   },
   {
+    href: "/not-ready-yet",
+    title: "I'm Not Ready To Get Up Yet",
+    blurb:
+      "Snooze negotiation, exit script, Soft Signal. Bed is a sovereign nation.",
+    tag: "SNOOZE",
+  },
+  {
     href: "/morning-cuddle",
     title: "Morning Cuddle Protocol",
     blurb:

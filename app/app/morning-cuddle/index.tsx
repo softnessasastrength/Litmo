@@ -724,6 +724,11 @@ export default function MorningCuddleScreen() {
         />
         <Button
           variant="secondary"
+          label="I'm Not Ready To Get Up Yet"
+          onPress={() => router.push("/not-ready-yet" as never)}
+        />
+        <Button
+          variant="secondary"
           label={`Local history (${summary.total})`}
           onPress={() => {
             void reloadHistory();
