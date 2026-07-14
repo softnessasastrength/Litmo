@@ -59,7 +59,7 @@ export default function ContainmentLofiScreen() {
             public product.
           </Text>
           <Body muted>
-            In-app playback via expo-av. Streams CC BY 4.0 Kevin MacLeod
+            In-app playback via expo-audio. Streams CC BY 4.0 Kevin MacLeod
             (incompetech.com). Comedy titles are ours; credit the real artists.
             Stop/mute anytime — Soft Signal of sound.
           </Body>

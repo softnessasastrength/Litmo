@@ -90,14 +90,14 @@ Not real songs. Ritual flavor text for the app index:
 
 ---
 
-## In-app (expo-av)
+## In-app (expo-audio)
 
 **Route:** `/containment/lofi`
 
 | Piece | Role |
 | ----- | ---- |
 | `app/lib/lofiCatalog.ts` | Track catalog, comedy titles, CC URIs |
-| `app/services/lofiAmbientPlayer.ts` | Singleton expo-av player (loop, volume, mute, next/prev) |
+| `app/services/lofiAmbientPlayer.ts` | Singleton expo-audio player (loop, volume, mute, next/prev) |
 | Prefs | AsyncStorage `litmo.lofi.ambient.prefs.v1` (wiped with local data) |
 
 **Playback sources (remote HTTPS MP3):** Kevin MacLeod / incompetech.com  
@@ -108,7 +108,7 @@ https://creativecommons.org/licenses/by/4.0/
 
 Soft Signal of sound = **Stop** / **Mute** anytime. Needs network for first buffer.
 
-Dependency: `expo-av` (heavy deps OK).
+Dependency: `expo-audio` (SDK 55). **Not** `expo-av` — EXAV fails to compile on Xcode 27 / current ExpoModulesCore.
 
 ---
 

@@ -1,9 +1,9 @@
 # Changelog
 
-## 2026-07-13 — Containment Lo-Fi player (expo-av)
+## 2026-07-13 — Containment Lo-Fi player (expo-audio)
 
-In-app ambient player: `expo-av` + Kevin MacLeod CC BY 4.0 remote MP3s mapped
-to protocols (comedy titles + required attribution). Play/pause/next/prev,
+In-app ambient player: `expo-audio` (not expo-av — Xcode 27 EXAV break) +
+Kevin MacLeod CC BY 4.0 remote MP3s mapped to protocols. Play/pause/next/prev,
 volume, mute, stop (Soft Signal of sound). Prefs wiped with local data.
 
 ## 2026-07-13 — Containment Lo-Fi map

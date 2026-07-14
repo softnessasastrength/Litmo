@@ -1,8 +1,15 @@
 /**
- * In-app Containment Lo-Fi ambient player (expo-av).
+ * In-app Containment Lo-Fi ambient player (expo-audio).
  * Singleton — one stream at a time. Soft Signal of sound = stop/mute free.
+ *
+ * NOTE: expo-av was removed — it fails to compile EXAV on Expo SDK 55 / Xcode 27
+ * (missing ExpoModulesCore/EXEventEmitter.h). expo-audio is the supported path.
  */
-import { Audio, type AVPlaybackStatus } from "expo-av";
+import {
+  createAudioPlayer,
+  setAudioModeAsync,
+  type AudioPlayer,
+} from "expo-audio";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   LOFI_TRACKS,
@@ -42,10 +49,11 @@ const defaultStatus = (): LofiPlayerStatus => ({
 });
 
 class LofiAmbientPlayer {
-  private sound: Audio.Sound | null = null;
+  private player: AudioPlayer | null = null;
   private status: LofiPlayerStatus = defaultStatus();
   private listeners = new Set<Listener>();
   private modeReady = false;
+  private poll: ReturnType<typeof setInterval> | null = null;
 
   getStatus(): LofiPlayerStatus {
     return this.status;
@@ -66,6 +74,33 @@ class LofiAmbientPlayer {
   private set(partial: Partial<LofiPlayerStatus>) {
     this.status = { ...this.status, ...partial };
     this.emit();
+  }
+
+  private startPoll() {
+    if (this.poll) return;
+    this.poll = setInterval(() => {
+      if (!this.player) return;
+      try {
+        this.set({
+          isPlaying: this.player.playing,
+          isLoading: this.player.isBuffering && !this.player.isLoaded,
+          positionMillis: Math.floor(this.player.currentTime * 1000),
+          durationMillis:
+            this.player.duration > 0
+              ? Math.floor(this.player.duration * 1000)
+              : null,
+        });
+      } catch {
+        // player may be released mid-poll
+      }
+    }, 500);
+  }
+
+  private stopPoll() {
+    if (this.poll) {
+      clearInterval(this.poll);
+      this.poll = null;
+    }
   }
 
   async hydratePrefs(): Promise<void> {
@@ -106,31 +141,26 @@ class LofiAmbientPlayer {
 
   private async ensureMode(): Promise<void> {
     if (this.modeReady) return;
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      playsInSilentModeIOS: true,
-      staysActiveInBackground: false,
-      shouldDuckAndroid: true,
-      playThroughEarpieceAndroid: false,
+    await setAudioModeAsync({
+      playsInSilentMode: true,
+      shouldPlayInBackground: false,
+      interruptionMode: "duckOthers",
     });
     this.modeReady = true;
   }
 
-  private onPlaybackStatus = (raw: AVPlaybackStatus) => {
-    if (!raw.isLoaded) {
-      if ("error" in raw && raw.error) {
-        this.set({ error: String(raw.error), isLoading: false, isPlaying: false });
+  private disposePlayer() {
+    this.stopPoll();
+    if (this.player) {
+      try {
+        this.player.pause();
+        this.player.remove();
+      } catch {
+        // ignore
       }
-      return;
+      this.player = null;
     }
-    this.set({
-      isPlaying: raw.isPlaying,
-      isLoading: false,
-      positionMillis: raw.positionMillis,
-      durationMillis: raw.durationMillis ?? null,
-      error: null,
-    });
-  };
+  }
 
   async playTrack(trackId: string): Promise<void> {
     const track = findLofiTrack(trackId);
@@ -146,23 +176,21 @@ class LofiAmbientPlayer {
     });
     try {
       await this.ensureMode();
-      if (this.sound) {
-        await this.sound.unloadAsync();
-        this.sound.setOnPlaybackStatusUpdate(null);
-        this.sound = null;
-      }
-      const { sound } = await Audio.Sound.createAsync(
+      this.disposePlayer();
+      const player = createAudioPlayer(
         { uri: track.uri },
-        {
-          shouldPlay: true,
-          isLooping: true,
-          volume: this.status.isMuted ? 0 : this.status.volume,
-          progressUpdateIntervalMillis: 500,
-        },
-        this.onPlaybackStatus,
+        { updateInterval: 500, downloadFirst: true },
       );
-      this.sound = sound;
-      this.set({ isPlaying: true, isLoading: false, error: null });
+      player.loop = true;
+      player.volume = this.status.isMuted ? 0 : this.status.volume;
+      player.play();
+      this.player = player;
+      this.startPoll();
+      this.set({
+        isPlaying: true,
+        isLoading: false,
+        error: null,
+      });
       await this.persistPrefs();
     } catch (e) {
       this.set({
@@ -177,22 +205,18 @@ class LofiAmbientPlayer {
   }
 
   async togglePlay(): Promise<void> {
-    if (!this.sound) {
+    if (!this.player) {
       if (this.status.trackId) await this.playTrack(this.status.trackId);
       return;
     }
     try {
-      const st = await this.sound.getStatusAsync();
-      if (!st.isLoaded) {
-        if (this.status.trackId) await this.playTrack(this.status.trackId);
-        return;
-      }
-      if (st.isPlaying) {
-        await this.sound.pauseAsync();
+      if (this.player.playing) {
+        this.player.pause();
         this.set({ isPlaying: false });
       } else {
-        await this.sound.playAsync();
+        this.player.play();
         this.set({ isPlaying: true });
+        this.startPoll();
       }
     } catch (e) {
       this.set({
@@ -203,16 +227,7 @@ class LofiAmbientPlayer {
 
   /** Soft Signal of sound — stop fully. */
   async stop(): Promise<void> {
-    try {
-      if (this.sound) {
-        await this.sound.stopAsync();
-        await this.sound.unloadAsync();
-        this.sound.setOnPlaybackStatusUpdate(null);
-        this.sound = null;
-      }
-    } catch {
-      this.sound = null;
-    }
+    this.disposePlayer();
     this.set({
       isPlaying: false,
       isLoading: false,
@@ -224,8 +239,9 @@ class LofiAmbientPlayer {
   async setMuted(muted: boolean): Promise<void> {
     this.set({ isMuted: muted });
     try {
-      if (this.sound) {
-        await this.sound.setVolumeAsync(muted ? 0 : this.status.volume);
+      if (this.player) {
+        this.player.muted = muted;
+        this.player.volume = muted ? 0 : this.status.volume;
       }
     } catch {
       // ignore
@@ -237,8 +253,8 @@ class LofiAmbientPlayer {
     const v = clampVolume(volume);
     this.set({ volume: v });
     try {
-      if (this.sound && !this.status.isMuted) {
-        await this.sound.setVolumeAsync(v);
+      if (this.player && !this.status.isMuted) {
+        this.player.volume = v;
       }
     } catch {
       // ignore
