@@ -27,6 +27,7 @@ These documents define why Litmo exists *right now*:
 - **[`ATTACHMENT_REPAIR_PROTOCOL.md`](ATTACHMENT_REPAIR_PROTOCOL.md)** — Attachment Repair Cathedral (mommy issues + emotional masochist)
 - **[`CONFLICT_NAVIGATION_SIMULATOR.md`](CONFLICT_NAVIGATION_SIMULATOR.md)** — Conflict Navigation Simulator v0.1
 - **[`CONTAINMENT_HUB.md`](CONTAINMENT_HUB.md)** — single door UI for all personal protocols
+- **[`CONTAINMENT_LOFI.md`](CONTAINMENT_LOFI.md)** — lo-fi soundtrack map for containment rituals
 - Root [`CONSTITUTION.md`](../CONSTITUTION.md) — `litmo-constitution-v4-containment`
 
 ### Secondary layers (useful, not primary stamp)

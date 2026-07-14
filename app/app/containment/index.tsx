@@ -25,6 +25,13 @@ type HubItem = {
 
 const PROTOCOLS: readonly HubItem[] = [
   {
+    href: "/containment/lofi",
+    title: "Containment Lo-Fi",
+    blurb:
+      "Protocol-matched chill: Safety Spoon in D♭, Gremlin Needs 8 Minutes, Edge Is Capped. Streams external.",
+    tag: "LO-FI",
+  },
+  {
     href: "/conflict-sim",
     title: "Conflict Navigation Simulator",
     blurb:

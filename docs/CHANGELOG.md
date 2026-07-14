@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — Containment Lo-Fi
+
+Protocol-matched lo-fi map (`docs/CONTAINMENT_LOFI.md`) + in-app
+`/containment/lofi` index (external Chillhop / free libraries; no bundled
+copyright audio). Comedy track titles; mute = Soft Signal of sound.
+
 ## 2026-07-13 — Containment Hub
 
 Single `/containment` door for all personal protocols (conflict, cathedral,
