@@ -8,7 +8,8 @@
 **Containment map:** [`docs/CONTAINMENT_SYSTEM.md`](docs/CONTAINMENT_SYSTEM.md)  
 **Secondary layers:** [`docs/EXORCISM_MANIFESTO.md`](docs/EXORCISM_MANIFESTO.md) · [`docs/TRAUMA_ARCHITECTURE.md`](docs/TRAUMA_ARCHITECTURE.md)  
 **Technical twin (historical product law):** [`docs/LITMO_CONSTITUTION.md`](docs/LITMO_CONSTITUTION.md)  
-**Peer document, different binding:** [`CLAUDE_CONSTITUTION.md`](CLAUDE_CONSTITUTION.md) — this document binds the containment system itself; that one binds the AI collaborator's ethical posture toward the founder.
+**Peer document, different binding:** [`CLAUDE_CONSTITUTION.md`](CLAUDE_CONSTITUTION.md) — this document binds the containment system itself; that one binds the AI collaborator's ethical posture toward the founder.  
+**Values pledge:** [`NON_MONETIZATION_COVENANT.md`](NON_MONETIZATION_COVENANT.md) — never charges, never sells data, never adds ads or engagement mechanics; transfers to any fork.
 
 ---
 

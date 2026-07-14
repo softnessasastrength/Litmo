@@ -153,6 +153,11 @@ More: `docs/LOCAL_DEVELOPMENT.md` · `docs/MACHINE_SETUP.md`
 Private personal project. Treat access accordingly.  
 I can stop, archive, or delete this when containment is no longer the job.
 
+Distributed under MPL 2.0 (see `LICENSE`) plus a plain-language promise on
+top of it: [`NON_MONETIZATION_COVENANT.md`](NON_MONETIZATION_COVENANT.md) —
+never charges, never sells your data, never adds ads or engagement
+mechanics, and the promise transfers to any fork.
+
 ---
 
 ## Notice
