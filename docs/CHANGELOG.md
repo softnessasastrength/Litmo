@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-07-14 — Relationship Model fuzz test + clampAxis NaN fix
+
+Added `relationshipModelCore.fuzz.test.ts`: seeded PRNG throws 500 randomized/
+adversarial drafts and raw payloads per run at `createModel`, `parseBundle`,
+`setPhase`, `updateAxes`, `linkConstitution`, asserting `modelIsNotConsent` /
+`softSignalAcknowledged` never flip and axes always clamp to an integer 1-5.
+Caught a real bug on first run: `clampAxis` let `NaN` (e.g. corrupted storage,
+non-numeric input) pass through `Math.round`/`Math.min`/`Math.max` untouched
+and get cast as a valid axis value. Fixed by falling back to neutral 3 when
+the coerced value isn't finite. No new dependency.
+
+## 2026-07-14 — Relationship Model → Constitution link (v0.2.1)
+
+`constitutionRef` was a dead field since v0.1. Wired `linkConstitution()` /
+`unlinkConstitution()`: reference-only pointer (`title (vN)`) to a
+Relationship Constitution snapshot, reversible, never pulls articles in,
+never touches the hard invariants. New "Constitution link" card on the
+Relationship Model screen. Core test added.
+
 ## 2026-07-13 — Relationship Model v0.2 perfect inventory
 
 Shared `BondMapBanner`; remaining hubs: Parallel · Apology · Field Notes ·

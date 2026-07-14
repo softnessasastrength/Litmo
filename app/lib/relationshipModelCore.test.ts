@@ -15,6 +15,9 @@ import {
   aftercareModeFromPhase,
   enterFloodProtect,
   exitFloodTowardSteady,
+  linkConstitution,
+  unlinkConstitution,
+  formatConstitutionRef,
 } from "./relationshipModelCore.ts";
 import { computeVerdict } from "./preRennGateCore.ts";
 
@@ -123,5 +126,30 @@ describe("relationship model", () => {
     assert.equal(aftercareModeFromPhase("repair_needed"), "after_conflict");
     assert.equal(aftercareModeFromPhase("flood_protect"), "after_flood");
     assert.equal(aftercareModeFromPhase("celebration"), "after_good_thing");
+  });
+
+  it("constitution link is reference-only and reversible", () => {
+    const d = {
+      ...defaultDraft(),
+      label: "bond",
+      phase: "steady" as const,
+      softSignalAcknowledged: true,
+    };
+    let m = createModel(d)!;
+    assert.equal(m.constitutionRef, null);
+
+    const doc = { id: "con-1", title: "Our Constitution", version: 3 };
+    const linked = linkConstitution(m, doc);
+    m = linked.model;
+    assert.equal(m.constitutionRef, formatConstitutionRef(doc));
+    assert.equal(linked.event.kind, "constitution_linked");
+    // linking must never touch the hard invariants
+    assert.equal(m.modelIsNotConsent, true);
+    assert.equal(m.softSignalAcknowledged, true);
+
+    const unlinked = unlinkConstitution(m);
+    m = unlinked.model;
+    assert.equal(m.constitutionRef, null);
+    assert.equal(unlinked.event.kind, "constitution_linked");
   });
 });

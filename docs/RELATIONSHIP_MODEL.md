@@ -39,6 +39,15 @@ Phase changes and axis updates append a local event log (last 100).
 5. Wipeable via local data wipe.  
 6. Soft Signal ends never force a “happy” phase rewrite unless explicitly designed (see table).
 
+## Constitution link
+
+`constitutionRef` (v0.2.1) optionally points at a Relationship Constitution
+snapshot — `linkConstitution()` / `unlinkConstitution()` in
+`relationshipModelCore.ts`. **Reference only:** it stores a display string
+(`title (vN)`), never pulls articles into the bond map, never edits the
+constitution, and unlinking is always available. Wired in the Relationship
+Model screen under a dedicated "Constitution link" card.
+
 ---
 
 ## Wired consumers (complete map)

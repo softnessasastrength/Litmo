@@ -23,9 +23,11 @@ import {
   defaultDraft,
   exportModelText,
   findPhase,
+  linkConstitution,
   modelSummaryLine,
   recommendFromModel,
   setPhase,
+  unlinkConstitution,
   updateAxes,
   type RelationshipAxes,
   type RelationshipEvent,
@@ -36,6 +38,7 @@ import {
   type ClosenessStyle,
 } from "../../lib/relationshipModelCore";
 import { relationshipModelStore } from "../../services/relationshipModelStore";
+import { relationshipConstitutionStore } from "../../services/relationshipConstitutionStore";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 import type { AppColors } from "../../theme";
@@ -93,6 +96,23 @@ export default function RelationshipModelScreen() {
   const bumpAxis = async (key: keyof RelationshipAxes, value: 1 | 2 | 3 | 4 | 5) => {
     if (!model) return;
     const { model: next, event } = updateAxes(model, { [key]: value });
+    await persist(next, [event, ...events].slice(0, 100));
+  };
+
+  const linkCurrentConstitution = async () => {
+    if (!model) return;
+    const doc = await relationshipConstitutionStore.load();
+    const { model: next, event } = linkConstitution(model, {
+      id: doc.id,
+      title: doc.title,
+      version: doc.version,
+    });
+    await persist(next, [event, ...events].slice(0, 100));
+  };
+
+  const unlinkCurrentConstitution = async () => {
+    if (!model) return;
+    const { model: next, event } = unlinkConstitution(model);
     await persist(next, [event, ...events].slice(0, 100));
   };
 
@@ -183,6 +203,27 @@ export default function RelationshipModelScreen() {
               <Body muted>Notes: {model.operatingNotes}</Body>
             ) : null}
             <Body muted>Phase blurb: {phase.blurb}</Body>
+          </Card>
+
+          <Card>
+            <Text style={styles.h}>Constitution link</Text>
+            <Body muted>
+              {model.constitutionRef
+                ? `Linked: ${model.constitutionRef}`
+                : "Not linked. Optional — reference only, never pulls articles into this map."}
+            </Body>
+            <Button
+              variant="secondary"
+              label={model.constitutionRef ? "Re-link current version" : "Link current constitution"}
+              onPress={() => void linkCurrentConstitution()}
+            />
+            {model.constitutionRef ? (
+              <Button
+                variant="secondary"
+                label="Unlink"
+                onPress={() => void unlinkCurrentConstitution()}
+              />
+            ) : null}
           </Card>
 
           <Text style={styles.h}>Suggested protocols</Text>

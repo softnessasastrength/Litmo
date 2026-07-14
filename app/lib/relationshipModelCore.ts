@@ -84,7 +84,8 @@ export type RelationshipEventKind =
   | "note"
   | "repair_entered"
   | "soft_signal_culture_check"
-  | "created";
+  | "created"
+  | "constitution_linked";
 
 export type RelationshipEvent = {
   id: string;
@@ -234,7 +235,12 @@ export function createModel(d: RelationshipModelDraft): RelationshipModel | null
 }
 
 function clampAxis(n: number | undefined): 1 | 2 | 3 | 4 | 5 {
-  const v = Math.max(1, Math.min(5, Math.round(n ?? 3)));
+  const base = typeof n === "number" ? n : Number(n);
+  const rounded = Math.round(base);
+  // NaN/Infinity (bad storage data, malicious payloads) fall back to neutral 3
+  // instead of silently propagating as an invalid axis value.
+  const safe = Number.isFinite(rounded) ? rounded : 3;
+  const v = Math.max(1, Math.min(5, safe));
   return v as 1 | 2 | 3 | 4 | 5;
 }
 
@@ -283,6 +289,63 @@ export function updateAxes(
     at: now,
     kind: "axes_update",
     summary: `Axes updated · capacity ${axes.capacity} · conflict ${axes.conflictClimate}`,
+    phaseAfter: model.phase,
+  };
+  return { model: next, event };
+}
+
+/** Constitution doc shape (duck-typed to avoid circular import with relationshipConstitutionCore). */
+export type ConstitutionRefLite = {
+  id: string;
+  title: string;
+  version: number;
+};
+
+/** Format a constitution doc into the compact ref string stored on the model. */
+export function formatConstitutionRef(doc: ConstitutionRefLite): string {
+  return `${doc.title} (v${doc.version})`;
+}
+
+/**
+ * Link the bond map to a Relationship Constitution snapshot. Reference only —
+ * never pulls articles in, never edits the constitution, never implies consent.
+ */
+export function linkConstitution(
+  model: RelationshipModel,
+  doc: ConstitutionRefLite,
+): { model: RelationshipModel; event: RelationshipEvent } {
+  const now = new Date().toISOString();
+  const ref = formatConstitutionRef(doc);
+  const next: RelationshipModel = {
+    ...model,
+    constitutionRef: ref,
+    updatedAt: now,
+  };
+  const event: RelationshipEvent = {
+    id: `evt-${Date.now()}`,
+    at: now,
+    kind: "constitution_linked",
+    summary: `Linked constitution: ${ref}`,
+    phaseAfter: model.phase,
+  };
+  return { model: next, event };
+}
+
+/** Unlink without deleting the constitution itself. */
+export function unlinkConstitution(
+  model: RelationshipModel,
+): { model: RelationshipModel; event: RelationshipEvent } {
+  const now = new Date().toISOString();
+  const next: RelationshipModel = {
+    ...model,
+    constitutionRef: null,
+    updatedAt: now,
+  };
+  const event: RelationshipEvent = {
+    id: `evt-${Date.now()}`,
+    at: now,
+    kind: "constitution_linked",
+    summary: `Unlinked constitution`,
     phaseAfter: model.phase,
   };
   return { model: next, event };
