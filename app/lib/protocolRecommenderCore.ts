@@ -15,6 +15,7 @@ export type ProtocolRec = {
 };
 
 const CATALOG: readonly { href: string; title: string; tags: string[] }[] = [
+  { href: "/relationship-model", title: "Relationship Model", tags: ["attachment", "repair", "hold"] },
   { href: "/flood", title: "Flood Protocol", tags: ["flooded", "rest", "soft_signal"] },
   { href: "/pre-renn", title: "Pre-Renn Gate", tags: ["dump", "urge", "reach"] },
   { href: "/weather", title: "Nervous System Weather", tags: ["daily", "check"] },
@@ -114,6 +115,7 @@ export function recommendProtocols(input: RecommenderInput): ProtocolRec[] {
   bump("/weather", 1, "Daily weather is free.");
   bump("/pre-renn", 1, "Gate before reach is free.");
   bump("/aftercare", 1, "Landing is free.");
+  bump("/relationship-model", 1, "Bond map is free.");
 
   if (input.softSignalHeavy) {
     bump("/soft-signal/practice", 3, "You asked for Soft Signal weight.");

@@ -70,6 +70,7 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
   Residual: G11 ADR 0060 prose reconcile.
 - **Docs index:** `docs/16_AGENT_MODE.md` · run log `docs/16_AGENT_AUTISM_MODE_RUN.md`
   · synthesis `docs/DUAL_MODE_16_AGENT_SWARM.md`.
+- **Relationship Model** v0.1: `/relationship-model` · `docs/RELATIONSHIP_MODEL.md`.
 - Containment cook still on main (Pre-Renn · Weather · Flood · Field Notes…).
 - Physical Watch + VoiceOver smoke still open.
 - Follow `docs/REAL_PURPOSE.md`.

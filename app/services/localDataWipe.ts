@@ -53,6 +53,7 @@ const EXTRA_ASYNC_KEYS = [
   "litmo.flood_protocol.history.v1",
   "litmo.apology_craft.history.v1",
   "litmo.field_notes.v1",
+  "litmo.relationship_model.v1",
 ];
 
 const EXTRA_SECURE_KEYS = [

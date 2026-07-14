@@ -16,6 +16,7 @@ Links:
 
 | Protocol | Route |
 | -------- | ----- |
+| Relationship Model | `/relationship-model` |
 | Flood Protocol | `/flood` |
 | Pre-Renn Regulation Gate | `/pre-renn` |
 | Nervous System Weather | `/weather` |

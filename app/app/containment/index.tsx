@@ -39,6 +39,13 @@ type HubItem = {
 
 const PROTOCOLS: readonly HubItem[] = [
   {
+    href: "/relationship-model",
+    title: "Relationship Model",
+    blurb:
+      "Living bond map: phase, axes, attachment weather. Not consent. Soft Signal free.",
+    tag: "BOND",
+  },
+  {
     href: "/flood",
     title: "Flood Protocol",
     blurb:

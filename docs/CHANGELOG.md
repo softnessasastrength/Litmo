@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — Relationship Model v0.1
+
+Living private bond map: operating phase, closeness style, attachment weather,
+climate axes (capacity / conflict / closeness / Soft Signal culture). Not
+consent, not a score. Protocol suggestions + constitution link. Soft Signal free.
+
 ## 2026-07-13 — 16-agent mode documentation pack
 
 Operator index `docs/16_AGENT_MODE.md` (roster, law, code map, re-run
