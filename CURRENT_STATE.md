@@ -66,8 +66,8 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
-- Done recently: **I Need You But I'm Scared You'll Leave** dual-bind ritual + Too Much v0.2 + Spooning v0.2 + full suite.
-- Follow `docs/REAL_PURPOSE.md`.
+- Done recently: batch 10–16 (reconcile, parallel play, watch complications, constitution, masochist mode, debrief lab, manifesto).
+- Follow `docs/REAL_PURPOSE.md` · manifesto: `docs/SELF_ROAST_SELF_LOVE_MANIFESTO.md`.
 
 ## Verification baseline
 

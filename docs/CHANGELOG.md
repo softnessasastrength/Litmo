@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-13 — Containment batch 10–16
+
+Post-Fight Reconciliation (5 archetypes), Parallel Play Sacred, Watch
+complications spec + ReassuranceComplication, Relationship Constitution
+(versioned amendments), Emotional Masochist Mode, Private Debrief Lab,
+Self-Roast/Self-Love manifesto.
+
 ## 2026-07-13 — I Need You But I'm Scared You'll Leave v0.1
 
 Maximum-granularity dual-bind attachment ritual: need poles + fear poles,

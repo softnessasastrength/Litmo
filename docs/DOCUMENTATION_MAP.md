@@ -32,6 +32,7 @@ These documents define why Litmo exists *right now*:
 - **[`IM_NOT_READY_YET.md`](IM_NOT_READY_YET.md)** — morning snooze / exit containment
 - **[`TOO_MUCH_ABANDONMENT.md`](TOO_MUCH_ABANDONMENT.md)** — too much / fear of abandonment panic room
 - **[`NEED_SCARED_LEAVE.md`](NEED_SCARED_LEAVE.md)** — dual-bind need + scared you'll leave ritual
+- **[`POST_FIGHT_RECONCILIATION.md`](POST_FIGHT_RECONCILIATION.md)** · **[`PARALLEL_PLAY_SACRED.md`](PARALLEL_PLAY_SACRED.md)** · **[`RELATIONSHIP_CONSTITUTION.md`](RELATIONSHIP_CONSTITUTION.md)** · **[`EMOTIONAL_MASOCHIST_MODE.md`](EMOTIONAL_MASOCHIST_MODE.md)** · **[`PRIVATE_DEBRIEF_LAB.md`](PRIVATE_DEBRIEF_LAB.md)** · **[`WATCH_COMPLICATIONS.md`](WATCH_COMPLICATIONS.md)** · **[`SELF_ROAST_SELF_LOVE_MANIFESTO.md`](SELF_ROAST_SELF_LOVE_MANIFESTO.md)**
 - Root [`CONSTITUTION.md`](../CONSTITUTION.md) — `litmo-constitution-v4-containment`
 
 ### Secondary layers (useful, not primary stamp)

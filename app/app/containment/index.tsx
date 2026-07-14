@@ -25,10 +25,40 @@ type HubItem = {
 
 const PROTOCOLS: readonly HubItem[] = [
   {
+    href: "/masochist-mode",
+    title: "Emotional Masochist Mode",
+    blurb: "Global denser/ritualized toggle. Soft Signal freeness never reduced.",
+    tag: "MODE",
+  },
+  {
+    href: "/debrief-lab",
+    title: "Private Debrief Lab",
+    blurb: "Useful local data, controlled tags, not creepy. Wipeable.",
+    tag: "DATA",
+  },
+  {
+    href: "/reconcile",
+    title: "Post-Fight Reconciliation",
+    blurb: "5 repair archetypes: accountable, soft return, pause, body-first, comic relief.",
+    tag: "REPAIR",
+  },
+  {
+    href: "/parallel-play",
+    title: "Parallel Play But Make It Sacred",
+    blurb: "Non-touch closeness. Same-room silence, tea, side-by-side work.",
+    tag: "PARALLEL",
+  },
+  {
+    href: "/relationship-constitution",
+    title: "Relationship Constitution",
+    blurb: "Living articles, version control, amendment log. Not legal.",
+    tag: "LAW",
+  },
+  {
     href: "/containment/lofi",
     title: "Containment Lo-Fi",
     blurb:
-      "Protocol-matched chill: Safety Spoon in D♭, Gremlin Needs 8 Minutes, Edge Is Capped. Streams external.",
+      "Protocol-matched chill: Safety Spoon in D♭, Gremlin Needs 8 Minutes, Edge Is Capped.",
     tag: "LO-FI",
   },
   {

@@ -42,6 +42,11 @@ const EXTRA_ASYNC_KEYS = [
   "litmo.too_much.history.v1",
   /** I Need You But I'm Scared You'll Leave dual-bind history. */
   "litmo.need_scared.history.v1",
+  "litmo.reconcile.history.v1",
+  "litmo.parallel_play.history.v1",
+  "litmo.relationship_constitution.v1",
+  "litmo.masochist_mode.v1",
+  "litmo.private_debrief.log.v1",
 ];
 
 const EXTRA_SECURE_KEYS = [
