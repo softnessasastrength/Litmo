@@ -55,11 +55,25 @@ export function canSealPreRenn(d: PreRennDraft): { ok: boolean; reason: string }
   return { ok: true, reason: "Ready." };
 }
 
+export type VerdictBias = {
+  /** Force at least this severity floor */
+  minVerdict?: GateVerdict;
+  extraReasons?: string[];
+  extraHrefs?: string[];
+};
+
+const VERDICT_RANK: Record<GateVerdict, number> = {
+  green: 0,
+  yellow: 1,
+  red: 2,
+};
+
 /** Pure verdict: red = do not dump; yellow = regulate first; green = careful ok. */
 export function computeVerdict(
   bodyFlood: number,
   urgeToText: number,
   purpose: string,
+  bias?: VerdictBias,
 ): { verdict: GateVerdict; reasons: string[]; recommendedHrefs: string[] } {
   const reasons: string[] = [];
   const hrefs: string[] = [];
@@ -85,6 +99,13 @@ export function computeVerdict(
   if (bodyFlood >= 4 || urgeToText >= 5) verdict = "red";
   else if (bodyFlood >= 3 || urgeToText >= 3 || purposeEmpty) verdict = "yellow";
 
+  // Relationship model bias: can raise severity floor, never lower Soft Signal freeness.
+  if (bias?.minVerdict && VERDICT_RANK[bias.minVerdict] > VERDICT_RANK[verdict]) {
+    verdict = bias.minVerdict;
+  }
+  if (bias?.extraReasons?.length) reasons.push(...bias.extraReasons);
+  if (bias?.extraHrefs?.length) hrefs.push(...bias.extraHrefs);
+
   if (verdict === "red") {
     hrefs.unshift("/soft-signal/practice", "/too-much");
   } else if (verdict === "yellow") {
@@ -97,7 +118,7 @@ export function computeVerdict(
     if (seen.has(h)) return false;
     seen.add(h);
     return true;
-  }).slice(0, 5);
+  }).slice(0, 6);
 
   if (reasons.length === 0) {
     reasons.push("No red flags named. Soft Signal still free if that changes mid-reach.");
@@ -106,13 +127,17 @@ export function computeVerdict(
   return { verdict, reasons, recommendedHrefs };
 }
 
-export function sealPreRenn(d: PreRennDraft): PreRennSnapshot | null {
+export function sealPreRenn(
+  d: PreRennDraft,
+  bias?: VerdictBias,
+): PreRennSnapshot | null {
   if (!canSealPreRenn(d).ok || d.bodyFlood == null || d.urgeToText == null)
     return null;
   const { verdict, reasons, recommendedHrefs } = computeVerdict(
     d.bodyFlood,
     d.urgeToText,
     d.purpose,
+    bias,
   );
   return {
     id: `pre-renn-${Date.now()}`,

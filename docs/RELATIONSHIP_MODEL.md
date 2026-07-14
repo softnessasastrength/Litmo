@@ -43,6 +43,14 @@ Phase changes and axis updates append a local event log (last 100).
 
 `recommendFromModel` maps phase + axes + weather → containment routes (flood, pre-renn, reconcile, need-scared, spooning, etc.) without surveillance.
 
+### Wired consumers (v0.1.1)
+
+| Surface | Behavior |
+| ------- | -------- |
+| **Hub** | Bond map banner + top 3 model recs |
+| **Pre-Renn** | Delay primed from capacity/phase; verdict bias (extra reasons/hrefs; yellow floor if flood_protect) — Soft Signal freeness unchanged |
+| **Weather** | “Apply sky → bond model” updates phase/capacity axes locally |
+
 Links well with:
 
 - `/relationship-constitution` — living articles  

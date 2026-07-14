@@ -25,10 +25,16 @@ import {
 } from "../../lib/masochistModeCore";
 import { privateDebriefStore } from "../../services/privateDebriefStore";
 import { weatherStore } from "../../services/weatherStore";
+import { relationshipModelStore } from "../../services/relationshipModelStore";
 import {
   recommendProtocols,
   type ProtocolRec,
 } from "../../lib/protocolRecommenderCore";
+import {
+  modelBannerLine,
+  recommendFromModel,
+  type RelationshipModel,
+} from "../../lib/relationshipModelCore";
 
 type HubItem = {
   href: string;
@@ -221,15 +227,18 @@ export default function ContainmentHubScreen() {
   const router = useRouter();
   const [mPrefs, setMPrefs] = useState<MasochistPrefs>(defaultMasochistPrefs());
   const [recs, setRecs] = useState<ProtocolRec[]>([]);
+  const [relModel, setRelModel] = useState<RelationshipModel | null>(null);
 
   useEffect(() => {
     void masochistModeStore.load().then(setMPrefs);
     void (async () => {
-      const [debriefs, weatherHist] = await Promise.all([
+      const [debriefs, weatherHist, relBundle] = await Promise.all([
         privateDebriefStore.load(),
         weatherStore.load(),
+        relationshipModelStore.load(),
       ]);
       const lastWeather = weatherHist[0]?.snapshot ?? null;
+      if (relBundle?.model) setRelModel(relBundle.model);
       setRecs(
         recommendProtocols({
           debriefs,
@@ -241,6 +250,7 @@ export default function ContainmentHubScreen() {
   }, []);
 
   const mBanner = masochistBanner(mPrefs);
+  const bondRecs = relModel ? recommendFromModel(relModel).slice(0, 3) : [];
 
   return (
     <Screen>
@@ -271,6 +281,41 @@ export default function ContainmentHubScreen() {
             </Body>
           </Card>
         ) : null}
+
+        {relModel ? (
+          <Card>
+            <Text style={styles.section}>Bond map</Text>
+            <Body>{modelBannerLine(relModel)}</Body>
+            <Body muted>Model is not consent. Soft Signal free.</Body>
+            {bondRecs.map((r) => (
+              <Pressable
+                key={r.href}
+                onPress={() => router.push(r.href as never)}
+                style={{ marginTop: 8 }}
+              >
+                <Body muted>
+                  → {r.href} · {r.why}
+                </Body>
+              </Pressable>
+            ))}
+            <Button
+              variant="secondary"
+              label="Open Relationship Model"
+              onPress={() => router.push("/relationship-model" as never)}
+            />
+          </Card>
+        ) : (
+          <Card>
+            <Body muted>
+              No Relationship Model yet. Seal one so Weather + Pre-Renn can
+              bias delay and phase without dumping raw on a human.
+            </Body>
+            <Button
+              label="Seal Relationship Model"
+              onPress={() => router.push("/relationship-model" as never)}
+            />
+          </Card>
+        )}
 
         {recs.length > 0 ? (
           <>

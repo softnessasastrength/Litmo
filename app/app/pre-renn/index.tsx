@@ -15,6 +15,12 @@ import {
 } from "../../lib/preRennGateCore";
 import { preRennGateStore } from "../../services/preRennGateStore";
 import { softSignalService } from "../../services/softSignalService";
+import { relationshipModelStore } from "../../services/relationshipModelStore";
+import {
+  modelBannerLine,
+  preRennBiasFromModel,
+  type RelationshipModel,
+} from "../../lib/relationshipModelCore";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 import type { AppColors } from "../../theme";
@@ -26,6 +32,8 @@ export default function PreRennGateScreen() {
   const [draft, setDraft] = useState<PreRennDraft>(defaultPreRennDraft());
   const [snap, setSnap] = useState<PreRennSnapshot | null>(null);
   const [soft, setSoft] = useState<"idle" | "stopping" | "stopped">("idle");
+  const [relModel, setRelModel] = useState<RelationshipModel | null>(null);
+  const [delayPrimed, setDelayPrimed] = useState(false);
   const [summary, setSummary] = useState({
     total: 0,
     red: 0,
@@ -36,12 +44,35 @@ export default function PreRennGateScreen() {
 
   useEffect(() => {
     void preRennGateStore.load().then((h) => setSummary(summarizePreRenn(h)));
-  }, [snap]);
+    void relationshipModelStore.load().then((b) => {
+      if (!b?.model) return;
+      setRelModel(b.model);
+      if (!delayPrimed) {
+        const bias = preRennBiasFromModel(b.model);
+        setDraft((d) => ({
+          ...d,
+          delayPledgeMinutes: bias.suggestedDelayMinutes,
+        }));
+        setDelayPrimed(true);
+      }
+    });
+  }, [snap, delayPrimed]);
 
   const gate = canSealPreRenn(draft);
+  const modelBias = relModel ? preRennBiasFromModel(relModel) : null;
 
   const seal = () => {
-    const s = sealPreRenn(draft);
+    const bias = modelBias
+      ? {
+          minVerdict: (modelBias.floodProtect
+            ? "yellow"
+            : undefined) as "yellow" | undefined,
+          extraReasons: modelBias.extraReasons,
+          extraHrefs: modelBias.extraHrefs,
+        }
+      : undefined;
+    // Capacity ≤1 or flood_protect + high urge → floor can go red via flood body
+    const s = sealPreRenn(draft, bias);
     if (!s) return;
     setSnap(s);
   };
@@ -147,6 +178,32 @@ export default function PreRennGateScreen() {
           gates · red {summary.red} · yellow {summary.yellow} · green{" "}
           {summary.green} · delays honored {summary.honored_delay}
         </Body>
+        {relModel ? (
+          <Card>
+            <Body>Bond map: {modelBannerLine(relModel)}</Body>
+            <Body muted>
+              Delay primed to {modelBias?.suggestedDelayMinutes ?? 15}m from
+              model. Soft Signal freeness unchanged.
+            </Body>
+            <Button
+              variant="secondary"
+              label="Open Relationship Model"
+              onPress={() => router.push("/relationship-model" as never)}
+            />
+          </Card>
+        ) : (
+          <Card>
+            <Body muted>
+              No Relationship Model yet — map the bond so Pre-Renn can bias
+              delay (still Soft Signal free).
+            </Body>
+            <Button
+              variant="secondary"
+              label="Seal Relationship Model first"
+              onPress={() => router.push("/relationship-model" as never)}
+            />
+          </Card>
+        )}
         <Card>
           <Body>Body flood (1 calm → 5 flooded)</Body>
           <View style={styles.row}>

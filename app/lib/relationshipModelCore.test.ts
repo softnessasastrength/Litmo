@@ -10,7 +10,10 @@ import {
   exportModelText,
   modelSummaryLine,
   parseBundle,
+  preRennBiasFromModel,
+  suggestModelUpdateFromWeather,
 } from "./relationshipModelCore.ts";
+import { computeVerdict } from "./preRennGateCore.ts";
 
 describe("relationship model", () => {
   it("fail-closed without Soft Signal ack", () => {
@@ -61,5 +64,44 @@ describe("relationship model", () => {
     const bundle = parseBundle({ model: m, events: [] });
     assert.ok(bundle);
     assert.equal(bundle!.model.label, "x");
+  });
+
+  it("pre-renn bias from flood_protect raises delay", () => {
+    const d = {
+      ...defaultDraft(),
+      label: "bond",
+      phase: "flood_protect" as const,
+      softSignalAcknowledged: true,
+      axes: { capacity: 1, conflictClimate: 2, closenessEase: 2, softSignalCulture: 5 },
+    };
+    const m = createModel(d)!;
+    const bias = preRennBiasFromModel(m);
+    assert.ok(bias.floodProtect);
+    assert.ok(bias.suggestedDelayMinutes >= 30);
+    const v = computeVerdict(2, 2, "check in", {
+      minVerdict: "yellow",
+      extraReasons: bias.extraReasons,
+      extraHrefs: bias.extraHrefs,
+    });
+    assert.equal(v.verdict, "yellow");
+    assert.ok(v.reasons.some((r) => r.includes("Bond map")));
+  });
+
+  it("weather suggests flood_protect when sky is bad", () => {
+    const d = {
+      ...defaultDraft(),
+      label: "bond",
+      phase: "steady" as const,
+      softSignalAcknowledged: true,
+    };
+    const m = createModel(d)!;
+    const s = suggestModelUpdateFromWeather(m, {
+      energy: 2,
+      anxiety: 5,
+      attachmentHeat: 4,
+      capacityForOthers: 1,
+    });
+    assert.equal(s.phase, "flood_protect");
+    assert.ok(s.reasons.length > 0);
   });
 });

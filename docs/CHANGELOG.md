@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-13 — Relationship Model wired into Pre-Renn · Weather · Hub
+
+Bond map biases Pre-Renn delay + verdict reasons, Weather can apply sky →
+phase/capacity, Hub shows model banner + recs. Soft Signal freeness unchanged.
+
 ## 2026-07-13 — Relationship Model v0.1
 
 Living private bond map: operating phase, closeness style, attachment weather,

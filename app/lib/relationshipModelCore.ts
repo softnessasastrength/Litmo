@@ -412,3 +412,125 @@ export function exportModelText(model: RelationshipModel): string {
     `— Soft Signal free · model is not consent · not legal · local only`,
   ].join("\n");
 }
+
+/** One-line banner for other protocols */
+export function modelBannerLine(model: RelationshipModel): string {
+  return `${model.label} · ${phaseLabel(model.phase)} · capacity ${model.axes.capacity}/5 · Soft Signal culture ${model.axes.softSignalCulture}/5 · not consent`;
+}
+
+/**
+ * How the bond map biases Pre-Renn — never auto-sends, never weakens Soft Signal.
+ */
+export function preRennBiasFromModel(model: RelationshipModel): {
+  suggestedDelayMinutes: 0 | 5 | 15 | 30 | 60;
+  capacityWarn: boolean;
+  floodProtect: boolean;
+  dualBind: boolean;
+  extraReasons: string[];
+  extraHrefs: string[];
+} {
+  const capacityWarn = model.axes.capacity <= 2;
+  const floodProtect = model.phase === "flood_protect" || capacityWarn;
+  const dualBind = model.attachmentWeather === "dual_bind";
+  const extraReasons: string[] = [];
+  const extraHrefs: string[] = [];
+
+  if (floodProtect) {
+    extraReasons.push(
+      `Bond map: ${phaseLabel(model.phase)} / capacity ${model.axes.capacity} — protect first.`,
+    );
+    extraHrefs.push("/flood", "/too-much");
+  }
+  if (dualBind) {
+    extraReasons.push("Bond map weather is dual-bind — need ∧ leave-fear both allowed.");
+    extraHrefs.push("/need-scared");
+  }
+  if (model.phase === "repair_needed") {
+    extraReasons.push("Bond map phase is repair needed — dump may re-open the fight.");
+    extraHrefs.push("/reconcile", "/apology-craft");
+  }
+  if (model.axes.softSignalCulture <= 3) {
+    extraReasons.push("Soft Signal culture axis is low — practice freeness before reach.");
+    extraHrefs.push("/soft-signal/practice");
+  }
+
+  let suggestedDelayMinutes: 0 | 5 | 15 | 30 | 60 = 15;
+  if (floodProtect) suggestedDelayMinutes = 30;
+  if (model.axes.capacity <= 1) suggestedDelayMinutes = 60;
+  if (model.phase === "steady" && model.axes.capacity >= 4)
+    suggestedDelayMinutes = 5;
+
+  return {
+    suggestedDelayMinutes,
+    capacityWarn,
+    floodProtect,
+    dualBind,
+    extraReasons,
+    extraHrefs,
+  };
+}
+
+/** Weather snapshot shape (duck-typed to avoid circular imports). */
+export type WeatherAxesLite = {
+  energy: number;
+  anxiety: number;
+  attachmentHeat: number;
+  capacityForOthers: number;
+};
+
+/**
+ * Suggest bond-model updates from personal weather.
+ * Pure: does not mutate. Caller applies with Soft Signal freeness intact.
+ */
+export function suggestModelUpdateFromWeather(
+  model: RelationshipModel,
+  w: WeatherAxesLite,
+): {
+  phase: RelationshipPhase | null;
+  axesPartial: Partial<RelationshipAxes>;
+  reasons: string[];
+} {
+  const reasons: string[] = [];
+  let phase: RelationshipPhase | null = null;
+  const axesPartial: Partial<RelationshipAxes> = {};
+
+  if (w.capacityForOthers <= 2 || w.anxiety >= 4) {
+    phase = "flood_protect";
+    axesPartial.capacity = Math.min(model.axes.capacity, w.capacityForOthers) as
+      | 1
+      | 2
+      | 3
+      | 4
+      | 5;
+    reasons.push("Personal sky is stormy / low capacity — flood protect suggested.");
+  } else if (w.attachmentHeat >= 4 && w.anxiety >= 3) {
+    if (model.phase !== "repair_needed") {
+      phase = model.phase === "paused" ? "paused" : model.phase;
+    }
+    axesPartial.capacity = Math.min(
+      model.axes.capacity,
+      Math.max(1, w.capacityForOthers),
+    ) as 1 | 2 | 3 | 4 | 5;
+    reasons.push("Attachment heat high — hold dual-bind / pre-renn paths.");
+  } else if (
+    w.capacityForOthers >= 4 &&
+    w.anxiety <= 2 &&
+    model.phase === "flood_protect"
+  ) {
+    phase = "steady";
+    axesPartial.capacity = Math.max(model.axes.capacity, w.capacityForOthers) as
+      | 1
+      | 2
+      | 3
+      | 4
+      | 5;
+    reasons.push("Sky clearing — can leave flood protect for steady when ready.");
+  } else {
+    axesPartial.capacity = Math.round(
+      (model.axes.capacity + w.capacityForOthers) / 2,
+    ) as 1 | 2 | 3 | 4 | 5;
+    reasons.push("Synced capacity axis toward today's personal weather.");
+  }
+
+  return { phase, axesPartial, reasons };
+}

@@ -15,6 +15,15 @@ import {
 } from "../../lib/weatherCore";
 import { weatherStore } from "../../services/weatherStore";
 import { softSignalService } from "../../services/softSignalService";
+import { relationshipModelStore } from "../../services/relationshipModelStore";
+import {
+  modelBannerLine,
+  setPhase,
+  suggestModelUpdateFromWeather,
+  updateAxes,
+  type RelationshipModel,
+  type RelationshipEvent,
+} from "../../lib/relationshipModelCore";
 import { useThemedStyles } from "../../hooks/useThemedStyles";
 import { useColors } from "../../context/ThemeContext";
 import type { AppColors } from "../../theme";
@@ -70,9 +79,18 @@ export default function WeatherScreen() {
     avg_capacity: null as number | null,
     last_sky: null as string | null,
   });
+  const [relModel, setRelModel] = useState<RelationshipModel | null>(null);
+  const [relEvents, setRelEvents] = useState<RelationshipEvent[]>([]);
+  const [syncNote, setSyncNote] = useState<string | null>(null);
 
   useEffect(() => {
     void weatherStore.load().then((h) => setSummary(summarizeWeather(h)));
+    void relationshipModelStore.load().then((b) => {
+      if (b) {
+        setRelModel(b.model);
+        setRelEvents(b.events);
+      }
+    });
   }, [snap]);
 
   const gate = canSealWeather(draft);
@@ -96,6 +114,9 @@ export default function WeatherScreen() {
 
   if (snap) {
     const suggestions = weatherSuggestions(snap);
+    const modelSuggest = relModel
+      ? suggestModelUpdateFromWeather(relModel, snap)
+      : null;
     return (
       <Screen>
         <ScrollView contentContainerStyle={styles.scroll}>
@@ -108,6 +129,57 @@ export default function WeatherScreen() {
             </Body>
             {snap.note ? <Body muted>{snap.note}</Body> : null}
           </Card>
+          {relModel && modelSuggest ? (
+            <Card>
+              <Body>Bond map: {modelBannerLine(relModel)}</Body>
+              {modelSuggest.reasons.map((r) => (
+                <Body key={r} muted>
+                  · {r}
+                </Body>
+              ))}
+              {syncNote ? <Body muted>{syncNote}</Body> : null}
+              <Button
+                label="Apply sky → bond model (local)"
+                onPress={() => {
+                  void (async () => {
+                    if (!relModel) return;
+                    let next = relModel;
+                    let evts = [...relEvents];
+                    if (modelSuggest.phase) {
+                      const p = setPhase(next, modelSuggest.phase);
+                      next = p.model;
+                      evts = [p.event, ...evts];
+                    }
+                    if (Object.keys(modelSuggest.axesPartial).length) {
+                      const a = updateAxes(next, modelSuggest.axesPartial);
+                      next = a.model;
+                      evts = [a.event, ...evts];
+                    }
+                    await relationshipModelStore.saveModel(next, evts.slice(0, 100));
+                    setRelModel(next);
+                    setRelEvents(evts);
+                    setSyncNote("Bond model updated from personal weather. Soft Signal free.");
+                  })();
+                }}
+              />
+              <Button
+                variant="secondary"
+                label="Open Relationship Model"
+                onPress={() => router.push("/relationship-model" as never)}
+              />
+            </Card>
+          ) : (
+            <Card>
+              <Body muted>
+                Seal a Relationship Model to sync bond phase/capacity from this sky.
+              </Body>
+              <Button
+                variant="secondary"
+                label="Relationship Model"
+                onPress={() => router.push("/relationship-model" as never)}
+              />
+            </Card>
+          )}
           <Text style={styles.h}>Suggested from this sky</Text>
           {suggestions.map((href) => (
             <Button
