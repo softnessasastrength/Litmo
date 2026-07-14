@@ -253,6 +253,12 @@ export default function HomeTabScreen() {
       />
       <Button
         variant="signal"
+        label="Attachment Repair Cathedral v0.1"
+        onPress={() => router.push("/attachment-repair" as never)}
+        accessibilityHint="Mommy Issues Reassurance + Emotional Masochist Circuit. Soft Signal God Mode. Private containment, not a product."
+      />
+      <Button
+        variant="signal"
         label="Morning Cuddle Protocol v0.1"
         onPress={() => router.push("/morning-cuddle" as never)}
         accessibilityHint="7:42am negotiation before coffee. Gremlin energy, Soft Signal, exit ritual. Containment, not a product."

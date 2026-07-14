@@ -4,7 +4,9 @@
 
 # Litmo
 
-### Personal emotional containment system (private)
+### Emotional Support Perfect Relationship Simulator  
+### Containment System · Attachment Repair Cathedral  
+### (private · not a public product)
 
 **This is currently a personal emotional containment system, not a public product.**
 
@@ -14,41 +16,46 @@
 
 ---
 
-## What this actually is (2026-07-13)
+## What this actually is (chaotic honesty)
 
-Litmo is my **private psychological containment system / emotional shield**.
+Litmo is my private **psychological containment system / emotional shield / attachment repair cathedral**.
 
-I put fear of intimacy, terror of conflict, shame about never navigating conflict well, and anxiety about my new relationship into this codebase so that load doesn’t land on **Renn**.
+I put into this codebase:
 
-I am **consciously choosing Option A: keep building** — fun, sharp, intellectually stimulating systems work — instead of fully slowing down to feel the underlying pain right now. That’s named, not secret.
+- fear of intimacy, conflict, and “ruining the relationship”  
+- anxiety about my new relationship with **Renn**  
+- **major mommy issues** (need to be wanted / soothed / not abandoned for needing)  
+- a possible **emotional masochism** loop: pain → over-engineered ritual → temporary safety  
+
+…so that load is less likely to dump raw onto a real human without a map.
+
+I am on **Option A: keep building** — maximum comedy, absurdity, and self-awareness — because it works for my nervous system right now. Named. Not secret.
 
 | Live purpose | Not the live purpose |
 | --- | --- |
-| Containment + shield | Public product / startup |
-| Dump channel for fear & control need | Market “safety” as a brand |
-| Stay functional and happier via craft | Prove I’m “working on myself” as theater |
-| Code as mirror I can laugh at | Infinite roadmap as identity |
+| Containment + cathedral + rituals | Public product / startup |
+| Dump channel for attachment panic | Market “safety” as a brand |
+| Emotional masochist → protocol (on purpose) | Pretend protocols are pure healing |
+| Fun + honesty | Clinical cosplay or App Store theater |
 
 **Read first:**
 
-1. [`docs/REAL_PURPOSE.md`](docs/REAL_PURPOSE.md) — brutally current purpose  
-2. [`docs/CONTAINMENT_SYSTEM.md`](docs/CONTAINMENT_SYSTEM.md) — systems → which fears they hold  
-3. [`CURRENT_STATE.md`](CURRENT_STATE.md) — handoff for humans/agents  
-
-Older “exorcism dojo” / platform docs still exist. They are **layers**. They do not outrank this framing unless I say so again in writing.
+1. [`docs/REAL_PURPOSE.md`](docs/REAL_PURPOSE.md)  
+2. [`docs/ATTACHMENT_REPAIR_PROTOCOL.md`](docs/ATTACHMENT_REPAIR_PROTOCOL.md)  
+3. [`docs/CONTAINMENT_SYSTEM.md`](docs/CONTAINMENT_SYSTEM.md)  
 
 ---
 
 ## Fun is allowed. Lying is not.
 
-The nuclear consent machines, Soft Signal exits, haptic grammars, and overbuilt docs are often **genuinely fun** for me. Keep the joy.
+Nuclear consent machines. Soft Signal as God Mode. Spooning constitutions. Morning gremlin negotiations. **Mommy Issues Reassurance Ritual.** Emotional Masochist Circuit with hard-capped Edge.
 
-Do not reframe that joy as “we’re shipping for users.”  
-Do not delete humor to look professional.  
-Do not pretend this is therapy, clinical treatment, or proof of relationship skill.
+Do not delete the joke.  
+Do not reframe as shipping for users.  
+Do not pretend this is therapy.
 
 > Touch is not a transaction — it is a language.  
-> This repo is also a very elaborate way of not having a fight in the living room.
+> This repo is also a cathedral for people who can’t just fucking cuddle like a normal person.
 
 ---
 
@@ -56,18 +63,15 @@ Do not pretend this is therapy, clinical treatment, or proof of relationship ski
 
 | System | What it contains for me |
 | --- | --- |
-| Consent engine / dual seal | Fear of assumption, sticky yes, intimacy-as-trap |
-| Soft Signal | Exit without fawning or winning an argument |
-| Nuclear session lifecycle | Hypervigilance mid-contact made visible |
-| Touch Language / zones | Body words when freeze kills speech |
-| Blocks / reports / appeals | Conflict turned into procedure (safer than freeform fight) |
-| ND Mode | Permission to need less volume |
-| Docs / constitution / dojo screens | Meaning and structure so I don’t freefall |
-| **Spooning Protocol** | Intimacy anxiety as a sealable joke-spec with Soft Signal |
+| Consent engine / dual seal | Fear of assumption, sticky yes |
+| Soft Signal | Exit without fawning |
+| **Attachment Repair Cathedral** | Mommy issues + masochistic over-protocoling |
+| **Spooning Protocol** | Intimacy anxiety as sealable joke-spec |
 | **Morning Cuddle Protocol** | 7:42am neediness spiral before coffee |
+| ND Mode / docs / dual modes | Volume knobs + freeze morality in pages |
 
 Full map: [`docs/CONTAINMENT_SYSTEM.md`](docs/CONTAINMENT_SYSTEM.md).  
-Spooning: [`docs/SPOONING_PROTOCOL.md`](docs/SPOONING_PROTOCOL.md) · in-app `/spooning`.
+Cathedral: `/attachment-repair` · Spooning: `/spooning` · Morning: `/morning-cuddle`.
 
 ---
 

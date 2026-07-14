@@ -58,6 +58,7 @@ This is not a diagnosis. It’s a field guide.
 | **In-app Dojo / urge log / burn gates** | See defenses, log urges | Meta-containment: even the “honesty layer” is a system that keeps me building instead of only feeling | Without ritual/structure I disappear (D23-ish) |
 | **Spooning Protocol** (`/spooning`, `spooningCore`) | Over-engineered cuddle planner | Hold “what if closeness goes wrong / I freeze / I stay too long / I don’t know how to ask” in a runnable joke-spec with Soft Signal | Intimacy anxiety; performance fear mid-cuddle |
 | **Morning Cuddle Protocol** (`/morning-cuddle`) | Pre-coffee 30s negotiation + gremlin mode | Hold 7:42am “am I needy / are they annoyed / ruining the relationship” spiral; Exit Protocol; positive exit ritual | Morning neediness guilt; closeness before coffee |
+| **Attachment Repair Cathedral** (`/attachment-repair`) | Mommy Issues Reassurance + Emotional Masochist Circuit | Hold abandonment/need-to-be-wanted loops; name masochistic over-protocoling; Soft Signal + Yellow; joke ledger | Mommy issues; emotional masochism; attachment panic |
 
 ---
 

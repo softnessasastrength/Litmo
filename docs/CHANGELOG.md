@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-13 — Attachment Repair Cathedral v0.1
+
+Mommy Issues Reassurance Ritual + Emotional Masochist Circuit + Soft Landing +
+Cathedral Silence. Fail-closed seal (Soft Signal + Yellow required), Edge hard
+cap, scripted ritual body, aftercare, joke ledger. Chaotic honesty updates to
+REAL_PURPOSE + README. `/attachment-repair`.
+
 ## 2026-07-13 — Morning Cuddle Protocol v0.1
 
 Pre-coffee negotiation: Crispy/Toasty/Gremlin/Exit Protocol, micro–extended

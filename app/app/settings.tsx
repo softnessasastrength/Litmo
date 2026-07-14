@@ -241,6 +241,12 @@ function SettingsContent() {
       </View>
       <Button
         variant="signal"
+        label="Attachment Repair Cathedral v0.1"
+        onPress={() => router.push("/attachment-repair" as never)}
+        accessibilityHint="Mommy Issues + Emotional Masochist Circuit. Soft Signal. Private containment."
+      />
+      <Button
+        variant="signal"
         label="Morning Cuddle Protocol v0.1"
         onPress={() => router.push("/morning-cuddle" as never)}
         accessibilityHint="Pre-coffee negotiation, gremlin mode, Soft Signal, exit ritual. Personal containment."
