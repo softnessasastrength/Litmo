@@ -17,6 +17,7 @@ Links:
 | Protocol | Route |
 | -------- | ----- |
 | Containment Lo-Fi | `/containment/lofi` |
+| I'm Too Much / Fear of Abandonment | `/too-much` |
 | Interest Reverse Engineering | `/interest-re` |
 | I'm Not Ready To Get Up Yet | `/not-ready-yet` |
 | Conflict Navigation Simulator | `/conflict-sim` |

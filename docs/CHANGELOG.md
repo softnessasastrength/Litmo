@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — I'm Too Much / Fear of Abandonment v0.1
+
+Safe panic-room UI: detection triggers, intensity, body locater, containment
+script, reassurance ritual, Soft Signal God Mode, private pattern tracking
+(7d/30d, top triggers — never a neediness score). Hub `/too-much`.
+
 ## 2026-07-13 — Spooning Protocol v0.2 nuclear
 
 14 positions (Jetpack, Koala Death Grip, Safety Burrito, Lap Nest, etc.),

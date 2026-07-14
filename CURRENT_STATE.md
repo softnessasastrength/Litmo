@@ -66,7 +66,7 @@ Foundation through BETA-001, ACCESS-001 engineering, macOS participant reads (AD
 
 ## Exact next action
 
-- Done recently: **Spooning Protocol v0.2** (nuclear positions + Watch + mommy-issues) + Interest RE + Not Ready Yet + Hub + iOS green.
+- Done recently: **I'm Too Much / Fear of Abandonment** panic room + Spooning v0.2 + full containment suite.
 - Follow `docs/REAL_PURPOSE.md`.
 
 ## Verification baseline

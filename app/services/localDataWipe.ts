@@ -38,6 +38,8 @@ const EXTRA_ASYNC_KEYS = [
   "litmo.interest_re.history.v1",
   /** I'm Not Ready Yet snooze history. */
   "litmo.not_ready_yet.history.v1",
+  /** Too Much / Fear of Abandonment history. */
+  "litmo.too_much.history.v1",
 ];
 
 const EXTRA_SECURE_KEYS = [

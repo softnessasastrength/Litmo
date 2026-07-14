@@ -45,6 +45,8 @@ We are **leaning all the way into it**:
 - Joke trust ledgers that are not public scores  
 - Interest Reverse Engineering (want vs should vs fawn)  
 - I'm Not Ready To Get Up Yet (morning snooze / exit)  
+- I'm Too Much / Fear of Abandonment (panic room + patterns)  
+
 
 
 

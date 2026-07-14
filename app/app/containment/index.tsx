@@ -32,6 +32,13 @@ const PROTOCOLS: readonly HubItem[] = [
     tag: "LO-FI",
   },
   {
+    href: "/too-much",
+    title: "I'm Too Much / Fear of Abandonment",
+    blurb:
+      "Panic room: detection triggers, containment, reassurance, private pattern tracking. Soft Signal lit.",
+    tag: "ABANDON",
+  },
+  {
     href: "/interest-re",
     title: "Interest Reverse Engineering",
     blurb:

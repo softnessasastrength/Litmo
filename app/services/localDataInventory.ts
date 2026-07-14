@@ -28,6 +28,8 @@ import { summarizeInterestHistory } from "../lib/interestReCore.ts";
 import { interestReStore } from "./interestReStore.ts";
 import { summarizeNotReadyHistory } from "../lib/notReadyYetCore.ts";
 import { notReadyYetStore } from "./notReadyYetStore.ts";
+import { summarizePatterns } from "../lib/tooMuchCore.ts";
+import { tooMuchStore } from "./tooMuchStore.ts";
 
 export type LocalInventory = {
   collected_at: string;
@@ -86,6 +88,12 @@ export type LocalInventory = {
     session_count: number;
     soft_signal_exits: number;
     im_up_count: number;
+  };
+  too_much: {
+    history_present: boolean;
+    session_count: number;
+    flooded_count: number;
+    soft_signal_exits: number;
   };
   notes: string[];
 };
@@ -335,6 +343,25 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     notes.push("not_ready_yet_history_unreadable");
   }
 
+  let too_much: LocalInventory["too_much"] = {
+    history_present: false,
+    session_count: 0,
+    flooded_count: 0,
+    soft_signal_exits: 0,
+  };
+  try {
+    const tm = await tooMuchStore.load();
+    const p = summarizePatterns(tm);
+    too_much = {
+      history_present: p.total > 0,
+      session_count: p.total,
+      flooded_count: p.flooded_count,
+      soft_signal_exits: p.soft_signal_count,
+    };
+  } catch {
+    notes.push("too_much_history_unreadable");
+  }
+
   return {
     collected_at: new Date().toISOString(),
     offline_ready: true,
@@ -364,6 +391,7 @@ export async function collectLocalInventory(): Promise<LocalInventory> {
     conflict_sim,
     interest_re,
     not_ready_yet,
+    too_much,
     notes,
   };
 }
